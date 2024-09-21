@@ -1,0 +1,349 @@
+---
+title: "Estimation Methods"
+author: "Ward B. Eiling"
+format: html
+---
+
+In this document, we will compare estimation methods in the context of clustered data (measurements within invididuals): generalized estimating equations (GEE) and mixed linear models (MLM).
+
+Let's first install and load necessary packages
+
+```{r}
+# Load packages
+library(dagitty)
+library(tidyverse)
+library(ggdag)
+library(purrr)
+library(qgraph)
+library(pcalg)
+library(sjPlot)
+library(lme4)
+library(geex)
+library(gee)
+library(MASS)
+library(jtools)
+```
+
+## Example 1: Continuous, X (individual level) on Y (occasion level)
+
+Let's draw a DAG where we are estimating the effect of $X$ (sleep-problems) on $Y_t$ (anxiety)
+
+```{r}
+dag <- dagitty('dag {
+  X -> Y_t
+}')
+
+plot(dag)
+```
+
+Let's specify the structural causal model (SCM) for the drawn DAG
+
+$$X_i := \mathcal{N}(5, 1) \quad \text{for} \quad i = 1, \ldots, n_{\text{individuals}}$$ $$Y_{i,t} := 2 + 0.6 \cdot X_i + \epsilon_{i,t} \quad \text{for} \quad i = 1, \ldots, n_{\text{individuals}} \quad \text{and} \quad t = 1, \ldots, n_{\text{measurements}}$$ where $\epsilon_{i,t}$ follows a multivariate normal distribution with mean zero and an exchangeable correlation structure across time points $t$: $$\epsilon_{i,1}, \ldots, \epsilon_{i,n_{\text{measurements}}} \sim \mathcal{N}(0, \Sigma)$$ The covariance matrix $\Sigma$ has the form: $$\Sigma = \begin{bmatrix} 1 & \rho & \cdots & \rho \\ \rho & 1 & \cdots & \rho \\ \vdots & \vdots & \ddots & \vdots \\ \rho & \rho & \cdots & 1 \end{bmatrix}$$
+
+with $\rho = 0.7$, representing the exchangeable correlation structure between the errors at different time points within an individual.
+
+Let's simulate clustered data from the SCM
+
+```{r}
+# Parameters
+set.seed(123)  # For reproducibility
+n_individuals <- 100  # Number of individuals
+n_measurements <- 5   # Number of measurements per individual
+rho <- 0.7  # Correlation between measurements within an individual
+
+# Generate individual-level covariates (X)
+X <- rnorm(n_individuals, mean = 5, sd = 1)
+
+# Correlation matrix (exchangeable structure)
+corr_matrix <- matrix(rho, n_measurements, n_measurements)
+diag(corr_matrix) <- 1  # Diagonal is 1
+
+# Simulate repeated measures for each individual
+data <- data.frame()
+for (i in 1:n_individuals) {
+  # Generate errors with the working correlation structure
+  epsilon_Y <- mvrnorm(1, mu = rep(0, n_measurements), Sigma = corr_matrix)
+  
+  # Generate Y for this individual across measurement occasions
+  Y <- 2 + 0.6 * X[i] + epsilon_Y
+  
+  # Store the data
+  individual_data <- data.frame(
+    id = i,
+    occasion = 1:n_measurements,
+    X = X[i],
+    Y = Y
+  )
+  
+  data <- rbind(data, individual_data)
+}
+
+# Check the first few rows of the data
+head(data)
+```
+
+Let's estimate the effect of $X$ on $Y$ using MLM
+
+```{r}
+# REML
+MLM1 <- lmer(Y ~ X + (1 | id), data = data) 
+# summary(MLM1)
+# summ(MLM1)
+```
+
+```{r}
+# Maximum likelihood
+# MLM2 <- lmer(Y ~ X + (1 | id), data = data, REML = FALSE)
+# summary(MLM2)
+# summ(MLM2)
+```
+
+Let's estimate the effect of $X$ on $Y$ using GEE
+
+First, we should examine the observed correlation structure for observations within a cluster.
+
+```{r}
+data_wide <- data %>%
+  pivot_wider(names_from = occasion, values_from = Y, names_prefix = "Y_")
+
+# Remove the ID column
+data_wide_Y <- data_wide %>% dplyr::select(starts_with("Y_"))
+
+# Compute the observed correlation matrix for the measurements across all individuals
+observed_corr_matrix <- cor(data_wide_Y, use = "pairwise.complete.obs")
+
+# Display the observed correlation matrix
+observed_corr_matrix
+```
+
+It seems to be more or less exchangeable, which is what we specified.
+
+```{r}
+GEE <- gee(Y ~ X, data = data, id = id, family = gaussian(), corstr = "exchangeable")
+# summary(GEE)
+```
+
+Let's compare the point estimates
+
+```{r}
+fixef(MLM1)
+coef(GEE)
+```
+
+The point estimates are identical
+
+## Example 2: Continuous, X (occasion level) on Y (occasion level)
+
+Let's draw a DAG where we are estimating the effect of $X_t$ (sleep-problems) on $Y_t$ (anxiety)
+
+```{r}
+dag <- dagitty('dag {
+  X_t -> Y_t
+}')
+
+plot(dag)
+```
+
+Let's specify the structural causal model (SCM) for the drawn DAG
+
+$$X_{i,t} := \mathcal{N}(5, 1) \quad \text{for} \quad i = 1, \ldots, n_{\text{individuals}} \quad \text{and} \quad t = 1, \ldots, n_{\text{measurements}}$$ $$Y_{i,t} := 2 + 0.6 \cdot X_{i,t} + \epsilon_{i,t} \quad \text{for} \quad i = 1, \ldots, n_{\text{individuals}} \quad \text{and} \quad t = 1, \ldots, n_{\text{measurements}}$$ where $\epsilon_{i,t}$ follows a multivariate normal distribution with mean zero and an exchangeable correlation structure across time points $t$: $$\epsilon_{i,1}, \ldots, \epsilon_{i,n_{\text{measurements}}} \sim \mathcal{MVN}(0, \Sigma)$$ The covariance matrix $\Sigma$ has the form:
+
+$$\Sigma = \begin{bmatrix} 1 & \rho & \cdots & \rho \\ \rho & 1 & \cdots & \rho \\ \vdots & \vdots & \ddots & \vdots \\ \rho & \rho & \cdots & 1 \end{bmatrix}$$ with $\rho = 0.7$, representing the exchangeable correlation structure between the errors at different time points within an individual.
+
+```{r}
+# Parameters
+set.seed(123)  # For reproducibility
+n_individuals <- 100  # Number of individuals
+n_measurements <- 5   # Number of measurements per individual
+rho <- 0.7  # Correlation between measurements within an individual
+
+# Generate occasion level predictors (X)
+X <- rnorm(n_individuals * n_measurements, mean = 5, sd = 1)
+
+# Correlation matrix (exchangeable structure)
+corr_matrix <- matrix(rho, n_measurements, n_measurements)
+diag(corr_matrix) <- 1  # Diagonal is 1
+
+# Simulate repeated measures for each individual
+data <- data.frame()
+for (i in 1:n_individuals) {
+  # Generate errors with the working correlation structure
+  epsilon_Y <- mvrnorm(1, mu = rep(0, n_measurements), Sigma = corr_matrix)
+  
+  # Generate Y for this individual across measurement occasions
+  Y <- 2 + 0.6 * X[(i - 1) * n_measurements + 1:(n_measurements)] + epsilon_Y
+  
+  # Store the data
+  individual_data <- data.frame(
+    id = i,
+    occasion = 1:n_measurements,
+    X = X[(i - 1) * n_measurements + 1:(n_measurements)],
+    Y = Y
+  )
+  
+  data <- rbind(data, individual_data)
+}
+
+head(data)
+```
+
+Let's estimate the effect of $X$ on $Y$ using MLM
+
+```{r}
+# REML
+ex2.MLM1 <- lmer(Y ~ X + (1 | id), data = data)
+# summary(ex2.MLM1)
+# summ(ex2.MLM1)
+```
+
+Let's estimate the effect of $X$ on $Y$ using GEE
+
+```{r}
+ex2.GEE <- gee(Y ~ X, data = data, id = id, family = gaussian(), corstr = "exchangeable")
+# summary(ex2.GEE)
+```
+
+Let's compare the point estimates
+
+```{r}
+fixef(ex2.MLM1)
+coef(ex2.GEE)
+```
+
+There is a minor difference in the point estimates (from the 4th decimal place onwards).
+
+## Example 3: Continuous, time-invariant confounder, X (occasion level) on Y (occasion level) with confounder S (individual level)
+
+Let's draw a DAG where we are estimating the effect of $X_t$ (sleep-problems) on $Y_t$ (anxiety) with the time-invariant confounder $S$ (sex) in the relationship between $X$ and $Y$.
+
+```{r}
+dag <- dagitty('dag {
+  X_t -> Y_t
+  S -> X_t
+  S -> Y_t
+}')
+
+plot(dag)
+```
+
+Let's specify the structural causal model (SCM) for the drawn DAG
+
+$$S_{i} := \mathcal{B}(0.5) \quad \text{for} \quad i = 1, \ldots, n_{\text{individuals}}$$ 
+
+where $S_i = 1$ represents male and $S_i = 0$ represents female.
+
+$$X_{i,t} := 4 + 2 \cdot S_i + \epsilon_{X_{i,t}} \quad \text{for} \quad i = 1, \ldots, n_{\text{individuals}} \quad \text{and} \quad t = 1, \ldots, n_{\text{measurements}}$$ 
+
+For now, let us assume that the error term $\epsilon_{X_{i,t}}$ are i.i.d. and $\sim \mathcal{N}(0, 1)$ (this may not be realistic in this example).
+
+$$Y_{i,t} := 1 + 0.6 \cdot X_{i,t} + 0.7 \cdot S_i + \epsilon_{Y_{i,t}} \quad \text{for} \quad i = 1, \ldots, n_{\text{individuals}} \quad \text{and} \quad t = 1, \ldots, n_{\text{measurements}}$$ 
+
+where $\epsilon_{Y_{i,t}}$ follows a multivariate normal distribution with mean zero and an exchangeable correlation structure across time points $t$:
+
+$$\epsilon_{i,1}, \ldots, \epsilon_{i,n_{\text{measurements}}} \sim \mathcal{MVN}(0, \Sigma)$$ 
+
+The covariance matrix $\Sigma$ has the form:
+
+$$\Sigma = \begin{bmatrix} 1 & \rho & \cdots & \rho \\ \rho & 1 & \cdots & \rho \\ \vdots & \vdots & \ddots & \vdots \\ \rho & \rho & \cdots & 1 \end{bmatrix}$$ 
+
+with $\rho = 0.7$, representing the exchangeable correlation structure between the errors at different time points within an individual.
+
+Let us now simulate the based based on this SCM
+
+```{r}
+set.seed(432)
+
+# Parameters
+n_individuals <- 100  # Number of individuals
+n_measurements <- 5   # Number of measurements per individual
+rho <- 0.7            # Correlation between measurements within an individual for Y's errors
+
+## Simulate data
+
+# 1. Generate the time-invariant confounder S (sex: 1 = male, 0 = female)
+S <- rbinom(n_individuals, 1, 0.5)
+
+# 2. Generate time-varying covariate X for each individual across measurement occasions
+X <- matrix(NA, nrow = n_individuals, ncol = n_measurements)
+for (i in 1:n_individuals) {
+  epsilon_X <- rnorm(n_measurements, mean = 0, sd = 1)
+  X[i, ] <- 4 + 2 * S[i] + epsilon_X
+}
+
+# 3. Simulate time-varying outcome Y with correlated errors
+Sigma_Y <- matrix(rho, n_measurements, n_measurements)
+diag(Sigma_Y) <- 1
+
+Y <- matrix(NA, nrow = n_individuals, ncol = n_measurements)
+for (i in 1:n_individuals) {
+  epsilon_Y <- mvrnorm(1, mu = rep(0, n_measurements), Sigma = Sigma_Y) 
+  Y[i, ] <- 1 + 0.6 * X[i, ] + 0.7 * S[i] + epsilon_Y
+}
+
+# 4. Organize the data into a long format (individuals, occasions, X, Y, S)
+data <- data.frame(
+  id = rep(1:n_individuals, each = n_measurements),
+  occasion = rep(1:n_measurements, n_individuals),
+  S = rep(S, each = n_measurements),
+  X = as.vector(t(X)),
+  Y = as.vector(t(Y))
+)
+
+# Show the first few rows of the generated data
+head(data)
+summary(data)
+```
+
+Let's estimate the effect of $X$ on $Y$ using MLM
+
+```{r}
+ex3.MLM <- lmer(Y ~ X + S + (1 | id), data = data) # REML estimation
+# summary(ex3.MLM)
+# summ(ex3.MLM)
+```
+
+Let's estimate the effect of $X$ on $Y$ using GEE
+
+```{r}
+ex3.GEE <- gee(Y ~ X + S, data = data, id = id, family = gaussian(), corstr = "exchangeable")
+```
+
+Let's compare the coefficients
+
+```{r}
+fixef(ex3.MLM)
+coef(ex3.GEE)
+```
+
+## Example 4: Continuous, time-varying confounder, X (occasion level) on Y (occasion level) with confounder Z (individual level)
+
+Let's draw a DAG where we are estimating the effect of $X$ (sleep-problems) and $S$ (sex) on $Y$ (anxiety) with a confounder $Z$ (mobile phone use) in the relationship between $X$ and $Y$.
+
+## Trash
+
+simulate with ICC
+
+```{r}
+### with ICC ###
+set.seed(123)
+
+# Parameters
+n_clusters <- 20
+cluster_size <- 5
+ICC <- 0.5
+
+# Variance components
+sigma_u <- sqrt(ICC / (1 - ICC))  # Between-cluster SD
+sigma_eps <- 1  # Within-cluster SD
+
+# Simulate data
+cluster_ids <- rep(1:n_clusters, each = cluster_size)
+u_c <- rnorm(n_clusters, mean = 0, sd = sigma_u)  # Random intercepts for clusters
+X <- rnorm(n_clusters * cluster_size, mean = 3, sd = 1)
+eps_Y <- rnorm(n_clusters * cluster_size, mean = 0, sd = sigma_eps)
+Y <- 2 + 0.4 * X + u_c[cluster_ids] + eps_Y
+data <- data.frame(cluster = cluster_ids, X = X, Y = Y)
+
+data %>% head()
+summary(data)
+```
