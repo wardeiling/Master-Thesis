@@ -2,7 +2,13 @@
 title: "Estimation Methods"
 author: "Ward B. Eiling"
 format: html
+execute:
+  message: false
+  warning: false
+embed-resources: true
 ---
+
+## Introduction
 
 In this document, we will compare estimation methods in the context of clustered data (measurements within invididuals): generalized estimating equations (GEE) and mixed linear models (MLM).
 
@@ -59,7 +65,7 @@ corr_matrix <- matrix(rho, n_measurements, n_measurements)
 diag(corr_matrix) <- 1  # Diagonal is 1
 
 # Simulate repeated measures for each individual
-data <- data.frame()
+ex1.data <- data.frame()
 for (i in 1:n_individuals) {
   # Generate errors with the working correlation structure
   epsilon_Y <- mvrnorm(1, mu = rep(0, n_measurements), Sigma = corr_matrix)
@@ -75,27 +81,22 @@ for (i in 1:n_individuals) {
     Y = Y
   )
   
-  data <- rbind(data, individual_data)
+  ex1.data <- rbind(ex1.data, individual_data)
 }
 
 # Check the first few rows of the data
-head(data)
+head(ex1.data)
 ```
 
 Let's estimate the effect of $X$ on $Y$ using MLM
 
 ```{r}
-# REML
-MLM1 <- lmer(Y ~ X + (1 | id), data = data) 
-# summary(MLM1)
-# summ(MLM1)
-```
-
-```{r}
-# Maximum likelihood
-# MLM2 <- lmer(Y ~ X + (1 | id), data = data, REML = FALSE)
-# summary(MLM2)
-# summ(MLM2)
+ex1.MLM_reml <- lmer(Y ~ X + (1 | id), data = ex1.data) 
+# summary(MLM_reml)
+# summ(MLM_reml)
+ex1.MLM_mle <- lmer(Y ~ X + (1 | id), data = ex1.data, REML = FALSE)
+# summary(MLM_mle)
+# summ(MLM_mle)
 ```
 
 Let's estimate the effect of $X$ on $Y$ using GEE
@@ -103,7 +104,7 @@ Let's estimate the effect of $X$ on $Y$ using GEE
 First, we should examine the observed correlation structure for observations within a cluster.
 
 ```{r}
-data_wide <- data %>%
+data_wide <- ex1.data %>%
   pivot_wider(names_from = occasion, values_from = Y, names_prefix = "Y_")
 
 # Remove the ID column
@@ -119,18 +120,19 @@ observed_corr_matrix
 It seems to be more or less exchangeable, which is what we specified.
 
 ```{r}
-GEE <- gee(Y ~ X, data = data, id = id, family = gaussian(), corstr = "exchangeable")
+ex1.GEE <- gee(Y ~ X, data = ex1.data, id = id, family = gaussian(), corstr = "exchangeable")
 # summary(GEE)
 ```
 
 Let's compare the point estimates
 
 ```{r}
-fixef(MLM1)
-coef(GEE)
+fixef(ex1.MLM_reml)
+fixef(ex1.MLM_mle)
+coef(ex1.GEE)
 ```
 
-The point estimates are identical
+The point estimates are identical (to 7 decimals) both (1) within the two MLM approaches and (2) between MLM and GEE.
 
 ## Example 2: Continuous, X (occasion level) on Y (occasion level)
 
@@ -165,7 +167,7 @@ corr_matrix <- matrix(rho, n_measurements, n_measurements)
 diag(corr_matrix) <- 1  # Diagonal is 1
 
 # Simulate repeated measures for each individual
-data <- data.frame()
+ex2.data <- data.frame()
 for (i in 1:n_individuals) {
   # Generate errors with the working correlation structure
   epsilon_Y <- mvrnorm(1, mu = rep(0, n_measurements), Sigma = corr_matrix)
@@ -181,17 +183,18 @@ for (i in 1:n_individuals) {
     Y = Y
   )
   
-  data <- rbind(data, individual_data)
+  ex2.data <- rbind(ex2.data, individual_data)
 }
 
-head(data)
+head(ex2.data)
 ```
 
 Let's estimate the effect of $X$ on $Y$ using MLM
 
 ```{r}
 # REML
-ex2.MLM1 <- lmer(Y ~ X + (1 | id), data = data)
+ex2.MLM_reml <- lmer(Y ~ X + (1 | id), data = ex2.data)
+ex2.MLM_mle <- lmer(Y ~ X + (1 | id), data = ex2.data, REML = FALSE)
 # summary(ex2.MLM1)
 # summ(ex2.MLM1)
 ```
@@ -199,18 +202,19 @@ ex2.MLM1 <- lmer(Y ~ X + (1 | id), data = data)
 Let's estimate the effect of $X$ on $Y$ using GEE
 
 ```{r}
-ex2.GEE <- gee(Y ~ X, data = data, id = id, family = gaussian(), corstr = "exchangeable")
+ex2.GEE <- gee(Y ~ X, data = ex2.data, id = id, family = gaussian(), corstr = "exchangeable")
 # summary(ex2.GEE)
 ```
 
 Let's compare the point estimates
 
 ```{r}
-fixef(ex2.MLM1)
+fixef(ex2.MLM_reml)
+fixef(ex2.MLM_mle)
 coef(ex2.GEE)
 ```
 
-There is a minor difference in the point estimates (from the 4th decimal place onwards).
+There is a minor difference between the point estimates of (1) the two MLM approaches (from 4th decimal) and (2) between MLM and GEE (from 4th decimal).
 
 ## Example 3: Continuous, time-invariant confounder, X (occasion level) on Y (occasion level) with confounder S (individual level)
 
@@ -281,7 +285,7 @@ for (i in 1:n_individuals) {
 }
 
 # 4. Organize the data into a long format (individuals, occasions, X, Y, S)
-data <- data.frame(
+ex3.data <- data.frame(
   id = rep(1:n_individuals, each = n_measurements),
   occasion = rep(1:n_measurements, n_individuals),
   S = rep(S, each = n_measurements),
@@ -290,14 +294,15 @@ data <- data.frame(
 )
 
 # Show the first few rows of the generated data
-head(data)
-summary(data)
+head(ex3.data)
+summary(ex3.data)
 ```
 
 Let's estimate the effect of $X$ on $Y$ using MLM
 
 ```{r}
-ex3.MLM <- lmer(Y ~ X + S + (1 | id), data = data) # REML estimation
+ex3.MLM_reml <- lmer(Y ~ X + S + (1 | id), data = ex3.data)
+ex3.MLM_mle <- lmer(Y ~ X + S + (1 | id), data = ex3.data, REML = FALSE)
 # summary(ex3.MLM)
 # summ(ex3.MLM)
 ```
@@ -305,15 +310,18 @@ ex3.MLM <- lmer(Y ~ X + S + (1 | id), data = data) # REML estimation
 Let's estimate the effect of $X$ on $Y$ using GEE
 
 ```{r}
-ex3.GEE <- gee(Y ~ X + S, data = data, id = id, family = gaussian(), corstr = "exchangeable")
+ex3.GEE <- gee(Y ~ X + S, data = ex3.data, id = id, family = gaussian(), corstr = "exchangeable")
 ```
 
 Let's compare the coefficients
 
 ```{r}
-fixef(ex3.MLM)
+fixef(ex3.MLM_reml)
+fixef(ex3.MLM_mle)
 coef(ex3.GEE)
 ```
+
+There is a minor difference between the point estimates of (1) the two MLM approaches (from 4th decimal) and (2) between MLM and GEE (from 4th decimal).
 
 ## Example 4: Continuous, time-varying confounder, X (occasion level) on Y (occasion level) with confounder Z (individual level)
 
@@ -321,29 +329,3 @@ Let's draw a DAG where we are estimating the effect of $X$ (sleep-problems) and 
 
 ## Trash
 
-simulate with ICC
-
-```{r}
-### with ICC ###
-set.seed(123)
-
-# Parameters
-n_clusters <- 20
-cluster_size <- 5
-ICC <- 0.5
-
-# Variance components
-sigma_u <- sqrt(ICC / (1 - ICC))  # Between-cluster SD
-sigma_eps <- 1  # Within-cluster SD
-
-# Simulate data
-cluster_ids <- rep(1:n_clusters, each = cluster_size)
-u_c <- rnorm(n_clusters, mean = 0, sd = sigma_u)  # Random intercepts for clusters
-X <- rnorm(n_clusters * cluster_size, mean = 3, sd = 1)
-eps_Y <- rnorm(n_clusters * cluster_size, mean = 0, sd = sigma_eps)
-Y <- 2 + 0.4 * X + u_c[cluster_ids] + eps_Y
-data <- data.frame(cluster = cluster_ids, X = X, Y = Y)
-
-data %>% head()
-summary(data)
-```
