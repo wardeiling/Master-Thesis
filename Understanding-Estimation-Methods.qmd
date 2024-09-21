@@ -84,6 +84,9 @@ for (i in 1:n_individuals) {
   ex1.data <- rbind(ex1.data, individual_data)
 }
 
+# Make sure first timepoint is zero
+ex1.data$occasion <- ex1.data$occasion - 1
+
 # Check the first few rows of the data
 head(ex1.data)
 ```
@@ -120,6 +123,7 @@ observed_corr_matrix
 It seems to be more or less exchangeable, which is what we specified.
 
 ```{r}
+# displays initial regression estimate of GLM
 ex1.GEE <- gee(Y ~ X, data = ex1.data, id = id, family = gaussian(), corstr = "exchangeable")
 # summary(GEE)
 ```
@@ -186,22 +190,48 @@ for (i in 1:n_individuals) {
   ex2.data <- rbind(ex2.data, individual_data)
 }
 
+# Make sure first timepoint is zero
+ex2.data$occasion <- ex2.data$occasion - 1
+
 head(ex2.data)
 ```
 
 Let's estimate the effect of $X$ on $Y$ using MLM
 
 ```{r}
-# REML
-ex2.MLM_reml <- lmer(Y ~ X + (1 | id), data = ex2.data)
-ex2.MLM_mle <- lmer(Y ~ X + (1 | id), data = ex2.data, REML = FALSE)
-# summary(ex2.MLM1)
-# summ(ex2.MLM1)
+# Model 1a: Intercept only model, random intercept 
+ex2.MLM1a <- lmer(Y ~ 1 + (1 | id), data = ex2.data, REML = FALSE) 
+
+# Model 1b: Intercept only model including the predictor time 
+ex2.MLM1b <- lmer(Y ~ 1 + occasion + (1 | id), data = ex2.data, REML = FALSE) 
+anova(ex2.MLM1a, ex2.MLM1b) # Model 1a is not significantly worse than Model 1b
+
+# Model 2: including remainder of the level 1 predictors 
+ex2.MLM2 <- lmer(Y ~ 1 + occasion + X + (1 | id), data = ex2.data, REML = FALSE)
+anova(ex2.MLM1b, ex2.MLM2) # Model 1b is significantly worse than Model 2
+
+# Model 3.1: random slope for time (and add covariance)
+ex2.MLM3.1 <- lmer(Y ~ 1 + occasion + X + (occasion | id), data = ex2.data, REML = FALSE)
+anova(ex2.MLM2, ex2.MLM3.1) # Model 2 is not significantly worse than Model 3.1
+
+# Model 3.2: random slope for X (and add covariance)
+ex2.MLM3.2 <- lmer(Y ~ 1 + occasion + X + (X | id), data = ex2.data, REML = FALSE)
+anova(ex2.MLM2, ex2.MLM3.2) # Model 2 not is significantly worse than Model 3.2
 ```
+
+Following the results of the model comparison, we will continue with model 2, which includes the fixed effect of $X$ and the random intercept for each individual.
+
+```{r}
+# Model 2
+ex2.MLM2_mle <- lmer(Y ~ 1 + occasion + X + (1 | id), data = ex2.data, REML = FALSE)
+ex2.MLM2_reml <- lmer(Y ~ 1 + occasion + X + (1 | id), data = ex2.data)
+```
+
 
 Let's estimate the effect of $X$ on $Y$ using GEE
 
 ```{r}
+# displays initial regression estimate of GLM
 ex2.GEE <- gee(Y ~ X, data = ex2.data, id = id, family = gaussian(), corstr = "exchangeable")
 # summary(ex2.GEE)
 ```
@@ -209,8 +239,8 @@ ex2.GEE <- gee(Y ~ X, data = ex2.data, id = id, family = gaussian(), corstr = "e
 Let's compare the point estimates
 
 ```{r}
-fixef(ex2.MLM_reml)
-fixef(ex2.MLM_mle)
+fixef(ex2.MLM2_reml)
+fixef(ex2.MLM2_mle)
 coef(ex2.GEE)
 ```
 
@@ -293,6 +323,9 @@ ex3.data <- data.frame(
   Y = as.vector(t(Y))
 )
 
+# Make sure first timepoint is zero
+ex3.data$occasion <- ex3.data$occasion - 1
+
 # Show the first few rows of the generated data
 head(ex3.data)
 summary(ex3.data)
@@ -310,6 +343,7 @@ ex3.MLM_mle <- lmer(Y ~ X + S + (1 | id), data = ex3.data, REML = FALSE)
 Let's estimate the effect of $X$ on $Y$ using GEE
 
 ```{r}
+# displays initial regression estimate of GLM
 ex3.GEE <- gee(Y ~ X + S, data = ex3.data, id = id, family = gaussian(), corstr = "exchangeable")
 ```
 

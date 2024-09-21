@@ -3127,16 +3127,19 @@ vertical-align: -.125em;
 <span id="cb3-31"><a href="#cb3-31" aria-hidden="true" tabindex="-1"></a>  ex1.data <span class="ot">&lt;-</span> <span class="fu">rbind</span>(ex1.data, individual_data)</span>
 <span id="cb3-32"><a href="#cb3-32" aria-hidden="true" tabindex="-1"></a>}</span>
 <span id="cb3-33"><a href="#cb3-33" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-34"><a href="#cb3-34" aria-hidden="true" tabindex="-1"></a><span class="co"># Check the first few rows of the data</span></span>
-<span id="cb3-35"><a href="#cb3-35" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(ex1.data)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb3-34"><a href="#cb3-34" aria-hidden="true" tabindex="-1"></a><span class="co"># Make sure first timepoint is zero</span></span>
+<span id="cb3-35"><a href="#cb3-35" aria-hidden="true" tabindex="-1"></a>ex1.data<span class="sc">$</span>occasion <span class="ot">&lt;-</span> ex1.data<span class="sc">$</span>occasion <span class="sc">-</span> <span class="dv">1</span></span>
+<span id="cb3-36"><a href="#cb3-36" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-37"><a href="#cb3-37" aria-hidden="true" tabindex="-1"></a><span class="co"># Check the first few rows of the data</span></span>
+<span id="cb3-38"><a href="#cb3-38" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(ex1.data)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>  id occasion        X        Y
-1  1        1 4.439524 5.320932
-2  1        2 4.439524 4.794407
-3  1        3 4.439524 5.276651
-4  1        4 4.439524 5.486515
-5  1        5 4.439524 5.536658
-6  2        1 4.769823 4.545282</code></pre>
+1  1        0 4.439524 5.320932
+2  1        1 4.439524 4.794407
+3  1        2 4.439524 5.276651
+4  1        3 4.439524 5.486515
+5  1        4 4.439524 5.536658
+6  2        0 4.769823 4.545282</code></pre>
 </div>
 </div>
 <p>Let’s estimate the effect of <span class="math inline">\(X\)</span> on <span class="math inline">\(Y\)</span> using MLM</p>
@@ -3163,17 +3166,18 @@ vertical-align: -.125em;
 <span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a><span class="co"># Display the observed correlation matrix</span></span>
 <span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a>observed_corr_matrix</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>          Y_1       Y_2       Y_3       Y_4       Y_5
-Y_1 1.0000000 0.7751471 0.7898935 0.8135446 0.7552615
-Y_2 0.7751471 1.0000000 0.8103372 0.8223252 0.7905814
-Y_3 0.7898935 0.8103372 1.0000000 0.8224634 0.8449385
-Y_4 0.8135446 0.8223252 0.8224634 1.0000000 0.8125480
-Y_5 0.7552615 0.7905814 0.8449385 0.8125480 1.0000000</code></pre>
+<pre><code>          Y_0       Y_1       Y_2       Y_3       Y_4
+Y_0 1.0000000 0.7751471 0.7898935 0.8135446 0.7552615
+Y_1 0.7751471 1.0000000 0.8103372 0.8223252 0.7905814
+Y_2 0.7898935 0.8103372 1.0000000 0.8224634 0.8449385
+Y_3 0.8135446 0.8223252 0.8224634 1.0000000 0.8125480
+Y_4 0.7552615 0.7905814 0.8449385 0.8125480 1.0000000</code></pre>
 </div>
 </div>
 <p>It seems to be more or less exchangeable, which is what we specified.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>ex1.GEE <span class="ot">&lt;-</span> <span class="fu">gee</span>(Y <span class="sc">~</span> X, <span class="at">data =</span> ex1.data, <span class="at">id =</span> id, <span class="at">family =</span> <span class="fu">gaussian</span>(), <span class="at">corstr =</span> <span class="st">&quot;exchangeable&quot;</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co"># displays initial regression estimate of GLM</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>ex1.GEE <span class="ot">&lt;-</span> <span class="fu">gee</span>(Y <span class="sc">~</span> X, <span class="at">data =</span> ex1.data, <span class="at">id =</span> id, <span class="at">family =</span> <span class="fu">gaussian</span>(), <span class="at">corstr =</span> <span class="st">&quot;exchangeable&quot;</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>(Intercept)           X 
   2.0974214   0.5647743 </code></pre>
@@ -3250,47 +3254,105 @@ Y_5 0.7552615 0.7905814 0.8449385 0.8125480 1.0000000</code></pre>
 <span id="cb18-31"><a href="#cb18-31" aria-hidden="true" tabindex="-1"></a>  ex2.data <span class="ot">&lt;-</span> <span class="fu">rbind</span>(ex2.data, individual_data)</span>
 <span id="cb18-32"><a href="#cb18-32" aria-hidden="true" tabindex="-1"></a>}</span>
 <span id="cb18-33"><a href="#cb18-33" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb18-34"><a href="#cb18-34" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(ex2.data)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb18-34"><a href="#cb18-34" aria-hidden="true" tabindex="-1"></a><span class="co"># Make sure first timepoint is zero</span></span>
+<span id="cb18-35"><a href="#cb18-35" aria-hidden="true" tabindex="-1"></a>ex2.data<span class="sc">$</span>occasion <span class="ot">&lt;-</span> ex2.data<span class="sc">$</span>occasion <span class="sc">-</span> <span class="dv">1</span></span>
+<span id="cb18-36"><a href="#cb18-36" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-37"><a href="#cb18-37" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(ex2.data)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>  id occasion        X        Y
-1  1        1 4.439524 5.829320
-2  1        2 4.769823 4.722097
-3  1        3 6.558708 7.100023
-4  1        4 5.070508 5.339398
-5  1        5 5.129288 5.213463
-6  2        1 6.715065 6.194996</code></pre>
+1  1        0 4.439524 5.829320
+2  1        1 4.769823 4.722097
+3  1        2 6.558708 7.100023
+4  1        3 5.070508 5.339398
+5  1        4 5.129288 5.213463
+6  2        0 6.715065 6.194996</code></pre>
 </div>
 </div>
 <p>Let’s estimate the effect of <span class="math inline">\(X\)</span> on <span class="math inline">\(Y\)</span> using MLM</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="co"># REML</span></span>
-<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>ex2.MLM_reml <span class="ot">&lt;-</span> <span class="fu">lmer</span>(Y <span class="sc">~</span> X <span class="sc">+</span> (<span class="dv">1</span> <span class="sc">|</span> id), <span class="at">data =</span> ex2.data)</span>
-<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a>ex2.MLM_mle <span class="ot">&lt;-</span> <span class="fu">lmer</span>(Y <span class="sc">~</span> X <span class="sc">+</span> (<span class="dv">1</span> <span class="sc">|</span> id), <span class="at">data =</span> ex2.data, <span class="at">REML =</span> <span class="cn">FALSE</span>)</span>
-<span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a><span class="co"># summary(ex2.MLM1)</span></span>
-<span id="cb20-5"><a href="#cb20-5" aria-hidden="true" tabindex="-1"></a><span class="co"># summ(ex2.MLM1)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Model 1a: Intercept only model, random intercept </span></span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>ex2.MLM1a <span class="ot">&lt;-</span> <span class="fu">lmer</span>(Y <span class="sc">~</span> <span class="dv">1</span> <span class="sc">+</span> (<span class="dv">1</span> <span class="sc">|</span> id), <span class="at">data =</span> ex2.data, <span class="at">REML =</span> <span class="cn">FALSE</span>) </span>
+<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Model 1b: Intercept only model including the predictor time </span></span>
+<span id="cb20-5"><a href="#cb20-5" aria-hidden="true" tabindex="-1"></a>ex2.MLM1b <span class="ot">&lt;-</span> <span class="fu">lmer</span>(Y <span class="sc">~</span> <span class="dv">1</span> <span class="sc">+</span> occasion <span class="sc">+</span> (<span class="dv">1</span> <span class="sc">|</span> id), <span class="at">data =</span> ex2.data, <span class="at">REML =</span> <span class="cn">FALSE</span>) </span>
+<span id="cb20-6"><a href="#cb20-6" aria-hidden="true" tabindex="-1"></a><span class="fu">anova</span>(ex2.MLM1a, ex2.MLM1b) <span class="co"># Model 1a is not significantly worse than Model 1b</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Data: ex2.data
+Models:
+ex2.MLM1a: Y ~ 1 + (1 | id)
+ex2.MLM1b: Y ~ 1 + occasion + (1 | id)
+          npar    AIC    BIC  logLik deviance  Chisq Df Pr(&gt;Chisq)
+ex2.MLM1a    3 1401.1 1413.7 -697.54   1395.1                     
+ex2.MLM1b    4 1401.4 1418.2 -696.68   1393.4 1.7174  1       0.19</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Model 2: including remainder of the level 1 predictors </span></span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>ex2.MLM2 <span class="ot">&lt;-</span> <span class="fu">lmer</span>(Y <span class="sc">~</span> <span class="dv">1</span> <span class="sc">+</span> occasion <span class="sc">+</span> X <span class="sc">+</span> (<span class="dv">1</span> <span class="sc">|</span> id), <span class="at">data =</span> ex2.data, <span class="at">REML =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a><span class="fu">anova</span>(ex2.MLM1b, ex2.MLM2) <span class="co"># Model 1b is significantly worse than Model 2</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Data: ex2.data
+Models:
+ex2.MLM1b: Y ~ 1 + occasion + (1 | id)
+ex2.MLM2: Y ~ 1 + occasion + X + (1 | id)
+          npar    AIC    BIC  logLik deviance  Chisq Df Pr(&gt;Chisq)    
+ex2.MLM1b    4 1401.4 1418.2 -696.68   1393.4                         
+ex2.MLM2     5 1087.0 1108.1 -538.50   1077.0 316.37  1  &lt; 2.2e-16 ***
+---
+Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Model 3.1: random slope for time (and add covariance)</span></span>
+<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a>ex2.MLM3<span class="fl">.1</span> <span class="ot">&lt;-</span> <span class="fu">lmer</span>(Y <span class="sc">~</span> <span class="dv">1</span> <span class="sc">+</span> occasion <span class="sc">+</span> X <span class="sc">+</span> (occasion <span class="sc">|</span> id), <span class="at">data =</span> ex2.data, <span class="at">REML =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a><span class="fu">anova</span>(ex2.MLM2, ex2.MLM3<span class="fl">.1</span>) <span class="co"># Model 2 is not significantly worse than Model 3.1</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Data: ex2.data
+Models:
+ex2.MLM2: Y ~ 1 + occasion + X + (1 | id)
+ex2.MLM3.1: Y ~ 1 + occasion + X + (occasion | id)
+           npar    AIC    BIC  logLik deviance  Chisq Df Pr(&gt;Chisq)
+ex2.MLM2      5 1087.0 1108.1 -538.50   1077.0                     
+ex2.MLM3.1    7 1090.9 1120.4 -538.45   1076.9 0.0986  2     0.9519</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Model 3.2: random slope for X (and add covariance)</span></span>
+<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a>ex2.MLM3<span class="fl">.2</span> <span class="ot">&lt;-</span> <span class="fu">lmer</span>(Y <span class="sc">~</span> <span class="dv">1</span> <span class="sc">+</span> occasion <span class="sc">+</span> X <span class="sc">+</span> (X <span class="sc">|</span> id), <span class="at">data =</span> ex2.data, <span class="at">REML =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a><span class="fu">anova</span>(ex2.MLM2, ex2.MLM3<span class="fl">.2</span>) <span class="co"># Model 2 not is significantly worse than Model 3.2</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Data: ex2.data
+Models:
+ex2.MLM2: Y ~ 1 + occasion + X + (1 | id)
+ex2.MLM3.2: Y ~ 1 + occasion + X + (X | id)
+           npar    AIC    BIC  logLik deviance Chisq Df Pr(&gt;Chisq)
+ex2.MLM2      5 1087.0 1108.1 -538.50   1077.0                    
+ex2.MLM3.2    7 1089.3 1118.8 -537.63   1075.3 1.727  2     0.4217</code></pre>
+</div>
+</div>
+<p>Following the results of the model comparison, we will continue with model 2, which includes the fixed effect of <span class="math inline">\(X\)</span> and the random intercept for each individual.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb28"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Model 2</span></span>
+<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a>ex2.MLM2_mle <span class="ot">&lt;-</span> <span class="fu">lmer</span>(Y <span class="sc">~</span> <span class="dv">1</span> <span class="sc">+</span> occasion <span class="sc">+</span> X <span class="sc">+</span> (<span class="dv">1</span> <span class="sc">|</span> id), <span class="at">data =</span> ex2.data, <span class="at">REML =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb28-3"><a href="#cb28-3" aria-hidden="true" tabindex="-1"></a>ex2.MLM2_reml <span class="ot">&lt;-</span> <span class="fu">lmer</span>(Y <span class="sc">~</span> <span class="dv">1</span> <span class="sc">+</span> occasion <span class="sc">+</span> X <span class="sc">+</span> (<span class="dv">1</span> <span class="sc">|</span> id), <span class="at">data =</span> ex2.data)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Let’s estimate the effect of <span class="math inline">\(X\)</span> on <span class="math inline">\(Y\)</span> using GEE</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>ex2.GEE <span class="ot">&lt;-</span> <span class="fu">gee</span>(Y <span class="sc">~</span> X, <span class="at">data =</span> ex2.data, <span class="at">id =</span> id, <span class="at">family =</span> <span class="fu">gaussian</span>(), <span class="at">corstr =</span> <span class="st">&quot;exchangeable&quot;</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb29"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a><span class="co"># displays initial regression estimate of GLM</span></span>
+<span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a>ex2.GEE <span class="ot">&lt;-</span> <span class="fu">gee</span>(Y <span class="sc">~</span> X, <span class="at">data =</span> ex2.data, <span class="at">id =</span> id, <span class="at">family =</span> <span class="fu">gaussian</span>(), <span class="at">corstr =</span> <span class="st">&quot;exchangeable&quot;</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>(Intercept)           X 
   1.8705422   0.6209278 </code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="co"># summary(ex2.GEE)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb31"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a><span class="co"># summary(ex2.GEE)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Let’s compare the point estimates</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="fu">fixef</span>(ex2.MLM_reml)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb32"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a><span class="fu">fixef</span>(ex2.MLM2_reml)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>(Intercept)           X 
-   2.056725    0.583947 </code></pre>
+<pre><code>(Intercept)    occasion           X 
+ 2.06964887 -0.00499007  0.58336236 </code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="fu">fixef</span>(ex2.MLM_mle)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb34"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a><span class="fu">fixef</span>(ex2.MLM2_mle)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>(Intercept)           X 
-  2.0566182   0.5839683 </code></pre>
+<pre><code> (Intercept)     occasion            X 
+ 2.069574689 -0.004989385  0.583376819 </code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb28"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="fu">coef</span>(ex2.GEE)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb36"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a><span class="fu">coef</span>(ex2.GEE)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>(Intercept)           X 
    2.056509    0.583990 </code></pre>
@@ -3302,15 +3364,15 @@ Y_5 0.7552615 0.7905814 0.8449385 0.8125480 1.0000000</code></pre>
 <h2 class="anchored" data-anchor-id="example-3-continuous-time-invariant-confounder-x-occasion-level-on-y-occasion-level-with-confounder-s-individual-level">Example 3: Continuous, time-invariant confounder, X (occasion level) on Y (occasion level) with confounder S (individual level)</h2>
 <p>Let’s draw a DAG where we are estimating the effect of <span class="math inline">\(X_t\)</span> (sleep-problems) on <span class="math inline">\(Y_t\)</span> (anxiety) with the time-invariant confounder <span class="math inline">\(S\)</span> (sex) in the relationship between <span class="math inline">\(X\)</span> and <span class="math inline">\(Y\)</span>.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb30"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a>dag <span class="ot">&lt;-</span> <span class="fu">dagitty</span>(<span class="st">&#39;dag {</span></span>
-<span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a><span class="st">  X_t -&gt; Y_t</span></span>
-<span id="cb30-3"><a href="#cb30-3" aria-hidden="true" tabindex="-1"></a><span class="st">  S -&gt; X_t</span></span>
-<span id="cb30-4"><a href="#cb30-4" aria-hidden="true" tabindex="-1"></a><span class="st">  S -&gt; Y_t</span></span>
-<span id="cb30-5"><a href="#cb30-5" aria-hidden="true" tabindex="-1"></a><span class="st">}&#39;</span>)</span>
-<span id="cb30-6"><a href="#cb30-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb30-7"><a href="#cb30-7" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(dag)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb38"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a>dag <span class="ot">&lt;-</span> <span class="fu">dagitty</span>(<span class="st">&#39;dag {</span></span>
+<span id="cb38-2"><a href="#cb38-2" aria-hidden="true" tabindex="-1"></a><span class="st">  X_t -&gt; Y_t</span></span>
+<span id="cb38-3"><a href="#cb38-3" aria-hidden="true" tabindex="-1"></a><span class="st">  S -&gt; X_t</span></span>
+<span id="cb38-4"><a href="#cb38-4" aria-hidden="true" tabindex="-1"></a><span class="st">  S -&gt; Y_t</span></span>
+<span id="cb38-5"><a href="#cb38-5" aria-hidden="true" tabindex="-1"></a><span class="st">}&#39;</span>)</span>
+<span id="cb38-6"><a href="#cb38-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb38-7"><a href="#cb38-7" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(dag)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-<p><img src="data:image/png;base64,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" class="img-fluid" width="672"></p>
+<p><img src="data:image/png;base64,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" class="img-fluid" width="672"></p>
 </div>
 </div>
 <p>Let’s specify the structural causal model (SCM) for the drawn DAG</p>
@@ -3326,76 +3388,80 @@ Y_5 0.7552615 0.7905814 0.8449385 0.8125480 1.0000000</code></pre>
 <p>with <span class="math inline">\(\rho = 0.7\)</span>, representing the exchangeable correlation structure between the errors at different time points within an individual.</p>
 <p>Let us now simulate the based based on this SCM</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb31"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">432</span>)</span>
-<span id="cb31-2"><a href="#cb31-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb31-3"><a href="#cb31-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Parameters</span></span>
-<span id="cb31-4"><a href="#cb31-4" aria-hidden="true" tabindex="-1"></a>n_individuals <span class="ot">&lt;-</span> <span class="dv">100</span>  <span class="co"># Number of individuals</span></span>
-<span id="cb31-5"><a href="#cb31-5" aria-hidden="true" tabindex="-1"></a>n_measurements <span class="ot">&lt;-</span> <span class="dv">5</span>   <span class="co"># Number of measurements per individual</span></span>
-<span id="cb31-6"><a href="#cb31-6" aria-hidden="true" tabindex="-1"></a>rho <span class="ot">&lt;-</span> <span class="fl">0.7</span>            <span class="co"># Correlation between measurements within an individual for Y&#39;s errors</span></span>
-<span id="cb31-7"><a href="#cb31-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb31-8"><a href="#cb31-8" aria-hidden="true" tabindex="-1"></a><span class="do">## Simulate data</span></span>
-<span id="cb31-9"><a href="#cb31-9" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb31-10"><a href="#cb31-10" aria-hidden="true" tabindex="-1"></a><span class="co"># 1. Generate the time-invariant confounder S (sex: 1 = male, 0 = female)</span></span>
-<span id="cb31-11"><a href="#cb31-11" aria-hidden="true" tabindex="-1"></a>S <span class="ot">&lt;-</span> <span class="fu">rbinom</span>(n_individuals, <span class="dv">1</span>, <span class="fl">0.5</span>)</span>
-<span id="cb31-12"><a href="#cb31-12" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb31-13"><a href="#cb31-13" aria-hidden="true" tabindex="-1"></a><span class="co"># 2. Generate time-varying covariate X for each individual across measurement occasions</span></span>
-<span id="cb31-14"><a href="#cb31-14" aria-hidden="true" tabindex="-1"></a>X <span class="ot">&lt;-</span> <span class="fu">matrix</span>(<span class="cn">NA</span>, <span class="at">nrow =</span> n_individuals, <span class="at">ncol =</span> n_measurements)</span>
-<span id="cb31-15"><a href="#cb31-15" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>n_individuals) {</span>
-<span id="cb31-16"><a href="#cb31-16" aria-hidden="true" tabindex="-1"></a>  epsilon_X <span class="ot">&lt;-</span> <span class="fu">rnorm</span>(n_measurements, <span class="at">mean =</span> <span class="dv">0</span>, <span class="at">sd =</span> <span class="dv">1</span>)</span>
-<span id="cb31-17"><a href="#cb31-17" aria-hidden="true" tabindex="-1"></a>  X[i, ] <span class="ot">&lt;-</span> <span class="dv">4</span> <span class="sc">+</span> <span class="dv">2</span> <span class="sc">*</span> S[i] <span class="sc">+</span> epsilon_X</span>
-<span id="cb31-18"><a href="#cb31-18" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb31-19"><a href="#cb31-19" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb31-20"><a href="#cb31-20" aria-hidden="true" tabindex="-1"></a><span class="co"># 3. Simulate time-varying outcome Y with correlated errors</span></span>
-<span id="cb31-21"><a href="#cb31-21" aria-hidden="true" tabindex="-1"></a>Sigma_Y <span class="ot">&lt;-</span> <span class="fu">matrix</span>(rho, n_measurements, n_measurements)</span>
-<span id="cb31-22"><a href="#cb31-22" aria-hidden="true" tabindex="-1"></a><span class="fu">diag</span>(Sigma_Y) <span class="ot">&lt;-</span> <span class="dv">1</span></span>
-<span id="cb31-23"><a href="#cb31-23" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb31-24"><a href="#cb31-24" aria-hidden="true" tabindex="-1"></a>Y <span class="ot">&lt;-</span> <span class="fu">matrix</span>(<span class="cn">NA</span>, <span class="at">nrow =</span> n_individuals, <span class="at">ncol =</span> n_measurements)</span>
-<span id="cb31-25"><a href="#cb31-25" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>n_individuals) {</span>
-<span id="cb31-26"><a href="#cb31-26" aria-hidden="true" tabindex="-1"></a>  epsilon_Y <span class="ot">&lt;-</span> <span class="fu">mvrnorm</span>(<span class="dv">1</span>, <span class="at">mu =</span> <span class="fu">rep</span>(<span class="dv">0</span>, n_measurements), <span class="at">Sigma =</span> Sigma_Y) </span>
-<span id="cb31-27"><a href="#cb31-27" aria-hidden="true" tabindex="-1"></a>  Y[i, ] <span class="ot">&lt;-</span> <span class="dv">1</span> <span class="sc">+</span> <span class="fl">0.6</span> <span class="sc">*</span> X[i, ] <span class="sc">+</span> <span class="fl">0.7</span> <span class="sc">*</span> S[i] <span class="sc">+</span> epsilon_Y</span>
-<span id="cb31-28"><a href="#cb31-28" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb31-29"><a href="#cb31-29" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb31-30"><a href="#cb31-30" aria-hidden="true" tabindex="-1"></a><span class="co"># 4. Organize the data into a long format (individuals, occasions, X, Y, S)</span></span>
-<span id="cb31-31"><a href="#cb31-31" aria-hidden="true" tabindex="-1"></a>ex3.data <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
-<span id="cb31-32"><a href="#cb31-32" aria-hidden="true" tabindex="-1"></a>  <span class="at">id =</span> <span class="fu">rep</span>(<span class="dv">1</span><span class="sc">:</span>n_individuals, <span class="at">each =</span> n_measurements),</span>
-<span id="cb31-33"><a href="#cb31-33" aria-hidden="true" tabindex="-1"></a>  <span class="at">occasion =</span> <span class="fu">rep</span>(<span class="dv">1</span><span class="sc">:</span>n_measurements, n_individuals),</span>
-<span id="cb31-34"><a href="#cb31-34" aria-hidden="true" tabindex="-1"></a>  <span class="at">S =</span> <span class="fu">rep</span>(S, <span class="at">each =</span> n_measurements),</span>
-<span id="cb31-35"><a href="#cb31-35" aria-hidden="true" tabindex="-1"></a>  <span class="at">X =</span> <span class="fu">as.vector</span>(<span class="fu">t</span>(X)),</span>
-<span id="cb31-36"><a href="#cb31-36" aria-hidden="true" tabindex="-1"></a>  <span class="at">Y =</span> <span class="fu">as.vector</span>(<span class="fu">t</span>(Y))</span>
-<span id="cb31-37"><a href="#cb31-37" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb31-38"><a href="#cb31-38" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb31-39"><a href="#cb31-39" aria-hidden="true" tabindex="-1"></a><span class="co"># Show the first few rows of the generated data</span></span>
-<span id="cb31-40"><a href="#cb31-40" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(ex3.data)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb39"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">432</span>)</span>
+<span id="cb39-2"><a href="#cb39-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb39-3"><a href="#cb39-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Parameters</span></span>
+<span id="cb39-4"><a href="#cb39-4" aria-hidden="true" tabindex="-1"></a>n_individuals <span class="ot">&lt;-</span> <span class="dv">100</span>  <span class="co"># Number of individuals</span></span>
+<span id="cb39-5"><a href="#cb39-5" aria-hidden="true" tabindex="-1"></a>n_measurements <span class="ot">&lt;-</span> <span class="dv">5</span>   <span class="co"># Number of measurements per individual</span></span>
+<span id="cb39-6"><a href="#cb39-6" aria-hidden="true" tabindex="-1"></a>rho <span class="ot">&lt;-</span> <span class="fl">0.7</span>            <span class="co"># Correlation between measurements within an individual for Y&#39;s errors</span></span>
+<span id="cb39-7"><a href="#cb39-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb39-8"><a href="#cb39-8" aria-hidden="true" tabindex="-1"></a><span class="do">## Simulate data</span></span>
+<span id="cb39-9"><a href="#cb39-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb39-10"><a href="#cb39-10" aria-hidden="true" tabindex="-1"></a><span class="co"># 1. Generate the time-invariant confounder S (sex: 1 = male, 0 = female)</span></span>
+<span id="cb39-11"><a href="#cb39-11" aria-hidden="true" tabindex="-1"></a>S <span class="ot">&lt;-</span> <span class="fu">rbinom</span>(n_individuals, <span class="dv">1</span>, <span class="fl">0.5</span>)</span>
+<span id="cb39-12"><a href="#cb39-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb39-13"><a href="#cb39-13" aria-hidden="true" tabindex="-1"></a><span class="co"># 2. Generate time-varying covariate X for each individual across measurement occasions</span></span>
+<span id="cb39-14"><a href="#cb39-14" aria-hidden="true" tabindex="-1"></a>X <span class="ot">&lt;-</span> <span class="fu">matrix</span>(<span class="cn">NA</span>, <span class="at">nrow =</span> n_individuals, <span class="at">ncol =</span> n_measurements)</span>
+<span id="cb39-15"><a href="#cb39-15" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>n_individuals) {</span>
+<span id="cb39-16"><a href="#cb39-16" aria-hidden="true" tabindex="-1"></a>  epsilon_X <span class="ot">&lt;-</span> <span class="fu">rnorm</span>(n_measurements, <span class="at">mean =</span> <span class="dv">0</span>, <span class="at">sd =</span> <span class="dv">1</span>)</span>
+<span id="cb39-17"><a href="#cb39-17" aria-hidden="true" tabindex="-1"></a>  X[i, ] <span class="ot">&lt;-</span> <span class="dv">4</span> <span class="sc">+</span> <span class="dv">2</span> <span class="sc">*</span> S[i] <span class="sc">+</span> epsilon_X</span>
+<span id="cb39-18"><a href="#cb39-18" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb39-19"><a href="#cb39-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb39-20"><a href="#cb39-20" aria-hidden="true" tabindex="-1"></a><span class="co"># 3. Simulate time-varying outcome Y with correlated errors</span></span>
+<span id="cb39-21"><a href="#cb39-21" aria-hidden="true" tabindex="-1"></a>Sigma_Y <span class="ot">&lt;-</span> <span class="fu">matrix</span>(rho, n_measurements, n_measurements)</span>
+<span id="cb39-22"><a href="#cb39-22" aria-hidden="true" tabindex="-1"></a><span class="fu">diag</span>(Sigma_Y) <span class="ot">&lt;-</span> <span class="dv">1</span></span>
+<span id="cb39-23"><a href="#cb39-23" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb39-24"><a href="#cb39-24" aria-hidden="true" tabindex="-1"></a>Y <span class="ot">&lt;-</span> <span class="fu">matrix</span>(<span class="cn">NA</span>, <span class="at">nrow =</span> n_individuals, <span class="at">ncol =</span> n_measurements)</span>
+<span id="cb39-25"><a href="#cb39-25" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>n_individuals) {</span>
+<span id="cb39-26"><a href="#cb39-26" aria-hidden="true" tabindex="-1"></a>  epsilon_Y <span class="ot">&lt;-</span> <span class="fu">mvrnorm</span>(<span class="dv">1</span>, <span class="at">mu =</span> <span class="fu">rep</span>(<span class="dv">0</span>, n_measurements), <span class="at">Sigma =</span> Sigma_Y) </span>
+<span id="cb39-27"><a href="#cb39-27" aria-hidden="true" tabindex="-1"></a>  Y[i, ] <span class="ot">&lt;-</span> <span class="dv">1</span> <span class="sc">+</span> <span class="fl">0.6</span> <span class="sc">*</span> X[i, ] <span class="sc">+</span> <span class="fl">0.7</span> <span class="sc">*</span> S[i] <span class="sc">+</span> epsilon_Y</span>
+<span id="cb39-28"><a href="#cb39-28" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb39-29"><a href="#cb39-29" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb39-30"><a href="#cb39-30" aria-hidden="true" tabindex="-1"></a><span class="co"># 4. Organize the data into a long format (individuals, occasions, X, Y, S)</span></span>
+<span id="cb39-31"><a href="#cb39-31" aria-hidden="true" tabindex="-1"></a>ex3.data <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
+<span id="cb39-32"><a href="#cb39-32" aria-hidden="true" tabindex="-1"></a>  <span class="at">id =</span> <span class="fu">rep</span>(<span class="dv">1</span><span class="sc">:</span>n_individuals, <span class="at">each =</span> n_measurements),</span>
+<span id="cb39-33"><a href="#cb39-33" aria-hidden="true" tabindex="-1"></a>  <span class="at">occasion =</span> <span class="fu">rep</span>(<span class="dv">1</span><span class="sc">:</span>n_measurements, n_individuals),</span>
+<span id="cb39-34"><a href="#cb39-34" aria-hidden="true" tabindex="-1"></a>  <span class="at">S =</span> <span class="fu">rep</span>(S, <span class="at">each =</span> n_measurements),</span>
+<span id="cb39-35"><a href="#cb39-35" aria-hidden="true" tabindex="-1"></a>  <span class="at">X =</span> <span class="fu">as.vector</span>(<span class="fu">t</span>(X)),</span>
+<span id="cb39-36"><a href="#cb39-36" aria-hidden="true" tabindex="-1"></a>  <span class="at">Y =</span> <span class="fu">as.vector</span>(<span class="fu">t</span>(Y))</span>
+<span id="cb39-37"><a href="#cb39-37" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb39-38"><a href="#cb39-38" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb39-39"><a href="#cb39-39" aria-hidden="true" tabindex="-1"></a><span class="co"># Make sure first timepoint is zero</span></span>
+<span id="cb39-40"><a href="#cb39-40" aria-hidden="true" tabindex="-1"></a>ex3.data<span class="sc">$</span>occasion <span class="ot">&lt;-</span> ex3.data<span class="sc">$</span>occasion <span class="sc">-</span> <span class="dv">1</span></span>
+<span id="cb39-41"><a href="#cb39-41" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb39-42"><a href="#cb39-42" aria-hidden="true" tabindex="-1"></a><span class="co"># Show the first few rows of the generated data</span></span>
+<span id="cb39-43"><a href="#cb39-43" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(ex3.data)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>  id occasion S        X        Y
-1  1        1 0 4.493055 4.662846
-2  1        2 0 5.429460 5.102302
-3  1        3 0 2.248839 2.760515
-4  1        4 0 3.977871 4.464240
-5  1        5 0 5.380970 5.473452
-6  2        1 0 3.101512 3.079049</code></pre>
+1  1        0 0 4.493055 4.662846
+2  1        1 0 5.429460 5.102302
+3  1        2 0 2.248839 2.760515
+4  1        3 0 3.977871 4.464240
+5  1        4 0 5.380970 5.473452
+6  2        0 0 3.101512 3.079049</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb33"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(ex3.data)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb41"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(ex3.data)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>       id            occasion       S              X               Y          
- Min.   :  1.00   Min.   :1   Min.   :0.00   Min.   :2.114   Min.   :-0.3268  
- 1st Qu.: 25.75   1st Qu.:2   1st Qu.:0.00   1st Qu.:4.019   1st Qu.: 3.2249  
- Median : 50.50   Median :3   Median :1.00   Median :4.961   Median : 4.3594  
- Mean   : 50.50   Mean   :3   Mean   :0.51   Mean   :5.007   Mean   : 4.3763  
- 3rd Qu.: 75.25   3rd Qu.:4   3rd Qu.:1.00   3rd Qu.:6.047   3rd Qu.: 5.4721  
- Max.   :100.00   Max.   :5   Max.   :1.00   Max.   :8.298   Max.   : 8.6837  </code></pre>
+ Min.   :  1.00   Min.   :0   Min.   :0.00   Min.   :2.114   Min.   :-0.3268  
+ 1st Qu.: 25.75   1st Qu.:1   1st Qu.:0.00   1st Qu.:4.019   1st Qu.: 3.2249  
+ Median : 50.50   Median :2   Median :1.00   Median :4.961   Median : 4.3594  
+ Mean   : 50.50   Mean   :2   Mean   :0.51   Mean   :5.007   Mean   : 4.3763  
+ 3rd Qu.: 75.25   3rd Qu.:3   3rd Qu.:1.00   3rd Qu.:6.047   3rd Qu.: 5.4721  
+ Max.   :100.00   Max.   :4   Max.   :1.00   Max.   :8.298   Max.   : 8.6837  </code></pre>
 </div>
 </div>
 <p>Let’s estimate the effect of <span class="math inline">\(X\)</span> on <span class="math inline">\(Y\)</span> using MLM</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb35"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a>ex3.MLM_reml <span class="ot">&lt;-</span> <span class="fu">lmer</span>(Y <span class="sc">~</span> X <span class="sc">+</span> S <span class="sc">+</span> (<span class="dv">1</span> <span class="sc">|</span> id), <span class="at">data =</span> ex3.data)</span>
-<span id="cb35-2"><a href="#cb35-2" aria-hidden="true" tabindex="-1"></a>ex3.MLM_mle <span class="ot">&lt;-</span> <span class="fu">lmer</span>(Y <span class="sc">~</span> X <span class="sc">+</span> S <span class="sc">+</span> (<span class="dv">1</span> <span class="sc">|</span> id), <span class="at">data =</span> ex3.data, <span class="at">REML =</span> <span class="cn">FALSE</span>)</span>
-<span id="cb35-3"><a href="#cb35-3" aria-hidden="true" tabindex="-1"></a><span class="co"># summary(ex3.MLM)</span></span>
-<span id="cb35-4"><a href="#cb35-4" aria-hidden="true" tabindex="-1"></a><span class="co"># summ(ex3.MLM)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb43"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb43-1"><a href="#cb43-1" aria-hidden="true" tabindex="-1"></a>ex3.MLM_reml <span class="ot">&lt;-</span> <span class="fu">lmer</span>(Y <span class="sc">~</span> X <span class="sc">+</span> S <span class="sc">+</span> (<span class="dv">1</span> <span class="sc">|</span> id), <span class="at">data =</span> ex3.data)</span>
+<span id="cb43-2"><a href="#cb43-2" aria-hidden="true" tabindex="-1"></a>ex3.MLM_mle <span class="ot">&lt;-</span> <span class="fu">lmer</span>(Y <span class="sc">~</span> X <span class="sc">+</span> S <span class="sc">+</span> (<span class="dv">1</span> <span class="sc">|</span> id), <span class="at">data =</span> ex3.data, <span class="at">REML =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb43-3"><a href="#cb43-3" aria-hidden="true" tabindex="-1"></a><span class="co"># summary(ex3.MLM)</span></span>
+<span id="cb43-4"><a href="#cb43-4" aria-hidden="true" tabindex="-1"></a><span class="co"># summ(ex3.MLM)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Let’s estimate the effect of <span class="math inline">\(X\)</span> on <span class="math inline">\(Y\)</span> using GEE</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb36"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a>ex3.GEE <span class="ot">&lt;-</span> <span class="fu">gee</span>(Y <span class="sc">~</span> X <span class="sc">+</span> S, <span class="at">data =</span> ex3.data, <span class="at">id =</span> id, <span class="at">family =</span> <span class="fu">gaussian</span>(), <span class="at">corstr =</span> <span class="st">&quot;exchangeable&quot;</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb44"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb44-1"><a href="#cb44-1" aria-hidden="true" tabindex="-1"></a><span class="co"># displays initial regression estimate of GLM</span></span>
+<span id="cb44-2"><a href="#cb44-2" aria-hidden="true" tabindex="-1"></a>ex3.GEE <span class="ot">&lt;-</span> <span class="fu">gee</span>(Y <span class="sc">~</span> X <span class="sc">+</span> S, <span class="at">data =</span> ex3.data, <span class="at">id =</span> id, <span class="at">family =</span> <span class="fu">gaussian</span>(), <span class="at">corstr =</span> <span class="st">&quot;exchangeable&quot;</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>(Intercept)           X           S 
   0.7177256   0.6779468   0.5172791 </code></pre>
@@ -3403,17 +3469,17 @@ Y_5 0.7552615 0.7905814 0.8449385 0.8125480 1.0000000</code></pre>
 </div>
 <p>Let’s compare the coefficients</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb38"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a><span class="fu">fixef</span>(ex3.MLM_reml)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb46"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb46-1"><a href="#cb46-1" aria-hidden="true" tabindex="-1"></a><span class="fu">fixef</span>(ex3.MLM_reml)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>(Intercept)           X           S 
   0.9267066   0.6262341   0.6152590 </code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb40"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a><span class="fu">fixef</span>(ex3.MLM_mle)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb48"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb48-1"><a href="#cb48-1" aria-hidden="true" tabindex="-1"></a><span class="fu">fixef</span>(ex3.MLM_mle)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>(Intercept)           X           S 
   0.9264434   0.6262992   0.6151356 </code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb42"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb42-1"><a href="#cb42-1" aria-hidden="true" tabindex="-1"></a><span class="fu">coef</span>(ex3.GEE)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb50"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb50-1"><a href="#cb50-1" aria-hidden="true" tabindex="-1"></a><span class="fu">coef</span>(ex3.GEE)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>(Intercept)           X           S 
   0.9262456   0.6263481   0.6150429 </code></pre>

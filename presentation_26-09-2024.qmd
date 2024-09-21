@@ -1,0 +1,116 @@
+---
+title: "Update: Understanding GEE"
+date: "2024-09-26"
+author: "Ward B. Eiling"
+format: 
+  revealjs: 
+    theme: default
+    # incremental: true
+    slideNumber: true
+    width: 1920
+    height: 1080
+    margin: 0.1
+execute:
+  echo: true
+embed-resources: true
+---
+
+## Background: GEE vs. MLM
+
+::: columns
+::: {.column width="60%"}
+McNeish et al. (2016) provides a nice summary of the differences
+
+![](images/clipboard-1208621128.png){width="1000"}
+:::
+
+::: {.column width="40%"}
+
+Parameter interpretation
+
+-   GEE: population-averaged/marginal, where $E(Y|X) = X \beta$.
+    -   for a one-unit change in $X$, the outcome variable $Y$ is expected to change by the value of regression coefficient \$\beta, holding all other predictors constant.
+-   MLM: subject-specific/conditional, where $E(Y|X, u) = X \beta + Z u$.
+    -   for a one-unit change in $X$, the outcome variable $Y$ is expected to change by the value of regression coefficient \$\beta, holding all other predictors constant *and given equal values for the random effects.*
+    
+:::
+:::
+
+## Background: GEE estimation
+
+::: columns
+::: {.column width="60%"}
+![](images/clipboard-2542938343.png){width="750"}
+:::
+
+::: {.column width="40%"}
+
+In step 2 we initially fit GLM (assumes independence)
+
+:::
+:::
+
+## Example 1: Simulation Specification
+
+To hone in on the understanding of the estimation approaches, we want to keep stable across simulations:
+
+-   Continuous variables (predictors, covariates and outcome)
+-   No missing data
+-   Number of classes = 50 (recommendation of McNeish et al., 2016)
+-   Size of classes (i.e., number of timepoints) = 5 (may be too small for random effects of MLM)
+-   Causal structure ($X \to Y_t$)
+
+And we want to vary:
+
+-   MLM - Estimation approaches: ML and REML
+-   GEE - Working correlation matrix (independence, exchangeable, AR1)
+
+## Example 1: DAG
+
+Let's draw a DAG where we are estimating the effect of $X$ (sleep-problems) on $Y_t$ (anxiety)
+
+```{r}
+library(dagitty)
+
+dag <- dagitty('dag {
+  X -> Y_t
+}')
+
+plot(dag)
+```
+
+## Example 1: Structural Causal Model
+
+Let's specify the structural causal model (SCM) for the drawn DAG
+
+$$X_i := \mathcal{N}(5, 1) \quad \text{for} \quad i = 1, \ldots, n_{\text{individuals}}$$ $$Y_{i,t} := 2 + 0.6 \cdot X_i + \epsilon_{i,t} \quad \text{for} \quad i = 1, \ldots, n_{\text{individuals}} \quad \text{and} \quad t = 1, \ldots, n_{\text{measurements}}$$ where $\epsilon_{i,t}$ follows a multivariate normal distribution with mean zero and an exchangeable correlation structure across time points $t$: $$\epsilon_{i,1}, \ldots, \epsilon_{i,n_{\text{measurements}}} \sim \mathcal{N}(0, \Sigma)$$ The covariance matrix $\Sigma$ has the form: $$\Sigma = \begin{bmatrix} 1 & \rho & \cdots & \rho \\ \rho & 1 & \cdots & \rho \\ \vdots & \vdots & \ddots & \vdots \\ \rho & \rho & \cdots & 1 \end{bmatrix}$$
+
+with $\rho = 0.7$, representing the exchangeable correlation structure between the errors at different time points within an individual.
+
+## Example 1: Statistical Model Equations
+
+::: columns
+
+::: {.column width="50%"}
+
+MLM model equations
+
+-   $$Y_{ij} = \beta_{0j} + \beta_{1j} X_{ij} + e_{ij}$$ where $i$ denotes level 1 (time) and $j$ denotes level 2 (individual).
+    -   $\beta_{0j} = \gamma_{00} + u_{0j}$
+    -   $\beta_{1j} = \gamma_{10} + u_{1j}$, where $u_{1j} \sim \mathcal{N}(0, \sigma^2_{u1})$
+  
+:::
+
+::: {.column width="50%"}
+
+GEE model equations
+
+
+
+
+    
+:::
+:::
+
+## Example 1: GEE Model
+
