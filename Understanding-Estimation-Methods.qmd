@@ -84,23 +84,32 @@ for (i in 1:n_individuals) {
   ex1.data <- rbind(ex1.data, individual_data)
 }
 
-# Make sure first timepoint is zero
+# Make sure first timepoint is zero (for intercept interpretation)
 ex1.data$occasion <- ex1.data$occasion - 1
 
 # Check the first few rows of the data
 head(ex1.data)
 ```
 
-Let's estimate the effect of $X$ on $Y$ using MLM
+Let's estimate the effect of $X$ on $Y_t$ using MLM
 
 ```{r}
-ex1.MLM_reml <- lmer(Y ~ X + (1 | id), data = ex1.data) 
-# summary(MLM_reml)
-# summ(MLM_reml)
-ex1.MLM_mle <- lmer(Y ~ X + (1 | id), data = ex1.data, REML = FALSE)
-# summary(MLM_mle)
-# summ(MLM_mle)
+# Model 1a: Intercept only model, random intercept 
+ex1.MLM1a <- lmer(Y ~ 1 + (1 | id), data = ex1.data, REML = FALSE) 
+
+# Model 1b: Intercept only model including the predictor time 
+ex1.MLM1b <- lmer(Y ~ 1 + occasion + (1 | id), data = ex1.data, REML = FALSE) 
+anova(ex1.MLM1a, ex1.MLM1b) # Model 1a is not significantly worse than Model 1b
+
+# Model 2: including remainder of the level 1 predictors 
+ex1.MLM2 <- lmer(Y ~ 1 + occasion + X + (1 | id), data = ex1.data, REML = FALSE)
+anova(ex1.MLM1b, ex1.MLM2) # Model 1b is significantly worse than Model 2
+
+# Model 3.1: random slope for time (and add covariance)
+ex1.MLM3.1 <- lmer(Y ~ 1 + occasion + X + (occasion | id), data = ex1.data, REML = FALSE)
+anova(ex1.MLM2, ex1.MLM3.1) # Model 2 is not significantly worse than Model 3.1
 ```
+
 
 Let's estimate the effect of $X$ on $Y$ using GEE
 
@@ -124,8 +133,11 @@ It seems to be more or less exchangeable, which is what we specified.
 
 ```{r}
 # displays initial regression estimate of GLM
-ex1.GEE <- gee(Y ~ X, data = ex1.data, id = id, family = gaussian(), corstr = "exchangeable")
-# summary(GEE)
+ex1.GEE_exch <- gee(Y ~ X + occasion, data = ex1.data, id = id, family = gaussian(), corstr = "exchangeable")
+ex1.GEE_ind <- gee(Y ~ X + occasion, data = ex1.data, id = id, family = gaussian(), corstr = "independence")
+ex1.GEE_ar <- gee(Y ~ X + occasion, data = ex1.data, id = id, family = gaussian(), corstr = "AR-M")
+ex1.GEE_uns <- gee(Y ~ X + occasion, data = ex1.data, id = id, family = gaussian(), corstr = "unstructured")
+ex1.GEE_fixed <- gee(Y ~ X + occasion, data = ex1.data, id = id, family = gaussian(), corstr = "fixed")
 ```
 
 Let's compare the point estimates
