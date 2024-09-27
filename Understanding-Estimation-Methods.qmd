@@ -30,348 +30,266 @@ library(MASS)
 library(jtools)
 ```
 
-## Example 1: Continuous, X (individual level) on Y (occasion level)
-
-Let's draw a DAG where we are estimating the effect of $X$ (sleep-problems) on $Y_t$ (anxiety)
+For all examples, we will use the same basic DAG, where we are estimating the effect of $X_t$ (sleep-problems) on $Y_t$ (anxiety). This implies that we are investigating the effect of sleep problems on anxiety within the same timepoint (we could also use a lagged effect, but we will keep it simple for now).
 
 ```{r}
 dag <- dagitty('dag {
-  X -> Y_t
+  "X_t" -> "Y_t"
 }')
 
 plot(dag)
 ```
 
-Let's specify the structural causal model (SCM) for the drawn DAG
+## Scenario 1: SCM with random intercept and a time-varying $X$ *without* between-person differences (a mean of 0 for everyone)
 
-$$X_i := \mathcal{N}(5, 1) \quad \text{for} \quad i = 1, \ldots, n_{\text{individuals}}$$ $$Y_{i,t} := 2 + 0.6 \cdot X_i + \epsilon_{i,t} \quad \text{for} \quad i = 1, \ldots, n_{\text{individuals}} \quad \text{and} \quad t = 1, \ldots, n_{\text{measurements}}$$ where $\epsilon_{i,t}$ follows a multivariate normal distribution with mean zero and an exchangeable correlation structure across time points $t$: $$\epsilon_{i,1}, \ldots, \epsilon_{i,n_{\text{measurements}}} \sim \mathcal{N}(0, \Sigma)$$ The covariance matrix $\Sigma$ has the form: $$\Sigma = \begin{bmatrix} 1 & \rho & \cdots & \rho \\ \rho & 1 & \cdots & \rho \\ \vdots & \vdots & \ddots & \vdots \\ \rho & \rho & \cdots & 1 \end{bmatrix}$$
+The generative model for the data is as follows:
 
-with $\rho = 0.7$, representing the exchangeable correlation structure between the errors at different time points within an individual.
+$$Y_{it} = \alpha_0 + \alpha_1 X_t + b_{0i} + b_{1} X_{it}+ \epsilon_{it} \quad \text{where} \quad \epsilon_{it} \sim \mathcal{N}(0, 1), \text{iid}$$
+where 
 
-Let's simulate clustered data from the SCM
+- $\alpha_0$: The overall intercept, representing the baseline level of $Y_{t}$ when all other terms are zero.
+- $\alpha_1$: The fixed slope of the predictor $X_t$ on $Y_{t}$
+- $b_{0i}$: Random intercept for individual $i$, representing deviations from the overall intercept  $\alpha_0$.
+
+Given $X_{it}$ has no between-person differences and a mean of 0:
+
+$$X_{it} = \mathcal{N}(0, 1)$$
+Let us give the parameters arbitrary values
+
+- $\alpha_0 = 2$
+- $\alpha_1 = 0.6$
+- $b_{0i} \sim \mathcal{N}(0, 1)$
+
+Let's specify the structural causal model (SCM) including the effects:
 
 ```{r}
 # Parameters
 set.seed(123)  # For reproducibility
-n_individuals <- 100  # Number of individuals
-n_measurements <- 5   # Number of measurements per individual
-rho <- 0.7  # Correlation between measurements within an individual
+n <- 100  # Number of individuals
+total_T <- 5  # Number of measurements per individual
+
+alpha_0 <- 2  # Overall intercept
+alpha_1 <- 0.6  # Fixed effect of X on Y
+b_0i <- rnorm(n, mean = 0, sd = 1)  # Random intercepts
 
 # Generate individual-level covariates (X)
-X <- rnorm(n_individuals, mean = 5, sd = 1)
+X <- rnorm(n, mean = 0, sd = 1)
 
-# Correlation matrix (exchangeable structure)
-corr_matrix <- matrix(rho, n_measurements, n_measurements)
-diag(corr_matrix) <- 1  # Diagonal is 1
-
-# Simulate repeated measures for each individual
-ex1.data <- data.frame()
-for (i in 1:n_individuals) {
-  # Generate errors with the working correlation structure
-  epsilon_Y <- mvrnorm(1, mu = rep(0, n_measurements), Sigma = corr_matrix)
-  
-  # Generate Y for this individual across measurement occasions
-  Y <- 2 + 0.6 * X[i] + epsilon_Y
-  
-  # Store the data
-  individual_data <- data.frame(
-    id = i,
-    occasion = 1:n_measurements,
-    X = X[i],
-    Y = Y
-  )
-  
-  ex1.data <- rbind(ex1.data, individual_data)
-}
-
-# Make sure first timepoint is zero (for intercept interpretation)
-ex1.data$occasion <- ex1.data$occasion - 1
-
-# Check the first few rows of the data
-head(ex1.data)
-```
-
-Let's estimate the effect of $X$ on $Y_t$ using MLM
-
-```{r}
-# Model 1a: Intercept only model, random intercept 
-ex1.MLM1a <- lmer(Y ~ 1 + (1 | id), data = ex1.data, REML = FALSE) 
-
-# Model 1b: Intercept only model including the predictor time 
-ex1.MLM1b <- lmer(Y ~ 1 + occasion + (1 | id), data = ex1.data, REML = FALSE) 
-anova(ex1.MLM1a, ex1.MLM1b) # Model 1a is not significantly worse than Model 1b
-
-# Model 2: including remainder of the level 1 predictors 
-ex1.MLM2 <- lmer(Y ~ 1 + occasion + X + (1 | id), data = ex1.data, REML = FALSE)
-anova(ex1.MLM1b, ex1.MLM2) # Model 1b is significantly worse than Model 2
-
-# Model 3.1: random slope for time (and add covariance)
-ex1.MLM3.1 <- lmer(Y ~ 1 + occasion + X + (occasion | id), data = ex1.data, REML = FALSE)
-anova(ex1.MLM2, ex1.MLM3.1) # Model 2 is not significantly worse than Model 3.1
 ```
 
 
-Let's estimate the effect of $X$ on $Y$ using GEE
-
-First, we should examine the observed correlation structure for observations within a cluster.
+## Scenario 2: SCM with random intercept and a time-varying $X$ *with* between-person differences (one participant has a greater mean than another across the timepoints)
 
-```{r}
-data_wide <- ex1.data %>%
-  pivot_wider(names_from = occasion, values_from = Y, names_prefix = "Y_")
+## Scenario 3: SCM with random intercept and a time-varying $X$ *with* between-person differences (one participant has a greater mean than another across the timepoints) that are related to the intercept (of $Y$)
 
-# Remove the ID column
-data_wide_Y <- data_wide %>% dplyr::select(starts_with("Y_"))
-
-# Compute the observed correlation matrix for the measurements across all individuals
-observed_corr_matrix <- cor(data_wide_Y, use = "pairwise.complete.obs")
-
-# Display the observed correlation matrix
-observed_corr_matrix
-```
-
-It seems to be more or less exchangeable, which is what we specified.
-
-```{r}
-# displays initial regression estimate of GLM
-ex1.GEE_exch <- gee(Y ~ X + occasion, data = ex1.data, id = id, family = gaussian(), corstr = "exchangeable")
-ex1.GEE_ind <- gee(Y ~ X + occasion, data = ex1.data, id = id, family = gaussian(), corstr = "independence")
-ex1.GEE_ar <- gee(Y ~ X + occasion, data = ex1.data, id = id, family = gaussian(), corstr = "AR-M")
-ex1.GEE_uns <- gee(Y ~ X + occasion, data = ex1.data, id = id, family = gaussian(), corstr = "unstructured")
-ex1.GEE_fixed <- gee(Y ~ X + occasion, data = ex1.data, id = id, family = gaussian(), corstr = "fixed")
-```
+<!-- # Trash -->
 
-Let's compare the point estimates
+<!-- ## Example 1: Continuous, X (individual level) on Y (occasion level) -->
 
-```{r}
-fixef(ex1.MLM_reml)
-fixef(ex1.MLM_mle)
-coef(ex1.GEE)
-```
+<!-- Let's simulate clustered data from the SCM -->
 
-The point estimates are identical (to 7 decimals) both (1) within the two MLM approaches and (2) between MLM and GEE.
+<!-- ```{r} -->
+<!-- # Parameters -->
+<!-- set.seed(123)  # For reproducibility -->
+<!-- n_individuals <- 100  # Number of individuals -->
+<!-- n_measurements <- 5   # Number of measurements per individual -->
+<!-- rho <- 0.7  # Correlation between measurements within an individual -->
 
-## Example 2: Continuous, X (occasion level) on Y (occasion level)
+<!-- # Generate individual-level covariates (X) -->
+<!-- X <- rnorm(n_individuals, mean = 5, sd = 1) -->
 
-Let's draw a DAG where we are estimating the effect of $X_t$ (sleep-problems) on $Y_t$ (anxiety)
+<!-- # Correlation matrix (exchangeable structure) -->
+<!-- corr_matrix <- matrix(rho, n_measurements, n_measurements) -->
+<!-- diag(corr_matrix) <- 1  # Diagonal is 1 -->
 
-```{r}
-dag <- dagitty('dag {
-  X_t -> Y_t
-}')
+<!-- # Simulate repeated measures for each individual -->
+<!-- ex1.data <- data.frame() -->
+<!-- for (i in 1:n_individuals) { -->
+<!--   # Generate errors with the working correlation structure -->
+<!--   epsilon_Y <- mvrnorm(1, mu = rep(0, n_measurements), Sigma = corr_matrix) -->
 
-plot(dag)
-```
+<!--   # Generate Y for this individual across measurement occasions -->
+<!--   Y <- 2 + 0.6 * X[i] + epsilon_Y -->
 
-Let's specify the structural causal model (SCM) for the drawn DAG
+<!--   # Store the data -->
+<!--   individual_data <- data.frame( -->
+<!--     id = i, -->
+<!--     occasion = 1:n_measurements, -->
+<!--     X = X[i], -->
+<!--     Y = Y -->
+<!--   ) -->
 
-$$X_{i,t} := \mathcal{N}(5, 1) \quad \text{for} \quad i = 1, \ldots, n_{\text{individuals}} \quad \text{and} \quad t = 1, \ldots, n_{\text{measurements}}$$ $$Y_{i,t} := 2 + 0.6 \cdot X_{i,t} + \epsilon_{i,t} \quad \text{for} \quad i = 1, \ldots, n_{\text{individuals}} \quad \text{and} \quad t = 1, \ldots, n_{\text{measurements}}$$ where $\epsilon_{i,t}$ follows a multivariate normal distribution with mean zero and an exchangeable correlation structure across time points $t$: $$\epsilon_{i,1}, \ldots, \epsilon_{i,n_{\text{measurements}}} \sim \mathcal{MVN}(0, \Sigma)$$ The covariance matrix $\Sigma$ has the form:
+<!--   ex1.data <- rbind(ex1.data, individual_data) -->
+<!-- } -->
 
-$$\Sigma = \begin{bmatrix} 1 & \rho & \cdots & \rho \\ \rho & 1 & \cdots & \rho \\ \vdots & \vdots & \ddots & \vdots \\ \rho & \rho & \cdots & 1 \end{bmatrix}$$ with $\rho = 0.7$, representing the exchangeable correlation structure between the errors at different time points within an individual.
+<!-- # Make sure first timepoint is zero (for intercept interpretation) -->
+<!-- ex1.data$occasion <- ex1.data$occasion - 1 -->
 
-```{r}
-# Parameters
-set.seed(123)  # For reproducibility
-n_individuals <- 100  # Number of individuals
-n_measurements <- 5   # Number of measurements per individual
-rho <- 0.7  # Correlation between measurements within an individual
+<!-- # Check the first few rows of the data -->
+<!-- head(ex1.data) -->
+<!-- ``` -->
 
-# Generate occasion level predictors (X)
-X <- rnorm(n_individuals * n_measurements, mean = 5, sd = 1)
+<!-- Let's estimate the effect of $X$ on $Y_t$ using MLM -->
 
-# Correlation matrix (exchangeable structure)
-corr_matrix <- matrix(rho, n_measurements, n_measurements)
-diag(corr_matrix) <- 1  # Diagonal is 1
+<!-- ```{r} -->
+<!-- # Model 1a: Intercept only model, random intercept  -->
+<!-- ex1.MLM1a <- lmer(Y ~ 1 + (1 | id), data = ex1.data, REML = FALSE)  -->
 
-# Simulate repeated measures for each individual
-ex2.data <- data.frame()
-for (i in 1:n_individuals) {
-  # Generate errors with the working correlation structure
-  epsilon_Y <- mvrnorm(1, mu = rep(0, n_measurements), Sigma = corr_matrix)
-  
-  # Generate Y for this individual across measurement occasions
-  Y <- 2 + 0.6 * X[(i - 1) * n_measurements + 1:(n_measurements)] + epsilon_Y
-  
-  # Store the data
-  individual_data <- data.frame(
-    id = i,
-    occasion = 1:n_measurements,
-    X = X[(i - 1) * n_measurements + 1:(n_measurements)],
-    Y = Y
-  )
-  
-  ex2.data <- rbind(ex2.data, individual_data)
-}
+<!-- # Model 1b: Intercept only model including the predictor time  -->
+<!-- ex1.MLM1b <- lmer(Y ~ 1 + occasion + (1 | id), data = ex1.data, REML = FALSE)  -->
+<!-- anova(ex1.MLM1a, ex1.MLM1b) # Model 1a is not significantly worse than Model 1b -->
 
-# Make sure first timepoint is zero
-ex2.data$occasion <- ex2.data$occasion - 1
+<!-- # Model 2: including remainder of the level 1 predictors  -->
+<!-- ex1.MLM2 <- lmer(Y ~ 1 + occasion + X + (1 | id), data = ex1.data, REML = FALSE) -->
+<!-- anova(ex1.MLM1b, ex1.MLM2) # Model 1b is significantly worse than Model 2 -->
 
-head(ex2.data)
-```
+<!-- # Model 3.1: random slope for time (and add covariance) -->
+<!-- ex1.MLM3.1 <- lmer(Y ~ 1 + occasion + X + (occasion | id), data = ex1.data, REML = FALSE) -->
+<!-- anova(ex1.MLM2, ex1.MLM3.1) # Model 2 is not significantly worse than Model 3.1 -->
+<!-- ``` -->
 
-Let's estimate the effect of $X$ on $Y$ using MLM
+<!-- Let's estimate the effect of $X$ on $Y$ using GEE -->
 
-```{r}
-# Model 1a: Intercept only model, random intercept 
-ex2.MLM1a <- lmer(Y ~ 1 + (1 | id), data = ex2.data, REML = FALSE) 
+<!-- First, we should examine the observed correlation structure for observations within a cluster. -->
 
-# Model 1b: Intercept only model including the predictor time 
-ex2.MLM1b <- lmer(Y ~ 1 + occasion + (1 | id), data = ex2.data, REML = FALSE) 
-anova(ex2.MLM1a, ex2.MLM1b) # Model 1a is not significantly worse than Model 1b
+<!-- ```{r} -->
+<!-- data_wide <- ex1.data %>% -->
+<!--   pivot_wider(names_from = occasion, values_from = Y, names_prefix = "Y_") -->
 
-# Model 2: including remainder of the level 1 predictors 
-ex2.MLM2 <- lmer(Y ~ 1 + occasion + X + (1 | id), data = ex2.data, REML = FALSE)
-anova(ex2.MLM1b, ex2.MLM2) # Model 1b is significantly worse than Model 2
+<!-- # Remove the ID column -->
+<!-- data_wide_Y <- data_wide %>% dplyr::select(starts_with("Y_")) -->
 
-# Model 3.1: random slope for time (and add covariance)
-ex2.MLM3.1 <- lmer(Y ~ 1 + occasion + X + (occasion | id), data = ex2.data, REML = FALSE)
-anova(ex2.MLM2, ex2.MLM3.1) # Model 2 is not significantly worse than Model 3.1
+<!-- # Compute the observed correlation matrix for the measurements across all individuals -->
+<!-- observed_corr_matrix <- cor(data_wide_Y, use = "pairwise.complete.obs") -->
 
-# Model 3.2: random slope for X (and add covariance)
-ex2.MLM3.2 <- lmer(Y ~ 1 + occasion + X + (X | id), data = ex2.data, REML = FALSE)
-anova(ex2.MLM2, ex2.MLM3.2) # Model 2 not is significantly worse than Model 3.2
-```
+<!-- # Display the observed correlation matrix -->
+<!-- observed_corr_matrix -->
+<!-- ``` -->
 
-Following the results of the model comparison, we will continue with model 2, which includes the fixed effect of $X$ and the random intercept for each individual.
+<!-- It seems to be more or less exchangeable, which is what we specified. -->
 
-```{r}
-# Model 2
-ex2.MLM2_mle <- lmer(Y ~ 1 + occasion + X + (1 | id), data = ex2.data, REML = FALSE)
-ex2.MLM2_reml <- lmer(Y ~ 1 + occasion + X + (1 | id), data = ex2.data)
-```
+<!-- ```{r} -->
+<!-- # displays initial regression estimate of GLM -->
+<!-- ex1.GEE_exch <- gee(Y ~ X + occasion, data = ex1.data, id = id, family = gaussian(), corstr = "exchangeable") -->
+<!-- ex1.GEE_ind <- gee(Y ~ X + occasion, data = ex1.data, id = id, family = gaussian(), corstr = "independence") -->
+<!-- ex1.GEE_ar <- gee(Y ~ X + occasion, data = ex1.data, id = id, family = gaussian(), corstr = "AR-M") -->
+<!-- ex1.GEE_uns <- gee(Y ~ X + occasion, data = ex1.data, id = id, family = gaussian(), corstr = "unstructured") -->
+<!-- ex1.GEE_fixed <- gee(Y ~ X + occasion, data = ex1.data, id = id, family = gaussian(), corstr = "fixed") -->
+<!-- ``` -->
 
+<!-- Let's compare the point estimates -->
 
-Let's estimate the effect of $X$ on $Y$ using GEE
+<!-- ```{r} -->
+<!-- fixef(ex1.MLM_reml) -->
+<!-- fixef(ex1.MLM_mle) -->
+<!-- coef(ex1.GEE) -->
+<!-- ``` -->
 
-```{r}
-# displays initial regression estimate of GLM
-ex2.GEE <- gee(Y ~ X, data = ex2.data, id = id, family = gaussian(), corstr = "exchangeable")
-# summary(ex2.GEE)
-```
+<!-- The point estimates are identical (to 7 decimals) both (1) within the two MLM approaches and (2) between MLM and GEE. -->
 
-Let's compare the point estimates
+<!-- ## Example 2: Continuous, X (occasion level) on Y (occasion level) -->
 
-```{r}
-fixef(ex2.MLM2_reml)
-fixef(ex2.MLM2_mle)
-coef(ex2.GEE)
-```
+<!-- Let's draw a DAG where we are estimating the effect of $X_t$ (sleep-problems) on $Y_t$ (anxiety) -->
 
-There is a minor difference between the point estimates of (1) the two MLM approaches (from 4th decimal) and (2) between MLM and GEE (from 4th decimal).
+<!-- ```{r} -->
+<!-- dag <- dagitty('dag { -->
+<!--   X_t -> Y_t -->
+<!-- }') -->
 
-## Example 3: Continuous, time-invariant confounder, X (occasion level) on Y (occasion level) with confounder S (individual level)
+<!-- plot(dag) -->
+<!-- ``` -->
 
-Let's draw a DAG where we are estimating the effect of $X_t$ (sleep-problems) on $Y_t$ (anxiety) with the time-invariant confounder $S$ (sex) in the relationship between $X$ and $Y$.
+<!-- Let's specify the structural causal model (SCM) for the drawn DAG -->
 
-```{r}
-dag <- dagitty('dag {
-  X_t -> Y_t
-  S -> X_t
-  S -> Y_t
-}')
+<!-- $$X_{i,t} := \mathcal{N}(5, 1) \quad \text{for} \quad i = 1, \ldots, n_{\text{individuals}} \quad \text{and} \quad t = 1, \ldots, n_{\text{measurements}}$$ $$Y_{i,t} := 2 + 0.6 \cdot X_{i,t} + \epsilon_{i,t} \quad \text{for} \quad i = 1, \ldots, n_{\text{individuals}} \quad \text{and} \quad t = 1, \ldots, n_{\text{measurements}}$$ where $\epsilon_{i,t}$ follows a multivariate normal distribution with mean zero and an exchangeable correlation structure across time points $t$: $$\epsilon_{i,1}, \ldots, \epsilon_{i,n_{\text{measurements}}} \sim \mathcal{MVN}(0, \Sigma)$$ The covariance matrix $\Sigma$ has the form: -->
 
-plot(dag)
-```
+<!-- $$\Sigma = \begin{bmatrix} 1 & \rho & \cdots & \rho \\ \rho & 1 & \cdots & \rho \\ \vdots & \vdots & \ddots & \vdots \\ \rho & \rho & \cdots & 1 \end{bmatrix}$$ with $\rho = 0.7$, representing the exchangeable correlation structure between the errors at different time points within an individual. -->
 
-Let's specify the structural causal model (SCM) for the drawn DAG
+<!-- ```{r} -->
+<!-- # Parameters -->
+<!-- set.seed(123)  # For reproducibility -->
+<!-- n_individuals <- 100  # Number of individuals -->
+<!-- n_measurements <- 5   # Number of measurements per individual -->
+<!-- rho <- 0.7  # Correlation between measurements within an individual -->
 
-$$S_{i} := \mathcal{B}(0.5) \quad \text{for} \quad i = 1, \ldots, n_{\text{individuals}}$$ 
+<!-- # Generate occasion level predictors (X) -->
+<!-- X <- rnorm(n_individuals * n_measurements, mean = 5, sd = 1) -->
 
-where $S_i = 1$ represents male and $S_i = 0$ represents female.
+<!-- # Correlation matrix (exchangeable structure) -->
+<!-- corr_matrix <- matrix(rho, n_measurements, n_measurements) -->
+<!-- diag(corr_matrix) <- 1  # Diagonal is 1 -->
 
-$$X_{i,t} := 4 + 2 \cdot S_i + \epsilon_{X_{i,t}} \quad \text{for} \quad i = 1, \ldots, n_{\text{individuals}} \quad \text{and} \quad t = 1, \ldots, n_{\text{measurements}}$$ 
+<!-- # Simulate repeated measures for each individual -->
+<!-- ex2.data <- data.frame() -->
+<!-- for (i in 1:n_individuals) { -->
+<!--   # Generate errors with the working correlation structure -->
+<!--   epsilon_Y <- mvrnorm(1, mu = rep(0, n_measurements), Sigma = corr_matrix) -->
 
-For now, let us assume that the error term $\epsilon_{X_{i,t}}$ are i.i.d. and $\sim \mathcal{N}(0, 1)$ (this may not be realistic in this example).
+<!--   # Generate Y for this individual across measurement occasions -->
+<!--   Y <- 2 + 0.6 * X[(i - 1) * n_measurements + 1:(n_measurements)] + epsilon_Y -->
 
-$$Y_{i,t} := 1 + 0.6 \cdot X_{i,t} + 0.7 \cdot S_i + \epsilon_{Y_{i,t}} \quad \text{for} \quad i = 1, \ldots, n_{\text{individuals}} \quad \text{and} \quad t = 1, \ldots, n_{\text{measurements}}$$ 
+<!--   # Store the data -->
+<!--   individual_data <- data.frame( -->
+<!--     id = i, -->
+<!--     occasion = 1:n_measurements, -->
+<!--     X = X[(i - 1) * n_measurements + 1:(n_measurements)], -->
+<!--     Y = Y -->
+<!--   ) -->
 
-where $\epsilon_{Y_{i,t}}$ follows a multivariate normal distribution with mean zero and an exchangeable correlation structure across time points $t$:
+<!--   ex2.data <- rbind(ex2.data, individual_data) -->
+<!-- } -->
 
-$$\epsilon_{i,1}, \ldots, \epsilon_{i,n_{\text{measurements}}} \sim \mathcal{MVN}(0, \Sigma)$$ 
+<!-- # Make sure first timepoint is zero -->
+<!-- ex2.data$occasion <- ex2.data$occasion - 1 -->
 
-The covariance matrix $\Sigma$ has the form:
+<!-- head(ex2.data) -->
+<!-- ``` -->
 
-$$\Sigma = \begin{bmatrix} 1 & \rho & \cdots & \rho \\ \rho & 1 & \cdots & \rho \\ \vdots & \vdots & \ddots & \vdots \\ \rho & \rho & \cdots & 1 \end{bmatrix}$$ 
+<!-- Let's estimate the effect of $X$ on $Y$ using MLM -->
 
-with $\rho = 0.7$, representing the exchangeable correlation structure between the errors at different time points within an individual.
+<!-- ```{r} -->
+<!-- # Model 1a: Intercept only model, random intercept  -->
+<!-- ex2.MLM1a <- lmer(Y ~ 1 + (1 | id), data = ex2.data, REML = FALSE)  -->
 
-Let us now simulate the based based on this SCM
+<!-- # Model 1b: Intercept only model including the predictor time  -->
+<!-- ex2.MLM1b <- lmer(Y ~ 1 + occasion + (1 | id), data = ex2.data, REML = FALSE)  -->
+<!-- anova(ex2.MLM1a, ex2.MLM1b) # Model 1a is not significantly worse than Model 1b -->
 
-```{r}
-set.seed(432)
+<!-- # Model 2: including remainder of the level 1 predictors  -->
+<!-- ex2.MLM2 <- lmer(Y ~ 1 + occasion + X + (1 | id), data = ex2.data, REML = FALSE) -->
+<!-- anova(ex2.MLM1b, ex2.MLM2) # Model 1b is significantly worse than Model 2 -->
 
-# Parameters
-n_individuals <- 100  # Number of individuals
-n_measurements <- 5   # Number of measurements per individual
-rho <- 0.7            # Correlation between measurements within an individual for Y's errors
+<!-- # Model 3.1: random slope for time (and add covariance) -->
+<!-- ex2.MLM3.1 <- lmer(Y ~ 1 + occasion + X + (occasion | id), data = ex2.data, REML = FALSE) -->
+<!-- anova(ex2.MLM2, ex2.MLM3.1) # Model 2 is not significantly worse than Model 3.1 -->
 
-## Simulate data
+<!-- # Model 3.2: random slope for X (and add covariance) -->
+<!-- ex2.MLM3.2 <- lmer(Y ~ 1 + occasion + X + (X | id), data = ex2.data, REML = FALSE) -->
+<!-- anova(ex2.MLM2, ex2.MLM3.2) # Model 2 not is significantly worse than Model 3.2 -->
+<!-- ``` -->
 
-# 1. Generate the time-invariant confounder S (sex: 1 = male, 0 = female)
-S <- rbinom(n_individuals, 1, 0.5)
+<!-- Following the results of the model comparison, we will continue with model 2, which includes the fixed effect of $X$ and the random intercept for each individual. -->
 
-# 2. Generate time-varying covariate X for each individual across measurement occasions
-X <- matrix(NA, nrow = n_individuals, ncol = n_measurements)
-for (i in 1:n_individuals) {
-  epsilon_X <- rnorm(n_measurements, mean = 0, sd = 1)
-  X[i, ] <- 4 + 2 * S[i] + epsilon_X
-}
+<!-- ```{r} -->
+<!-- # Model 2 -->
+<!-- ex2.MLM2_mle <- lmer(Y ~ 1 + occasion + X + (1 | id), data = ex2.data, REML = FALSE) -->
+<!-- ex2.MLM2_reml <- lmer(Y ~ 1 + occasion + X + (1 | id), data = ex2.data) -->
+<!-- ``` -->
 
-# 3. Simulate time-varying outcome Y with correlated errors
-Sigma_Y <- matrix(rho, n_measurements, n_measurements)
-diag(Sigma_Y) <- 1
+<!-- Let's estimate the effect of $X$ on $Y$ using GEE -->
 
-Y <- matrix(NA, nrow = n_individuals, ncol = n_measurements)
-for (i in 1:n_individuals) {
-  epsilon_Y <- mvrnorm(1, mu = rep(0, n_measurements), Sigma = Sigma_Y) 
-  Y[i, ] <- 1 + 0.6 * X[i, ] + 0.7 * S[i] + epsilon_Y
-}
+<!-- ```{r} -->
+<!-- # displays initial regression estimate of GLM -->
+<!-- ex2.GEE <- gee(Y ~ X, data = ex2.data, id = id, family = gaussian(), corstr = "exchangeable") -->
+<!-- # summary(ex2.GEE) -->
+<!-- ``` -->
 
-# 4. Organize the data into a long format (individuals, occasions, X, Y, S)
-ex3.data <- data.frame(
-  id = rep(1:n_individuals, each = n_measurements),
-  occasion = rep(1:n_measurements, n_individuals),
-  S = rep(S, each = n_measurements),
-  X = as.vector(t(X)),
-  Y = as.vector(t(Y))
-)
+<!-- Let's compare the point estimates -->
 
-# Make sure first timepoint is zero
-ex3.data$occasion <- ex3.data$occasion - 1
+<!-- ```{r} -->
+<!-- fixef(ex2.MLM2_reml) -->
+<!-- fixef(ex2.MLM2_mle) -->
+<!-- coef(ex2.GEE) -->
+<!-- ``` -->
 
-# Show the first few rows of the generated data
-head(ex3.data)
-summary(ex3.data)
-```
-
-Let's estimate the effect of $X$ on $Y$ using MLM
-
-```{r}
-ex3.MLM_reml <- lmer(Y ~ X + S + (1 | id), data = ex3.data)
-ex3.MLM_mle <- lmer(Y ~ X + S + (1 | id), data = ex3.data, REML = FALSE)
-# summary(ex3.MLM)
-# summ(ex3.MLM)
-```
-
-Let's estimate the effect of $X$ on $Y$ using GEE
-
-```{r}
-# displays initial regression estimate of GLM
-ex3.GEE <- gee(Y ~ X + S, data = ex3.data, id = id, family = gaussian(), corstr = "exchangeable")
-```
-
-Let's compare the coefficients
-
-```{r}
-fixef(ex3.MLM_reml)
-fixef(ex3.MLM_mle)
-coef(ex3.GEE)
-```
-
-There is a minor difference between the point estimates of (1) the two MLM approaches (from 4th decimal) and (2) between MLM and GEE (from 4th decimal).
-
-## Example 4: Continuous, time-varying confounder, X (occasion level) on Y (occasion level) with confounder Z (individual level)
-
-Let's draw a DAG where we are estimating the effect of $X$ (sleep-problems) and $S$ (sex) on $Y$ (anxiety) with a confounder $Z$ (mobile phone use) in the relationship between $X$ and $Y$.
-
-## Trash
-
+<!-- There is a minor difference between the point estimates of (1) the two MLM approaches (from 4th decimal) and (2) between MLM and GEE (from 4th decimal). -->
