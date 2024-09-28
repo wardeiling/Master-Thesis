@@ -2,6 +2,8 @@
 title: "Estimation of Effects of Endogenous Time-Varying Covariates: A Comparison Of Multilevel Modeling and Generalized Estimating Equations"
 subtitle: "Proposal"
 author: "Ward B. Eiling (9294163), June 19, 2024"
+date: "Sep 28, 2024"
+date-format: long
 format: 
   pdf:
     papersize: a4
