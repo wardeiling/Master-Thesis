@@ -1,44 +1,50 @@
 ---
 title: "Estimation of Effects of Endogenous Time-Varying Covariates: A Comparison Of Multilevel Modeling and Generalized Estimating Equations"
-subtitle: "Proposal"
-author: "Ward B. Eiling (9294163), June 19, 2024"
+subtitle: "PROPOSAL" 
+author: 
+  - name: "Ward B. Eiling (9294163)"
+    orcid: "0009-0007-8114-9497"
+    affiliation: 
+      - name: "Utrecht University"
+      - department: "Methodology and Statistics"
 date: "Sep 28, 2024"
 date-format: long
 format: 
   pdf:
     papersize: a4
-    toc: true
+    keep-tex: true
+    # toc: true
     number-sections: true
     colorlinks: true
-header-includes:
-  - \usepackage{fancyhdr}
-  - \usepackage{amsmath}
-  - \usepackage{float}
-geometry:
-  - top=2.5cm
-  - bottom=2.5cm
-  - left=2.5cm
-  - right=2.5cm
-mainfont: Latin Modern Roman
-sansfont: Latin Modern Roman
-fontsize: 10.5pt
+    indent: true
+    header-includes:
+      - \usepackage{fancyhdr}
+      - \usepackage{amsmath}
+      - \usepackage{float}
+    geometry:
+      - top=2.5cm
+      - bottom=2.5cm
+      - left=2.5cm
+      - right=2.5cm
+    mainfont: Latin Modern Roman
+    sansfont: Latin Modern Roman
+    linestretch: 2
+    fontsize: 12pt
+    template-partials: 
+      - "before-body.tex"
+    spacing: double
 bibliography: references.bib
 link-citations: true
 csl: apa.csl
 ---
 
-\newpage
-
 ```{=tex}
 \pagestyle{fancy}
   \fancyhead{}
-  \fancyhead[L]{Proposal}
-  \fancyhead[C]{Ward B. Eiling (9294163)}
-  \fancyhead[R]{Sep 28, 2024}
-  
+  \fancyhead[L]{PROPOSAL}
+
 \floatplacement{figure}{H} % Place all figures exactly "here"
 ```
-
 ```{r, include=FALSE}
 library(papaja)
 library(rlang)
@@ -46,21 +52,43 @@ library(rmarkdown)
 library(knitr)
 ```
 
-Add to title page:
-
-- Supervisors/Promotors: Ellen Hamaker, Jeroen Mulder
-- Department: Methodology and Statistics
-- Candidate journal: Psychological Methods
-- Word count: XXX
-
 \newpage
 
 # Introduction
 
--	Start with a paragraph describing a problem in the real-life world (so that a BoS member not familiar with statistics understands why you are pursuing research in this direction);
--	Then, add a paragraph describing what is known in the literature;
--	Also, describe what is not known and which gap you will address in your thesis;
--	End with a clear research question and, if applicable, your hypothesis (for confirmatory research questions – it should be a testable hypothesis) or expectations (for exploratory research questions – can be much vaguer because of the explorative nature of the question).
+-   Start with a paragraph describing a problem in the real-life world (so that a BoS member not familiar with statistics understands why you are pursuing research in this direction);
+
+Recent trends in data-collection methods and rises in longitudinal research have led to a proliferation of studies that employ clustered data. To address such data, the psychological sciences most commonly resort to multilevel linear models (MLMs), whereas other fields, such as biostatistics and econometrics often favour generalized estimating equations [GEE; @mcneish2017]. However, blind application of either analysis (e.g., not for its advantages over the other in a particular case but because of the frequency of use by fellow researchers or by it being unknown) may cause researchers to obtain biased estimates that do not represent the measures that they intend to report.
+
+Recent evidence has shed light on an issue specific to the MLM, where controlling for covariates may yield biased causal estimands (e.g., treatment effect).
+
+While the importance of adequately controlling for time-varying confounders for obtaining an unbiased treatment effect in the context of either model tends to be widely understood, the danger of including time-varying covariates in a MLM tends to go unnoticed. In a standard MLM with fixed covariates, coefficients may be interpreted in the marginal (population-averaged) manner, as well as in the conditional-on-the-random-effects manner [@qian2020, p. 3]. However, once we include time-varying endogenous covariates, the marginal interpretation is no longer appropriate.
+
+In the latter case, we obtain a conditional-on-the-random-effect interpretation for the coefficients.
+
+recent evidence shows that including endogenous time-varying covariates in a MLM may also result in biased treatment effects [@qian2020].
+
+More specifically, using MLMs in the case of endogenous
+
+Upon collecting such data, researchers often resort to analyses that are most common in their field and most well-liked by reviewers.
+
+the main challenge faced by researchers is the type of analysis they choose to carry out.
+
+Over the last few decades, there has been somewhat of a disconnect between the methods used to analyse clustered data in different fields. To address such data, the psychological sciences most commonly resort to multilevel linear models, whereas other fields, such as biostatistics and econometrics often favour generalized estimating equations.
+
+The issue has grown in importance in light of recent findings that suggest that multilevel linear models suffer from biases in parameter estimates when endogenous time-varying covariates are present.
+
+-   Then, add a paragraph describing what is known in the literature;
+
+...
+
+-   Also, describe what is not known and which gap you will address in your thesis;
+
+...
+
+-   End with a clear research question and, if applicable, your hypothesis (for confirmatory research questions – it should be a testable hypothesis) or expectations (for exploratory research questions – can be much vaguer because of the explorative nature of the question).
+
+...
 
 This project aims to address and better understand the biases in the parameter estimates of a multilevel model, when there are endogenous time-varying covariates (e.g., Micro-randomized trials). The study will investigate the issue introduced in @qian2020, reframing the problem using visualizations such as Directed Acyclic Graphs (DAGs) and path diagrams. Additionally, it will compare the multilevel models with alternative approaches, including Generalized Estimating Equations (GEE) and Dynamic Structural Equation Modeling (DSEM), through simulations and empirical analysis.
 
@@ -72,9 +100,9 @@ In conclusion, the research report will provide a detailed visualization and sim
 
 # Analytic strategy
 
--	Describe how you are planning to answer your research question and how to test your hypothesis or explore your question. Be as specific as possible and preferably use an illustration to help the reader understand how all your plans connect.
--	Also, include information on what data you are going to use and if you already have ethical consent. If you do already have consent, putting the FETC case number on your front page also suffices. 
--	Describe what software/packages you will use.
+-   Describe how you are planning to answer your research question and how to test your hypothesis or explore your question. Be as specific as possible and preferably use an illustration to help the reader understand how all your plans connect.
+-   Also, include information on what data you are going to use and if you already have ethical consent. If you do already have consent, putting the FETC case number on your front page also suffices.
+-   Describe what software/packages you will use.
 
 ...
 
@@ -82,9 +110,8 @@ In conclusion, the research report will provide a detailed visualization and sim
 
 # References
 
--	Add a reference list for the literature used in the text – you can use the formatting style of the chosen journal, but this is not mandatory.
--	Add about 20 extra references that will be used for the thesis (you do not have to have read these already).
-
+-   Add a reference list for the literature used in the text – you can use the formatting style of the chosen journal, but this is not mandatory.
+-   Add about 20 extra references that will be used for the thesis (you do not have to have read these already).
 
 ::: {#refs}
 :::
