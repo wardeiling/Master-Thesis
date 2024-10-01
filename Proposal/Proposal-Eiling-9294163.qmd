@@ -60,27 +60,9 @@ library(knitr)
 
 Recent trends in data-collection methods and rises in longitudinal research have led to a proliferation of studies that employ clustered data. To address such data, the psychological sciences most commonly resort to multilevel linear models (MLMs), whereas other fields, such as biostatistics and econometrics often favour generalized estimating equations [GEE; @mcneish2017]. However, blind application of either analysis (e.g., not for its advantages over the other in a particular case but because of the frequency of use by fellow researchers or by it being unknown) may cause researchers to obtain biased estimates that do not represent the measures that they intend to report.
 
-Recent evidence has shed light on an issue specific to the MLM, where controlling for covariates may yield biased causal estimands (e.g., treatment effect).
-
-While the importance of adequately controlling for time-varying confounders for obtaining an unbiased treatment effect in the context of either model tends to be widely understood, the danger of including time-varying covariates in a MLM tends to go unnoticed. In a standard MLM with fixed covariates, coefficients may be interpreted in the marginal (population-averaged) manner, as well as in the conditional-on-the-random-effects manner [@qian2020, p. 3]. However, once we include time-varying endogenous covariates, the marginal interpretation is no longer appropriate.
-
-In the latter case, we obtain a conditional-on-the-random-effect interpretation for the coefficients.
-
-recent evidence shows that including endogenous time-varying covariates in a MLM may also result in biased treatment effects [@qian2020].
-
-More specifically, using MLMs in the case of endogenous
-
-Upon collecting such data, researchers often resort to analyses that are most common in their field and most well-liked by reviewers.
-
-the main challenge faced by researchers is the type of analysis they choose to carry out.
-
-Over the last few decades, there has been somewhat of a disconnect between the methods used to analyse clustered data in different fields. To address such data, the psychological sciences most commonly resort to multilevel linear models, whereas other fields, such as biostatistics and econometrics often favour generalized estimating equations.
-
-The issue has grown in importance in light of recent findings that suggest that multilevel linear models suffer from biases in parameter estimates when endogenous time-varying covariates are present.
-
 -   Then, add a paragraph describing what is known in the literature;
 
-...
+Recent evidence has shed light on an issue present in both methods, where controlling for covariates may yield biased causal estimands [@qian2020]. More specificially, in a standard MLM with fixed covariates, coefficients may be interpreted in the marginal (population-averaged) manner, as well as in the conditional-on-the-random-effects manner [@qian2020, p. 3]. However, once we include time-varying endogenous covariates, the marginal interpretation is no longer appropriate. In a similar manner, once we include endogenous covariates when carrying out GEE, parameter estimates no longer follow the marginal interpretation unless the working correlation matrix is specified as independent [@pepe1994].
 
 -   Also, describe what is not known and which gap you will address in your thesis;
 

@@ -223,7 +223,7 @@ Estimating Equations \par}
 % {\small Submitted in total fulfilment of the requirements
 % of the degree of Doctor of Philosophy \par}
 }
-\ifdefined\Shaded\renewenvironment{Shaded}{\begin{tcolorbox}[boxrule=0pt, interior hidden, enhanced, sharp corners, frame hidden, breakable, borderline west={3pt}{0pt}{shadecolor}]}{\end{tcolorbox}}\fi
+\ifdefined\Shaded\renewenvironment{Shaded}{\begin{tcolorbox}[frame hidden, breakable, enhanced, sharp corners, boxrule=0pt, borderline west={3pt}{0pt}{shadecolor}, interior hidden]}{\end{tcolorbox}}\fi
 
 \setstretch{2}
 \pagestyle{fancy}
@@ -258,53 +258,25 @@ researchers or by it being unknown) may cause researchers to obtain
 biased estimates that do not represent the measures that they intend to
 report.
 
-Recent evidence has shed light on an issue specific to the MLM, where
-controlling for covariates may yield biased causal estimands (e.g.,
-treatment effect).
-
-While the importance of adequately controlling for time-varying
-confounders for obtaining an unbiased treatment effect in the context of
-either model tends to be widely understood, the danger of including
-time-varying covariates in a MLM tends to go unnoticed. In a standard
-MLM with fixed covariates, coefficients may be interpreted in the
-marginal (population-averaged) manner, as well as in the
-conditional-on-the-random-effects manner
-(\protect\hyperlink{ref-qian2020}{Qian et al., 2020, p. 3}). However,
-once we include time-varying endogenous covariates, the marginal
-interpretation is no longer appropriate.
-
-In the latter case, we obtain a conditional-on-the-random-effect
-interpretation for the coefficients.
-
-recent evidence shows that including endogenous time-varying covariates
-in a MLM may also result in biased treatment effects
-(\protect\hyperlink{ref-qian2020}{Qian et al., 2020}).
-
-More specifically, using MLMs in the case of endogenous
-
-Upon collecting such data, researchers often resort to analyses that are
-most common in their field and most well-liked by reviewers.
-
-the main challenge faced by researchers is the type of analysis they
-choose to carry out.
-
-Over the last few decades, there has been somewhat of a disconnect
-between the methods used to analyse clustered data in different fields.
-To address such data, the psychological sciences most commonly resort to
-multilevel linear models, whereas other fields, such as biostatistics
-and econometrics often favour generalized estimating equations.
-
-The issue has grown in importance in light of recent findings that
-suggest that multilevel linear models suffer from biases in parameter
-estimates when endogenous time-varying covariates are present.
-
 \begin{itemize}
 \tightlist
 \item
   Then, add a paragraph describing what is known in the literature;
 \end{itemize}
 
-\ldots{}
+Recent evidence has shed light on an issue present in both methods,
+where controlling for covariates may yield biased causal estimands
+(\protect\hyperlink{ref-qian2020}{Qian et al., 2020}). More
+specificially, in a standard MLM with fixed covariates, coefficients may
+be interpreted in the marginal (population-averaged) manner, as well as
+in the conditional-on-the-random-effects manner
+(\protect\hyperlink{ref-qian2020}{Qian et al., 2020, p. 3}). However,
+once we include time-varying endogenous covariates, the marginal
+interpretation is no longer appropriate. In a similar manner, once we
+include endogenous covariates when carrying out GEE, parameter estimates
+no longer follow the marginal interpretation unless the working
+correlation matrix is specified as independent
+(\protect\hyperlink{ref-pepe1994}{Pepe \& Anderson, 1994}).
 
 \begin{itemize}
 \tightlist
@@ -418,6 +390,13 @@ McNeish, D., Stapleton, L. M., \& Silverman, R. D. (2017). On the
 unnecessary ubiquity of hierarchical linear modeling.
 \emph{Psychological Methods}, \emph{22}(1), 114--140.
 \url{https://doi.org/10.1037/met0000078}
+
+\leavevmode\vadjust pre{\hypertarget{ref-pepe1994}{}}%
+Pepe, M. S., \& Anderson, G. L. (1994). A cautionary note on inference
+for marginal regression models with longitudinal data and general
+correlated response data. \emph{Communications in Statistics -
+Simulation and Computation}, \emph{23}(4), 939--951.
+\url{https://doi.org/10.1080/03610919408813210}
 
 \leavevmode\vadjust pre{\hypertarget{ref-qian2020}{}}%
 Qian, T., Klasnja, P., \& Murphy, S. A. (2020). Linear mixed models with
