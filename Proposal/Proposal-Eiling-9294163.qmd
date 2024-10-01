@@ -58,7 +58,7 @@ library(knitr)
 
 <!-- -   Start with a paragraph describing a problem in the real-life world (so that a BoS member not familiar with statistics understands why you are pursuing research in this direction); -->
 
-Recent trends in data-collection methods and rises in longitudinal research have led to a proliferation of studies that employ clustered data. To address such data, the psychological sciences most commonly resort to multilevel linear models (MLMs), which allow us insight into between-person heterogeneity of effects. Conversely, other fields, such as biostatistics and econometrics often favour generalized estimating equations [GEE; @mcneish2017], which does not include random effects. However, blind application of either analysis (e.g., not for its advantages over the other in a particular case but because of the frequency of use by fellow researchers or by it being unknown) may cause researchers to obtain biased estimates that do not represent the measures that they intend to report.
+Recent trends in data-collection methods and rises in longitudinal research have led to a proliferation of studies that employ clustered data. To address such data, the psychological sciences most commonly resort to multilevel linear models (MLMs), which allow us insight into between-person heterogeneity of effects. Conversely, other fields, such as biostatistics and econometrics often favour generalized estimating equations [GEE, @mcneish2017], which does not include random effects. However, blind application of either analysis (e.g., not for its advantages over the other in a particular case but because of the frequency of use by fellow researchers or by it being unknown) may cause researchers to obtain biased estimates that do not represent the measures that they intend to report.
 
 <!-- -   Then, add a paragraph describing what is known in the literature; -->
 
@@ -78,14 +78,14 @@ This indicates a need to understand (1) the consequences of including these cova
 
 To introduce the problem, this paper will visualize the issue in fictional examples using the directed acyclic graph.
 
-To uncover the undesirable effects of endogenous covariates and investigate robustness against these effects, we will carry out simulations in which data will be generated according to several increasingly complex causal questions, followed by an analysis of these questions using the GEE, basic MLM and extensions thereof. We consider varying number of timepoints and sample sizes. Statistical analyses pertaining to the GEE and basic MLM will be performed in `R`, version 4.2.0 [@rcoreteam2022]. To fit the GEE, the R-packages `geepack` [@halekoh2006] and `gee` [@carey2024] will evaluate several different working correlation structures, including independent, exchangeable, AR(1) and unstructured. To fit the basic MLM, the R-package `lme4` [@bates2015] will be employed, where we will both evaluate restricted maximum likelihood estimation and ordinary maximum likelihood estimation. Extensions of the MLM, such as the (RI-)CLPM and the bayesian DSEM will be fitted using `Mplus`, version 8.10 [@muthén1998].
+To uncover the undesirable effects of endogenous covariates and investigate robustness against these effects, we will carry out simulations in which data will be generated according to several increasingly complex causal questions, followed by an analysis of these questions using the GEE, basic MLM and extensions thereof. We consider varying number of timepoints and sample sizes. Statistical analyses pertaining to the GEE and basic MLM will be performed in `R`, version 4.2.0 [@rcoreteam2022]. To fit the GEE, the R-packages `geepack` [@halekoh2006] and `gee` [@carey2024] will evaluate several different working correlation structures, including independent, exchangeable, AR(1) and unstructured. To fit the basic MLM, the R-package `lme4` [@bates2015] will be employed, where we will both evaluate restricted maximum likelihood estimation and ordinary maximum likelihood estimation. Extensions of the MLM, such as the (RI-)CLPM and the bayesian DSEM will be fitted using `Mplus`, version 8.10 [@muthén1998]. 
 
 \newpage
 
 # References
 
--   Add a reference list for the literature used in the text – you can use the formatting style of the chosen journal, but this is not mandatory.
--   Add about 20 extra references that will be used for the thesis (you do not have to have read these already).
+<!-- -   Add a reference list for the literature used in the text – you can use the formatting style of the chosen journal, but this is not mandatory. -->
+<!-- -   Add about 20 extra references that will be used for the thesis (you do not have to have read these already). -->
 
 ::: {#refs}
 :::
