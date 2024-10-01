@@ -70,15 +70,13 @@ This indicates a need to understand (1) the consequences of including these cova
 
 <!-- It would be interesting to compare the RI-CLPM to the CLPM, as the former is said to be superior in addressing certain confounders, but could it also be more susceptible to time-varying moderators? -->
 
-# Analytic strategy
+# Analytic Strategy
 
 <!-- -   Describe how you are planning to answer your research question and how to test your hypothesis or explore your question. Be as specific as possible and preferably use an illustration to help the reader understand how all your plans connect. -->
 <!-- -   Also, include information on what data you are going to use and if you already have ethical consent. If you do already have consent, putting the FETC case number on your front page also suffices. -->
 <!-- -   Describe what software/packages you will use. -->
 
-To introduce the problem, this paper will visualize the issue in fictional examples using the directed acyclic graph.
-
-To uncover the undesirable effects of endogenous covariates and investigate robustness against these effects, we will carry out simulations in which data will be generated according to several increasingly complex causal questions, followed by an analysis of these questions using the GEE, basic MLM and extensions thereof. We consider varying number of timepoints and sample sizes. Statistical analyses pertaining to the GEE and basic MLM will be performed in `R`, version 4.2.0 [@rcoreteam2022]. To fit the GEE, the R-packages `geepack` [@halekoh2006] and `gee` [@carey2024] will evaluate several different working correlation structures, including independent, exchangeable, AR(1) and unstructured. To fit the basic MLM, the R-package `lme4` [@bates2015] will be employed, where we will both evaluate restricted maximum likelihood estimation and ordinary maximum likelihood estimation. Extensions of the MLM, such as the (RI-)CLPM and the bayesian DSEM will be fitted using `Mplus`, version 8.10 [@muthén1998]. 
+To uncover the undesirable effects of endogenous covariates and investigate robustness against these effects, we will carry out simulations in which data will be generated according to several increasingly complex causal questions, which will be visually represented using directed acyclic graphs, followed by an analysis of these questions using the GEE, basic MLM and extensions thereof. We consider varying number of time points and sample sizes. Statistical analyses pertaining to the GEE and basic MLM will be performed in `R`, version 4.2.0 [@rcoreteam2022]. To fit the GEE, the R-packages `geepack` [@halekoh2006] and `gee` [@carey2024] will evaluate several different working correlation structures, including independent, exchangeable, AR(1) and unstructured. To fit the basic MLM, the R-package `lme4` [@bates2015] will be employed, where we will both evaluate restricted maximum likelihood estimation and ordinary maximum likelihood estimation. Extensions of the MLM, such as the (RI-)CLPM and the bayesian DSEM will be fitted using `Mplus`, version 8.10 [@muthén1998]. 
 
 \newpage
 

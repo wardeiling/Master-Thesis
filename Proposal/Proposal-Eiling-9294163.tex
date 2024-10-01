@@ -223,7 +223,7 @@ Estimating Equations \par}
 % {\small Submitted in total fulfilment of the requirements
 % of the degree of Doctor of Philosophy \par}
 }
-\ifdefined\Shaded\renewenvironment{Shaded}{\begin{tcolorbox}[frame hidden, enhanced, interior hidden, borderline west={3pt}{0pt}{shadecolor}, sharp corners, breakable, boxrule=0pt]}{\end{tcolorbox}}\fi
+\ifdefined\Shaded\renewenvironment{Shaded}{\begin{tcolorbox}[frame hidden, boxrule=0pt, enhanced, breakable, interior hidden, borderline west={3pt}{0pt}{shadecolor}, sharp corners]}{\end{tcolorbox}}\fi
 
 \setstretch{2}
 \pagestyle{fancy}
@@ -284,20 +284,18 @@ covariates elicits non-trivial bias in longitudinal data analyses that
 involve a marginal interpretation.
 
 \hypertarget{analytic-strategy}{%
-\section{Analytic strategy}\label{analytic-strategy}}
-
-To introduce the problem, this paper will visualize the issue in
-fictional examples using the directed acyclic graph.
+\section{Analytic Strategy}\label{analytic-strategy}}
 
 To uncover the undesirable effects of endogenous covariates and
 investigate robustness against these effects, we will carry out
 simulations in which data will be generated according to several
-increasingly complex causal questions, followed by an analysis of these
-questions using the GEE, basic MLM and extensions thereof. We consider
-varying number of timepoints and sample sizes. Statistical analyses
-pertaining to the GEE and basic MLM will be performed in \texttt{R},
-version 4.2.0 (\protect\hyperlink{ref-rcoreteam2022}{R Core Team,
-2022}). To fit the GEE, the R-packages \texttt{geepack}
+increasingly complex causal questions, which will be visually
+represented using directed acyclic graphs, followed by an analysis of
+these questions using the GEE, basic MLM and extensions thereof. We
+consider varying number of time points and sample sizes. Statistical
+analyses pertaining to the GEE and basic MLM will be performed in
+\texttt{R}, version 4.2.0 (\protect\hyperlink{ref-rcoreteam2022}{R Core
+Team, 2022}). To fit the GEE, the R-packages \texttt{geepack}
 (\protect\hyperlink{ref-halekoh2006}{Halekoh et al., 2006}) and
 \texttt{gee} (\protect\hyperlink{ref-carey2024}{Carey et al., 2024})
 will evaluate several different working correlation structures,
