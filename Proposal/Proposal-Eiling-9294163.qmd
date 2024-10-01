@@ -14,7 +14,7 @@ format:
     papersize: a4
     keep-tex: true
     # toc: true
-    number-sections: true
+    # number-sections: true
     colorlinks: true
     indent: true
     header-includes:
@@ -32,7 +32,7 @@ format:
     fontsize: 12pt
     template-partials: 
       - "before-body.tex"
-    spacing: double
+    # spacing: double
 bibliography: references.bib
 link-citations: true
 csl: apa.csl
@@ -56,37 +56,29 @@ library(knitr)
 
 # Introduction
 
--   Start with a paragraph describing a problem in the real-life world (so that a BoS member not familiar with statistics understands why you are pursuing research in this direction);
+<!-- -   Start with a paragraph describing a problem in the real-life world (so that a BoS member not familiar with statistics understands why you are pursuing research in this direction); -->
 
-Recent trends in data-collection methods and rises in longitudinal research have led to a proliferation of studies that employ clustered data. To address such data, the psychological sciences most commonly resort to multilevel linear models (MLMs), whereas other fields, such as biostatistics and econometrics often favour generalized estimating equations [GEE; @mcneish2017]. However, blind application of either analysis (e.g., not for its advantages over the other in a particular case but because of the frequency of use by fellow researchers or by it being unknown) may cause researchers to obtain biased estimates that do not represent the measures that they intend to report.
+Recent trends in data-collection methods and rises in longitudinal research have led to a proliferation of studies that employ clustered data. To address such data, the psychological sciences most commonly resort to multilevel linear models (MLMs), which allow us insight into between-person heterogeneity of effects. Conversely, other fields, such as biostatistics and econometrics often favour generalized estimating equations [GEE; @mcneish2017], which does not include random effects. However, blind application of either analysis (e.g., not for its advantages over the other in a particular case but because of the frequency of use by fellow researchers or by it being unknown) may cause researchers to obtain biased estimates that do not represent the measures that they intend to report.
 
--   Then, add a paragraph describing what is known in the literature;
+<!-- -   Then, add a paragraph describing what is known in the literature; -->
 
-Recent evidence has shed light on an issue present in both methods, where controlling for covariates may yield biased causal estimands [@qian2020]. More specificially, in a standard MLM with fixed covariates, coefficients may be interpreted in the marginal (population-averaged) manner, as well as in the conditional-on-the-random-effects manner [@qian2020, p. 3]. However, once we include time-varying endogenous covariates, the marginal interpretation is no longer appropriate. In a similar manner, once we include endogenous covariates when carrying out GEE, parameter estimates no longer follow the marginal interpretation unless the working correlation matrix is specified as independent [@pepe1994].
+Recent evidence has shed light on an issue present in both methods, where controlling for endogenous covariates may yield biased causal estimands [@qian2020]. More specifically, in a standard MLM with fixed covariates, coefficients may be interpreted in the marginal (population-averaged) manner, as well as in the conditional-on-the-random-effects manner [@qian2020, p. 3]. However, once we include time-varying endogenous covariates, the marginal interpretation is no longer appropriate. In a similar manner, once we include endogenous covariates when carrying out GEE, parameter estimates no longer follow the marginal interpretation unless the working correlation matrix is specified as independent [@pepe1994]. According to @diggle2002, this issue not only pertains GEE and MLM, but *all* longitudinal data analysis methods.
 
--   Also, describe what is not known and which gap you will address in your thesis;
+<!-- -   Also, describe what is not known and which gap you will address in your thesis; End with a clear research question and, if applicable, your hypothesis (for confirmatory research questions – it should be a testable hypothesis) or expectations (for exploratory research questions – can be much vaguer because of the explorative nature of the question). -->
 
-...
+This indicates a need to understand (1) the consequences of including these covariates in analyses on clustered data, including GEE and extensions of the basic MLM such as the (random-intercept) cross-lagged panel model (CLPM) and dynamic structural equation modeling (DSEM) and (2) how this issue may be addressed by researchers that perform longitudinal data analysis. Accordingly, this paper explores the ways in which the inclusion of time-varying covariates can yield faulty inferences and intends to establish guidelines on how this may be prevented. More specifically, the current project addresses the following research question: *to what extent does the inclusion of endogenous variables in multilevel linear models and generalized estimating equations result in biased estimands?* In this exploratory study, we expect that the inclusion of endogenous time-varying covariates elicits non-trivial bias in longitudinal data analyses that involve a marginal interpretation.
 
--   End with a clear research question and, if applicable, your hypothesis (for confirmatory research questions – it should be a testable hypothesis) or expectations (for exploratory research questions – can be much vaguer because of the explorative nature of the question).
-
-...
-
-This project aims to address and better understand the biases in the parameter estimates of a multilevel model, when there are endogenous time-varying covariates (e.g., Micro-randomized trials). The study will investigate the issue introduced in @qian2020, reframing the problem using visualizations such as Directed Acyclic Graphs (DAGs) and path diagrams. Additionally, it will compare the multilevel models with alternative approaches, including Generalized Estimating Equations (GEE) and Dynamic Structural Equation Modeling (DSEM), through simulations and empirical analysis.
-
-In the research report, the problem will be restated using visualizations to enhance understanding. The biases associated with multilevel models in the presence of endogenous time-varying confounders will be explored, utilizing path diagrams or Directed Acyclic Graphs (DAGs) to illustrate the problem as described by Qian et al. (2020). To further investigate, data will be simulated based on the descriptions provided in the study, replicating the conditions under which time-varying confounders and endogenous covariates affect the analysis. The next step involves reproducing the results of multilevel model and GEE as discussed in Qian et al. (2020). This will include a thorough investigation of the effects of group mean centering (GMC) and centering within cluster (CWC) on the analysis.
-
-In the thesis, the focus will shift to implementing solution proposed by Qian et al. (2020) in Dynamic Structural Equation Modeling (DSEM) using software like Mplus. Utilizing DSEM estimation, the study will explore (1) the potential bias in parameter estimates in multilevel models when including endogenous covariates and (2) how interpretation of these parameters is affected in the presence of marginal and conditional effects. Following this, a large-scale simulation study will be conducted to compare when GEE delivers better results than DSEM. This study will evaluate the sensitivity of each method to model misspecification, particularly in areas where the model is not directly focused. We will take a multidisciplinary approach, by comparing methods for the analysis of endogenous time-varying covariates from the fields of biostatistics, econometrics, and social sciences. Finally, the thesis will include a comprehensive comparative analysis of multilevel regression, GEE, and DSEM. The advantages and disadvantages of each method will be summarized, as well as their similarities and differences, providing clear guidelines on their appropriate use cases.
-
-In conclusion, the research report will provide a detailed visualization and simulation-based exploration of the problem, while the thesis will delve deeper into methodological comparisons and practical implementations. Together, they will offer a comprehensive evaluation of handling endogenous time-varying confounders, providing guidelines on different estimation methods for researchers across different fields.
+<!-- It would be interesting to compare the RI-CLPM to the CLPM, as the former is said to be superior in addressing certain confounders, but could it also be more susceptible to time-varying moderators? -->
 
 # Analytic strategy
 
--   Describe how you are planning to answer your research question and how to test your hypothesis or explore your question. Be as specific as possible and preferably use an illustration to help the reader understand how all your plans connect.
--   Also, include information on what data you are going to use and if you already have ethical consent. If you do already have consent, putting the FETC case number on your front page also suffices.
--   Describe what software/packages you will use.
+<!-- -   Describe how you are planning to answer your research question and how to test your hypothesis or explore your question. Be as specific as possible and preferably use an illustration to help the reader understand how all your plans connect. -->
+<!-- -   Also, include information on what data you are going to use and if you already have ethical consent. If you do already have consent, putting the FETC case number on your front page also suffices. -->
+<!-- -   Describe what software/packages you will use. -->
 
-...
+To introduce the problem, this paper will visualize the issue in fictional examples using the directed acyclic graph.
+
+To uncover the undesirable effects of endogenous covariates and investigate robustness against these effects, we will carry out simulations in which data will be generated according to several increasingly complex causal questions, followed by an analysis of these questions using the GEE, basic MLM and extensions thereof. We consider varying number of timepoints and sample sizes. Statistical analyses pertaining to the GEE and basic MLM will be performed in `R`, version 4.2.0 [@rcoreteam2022]. To fit the GEE, the R-packages `geepack` [@halekoh2006] and `gee` [@carey2024] will evaluate several different working correlation structures, including independent, exchangeable, AR(1) and unstructured. To fit the basic MLM, the R-package `lme4` [@bates2015] will be employed, where we will both evaluate restricted maximum likelihood estimation and ordinary maximum likelihood estimation. Extensions of the MLM, such as the (RI-)CLPM and the bayesian DSEM will be fitted using `Mplus`, version 8.10 [@muthén1998].
 
 \newpage
 

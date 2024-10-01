@@ -35,7 +35,7 @@
 \usepackage{xcolor}
 \usepackage[top=2.5cm,bottom=2.5cm,left=2.5cm,right=2.5cm]{geometry}
 \setlength{\emergencystretch}{3em} % prevent overfull lines
-\setcounter{secnumdepth}{5}
+\setcounter{secnumdepth}{-\maxdimen} % remove section numbering
 % Make \paragraph and \subparagraph free-standing
 \ifx\paragraph\undefined\else
   \let\oldparagraph\paragraph
@@ -223,7 +223,7 @@ Estimating Equations \par}
 % {\small Submitted in total fulfilment of the requirements
 % of the degree of Doctor of Philosophy \par}
 }
-\ifdefined\Shaded\renewenvironment{Shaded}{\begin{tcolorbox}[frame hidden, breakable, enhanced, sharp corners, boxrule=0pt, borderline west={3pt}{0pt}{shadecolor}, interior hidden]}{\end{tcolorbox}}\fi
+\ifdefined\Shaded\renewenvironment{Shaded}{\begin{tcolorbox}[boxrule=0pt, frame hidden, sharp corners, interior hidden, enhanced, breakable, borderline west={3pt}{0pt}{shadecolor}]}{\end{tcolorbox}}\fi
 
 \setstretch{2}
 \pagestyle{fancy}
@@ -237,37 +237,24 @@ Estimating Equations \par}
 \hypertarget{introduction}{%
 \section{Introduction}\label{introduction}}
 
-\begin{itemize}
-\tightlist
-\item
-  Start with a paragraph describing a problem in the real-life world (so
-  that a BoS member not familiar with statistics understands why you are
-  pursuing research in this direction);
-\end{itemize}
-
 Recent trends in data-collection methods and rises in longitudinal
 research have led to a proliferation of studies that employ clustered
 data. To address such data, the psychological sciences most commonly
-resort to multilevel linear models (MLMs), whereas other fields, such as
-biostatistics and econometrics often favour generalized estimating
+resort to multilevel linear models (MLMs), which allow us insight into
+between-person heterogeneity of effects. Conversely, other fields, such
+as biostatistics and econometrics often favour generalized estimating
 equations {[}GEE; McNeish et al.
-(\protect\hyperlink{ref-mcneish2017}{2017}){]}. However, blind
-application of either analysis (e.g., not for its advantages over the
-other in a particular case but because of the frequency of use by fellow
-researchers or by it being unknown) may cause researchers to obtain
-biased estimates that do not represent the measures that they intend to
-report.
-
-\begin{itemize}
-\tightlist
-\item
-  Then, add a paragraph describing what is known in the literature;
-\end{itemize}
+(\protect\hyperlink{ref-mcneish2017}{2017}){]}, which does not include
+random effects. However, blind application of either analysis (e.g., not
+for its advantages over the other in a particular case but because of
+the frequency of use by fellow researchers or by it being unknown) may
+cause researchers to obtain biased estimates that do not represent the
+measures that they intend to report.
 
 Recent evidence has shed light on an issue present in both methods,
-where controlling for covariates may yield biased causal estimands
-(\protect\hyperlink{ref-qian2020}{Qian et al., 2020}). More
-specificially, in a standard MLM with fixed covariates, coefficients may
+where controlling for endogenous covariates may yield biased causal
+estimands (\protect\hyperlink{ref-qian2020}{Qian et al., 2020}). More
+specifically, in a standard MLM with fixed covariates, coefficients may
 be interpreted in the marginal (population-averaged) manner, as well as
 in the conditional-on-the-random-effects manner
 (\protect\hyperlink{ref-qian2020}{Qian et al., 2020, p. 3}). However,
@@ -276,96 +263,52 @@ interpretation is no longer appropriate. In a similar manner, once we
 include endogenous covariates when carrying out GEE, parameter estimates
 no longer follow the marginal interpretation unless the working
 correlation matrix is specified as independent
-(\protect\hyperlink{ref-pepe1994}{Pepe \& Anderson, 1994}).
+(\protect\hyperlink{ref-pepe1994}{Pepe \& Anderson, 1994}). According to
+Diggle (\protect\hyperlink{ref-diggle2002}{2002}), this issue not only
+pertains GEE and MLM, but \emph{all} longitudinal data analysis methods.
 
-\begin{itemize}
-\tightlist
-\item
-  Also, describe what is not known and which gap you will address in
-  your thesis;
-\end{itemize}
-
-\ldots{}
-
-\begin{itemize}
-\tightlist
-\item
-  End with a clear research question and, if applicable, your hypothesis
-  (for confirmatory research questions -- it should be a testable
-  hypothesis) or expectations (for exploratory research questions -- can
-  be much vaguer because of the explorative nature of the question).
-\end{itemize}
-
-\ldots{}
-
-This project aims to address and better understand the biases in the
-parameter estimates of a multilevel model, when there are endogenous
-time-varying covariates (e.g., Micro-randomized trials). The study will
-investigate the issue introduced in Qian et al.
-(\protect\hyperlink{ref-qian2020}{2020}), reframing the problem using
-visualizations such as Directed Acyclic Graphs (DAGs) and path diagrams.
-Additionally, it will compare the multilevel models with alternative
-approaches, including Generalized Estimating Equations (GEE) and Dynamic
-Structural Equation Modeling (DSEM), through simulations and empirical
-analysis.
-
-In the research report, the problem will be restated using
-visualizations to enhance understanding. The biases associated with
-multilevel models in the presence of endogenous time-varying confounders
-will be explored, utilizing path diagrams or Directed Acyclic Graphs
-(DAGs) to illustrate the problem as described by Qian et al.~(2020). To
-further investigate, data will be simulated based on the descriptions
-provided in the study, replicating the conditions under which
-time-varying confounders and endogenous covariates affect the analysis.
-The next step involves reproducing the results of multilevel model and
-GEE as discussed in Qian et al.~(2020). This will include a thorough
-investigation of the effects of group mean centering (GMC) and centering
-within cluster (CWC) on the analysis.
-
-In the thesis, the focus will shift to implementing solution proposed by
-Qian et al.~(2020) in Dynamic Structural Equation Modeling (DSEM) using
-software like Mplus. Utilizing DSEM estimation, the study will explore
-(1) the potential bias in parameter estimates in multilevel models when
-including endogenous covariates and (2) how interpretation of these
-parameters is affected in the presence of marginal and conditional
-effects. Following this, a large-scale simulation study will be
-conducted to compare when GEE delivers better results than DSEM. This
-study will evaluate the sensitivity of each method to model
-misspecification, particularly in areas where the model is not directly
-focused. We will take a multidisciplinary approach, by comparing methods
-for the analysis of endogenous time-varying covariates from the fields
-of biostatistics, econometrics, and social sciences. Finally, the thesis
-will include a comprehensive comparative analysis of multilevel
-regression, GEE, and DSEM. The advantages and disadvantages of each
-method will be summarized, as well as their similarities and
-differences, providing clear guidelines on their appropriate use cases.
-
-In conclusion, the research report will provide a detailed visualization
-and simulation-based exploration of the problem, while the thesis will
-delve deeper into methodological comparisons and practical
-implementations. Together, they will offer a comprehensive evaluation of
-handling endogenous time-varying confounders, providing guidelines on
-different estimation methods for researchers across different fields.
+This indicates a need to understand (1) the consequences of including
+these covariates in analyses on clustered data, including GEE and
+extensions of the basic MLM such as the (random-intercept) cross-lagged
+panel model (CLPM) and dynamic structural equation modeling (DSEM) and
+(2) how this issue may be addressed by researchers that perform
+longitudinal data analysis. Accordingly, this paper explores the ways in
+which the inclusion of time-varying covariates can yield faulty
+inferences and intends to establish guidelines on how this may be
+prevented. More specifically, the current project addresses the
+following research question: \emph{to what extent does the inclusion of
+endogenous variables in multilevel linear models and generalized
+estimating equations result in biased estimands?} In this exploratory
+study, we expect that the inclusion of endogenous time-varying
+covariates elicits non-trivial bias in longitudinal data analyses that
+involve a marginal interpretation.
 
 \hypertarget{analytic-strategy}{%
 \section{Analytic strategy}\label{analytic-strategy}}
 
-\begin{itemize}
-\tightlist
-\item
-  Describe how you are planning to answer your research question and how
-  to test your hypothesis or explore your question. Be as specific as
-  possible and preferably use an illustration to help the reader
-  understand how all your plans connect.
-\item
-  Also, include information on what data you are going to use and if you
-  already have ethical consent. If you do already have consent, putting
-  the FETC case number on your front page also suffices.
-\item
-  Describe what software/packages you will use.
-\end{itemize}
+To introduce the problem, this paper will visualize the issue in
+fictional examples using the directed acyclic graph.
 
-\ldots{}
+To uncover the undesirable effects of endogenous covariates and
+investigate robustness against these effects, we will carry out
+simulations in which data will be generated according to several
+increasingly complex causal questions, followed by an analysis of these
+questions using the GEE, basic MLM and extensions thereof. We consider
+varying number of timepoints and sample sizes. Statistical analyses
+pertaining to the GEE and basic MLM will be performed in \texttt{R},
+version 4.2.0 (\protect\hyperlink{ref-rcoreteam2022}{R Core Team,
+2022}). To fit the GEE, the R-packages \texttt{geepack}
+(\protect\hyperlink{ref-halekoh2006}{Halekoh et al., 2006}) and
+\texttt{gee} (\protect\hyperlink{ref-carey2024}{Carey et al., 2024})
+will evaluate several different working correlation structures,
+including independent, exchangeable, AR(1) and unstructured. To fit the
+basic MLM, the R-package \texttt{lme4}
+(\protect\hyperlink{ref-bates2015}{Bates et al., 2015}) will be
+employed, where we will both evaluate restricted maximum likelihood
+estimation and ordinary maximum likelihood estimation. Extensions of the
+MLM, such as the (RI-)CLPM and the bayesian DSEM will be fitted using
+\texttt{Mplus}, version 8.10
+(\protect\hyperlink{ref-muthuxe9n1998}{Muthén \& Muthén, 1998}).
 
 \newpage
 
@@ -385,11 +328,35 @@ different estimation methods for researchers across different fields.
 
 \hypertarget{refs}{}
 \begin{CSLReferences}{1}{0}
+\leavevmode\vadjust pre{\hypertarget{ref-bates2015}{}}%
+Bates, D., Mächler, M., Bolker, B., \& Walker, S. (2015). Fitting linear
+mixed-effects models using {lme4}. \emph{Journal of Statistical
+Software}, \emph{67}(1), 148.
+\url{https://doi.org/10.18637/jss.v067.i01}
+
+\leavevmode\vadjust pre{\hypertarget{ref-carey2024}{}}%
+Carey, V. J., and 4.4), T. S. L. (R. port of versions 3. 13., src/d*),
+C. M. (LINPACK. routines in, \& updates), B. R. (R. port of version 4.
+13. and. (2024). \emph{Gee: Generalized estimation equation solver}.
+\url{https://cran.r-project.org/web/packages/gee/index.html}
+
+\leavevmode\vadjust pre{\hypertarget{ref-diggle2002}{}}%
+Diggle, P. (2002). \emph{Analysis of Longitudinal Data}. OUP Oxford.
+
+\leavevmode\vadjust pre{\hypertarget{ref-halekoh2006}{}}%
+Halekoh, U., Højsgaard, S., \& Yan, J. (2006). The r package geepack for
+generalized estimating equations. \emph{Journal of Statistical
+Software}, \emph{15/2}, 111.
+
 \leavevmode\vadjust pre{\hypertarget{ref-mcneish2017}{}}%
 McNeish, D., Stapleton, L. M., \& Silverman, R. D. (2017). On the
 unnecessary ubiquity of hierarchical linear modeling.
 \emph{Psychological Methods}, \emph{22}(1), 114--140.
 \url{https://doi.org/10.1037/met0000078}
+
+\leavevmode\vadjust pre{\hypertarget{ref-muthuxe9n1998}{}}%
+Muthén, L. K., \& Muthén, B. O. (1998). \emph{Mplus user's guide} (Eight
+Edition). Muthén \& Muthén.
 
 \leavevmode\vadjust pre{\hypertarget{ref-pepe1994}{}}%
 Pepe, M. S., \& Anderson, G. L. (1994). A cautionary note on inference
@@ -404,6 +371,10 @@ endogenous covariates: Modeling sequential treatment effects with
 application to a mobile health study. \emph{Statistical Science : A
 Review Journal of the Institute of Mathematical Statistics},
 \emph{35}(3), 375--390. \url{https://doi.org/10.1214/19-sts720}
+
+\leavevmode\vadjust pre{\hypertarget{ref-rcoreteam2022}{}}%
+R Core Team. (2022). \emph{R: A language and environment for statistical
+computing}. \url{https://www.R-project.org/}
 
 \end{CSLReferences}
 
