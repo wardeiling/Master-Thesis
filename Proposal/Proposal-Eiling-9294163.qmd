@@ -85,5 +85,12 @@ To uncover the undesirable effects of endogenous covariates and investigate robu
 <!-- -   Add a reference list for the literature used in the text – you can use the formatting style of the chosen journal, but this is not mandatory. -->
 <!-- -   Add about 20 extra references that will be used for the thesis (you do not have to have read these already). -->
 
-::: {#refs}
-:::
+<!-- I need 6 more references -->
+
+<!-- ::: {#refs} -->
+<!-- ::: -->
+
+---
+nocite: |
+  @*
+---
