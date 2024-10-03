@@ -40,47 +40,75 @@ dag <- dagitty('dag {
 plot(dag)
 ```
 
-## Scenario 1: SCM with random intercept and a time-varying $X$ *without* between-person differences (a mean of 0 for everyone)
+## Scenario 1: SCM with random intercept and a time-varying $X$ *without* between-person differences in $\bar{X}_i$ (a mean of 0 for everyone)
 
-The generative model for the data is as follows:
+For the first DGM, using the multilevel notation (Raudenbusch and Bryk, 2002), we can specify the within person equation
 
-$$Y_{it} = \alpha_0 + \alpha_1 X_t + b_{0i} + b_{1} X_{it}+ \epsilon_{it} \quad \text{where} \quad \epsilon_{it} \sim \mathcal{N}(0, 1), \text{iid}$$
-where 
+$$Y_{it} = \beta_{0i} + \beta_1 X_{it} + e_{it} \quad \text{where} \quad e_{it} \sim \mathcal{N}(0, \sigma^2_{e}), \text{iid}$$
 
-- $\alpha_0$: The overall intercept, representing the baseline level of $Y_{t}$ when all other terms are zero.
-- $\alpha_1$: The fixed slope of the predictor $X_t$ on $Y_{t}$
-- $b_{0i}$: Random intercept for individual $i$, representing deviations from the overall intercept  $\alpha_0$.
+and between person equation
 
-Given $X_{it}$ has no between-person differences and a mean of 0:
+$$\beta_{0i} = \gamma_{00} + u_{0i} \quad \text{where} \quad u_{0i} \sim \mathcal{N}(0, \sigma^2_{u0})$$
 
-$$X_{it} = \mathcal{N}(0, 1)$$
-Let us give the parameters arbitrary values
+By plugging the between person equation into the within-person equation we get the combined expression
 
-- $\alpha_0 = 2$
-- $\alpha_1 = 0.6$
-- $b_{0i} \sim \mathcal{N}(0, 1)$
+$$Y_{it} = \gamma_{00} + u_{0i} + \beta_1 X_{it} + e_{it}$$
 
-Let's specify the structural causal model (SCM) including the effects:
+where (1) $\gamma_{00}$ is the overall intercept, (2) $\beta_1$ is the fixed slope and (3) $u_{0i}$ is the random intercept for individual $i$.
 
-```{r}
-# Parameters
-set.seed(123)  # For reproducibility
-n <- 100  # Number of individuals
-total_T <- 5  # Number of measurements per individual
+Given that we want no between person differences in the mean level of $X$ over time and for it to be centered around 0 (i.e., $\bar{X}_{i}= 0$), we may simulate $X_{it}$ as such
 
-alpha_0 <- 2  # Overall intercept
-alpha_1 <- 0.6  # Fixed effect of X on Y
-b_0i <- rnorm(n, mean = 0, sd = 1)  # Random intercepts
+$$X_{it} \sim \mathcal{N}(0, \sigma^2_{X})$$
 
-# Generate individual-level covariates (X)
-X <- rnorm(n, mean = 0, sd = 1)
+Now we may, for instance, give the parameters arbitrary values
 
-```
+- $\gamma_{00} = 2$
+- $\beta_{1}= 0.6$
+- $\sigma^2_{u0}= 1$
+- $\sigma^2_{e}= 1$
+- $\sigma^2_{X}= 1$
 
+## Scenario 2: SCM met een random intercept, time-varying $X$ en *met* between-person verschillen in $\bar{X}_{i}$ (de ene proefpersoon heeft een hogere gemiddelde dan een ander over de tijdspunten)
 
-## Scenario 2: SCM with random intercept and a time-varying $X$ *with* between-person differences (one participant has a greater mean than another across the timepoints)
+For the second DGM, using the multilevel notation (Raudenbusch and Bryk, 2002), we can specify the within person equation
 
-## Scenario 3: SCM with random intercept and a time-varying $X$ *with* between-person differences (one participant has a greater mean than another across the timepoints) that are related to the intercept (of $Y$)
+$$Y_{it} = \beta_{0i} + \beta_1 (X_{it} - \bar{X}_{i}) + e_{it} \quad \text{where} \quad e_{it} \sim \mathcal{N}(0, \sigma^2_{e}), \text{iid}$$
+
+and between person equation
+
+$$\beta_{0i} = \gamma_{00} + u_{0i} \quad \text{where} \quad u_{0i} \sim \mathcal{N}(0, \sigma^2_{u0})$$
+
+By plugging the between person equation into the within-person equation we get the combined expression
+
+$$Y_{it} = \gamma_{00} + u_{0i} + \beta_1 (X_{it} - \bar{X}_{i}) + e_{it}$$
+
+where (1) $\gamma_{00}$ is the overall intercept, (2) $\beta_1$ is the fixed slope and (3) $u_{0i}$ is the random intercept for individual $i$.
+
+Given that we want between person differences in the mean level of $X$ over time, we may simulate $X_{it}$ as such
+
+$$X_{it} = \bar{X}_{i} + e_{X, it} \quad \text{where} \quad e_{X, it} \sim \mathcal{N}(0, \sigma^2_{X})$$
+
+where
+
+$$\bar{X_{i}} \sim \mathcal{N}(\mu_{\bar{X}}, \sigma^2_{\bar{X}})$$
+
+Now we may, for instance, give the parameters arbitrary values
+In addition to the arbitrary values we chose for scenario 1
+
+- $\gamma_{00} = 2$
+- $\beta_{1}= 0.6$
+- $\sigma^2_{u0}= 1$
+- $\sigma^2_{e}= 1$
+- $\sigma^2_{X}= 1$
+
+We now have to also define
+
+- $\mu_{\bar{X}} = 3$
+- $\sigma^2_{\bar{X}} = 1$
+
+## Scenario 3: SCM with random intercept and a time-varying $X$ *with* between-person differences in $\bar{X}_{i}$ (one participant has a greater mean than another across the timepoints) that are related to the intercept (of $Y$)
+
+...
 
 <!-- # Trash -->
 

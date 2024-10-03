@@ -3087,42 +3087,56 @@ vertical-align: -.125em;
 </div>
 </div>
 </section>
-<section id="scenario-1-scm-with-random-intercept-and-a-time-varying-x-without-between-person-differences-a-mean-of-0-for-everyone" class="level2">
-<h2 class="anchored" data-anchor-id="scenario-1-scm-with-random-intercept-and-a-time-varying-x-without-between-person-differences-a-mean-of-0-for-everyone">Scenario 1: SCM with random intercept and a time-varying <span class="math inline">\(X\)</span> <em>without</em> between-person differences (a mean of 0 for everyone)</h2>
-<p>The generative model for the data is as follows:</p>
-<p><span class="math display">\[Y_{it} = \alpha_0 + \alpha_1 X_t + b_{0i} + b_{1} X_{it}+ \epsilon_{it} \quad \text{where} \quad \epsilon_{it} \sim \mathcal{N}(0, 1), \text{iid}\]</span> where</p>
+<section id="scenario-1-scm-with-random-intercept-and-a-time-varying-x-without-between-person-differences-in-barx_i-a-mean-of-0-for-everyone" class="level2">
+<h2 class="anchored" data-anchor-id="scenario-1-scm-with-random-intercept-and-a-time-varying-x-without-between-person-differences-in-barx_i-a-mean-of-0-for-everyone">Scenario 1: SCM with random intercept and a time-varying <span class="math inline">\(X\)</span> <em>without</em> between-person differences in <span class="math inline">\(\bar{X}_i\)</span> (a mean of 0 for everyone)</h2>
+<p>For the first DGM, using the multilevel notation (Raudenbusch and Bryk, 2002), we can specify the within person equation</p>
+<p><span class="math display">\[Y_{it} = \beta_{0i} + \beta_1 X_{it} + e_{it} \quad \text{where} \quad e_{it} \sim \mathcal{N}(0, \sigma^2_{e}), \text{iid}\]</span></p>
+<p>and between person equation</p>
+<p><span class="math display">\[\beta_{0i} = \gamma_{00} + u_{0i} \quad \text{where} \quad u_{0i} \sim \mathcal{N}(0, \sigma^2_{u0})\]</span></p>
+<p>By plugging the between person equation into the within-person equation we get the combined expression</p>
+<p><span class="math display">\[Y_{it} = \gamma_{00} + u_{0i} + \beta_1 X_{it} + e_{it}\]</span></p>
+<p>where (1) <span class="math inline">\(\gamma_{00}\)</span> is the overall intercept, (2) <span class="math inline">\(\beta_1\)</span> is the fixed slope and (3) <span class="math inline">\(u_{0i}\)</span> is the random intercept for individual <span class="math inline">\(i\)</span>.</p>
+<p>Given that we want no between person differences in the mean level of <span class="math inline">\(X\)</span> over time and for it to be centered around 0 (i.e., <span class="math inline">\(\bar{X}_{i}= 0\)</span>), we may simulate <span class="math inline">\(X_{it}\)</span> as such</p>
+<p><span class="math display">\[X_{it} \sim \mathcal{N}(0, \sigma^2_{X})\]</span></p>
+<p>Now we may, for instance, give the parameters arbitrary values</p>
 <ul>
-<li><span class="math inline">\(\alpha_0\)</span>: The overall intercept, representing the baseline level of <span class="math inline">\(Y_{t}\)</span> when all other terms are zero.</li>
-<li><span class="math inline">\(\alpha_1\)</span>: The fixed slope of the predictor <span class="math inline">\(X_t\)</span> on <span class="math inline">\(Y_{t}\)</span></li>
-<li><span class="math inline">\(b_{0i}\)</span>: Random intercept for individual <span class="math inline">\(i\)</span>, representing deviations from the overall intercept <span class="math inline">\(\alpha_0\)</span>.</li>
+<li><span class="math inline">\(\gamma_{00} = 2\)</span></li>
+<li><span class="math inline">\(\beta_{1}= 0.6\)</span></li>
+<li><span class="math inline">\(\sigma^2_{u0}= 1\)</span></li>
+<li><span class="math inline">\(\sigma^2_{e}= 1\)</span></li>
+<li><span class="math inline">\(\sigma^2_{X}= 1\)</span></li>
 </ul>
-<p>Given <span class="math inline">\(X_{it}\)</span> has no between-person differences and a mean of 0:</p>
-<p><span class="math display">\[X_{it} = \mathcal{N}(0, 1)\]</span> Let us give the parameters arbitrary values</p>
+</section>
+<section id="scenario-2-scm-met-een-random-intercept-time-varying-x-en-met-between-person-verschillen-in-barx_i-de-ene-proefpersoon-heeft-een-hogere-gemiddelde-dan-een-ander-over-de-tijdspunten" class="level2">
+<h2 class="anchored" data-anchor-id="scenario-2-scm-met-een-random-intercept-time-varying-x-en-met-between-person-verschillen-in-barx_i-de-ene-proefpersoon-heeft-een-hogere-gemiddelde-dan-een-ander-over-de-tijdspunten">Scenario 2: SCM met een random intercept, time-varying <span class="math inline">\(X\)</span> en <em>met</em> between-person verschillen in <span class="math inline">\(\bar{X}_{i}\)</span> (de ene proefpersoon heeft een hogere gemiddelde dan een ander over de tijdspunten)</h2>
+<p>For the second DGM, using the multilevel notation (Raudenbusch and Bryk, 2002), we can specify the within person equation</p>
+<p><span class="math display">\[Y_{it} = \beta_{0i} + \beta_1 (X_{it} - \bar{X}_{i}) + e_{it} \quad \text{where} \quad e_{it} \sim \mathcal{N}(0, \sigma^2_{e}), \text{iid}\]</span></p>
+<p>and between person equation</p>
+<p><span class="math display">\[\beta_{0i} = \gamma_{00} + u_{0i} \quad \text{where} \quad u_{0i} \sim \mathcal{N}(0, \sigma^2_{u0})\]</span></p>
+<p>By plugging the between person equation into the within-person equation we get the combined expression</p>
+<p><span class="math display">\[Y_{it} = \gamma_{00} + u_{0i} + \beta_1 (X_{it} - \bar{X}_{i}) + e_{it}\]</span></p>
+<p>where (1) <span class="math inline">\(\gamma_{00}\)</span> is the overall intercept, (2) <span class="math inline">\(\beta_1\)</span> is the fixed slope and (3) <span class="math inline">\(u_{0i}\)</span> is the random intercept for individual <span class="math inline">\(i\)</span>.</p>
+<p>Given that we want between person differences in the mean level of <span class="math inline">\(X\)</span> over time, we may simulate <span class="math inline">\(X_{it}\)</span> as such</p>
+<p><span class="math display">\[X_{it} = \bar{X}_{i} + e_{X, it} \quad \text{where} \quad e_{X, it} \sim \mathcal{N}(0, \sigma^2_{X})\]</span></p>
+<p>where</p>
+<p><span class="math display">\[\bar{X_{i}} \sim \mathcal{N}(\mu_{\bar{X}}, \sigma^2_{\bar{X}})\]</span></p>
+<p>Now we may, for instance, give the parameters arbitrary values In addition to the arbitrary values we chose for scenario 1</p>
 <ul>
-<li><span class="math inline">\(\alpha_0 = 2\)</span></li>
-<li><span class="math inline">\(\alpha_1 = 0.6\)</span></li>
-<li><span class="math inline">\(b_{0i} \sim \mathcal{N}(0, 1)\)</span></li>
+<li><span class="math inline">\(\gamma_{00} = 2\)</span></li>
+<li><span class="math inline">\(\beta_{1}= 0.6\)</span></li>
+<li><span class="math inline">\(\sigma^2_{u0}= 1\)</span></li>
+<li><span class="math inline">\(\sigma^2_{e}= 1\)</span></li>
+<li><span class="math inline">\(\sigma^2_{X}= 1\)</span></li>
 </ul>
-<p>Let’s specify the structural causal model (SCM) including the effects:</p>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Parameters</span></span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">123</span>)  <span class="co"># For reproducibility</span></span>
-<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>n <span class="ot">&lt;-</span> <span class="dv">100</span>  <span class="co"># Number of individuals</span></span>
-<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>total_T <span class="ot">&lt;-</span> <span class="dv">5</span>  <span class="co"># Number of measurements per individual</span></span>
-<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>alpha_0 <span class="ot">&lt;-</span> <span class="dv">2</span>  <span class="co"># Overall intercept</span></span>
-<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>alpha_1 <span class="ot">&lt;-</span> <span class="fl">0.6</span>  <span class="co"># Fixed effect of X on Y</span></span>
-<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>b_0i <span class="ot">&lt;-</span> <span class="fu">rnorm</span>(n, <span class="at">mean =</span> <span class="dv">0</span>, <span class="at">sd =</span> <span class="dv">1</span>)  <span class="co"># Random intercepts</span></span>
-<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a><span class="co"># Generate individual-level covariates (X)</span></span>
-<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>X <span class="ot">&lt;-</span> <span class="fu">rnorm</span>(n, <span class="at">mean =</span> <span class="dv">0</span>, <span class="at">sd =</span> <span class="dv">1</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</div>
+<p>We now have to also define</p>
+<ul>
+<li><span class="math inline">\(\mu_{\bar{X}} = 3\)</span></li>
+<li><span class="math inline">\(\sigma^2_{\bar{X}} = 1\)</span></li>
+</ul>
 </section>
-<section id="scenario-2-scm-with-random-intercept-and-a-time-varying-x-with-between-person-differences-one-participant-has-a-greater-mean-than-another-across-the-timepoints" class="level2">
-<h2 class="anchored" data-anchor-id="scenario-2-scm-with-random-intercept-and-a-time-varying-x-with-between-person-differences-one-participant-has-a-greater-mean-than-another-across-the-timepoints">Scenario 2: SCM with random intercept and a time-varying <span class="math inline">\(X\)</span> <em>with</em> between-person differences (one participant has a greater mean than another across the timepoints)</h2>
-</section>
-<section id="scenario-3-scm-with-random-intercept-and-a-time-varying-x-with-between-person-differences-one-participant-has-a-greater-mean-than-another-across-the-timepoints-that-are-related-to-the-intercept-of-y" class="level2">
-<h2 class="anchored" data-anchor-id="scenario-3-scm-with-random-intercept-and-a-time-varying-x-with-between-person-differences-one-participant-has-a-greater-mean-than-another-across-the-timepoints-that-are-related-to-the-intercept-of-y">Scenario 3: SCM with random intercept and a time-varying <span class="math inline">\(X\)</span> <em>with</em> between-person differences (one participant has a greater mean than another across the timepoints) that are related to the intercept (of <span class="math inline">\(Y\)</span>)</h2>
+<section id="scenario-3-scm-with-random-intercept-and-a-time-varying-x-with-between-person-differences-in-barx_i-one-participant-has-a-greater-mean-than-another-across-the-timepoints-that-are-related-to-the-intercept-of-y" class="level2">
+<h2 class="anchored" data-anchor-id="scenario-3-scm-with-random-intercept-and-a-time-varying-x-with-between-person-differences-in-barx_i-one-participant-has-a-greater-mean-than-another-across-the-timepoints-that-are-related-to-the-intercept-of-y">Scenario 3: SCM with random intercept and a time-varying <span class="math inline">\(X\)</span> <em>with</em> between-person differences in <span class="math inline">\(\bar{X}_{i}\)</span> (one participant has a greater mean than another across the timepoints) that are related to the intercept (of <span class="math inline">\(Y\)</span>)</h2>
+<p>…</p>
 <!-- # Trash -->
 <!-- ## Example 1: Continuous, X (individual level) on Y (occasion level) -->
 <!-- Let's simulate clustered data from the SCM -->
