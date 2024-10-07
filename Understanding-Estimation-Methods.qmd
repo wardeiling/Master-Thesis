@@ -65,8 +65,120 @@ Now we may, for instance, give the parameters arbitrary values
 - $\gamma_{00} = 2$
 - $\beta_{1}= 0.6$
 - $\sigma^2_{u0}= 1$
-- $\sigma^2_{e}= 1$
+- $\sigma^2_{e}= 0.2$
 - $\sigma^2_{X}= 1$
+
+Let us now simulate data according to data generating model 1
+
+```{r}
+# Specify parameters
+set.seed(123)  # For reproducibility
+n_i <- 10000  # Number of individuals
+n_t <- 10  # Number of timepoints
+n_obs <- n_i * n_t  # Total number of observations
+
+gamma_00 <- 2
+beta_1 <- 0.6
+sigma_u0 <- 1
+sigma_e <- 0.2 # this may be unrealistic, but we want to see the effect of the estimation method
+sigma_X <- 1
+
+# Simulate data
+X = rnorm(n_obs, 0, sigma_X)
+e = rnorm(n_obs, 0, sigma_e)
+u_0i = rnorm(n_i, 0, sigma_u0)
+
+
+scenario1.data <- tibble(
+  id = rep(1:n_i, each = n_t),
+  time = rep(1:n_t, times = n_i),
+  X = X,
+  e = e,
+  u_0i = rep(u_0i, each = n_t),
+  Y = gamma_00 + u_0i + beta_1 * X + e)
+```
+
+Let's plot the first 10 individuals with different colors for each participant and seperate regression lines for each participant
+
+```{r}
+scenario1.data %>%
+  filter(id <= 5) %>%
+  ggplot(aes(x = X, y = Y, group = id)) +
+  geom_point(aes(color = as.factor(id))) +
+  geom_smooth(method = "lm", se = FALSE, aes(color = as.factor(id))) +
+  geom_abline(intercept = gamma_00, slope = beta_1, color = "black", size = 1) +
+  theme_minimal()
+```
+
+Let's now do the same but with the true regression lines for each individual
+
+```{r}
+head(u_0i, 5)
+
+scenario1.data %>%
+  filter(id <= 5) %>%
+  ggplot(aes(x = X, y = Y, group = id)) +
+  geom_point(aes(color = as.factor(id))) +
+  geom_abline(intercept = gamma_00, slope = beta_1, color = "black", size = 1) + # overall regression line
+  geom_abline(intercept = gamma_00 + u_0i[1], slope = beta_1, color = "red", size = 1) + # for id = 1
+  geom_abline(intercept = gamma_00 + u_0i[2], slope = beta_1, color = "orange", size = 1) + # for id = 2
+  geom_abline(intercept = gamma_00 + u_0i[3], slope = beta_1, color = "green", size = 1) + # for id = 3
+  geom_abline(intercept = gamma_00 + u_0i[4], slope = beta_1, color = "blue", size = 1) + # for id = 4
+  geom_abline(intercept = gamma_00 + u_0i[5], slope = beta_1, color = "purple", size = 1) + # for id = 5
+  theme_minimal()
+```
+
+Let's estimate the effect of $X_t$ on $Y_t$ using MLM
+
+```{r}
+scenario1.MLM.1a <- lmer(Y ~ 1 + X + (1 | id), data = scenario1.data, REML = FALSE)
+scenario1.MLM.1b <- lmer(Y ~ 1 + time + X + (1 | id), data = scenario1.data, REML = FALSE)
+anova(scenario1.MLM.1a, scenario1.MLM.1b)
+```
+
+Model 1a is not significantly worse than Model 1b, which makes sense as we did not specify any effect of time.
+
+```{r}
+scenario1.MLM.2 <- lmer(Y ~ 1 + X + (X | id), data = scenario1.data, REML = FALSE)
+```
+The model with the random slope does not convergence ("boundary singular"), which not unexpected as we did not specify a random slope.
+
+Thus, the final model is the random intercept model
+
+```{r}
+scenario1.MLM.1a_reml <- lmer(Y ~ 1 + X + (1 | id), data = scenario1.data, REML = TRUE)
+scenario1.MLM.1a_mle <- lmer(Y ~ 1 + X + (1 | id), data = scenario1.data, REML = FALSE)
+```
+
+Let's now estimate the effect of $X_t$ on $Y_t$ using GEE
+
+```{r}
+# displays initial regression estimate of GLM
+scenario1.GEE_exch <- gee(Y ~ X, data = scenario1.data, id = id, family = gaussian(), corstr = "exchangeable")
+scenario1.GEE_ind <- gee(Y ~ X, data = scenario1.data, id = id, family = gaussian(), corstr = "independence")
+scenario1.GEE_ar <- gee(Y ~ X, data = scenario1.data, id = id, family = gaussian(), corstr = "AR-M")
+scenario1.GEE_uns <- gee(Y ~ X, data = scenario1.data, id = id, family = gaussian(), corstr = "unstructured") # with n = 100  convergence was not achieved
+# scenario1.GEE_fixed <- gee(Y ~ X, data = scenario1.data, id = id, family = gaussian(), corstr = "fixed") # takes very long to converge
+```
+
+Let's compare the point estimates
+
+```{r}
+# Extracting the coefficients
+coefs <- data.frame(
+  row.names = c("Intercept", "X"),
+  coef_MLM_reml = fixef(scenario1.MLM.1a_reml),
+  coef_MLM_mle = fixef(scenario1.MLM.1a_mle),
+  coef_GEE_exch = coef(scenario1.GEE_exch),
+  coef_GEE_ind = coef(scenario1.GEE_ind),
+  coef_GEE_ar = coef(scenario1.GEE_ar),
+  coef_GEE_uns = coef(scenario1.GEE_uns))
+
+# Create nice table
+knitr::kable(coefs, digits = 3)
+```
+
+The point estimates are essentially identical with a large sample size. However, efficiency/convergence rates may differ across working correlation structures, as unstructured did not convergence with $n = 100$.
 
 ## Scenario 2: SCM met een random intercept, time-varying $X$ en *met* between-person verschillen in $\bar{X}_{i}$ (de ene proefpersoon heeft een hogere gemiddelde dan een ander over de tijdspunten)
 
@@ -98,13 +210,17 @@ In addition to the arbitrary values we chose for scenario 1
 - $\gamma_{00} = 2$
 - $\beta_{1}= 0.6$
 - $\sigma^2_{u0}= 1$
-- $\sigma^2_{e}= 1$
+- $\sigma^2_{e}= 0.2$
 - $\sigma^2_{X}= 1$
 
 We now have to also define
 
 - $\mu_{\bar{X}} = 3$
 - $\sigma^2_{\bar{X}} = 1$
+
+Let us now simulate data according to data generating model 2
+
+
 
 ## Scenario 3: SCM with random intercept and a time-varying $X$ *with* between-person differences in $\bar{X}_{i}$ (one participant has a greater mean than another across the timepoints) that are related to the intercept (of $Y$)
 
