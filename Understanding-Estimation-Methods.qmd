@@ -60,13 +60,13 @@ Given that we want no between person differences in the mean level of $X$ over t
 
 $$X_{it} \sim \mathcal{N}(0, \sigma^2_{X})$$
 
-Now we may, for instance, give the parameters arbitrary values
+Now we may, for instance, give the parameters arbitrary values (note that I define the standarddeviations instead of the variances)
 
-- $\gamma_{00} = 2$
-- $\beta_{1}= 0.6$
-- $\sigma^2_{u0}= 1$
-- $\sigma^2_{e}= 0.2$
-- $\sigma^2_{X}= 1$
+-   $\gamma_{00} = 2$
+-   $\beta_{1}= 0.6$
+-   $\sigma_{u0}= 1$
+-   $\sigma_{e}= 0.1$
+-   $\sigma_{X}= 1$
 
 Let us now simulate data according to data generating model 1
 
@@ -80,7 +80,7 @@ n_obs <- n_i * n_t  # Total number of observations
 gamma_00 <- 2
 beta_1 <- 0.6
 sigma_u0 <- 1
-sigma_e <- 0.2 # this may be unrealistic, but we want to see the effect of the estimation method
+sigma_e <- 0.1 # this may be unrealistic, but we want to see the effect of the estimation method
 sigma_X <- 1
 
 # Simulate data
@@ -96,9 +96,11 @@ scenario1.data <- tibble(
   e = e,
   u_0i = rep(u_0i, each = n_t),
   Y = gamma_00 + u_0i + beta_1 * X + e)
+
+head(scenario1.data)
 ```
 
-Let's plot the first 10 individuals with different colors for each participant and seperate regression lines for each participant
+Let's plot the first 10 individuals with different colors for each participant and separate regression lines for each participant
 
 ```{r}
 scenario1.data %>%
@@ -141,6 +143,7 @@ Model 1a is not significantly worse than Model 1b, which makes sense as we did n
 ```{r}
 scenario1.MLM.2 <- lmer(Y ~ 1 + X + (X | id), data = scenario1.data, REML = FALSE)
 ```
+
 The model with the random slope does not convergence ("boundary singular"), which not unexpected as we did not specify a random slope.
 
 Thus, the final model is the random intercept model
@@ -148,6 +151,8 @@ Thus, the final model is the random intercept model
 ```{r}
 scenario1.MLM.1a_reml <- lmer(Y ~ 1 + X + (1 | id), data = scenario1.data, REML = TRUE)
 scenario1.MLM.1a_mle <- lmer(Y ~ 1 + X + (1 | id), data = scenario1.data, REML = FALSE)
+
+as.numeric(VarCorr(scenario1.MLM.1a_mle)$id[1]) # aligns with specification of sigma_u0
 ```
 
 Let's now estimate the effect of $X_t$ on $Y_t$ using GEE
@@ -165,7 +170,7 @@ Let's compare the point estimates
 
 ```{r}
 # Extracting the coefficients
-coefs <- data.frame(
+scenario1.coefs <- data.frame(
   row.names = c("Intercept", "X"),
   coef_MLM_reml = fixef(scenario1.MLM.1a_reml),
   coef_MLM_mle = fixef(scenario1.MLM.1a_mle),
@@ -175,16 +180,24 @@ coefs <- data.frame(
   coef_GEE_uns = coef(scenario1.GEE_uns))
 
 # Create nice table
-knitr::kable(coefs, digits = 3)
+knitr::kable(scenario1.coefs, digits = 3)
 ```
 
-The point estimates are essentially identical with a large sample size. However, efficiency/convergence rates may differ across working correlation structures, as unstructured did not convergence with $n = 100$.
+The point estimates are essentially identical with $n = 10.000$. However, efficiency/convergence rates may differ across working correlation structures, as unstructured did not convergence with $n = 100$.
+
+De interpretatie for the fixed effects is als volgt:
+
+-   intercept: de gemiddelde angst ($Y$) over alle proefpersonen genomen $\approx 2$, wanneer slaapproblemen ($X$) 0 zijn, waarbij variatie tussen proefpersonen genegeerd wordt. In technische termen, we nemen gelijke waarden aan voor de random effecten.
+
+-   slope: voor een eenheid verandering in slaapproblemen ($X$), wordt verwacht dat angst ($Y$) verandert met $\approx 0.6$, waarbij variatie tussen proefpersonen genegeerd wordt. In technische termen, we nemen gelijke waarden aan voor de random effecten.
 
 ## Scenario 2: SCM met een random intercept, time-varying $X$ en *met* between-person verschillen in $\bar{X}_{i}$ (de ene proefpersoon heeft een hogere gemiddelde dan een ander over de tijdspunten)
 
-For the second DGM, using the multilevel notation (Raudenbusch and Bryk, 2002), we can specify the within person equation
+For the second DGM, using the multilevel notation (Raudenbusch and Bryk, 2002), we can specify the within person equation with the predictor within-person centered
 
 $$Y_{it} = \beta_{0i} + \beta_1 (X_{it} - \bar{X}_{i}) + e_{it} \quad \text{where} \quad e_{it} \sim \mathcal{N}(0, \sigma^2_{e}), \text{iid}$$
+
+Note that by using the within-person centered predictor $X_{it} - \bar{X}_{i}$, we disentangle the within-person and between-person slopes, whereas the use of the non-centered predictor $X_{it}$ would have yielded a weighted sum of the estimated slopes at both levels.
 
 and between person equation
 
@@ -204,236 +217,302 @@ where
 
 $$\bar{X_{i}} \sim \mathcal{N}(\mu_{\bar{X}}, \sigma^2_{\bar{X}})$$
 
-Now we may, for instance, give the parameters arbitrary values
-In addition to the arbitrary values we chose for scenario 1
+Now we may, for instance, give the parameters arbitrary values In addition to the arbitrary values we chose for scenario 1 (note that I define the standarddeviations instead of the variances)
 
-- $\gamma_{00} = 2$
-- $\beta_{1}= 0.6$
-- $\sigma^2_{u0}= 1$
-- $\sigma^2_{e}= 0.2$
-- $\sigma^2_{X}= 1$
+-   $\gamma_{00} = 2$
+-   $\beta_{1}= 0.6$
+-   $\sigma_{u0}= 1$
+-   $\sigma_{e}= 0.1$
+-   $\sigma_{X}= 1$
 
 We now have to also define
 
-- $\mu_{\bar{X}} = 3$
-- $\sigma^2_{\bar{X}} = 1$
+-   $\mu_{\bar{X}} = 3$
+-   $\sigma_{\bar{X}} = 1$
 
 Let us now simulate data according to data generating model 2
 
+```{r}
+# Specify parameters
+set.seed(123)  # For reproducibility
+n_i <- 1000  # Number of individuals
+n_t <- 10  # Number of timepoints
+n_obs <- n_i * n_t  # Total number of observations
+
+gamma_00 <- 2
+beta_1 <- 0.6 # represents the within-person slope
+sigma_u0 <- 1
+sigma_e <- 0.1 # this may be unrealistic, but we want to see the effect of the estimation method
+sigma_X <- 1
+
+mu_X_bar <- 3
+sigma_X_bar <- 1
+
+# Simulate data
+X_bar_i = rnorm(n_i, mu_X_bar, sigma_X_bar)
+u_0i = rnorm(n_i, 0, sigma_u0)
+
+# Create a data frame to store the simulated data
+scenario2.data <- data.frame()
+
+for (i in 1:n_i) {
+  for (t in 1:n_t) {
+    
+    X_it <- X_bar_i[i] + rnorm(1, mean = 0, sd = sigma_X)
+    
+    e_it <- rnorm(1, mean = 0, sd = sigma_e)
+    
+    Y_it <- gamma_00 + u_0i[i] + beta_1 * (X_it - X_bar_i[i]) + e_it
+    
+    # Store the values in the data frame
+    scenario2.data <- rbind(scenario2.data, data.frame(id = i, time = t, X = X_it, Y = Y_it, X_bar = X_bar_i[i]))
+  }
+}
+
+head(scenario2.data)
+```
+
+Let's plot the first 10 individuals with different colors for each participant and separate regression lines for each participant
+
+```{r}
+scenario2.data %>%
+  filter(id <= 5) %>%
+  ggplot(aes(x = X, y = Y, group = id)) +
+  geom_point(aes(color = as.factor(id))) +
+  geom_smooth(method = "lm", se = FALSE, aes(color = as.factor(id))) +
+  geom_abline(intercept = gamma_00, slope = beta_1, color = "black", size = 1) +
+  theme_minimal()
+```
+
+Let's now do the same but with the true regression lines for each individual
+
+```{r}
+head(u_0i, 5)
+head(X_bar_i, 5)
+
+scenario2.data %>%
+  filter(id <= 5) %>%
+  ggplot(aes(x = X, y = Y, group = id)) +
+  geom_point(aes(color = as.factor(id))) +
+  geom_abline(intercept = gamma_00, slope = beta_1, color = "black", size = 1) + # overall regression line
+  geom_abline(intercept = gamma_00 + u_0i[1], slope = beta_1, color = "red", size = 1) + # for id = 1
+  geom_abline(intercept = gamma_00 + u_0i[2], slope = beta_1, color = "orange", size = 1) + # for id = 2
+  geom_abline(intercept = gamma_00 + u_0i[3], slope = beta_1, color = "green", size = 1) + # for id = 3
+  geom_abline(intercept = gamma_00 + u_0i[4], slope = beta_1, color = "blue", size = 1) + # for id = 4
+  geom_abline(intercept = gamma_00 + u_0i[5], slope = beta_1, color = "purple", size = 1) + # for id = 5
+  theme_minimal()
+```
+
+Let's estimate the effect of $X_t$ on $Y_t$ using MLM
+
+first, we have to prepare the centered within clusters variable $X_{it} - \bar{X}_{i}$
+
+```{r}
+scenario2.data$X_cwc <- scenario2.data$X - scenario2.data$X_bar
+```
+
+Now let's fit the models
+
+```{r}
+scenario2.MLM.1a_reml <- lmer(Y ~ 1 + X_cwc + (1 | id), data = scenario2.data, REML = TRUE)
+scenario2.MLM.1a_mle <- lmer(Y ~ 1 + X_cwc + (1 | id), data = scenario2.data, REML = FALSE)
+
+as.numeric(VarCorr(scenario2.MLM.1a_mle)$id[1]) # aligns with specification of sigma_u0
+```
+
+Let's now estimate the effect of $X_t$ on $Y_t$ using GEE
+
+```{r}
+# displays initial regression estimate of GLM
+scenario2.GEE_exch <- gee(Y ~ X_cwc, data = scenario2.data, id = id, family = gaussian(), corstr = "exchangeable")
+scenario2.GEE_ind <- gee(Y ~ X_cwc, data = scenario2.data, id = id, family = gaussian(), corstr = "independence")
+scenario2.GEE_ar <- gee(Y ~ X_cwc, data = scenario2.data, id = id, family = gaussian(), corstr = "AR-M")
+scenario2.GEE_uns <- gee(Y ~ X_cwc, data = scenario2.data, id = id, family = gaussian(), corstr = "unstructured") # with n = 1000, working correlation not positive definite
+```
+
+Let's compare the point estimates
+
+```{r}
+# Extracting the coefficients
+scenario2.coefs <- data.frame(
+  row.names = c("Intercept", "X"),
+  coef_MLM_reml = fixef(scenario2.MLM.1a_reml),
+  coef_MLM_mle = fixef(scenario2.MLM.1a_mle),
+  coef_GEE_exch = coef(scenario2.GEE_exch),
+  coef_GEE_ind = coef(scenario2.GEE_ind),
+  coef_GEE_ar = coef(scenario2.GEE_ar),
+  coef_GEE_uns = coef(scenario2.GEE_uns))
+
+# Create nice table
+knitr::kable(scenario2.coefs, digits = 3)
+```
+
+The point estimates are essentially identical with $n = 10.000$ across all conditions. Note that for the unstructured working correlation matrix, the warning "Working correlation estimate not positive definite" was given.
+
+Nu dat we de within-person centered predictor gebruiken is de interpretatie anders:
+
+-   de gemiddelde angst ($Y$) over alle proefpersonen genomen $\approx 2$, wanneer slaapproblemen ($X$) 0 zijn, waarbij variatie tussen proefpersonen genegeerd wordt. In technische termen, we nemen gelijke waarden aan voor de random effecten.
+
+-   slope beta_1 (within-person interpretatie): *In vergelijking met het persoonlijk gemiddelde van een persoon*, gaat een eenheid toename in slaapproblemen gepaard met een toename van $\approx 0.6$ in angst ($Y$), waarbij variatie tussen proefpersonen genegeerd wordt. In technische termen, we nemen gelijke waarden aan voor de random effecten.
+
+## Scenario 3: SCM met een random intercept, time-varying $X$ en *met* between-person verschillen in $\bar{X}_{i}$ (de ene proefpersoon heeft een hogere gemiddelde dan een ander over de tijdspunten) die gerelateerd zijn aan de intercept (van $Y$)
+
+For the second DGM, using the multilevel notation (Raudenbusch and Bryk, 2002), we can specify the within person equation
+
+$$Y_{it} = \beta_{0i} + \beta_1 (X_{it} - \bar{X}_{i}) + e_{it} \quad \text{where} \quad e_{it} \sim \mathcal{N}(0, \sigma^2_{e}), \text{iid}$$
+
+and between person equation
+
+$$\beta_{0i} = \gamma_{00} + \gamma_{01} \bar{X}_i + u_{0i} \quad \text{where} \quad u_{0i} \sim \mathcal{N}(0, \sigma^2_{u0})$$
+
+in which we predict the within-person mean on the outcome from the within-person mean on the predictor. In other words, by including the between-person slope $\gamma_{01}$ multiplied by the person mean $\bar{X}_i$, we could investigate contextual effects.
+
+By plugging the between person equation into the within-person equation we get the combined expression
+
+$$Y_{it} = \gamma_{00} +  \gamma_{01} \bar{X}_i + u_{0i} + \beta_1 (X_{it} - \bar{X}_{i}) + e_{it}$$
+
+where (1) $\gamma_{00}$ is the overall intercept, (2) $\beta_1$ is the fixed slope and (3) $u_{0i}$ is the random intercept for individual $i$.
+
+Given that we want between person differences in the mean level of $X$ over time, we may simulate $X_{it}$ as such
+
+$$X_{it} = \bar{X}_{i} + e_{X, it} \quad \text{where} \quad e_{X, it} \sim \mathcal{N}(0, \sigma^2_{X})$$
+
+where
+
+$$\bar{X_{i}} \sim \mathcal{N}(\mu_{\bar{X}}, \sigma^2_{\bar{X}})$$
+
+Now we may, for instance, give the parameters arbitrary values In addition to the arbitrary values we chose for scenario 2 (note that I define the standard deviations instead of the variances)
+
+-   $\gamma_{00} = 2$
+-   $\beta_{1}= 0.6$
+-   $\sigma_{u0}= 1$
+-   $\sigma_{e}= 0.1$
+-   $\sigma_{X}= 1$
+-   $\mu_{\bar{X}} = 3$
+-   $\sigma_{\bar{X}} = 1$
+
+we have to define
+
+-   $\gamma_{01} = 0.8$
+
+Let us now simulate data according to data generating model 3
+
+```{r}
+# Specify parameters
+set.seed(123)  # For reproducibility
+n_i <- 1000  # Number of individuals
+n_t <- 10  # Number of timepoints
+n_obs <- n_i * n_t  # Total number of observations
+
+gamma_00 <- 2
+beta_1 <- 0.6 # represents the within-person slope
+sigma_u0 <- 1
+sigma_e <- 0.1 # this may be unrealistic, but we want to see the effect of the estimation method
+sigma_X <- 1
+mu_X_bar <- 3
+sigma_X_bar <- 1
+
+gamma_01 <- 0.8 # represents the between-person slope
+
+# Simulate data
+X_bar_i = rnorm(n_i, mu_X_bar, sigma_X_bar)
+u_0i = rnorm(n_i, 0, sigma_u0)
+
+# Create a data frame to store the simulated data
+scenario3.data <- data.frame()
+
+for (i in 1:n_i) {
+  for (t in 1:n_t) {
+    
+    X_it <- X_bar_i[i] + rnorm(1, mean = 0, sd = sigma_X)
+    
+    e_it <- rnorm(1, mean = 0, sd = sigma_e)
+    
+    Y_it <- gamma_00 + gamma_01 * X_bar_i[i] + u_0i[i] + beta_1 * (X_it - X_bar_i[i]) + e_it
+    
+    # Store the values in the data frame
+    scenario3.data <- rbind(scenario3.data, data.frame(id = i, time = t, X = X_it, Y = Y_it, X_bar = X_bar_i[i]))
+  }
+}
+
+head(scenario3.data)
+```
+
+Let's plot the first 10 individuals with different colors for each participant and separate regression lines for each participant
+
+```{r}
+scenario3.data %>%
+  filter(id <= 5) %>%
+  ggplot(aes(x = X, y = Y, group = id)) +
+  geom_point(aes(color = as.factor(id))) +
+  geom_smooth(method = "lm", se = FALSE, aes(color = as.factor(id))) +
+  geom_abline(intercept = gamma_00, slope = beta_1, color = "black", size = 1) +
+  theme_minimal()
+```
+
+Let's now do the same but with the true regression lines for each individual
+
+```{r}
+head(u_0i, 5)
+head(X_bar_i, 5)
+
+scenario3.data %>%
+  filter(id <= 5) %>%
+  ggplot(aes(x = X, y = Y, group = id)) +
+  geom_point(aes(color = as.factor(id))) +
+  geom_abline(intercept = gamma_00, slope = beta_1, color = "black", size = 1) + # overall regression line
+  geom_abline(intercept = gamma_00 + u_0i[1], slope = beta_1, color = "red", size = 1) + # for id = 1
+  geom_abline(intercept = gamma_00 + u_0i[2], slope = beta_1, color = "orange", size = 1) + # for id = 2
+  geom_abline(intercept = gamma_00 + u_0i[3], slope = beta_1, color = "green", size = 1) + # for id = 3
+  geom_abline(intercept = gamma_00 + u_0i[4], slope = beta_1, color = "blue", size = 1) + # for id = 4
+  geom_abline(intercept = gamma_00 + u_0i[5], slope = beta_1, color = "purple", size = 1) + # for id = 5
+  theme_minimal()
+```
+
+Let's estimate the effect of $X_t$ on $Y_t$ using MLM
+
+first, we have to prepare the centered within clusters variable $X_{it} - \bar{X}_{i}$
+
+```{r}
+scenario3.data$X_cwc <- scenario3.data$X - scenario3.data$X_bar
+```
+
+Now let's fit the models
+
+```{r}
+scenario3.MLM.1a_reml <- lmer(Y ~ 1 + X_cwc + X_bar + (1 | id), data = scenario3.data, REML = TRUE)
+scenario3.MLM.1a_mle <- lmer(Y ~ 1 + X_cwc + X_bar + (1 | id), data = scenario3.data, REML = FALSE)
+
+summary(scenario3.MLM.1a_reml)
+
+as.numeric(VarCorr(scenario3.MLM.1a_mle)$id[1]) # aligns with specification of sigma_u0
+```
+
+Let's now estimate the effect of $X_t$ on $Y_t$ using GEE
+
+```{r}
+# displays initial regression estimate of GLM
+scenario3.GEE_exch <- gee(Y ~ X_cwc + X_bar, data = scenario3.data, id = id, family = gaussian(), corstr = "exchangeable")
+scenario3.GEE_ind <- gee(Y ~ X_cwc + X_bar, data = scenario3.data, id = id, family = gaussian(), corstr = "independence")
+scenario3.GEE_ar <- gee(Y ~ X_cwc + X_bar, data = scenario3.data, id = id, family = gaussian(), corstr = "AR-M")
+scenario3.GEE_uns <- gee(Y ~ X_cwc + X_bar, data = scenario3.data, id = id, family = gaussian(), corstr = "unstructured") # with n = 1000, working correlation not positive definite
+```
+
+Let's compare the point estimates
+
+```{r}
+# Extracting the coefficients
+scenario3.coefs <- data.frame(
+  row.names = c("Intercept", "X", "X_bar"),
+  coef_MLM_reml = fixef(scenario3.MLM.1a_reml),
+  coef_MLM_mle = fixef(scenario3.MLM.1a_mle),
+  coef_GEE_exch = coef(scenario3.GEE_exch),
+  coef_GEE_ind = coef(scenario3.GEE_ind),
+  coef_GEE_ar = coef(scenario3.GEE_ar),
+  coef_GEE_uns = coef(scenario3.GEE_uns))
+
+# Create nice table
+knitr::kable(scenario3.coefs, digits = 3)
+```
 
 
-## Scenario 3: SCM with random intercept and a time-varying $X$ *with* between-person differences in $\bar{X}_{i}$ (one participant has a greater mean than another across the timepoints) that are related to the intercept (of $Y$)
-
-...
-
-<!-- # Trash -->
-
-<!-- ## Example 1: Continuous, X (individual level) on Y (occasion level) -->
-
-<!-- Let's simulate clustered data from the SCM -->
-
-<!-- ```{r} -->
-<!-- # Parameters -->
-<!-- set.seed(123)  # For reproducibility -->
-<!-- n_individuals <- 100  # Number of individuals -->
-<!-- n_measurements <- 5   # Number of measurements per individual -->
-<!-- rho <- 0.7  # Correlation between measurements within an individual -->
-
-<!-- # Generate individual-level covariates (X) -->
-<!-- X <- rnorm(n_individuals, mean = 5, sd = 1) -->
-
-<!-- # Correlation matrix (exchangeable structure) -->
-<!-- corr_matrix <- matrix(rho, n_measurements, n_measurements) -->
-<!-- diag(corr_matrix) <- 1  # Diagonal is 1 -->
-
-<!-- # Simulate repeated measures for each individual -->
-<!-- ex1.data <- data.frame() -->
-<!-- for (i in 1:n_individuals) { -->
-<!--   # Generate errors with the working correlation structure -->
-<!--   epsilon_Y <- mvrnorm(1, mu = rep(0, n_measurements), Sigma = corr_matrix) -->
-
-<!--   # Generate Y for this individual across measurement occasions -->
-<!--   Y <- 2 + 0.6 * X[i] + epsilon_Y -->
-
-<!--   # Store the data -->
-<!--   individual_data <- data.frame( -->
-<!--     id = i, -->
-<!--     occasion = 1:n_measurements, -->
-<!--     X = X[i], -->
-<!--     Y = Y -->
-<!--   ) -->
-
-<!--   ex1.data <- rbind(ex1.data, individual_data) -->
-<!-- } -->
-
-<!-- # Make sure first timepoint is zero (for intercept interpretation) -->
-<!-- ex1.data$occasion <- ex1.data$occasion - 1 -->
-
-<!-- # Check the first few rows of the data -->
-<!-- head(ex1.data) -->
-<!-- ``` -->
-
-<!-- Let's estimate the effect of $X$ on $Y_t$ using MLM -->
-
-<!-- ```{r} -->
-<!-- # Model 1a: Intercept only model, random intercept  -->
-<!-- ex1.MLM1a <- lmer(Y ~ 1 + (1 | id), data = ex1.data, REML = FALSE)  -->
-
-<!-- # Model 1b: Intercept only model including the predictor time  -->
-<!-- ex1.MLM1b <- lmer(Y ~ 1 + occasion + (1 | id), data = ex1.data, REML = FALSE)  -->
-<!-- anova(ex1.MLM1a, ex1.MLM1b) # Model 1a is not significantly worse than Model 1b -->
-
-<!-- # Model 2: including remainder of the level 1 predictors  -->
-<!-- ex1.MLM2 <- lmer(Y ~ 1 + occasion + X + (1 | id), data = ex1.data, REML = FALSE) -->
-<!-- anova(ex1.MLM1b, ex1.MLM2) # Model 1b is significantly worse than Model 2 -->
-
-<!-- # Model 3.1: random slope for time (and add covariance) -->
-<!-- ex1.MLM3.1 <- lmer(Y ~ 1 + occasion + X + (occasion | id), data = ex1.data, REML = FALSE) -->
-<!-- anova(ex1.MLM2, ex1.MLM3.1) # Model 2 is not significantly worse than Model 3.1 -->
-<!-- ``` -->
-
-<!-- Let's estimate the effect of $X$ on $Y$ using GEE -->
-
-<!-- First, we should examine the observed correlation structure for observations within a cluster. -->
-
-<!-- ```{r} -->
-<!-- data_wide <- ex1.data %>% -->
-<!--   pivot_wider(names_from = occasion, values_from = Y, names_prefix = "Y_") -->
-
-<!-- # Remove the ID column -->
-<!-- data_wide_Y <- data_wide %>% dplyr::select(starts_with("Y_")) -->
-
-<!-- # Compute the observed correlation matrix for the measurements across all individuals -->
-<!-- observed_corr_matrix <- cor(data_wide_Y, use = "pairwise.complete.obs") -->
-
-<!-- # Display the observed correlation matrix -->
-<!-- observed_corr_matrix -->
-<!-- ``` -->
-
-<!-- It seems to be more or less exchangeable, which is what we specified. -->
-
-<!-- ```{r} -->
-<!-- # displays initial regression estimate of GLM -->
-<!-- ex1.GEE_exch <- gee(Y ~ X + occasion, data = ex1.data, id = id, family = gaussian(), corstr = "exchangeable") -->
-<!-- ex1.GEE_ind <- gee(Y ~ X + occasion, data = ex1.data, id = id, family = gaussian(), corstr = "independence") -->
-<!-- ex1.GEE_ar <- gee(Y ~ X + occasion, data = ex1.data, id = id, family = gaussian(), corstr = "AR-M") -->
-<!-- ex1.GEE_uns <- gee(Y ~ X + occasion, data = ex1.data, id = id, family = gaussian(), corstr = "unstructured") -->
-<!-- ex1.GEE_fixed <- gee(Y ~ X + occasion, data = ex1.data, id = id, family = gaussian(), corstr = "fixed") -->
-<!-- ``` -->
-
-<!-- Let's compare the point estimates -->
-
-<!-- ```{r} -->
-<!-- fixef(ex1.MLM_reml) -->
-<!-- fixef(ex1.MLM_mle) -->
-<!-- coef(ex1.GEE) -->
-<!-- ``` -->
-
-<!-- The point estimates are identical (to 7 decimals) both (1) within the two MLM approaches and (2) between MLM and GEE. -->
-
-<!-- ## Example 2: Continuous, X (occasion level) on Y (occasion level) -->
-
-<!-- Let's draw a DAG where we are estimating the effect of $X_t$ (sleep-problems) on $Y_t$ (anxiety) -->
-
-<!-- ```{r} -->
-<!-- dag <- dagitty('dag { -->
-<!--   X_t -> Y_t -->
-<!-- }') -->
-
-<!-- plot(dag) -->
-<!-- ``` -->
-
-<!-- Let's specify the structural causal model (SCM) for the drawn DAG -->
-
-<!-- $$X_{i,t} := \mathcal{N}(5, 1) \quad \text{for} \quad i = 1, \ldots, n_{\text{individuals}} \quad \text{and} \quad t = 1, \ldots, n_{\text{measurements}}$$ $$Y_{i,t} := 2 + 0.6 \cdot X_{i,t} + \epsilon_{i,t} \quad \text{for} \quad i = 1, \ldots, n_{\text{individuals}} \quad \text{and} \quad t = 1, \ldots, n_{\text{measurements}}$$ where $\epsilon_{i,t}$ follows a multivariate normal distribution with mean zero and an exchangeable correlation structure across time points $t$: $$\epsilon_{i,1}, \ldots, \epsilon_{i,n_{\text{measurements}}} \sim \mathcal{MVN}(0, \Sigma)$$ The covariance matrix $\Sigma$ has the form: -->
-
-<!-- $$\Sigma = \begin{bmatrix} 1 & \rho & \cdots & \rho \\ \rho & 1 & \cdots & \rho \\ \vdots & \vdots & \ddots & \vdots \\ \rho & \rho & \cdots & 1 \end{bmatrix}$$ with $\rho = 0.7$, representing the exchangeable correlation structure between the errors at different time points within an individual. -->
-
-<!-- ```{r} -->
-<!-- # Parameters -->
-<!-- set.seed(123)  # For reproducibility -->
-<!-- n_individuals <- 100  # Number of individuals -->
-<!-- n_measurements <- 5   # Number of measurements per individual -->
-<!-- rho <- 0.7  # Correlation between measurements within an individual -->
-
-<!-- # Generate occasion level predictors (X) -->
-<!-- X <- rnorm(n_individuals * n_measurements, mean = 5, sd = 1) -->
-
-<!-- # Correlation matrix (exchangeable structure) -->
-<!-- corr_matrix <- matrix(rho, n_measurements, n_measurements) -->
-<!-- diag(corr_matrix) <- 1  # Diagonal is 1 -->
-
-<!-- # Simulate repeated measures for each individual -->
-<!-- ex2.data <- data.frame() -->
-<!-- for (i in 1:n_individuals) { -->
-<!--   # Generate errors with the working correlation structure -->
-<!--   epsilon_Y <- mvrnorm(1, mu = rep(0, n_measurements), Sigma = corr_matrix) -->
-
-<!--   # Generate Y for this individual across measurement occasions -->
-<!--   Y <- 2 + 0.6 * X[(i - 1) * n_measurements + 1:(n_measurements)] + epsilon_Y -->
-
-<!--   # Store the data -->
-<!--   individual_data <- data.frame( -->
-<!--     id = i, -->
-<!--     occasion = 1:n_measurements, -->
-<!--     X = X[(i - 1) * n_measurements + 1:(n_measurements)], -->
-<!--     Y = Y -->
-<!--   ) -->
-
-<!--   ex2.data <- rbind(ex2.data, individual_data) -->
-<!-- } -->
-
-<!-- # Make sure first timepoint is zero -->
-<!-- ex2.data$occasion <- ex2.data$occasion - 1 -->
-
-<!-- head(ex2.data) -->
-<!-- ``` -->
-
-<!-- Let's estimate the effect of $X$ on $Y$ using MLM -->
-
-<!-- ```{r} -->
-<!-- # Model 1a: Intercept only model, random intercept  -->
-<!-- ex2.MLM1a <- lmer(Y ~ 1 + (1 | id), data = ex2.data, REML = FALSE)  -->
-
-<!-- # Model 1b: Intercept only model including the predictor time  -->
-<!-- ex2.MLM1b <- lmer(Y ~ 1 + occasion + (1 | id), data = ex2.data, REML = FALSE)  -->
-<!-- anova(ex2.MLM1a, ex2.MLM1b) # Model 1a is not significantly worse than Model 1b -->
-
-<!-- # Model 2: including remainder of the level 1 predictors  -->
-<!-- ex2.MLM2 <- lmer(Y ~ 1 + occasion + X + (1 | id), data = ex2.data, REML = FALSE) -->
-<!-- anova(ex2.MLM1b, ex2.MLM2) # Model 1b is significantly worse than Model 2 -->
-
-<!-- # Model 3.1: random slope for time (and add covariance) -->
-<!-- ex2.MLM3.1 <- lmer(Y ~ 1 + occasion + X + (occasion | id), data = ex2.data, REML = FALSE) -->
-<!-- anova(ex2.MLM2, ex2.MLM3.1) # Model 2 is not significantly worse than Model 3.1 -->
-
-<!-- # Model 3.2: random slope for X (and add covariance) -->
-<!-- ex2.MLM3.2 <- lmer(Y ~ 1 + occasion + X + (X | id), data = ex2.data, REML = FALSE) -->
-<!-- anova(ex2.MLM2, ex2.MLM3.2) # Model 2 not is significantly worse than Model 3.2 -->
-<!-- ``` -->
-
-<!-- Following the results of the model comparison, we will continue with model 2, which includes the fixed effect of $X$ and the random intercept for each individual. -->
-
-<!-- ```{r} -->
-<!-- # Model 2 -->
-<!-- ex2.MLM2_mle <- lmer(Y ~ 1 + occasion + X + (1 | id), data = ex2.data, REML = FALSE) -->
-<!-- ex2.MLM2_reml <- lmer(Y ~ 1 + occasion + X + (1 | id), data = ex2.data) -->
-<!-- ``` -->
-
-<!-- Let's estimate the effect of $X$ on $Y$ using GEE -->
-
-<!-- ```{r} -->
-<!-- # displays initial regression estimate of GLM -->
-<!-- ex2.GEE <- gee(Y ~ X, data = ex2.data, id = id, family = gaussian(), corstr = "exchangeable") -->
-<!-- # summary(ex2.GEE) -->
-<!-- ``` -->
-
-<!-- Let's compare the point estimates -->
-
-<!-- ```{r} -->
-<!-- fixef(ex2.MLM2_reml) -->
-<!-- fixef(ex2.MLM2_mle) -->
-<!-- coef(ex2.GEE) -->
-<!-- ``` -->
-
-<!-- There is a minor difference between the point estimates of (1) the two MLM approaches (from 4th decimal) and (2) between MLM and GEE (from 4th decimal). -->

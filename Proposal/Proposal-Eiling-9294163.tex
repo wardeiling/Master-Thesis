@@ -225,7 +225,7 @@ Estimating Equations \par}
 % {\small Submitted in total fulfilment of the requirements
 % of the degree of Doctor of Philosophy \par}
 }
-\ifdefined\Shaded\renewenvironment{Shaded}{\begin{tcolorbox}[interior hidden, frame hidden, sharp corners, boxrule=0pt, borderline west={3pt}{0pt}{shadecolor}, breakable, enhanced]}{\end{tcolorbox}}\fi
+\ifdefined\Shaded\renewenvironment{Shaded}{\begin{tcolorbox}[breakable, frame hidden, enhanced, sharp corners, interior hidden, boxrule=0pt, borderline west={3pt}{0pt}{shadecolor}]}{\end{tcolorbox}}\fi
 
 \setstretch{2}
 \pagestyle{fancy}
@@ -239,10 +239,10 @@ Estimating Equations \par}
 \hypertarget{introduction}{%
 \section{Introduction}\label{introduction}}
 
-Across a wide range of disciplines, researchers analyze longitudinal,
-observational data to investigate prospective causal relationships
-between variables. To address such data, the psychological sciences most
-commonly resort to the multilevel linear model (MLM)
+Across a wide range of disciplines, researchers analyze clustered
+longitudinal, observational data to investigate prospective causal
+relationships between variables. To address such data, the psychological
+sciences most commonly resort to the multilevel linear model (MLM)
 (\protect\hyperlink{ref-mcneish2017}{McNeish et al., 2017}), which is
 characterized by its separation of stable between-person differences
 from possible trends in the dynamics of within-person fluctuations
@@ -250,12 +250,12 @@ from possible trends in the dynamics of within-person fluctuations
 Conversely, other fields, such as biostatistics and econometrics often
 favour generalized estimating equations (GEE,
 \protect\hyperlink{ref-mcneish2017}{McNeish et al., 2017}). While some
-interdisciplinary research has been carried out on comparing these
-methods (\protect\hyperlink{ref-mcneish2017}{McNeish et al., 2017};
+interdisciplinary research has introduced and compared these methods
+(\protect\hyperlink{ref-mcneish2017}{McNeish et al., 2017};
 \protect\hyperlink{ref-muth2016}{Muth et al., 2016};
-\protect\hyperlink{ref-yan2013}{Yan et al., 2013}), the causal
-structures under which these models may yield meaningful inferences has
-received scant attention in the research literature.
+\protect\hyperlink{ref-yan2013}{Yan et al., 2013}), much of it remains
+superficial, lacking a focus on the specific conditions under which
+these models can produce meaningful inferences.
 
 Recent evidence has shed light on an issue present in both methods,
 where controlling for moderators of the treatment effect---that depend
@@ -268,11 +268,11 @@ interpretations of the coefficients are no longer valid
 (\protect\hyperlink{ref-qian2020}{Qian et al., 2020, p. 3}). According
 to Diggle (\protect\hyperlink{ref-diggle2002}{2002}), this issue not
 only pertains GEE and MLM, but \emph{all} longitudinal data analysis
-methods. However, due to a segregation of the disciplines that employ
-these methods, such critiques of the MLM not reach the applied
-researcher. And when it does, the technical nature and jargon of the
-literature in other fields may prevent these researchers from figuring
-out how and when these problems occur.
+methods. However, due to a schism of the disciplines that employ these
+methods, such critiques of the MLM not reach the applied researcher. And
+when it does, the technical nature and jargon of the literature in other
+fields may prevent these researchers from figuring out how and when
+these problems occur.
 
 This indicates a need to understand (1) the consequences of including
 these covariates in analyses on multilevel longitudinal data, such as
