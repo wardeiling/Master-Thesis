@@ -5,6 +5,7 @@ format:
   html:
     toc: true
     toc-location: left
+    toc-expand: 3
     number-sections: false
     # embed-resources: false
     default-image-extension: svg
@@ -24,6 +25,8 @@ In this document, we will compare estimation methods in the context of clustered
 Let's first install and load necessary packages
 
 ```{r}
+#| label: Packages
+
 # Load packages
 library(dagitty)
 library(tidyverse)
@@ -54,7 +57,11 @@ dag <- dagitty('dag {
 plot(dag)
 ```
 
-## Scenario 1
+## Regression of $Y$ on $X$
+
+In de eerste drie scenarios zullen we kijken naar de effecten van $X$ op $Y$ in een multilevel model. In scenario 1 zullen we kijken naar een situatie waarin er geen tussen-persoon verschillen zijn in de gemiddelde waarde van $X$ over tijd; in scenario 2 zullen we kijken naar een situatie waarin er wel tussen-persoon verschillen zijn in de gemiddelde waarde van $X$ over tijd; en in scenario 3 zullen we kijken naar een situatie waarin er tussen-persoon verschillen zijn in de gemiddelde waarde van $X$ over tijd en die samenhangt met de random intercept van $Y$.
+
+### Scenario 1
 
 **SCM with random intercept and a time-varying $X$ *without* between-person differences in $\bar{X}_i$ (a mean of 0 for everyone)**
 
@@ -211,7 +218,7 @@ De interpretatie for the fixed effects is als volgt:
 
 -   slope: voor een eenheid verandering in slaapproblemen ($X$), wordt verwacht dat angst ($Y$) verandert met $\approx 0.6$, waarbij variatie tussen proefpersonen genegeerd wordt. In technische termen, we nemen gelijke waarden aan voor de random effecten.
 
-## Scenario 2
+### Scenario 2
 
 **SCM met een random intercept, time-varying $X$ en *met* between-person verschillen in $\bar{\mu}_{i}$ (de ene proefpersoon heeft een hogere gemiddelde dan een ander over de tijdspunten)**
 
@@ -426,7 +433,7 @@ Nu dat we de within-person centered predictor gebruiken is de interpretatie ande
 
 -   slope beta_1 (within-person interpretatie): *In vergelijking met het persoonlijk gemiddelde van een persoon*, gaat een eenheid toename in slaapproblemen gepaard met een toename van $\approx 0.6$ in angst ($Y$), waarbij variatie tussen proefpersonen genegeerd wordt. In technische termen, we nemen gelijke waarden aan voor de random effecten.
 
-## Scenario 3
+### Scenario 3
 
 **SCM met een random intercept, time-varying $X$ en *met* between-person verschillen in $\bar{\mu}_{i}$ (de ene proefpersoon heeft een hogere gemiddelde dan een ander over de tijdspunten) die gerelateerd zijn aan de intercept (van $Y$)**
 
@@ -637,4 +644,46 @@ knitr::kable(scenario3.coefs, digits = 3)
 ```
 
 Again, the point estimates are essentially the same across all methods with $n = 1.000$. As a reminder, we specified the overall intercept $\gamma_{00} = 2$, the fixed within-person slope $\beta_1 = 0.6$, and the between person slope $\gamma_{01} = 0.8$. The point estimates are very close to the true values. Although the intercept is consistently off by more than 0.1.
+
+## Including Covariate $Z$
+
+Nu zullen we verder bouwen op scenario 3 en een covariaat $Z$ toevoegen aan het model. Hierbij zullen we in scenario 4 een time-invariante covariaat $Z$ toevoegen, in scenario 5 een time-varying exogenous covariaat $Z$ toevoegen en in scenario 6 een time-varying endogenous covariaat $Z$ toevoegen. We zullen de effecten van $X$ en $Z$ op $Y$ schatten met behulp van MLM en GEE.
+
+### Scenario 4
+
+**Ten opzichte van scenario 3, wordt er in dit scenario een time-invariant moderator $Z$ toegevoegd aan het model in het effect van $X$ op $Y$**
+
+----
+
+In verband met het toevoegen van een nieuwe variabele, kunnen we opnieuw de DAG tekenen.
+
+```{r}
+#| label: DAG2
+#| cache: true
+#| fig-cap: "DAG for the data generating models"
+
+dag2 <- dagitty('dag {
+  "X_t" -> "Y_t"
+  "Z" -> "Y_t"
+  "X_t" -> "Z_t"
+}')
+
+plot(dag2)
+```
+
+### Scenario 5
+
+**Ten opzichte van scenario 3, wordt er in dit scenario een time-varying exogenous covariate $Z$ toegevoegd aan het model**
+
+
+
+### Scenario 6
+
+**Ten opzichte van scenario 3, wordt er in dit scenario een time-varying endogenous covariate $Z$ toegevoegd aan het model**
+
+## Including a Random Slope
+
+Bij de vorige scenarios hebben we gekeken naar het effect van verschillende covariaaten in modellen met alleen een random intercept. In de volgende scenarios zullen we hier ook een random slope aan toevoegen. We zullen de effecten van $X$ en $Z$ op $Y$ schatten met behulp van MLM en GEE.
+
+
 

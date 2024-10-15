@@ -84,14 +84,24 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 <div id="quarto-content" class="page-columns page-rows-contents page-layout-article toc-left">
 <div id="quarto-sidebar-toc-left" class="sidebar toc-left">
-  <nav id="TOC" role="doc-toc" class="toc-active">
+  <nav id="TOC" role="doc-toc" class="toc-active" data-toc-expanded="3">
     <h2 id="toc-title">Table of contents</h2>
    
   <ul>
   <li><a href="#introduction" id="toc-introduction" class="nav-link active" data-scroll-target="#introduction">Introduction</a></li>
+  <li><a href="#regression-of-y-on-x" id="toc-regression-of-y-on-x" class="nav-link" data-scroll-target="#regression-of-y-on-x">Regression of <span class="math inline">\(Y\)</span> on <span class="math inline">\(X\)</span></a>
+  <ul class="collapse">
   <li><a href="#scenario-1" id="toc-scenario-1" class="nav-link" data-scroll-target="#scenario-1">Scenario 1</a></li>
   <li><a href="#scenario-2" id="toc-scenario-2" class="nav-link" data-scroll-target="#scenario-2">Scenario 2</a></li>
   <li><a href="#scenario-3" id="toc-scenario-3" class="nav-link" data-scroll-target="#scenario-3">Scenario 3</a></li>
+  </ul></li>
+  <li><a href="#including-covariate-z" id="toc-including-covariate-z" class="nav-link" data-scroll-target="#including-covariate-z">Including Covariate <span class="math inline">\(Z\)</span></a>
+  <ul class="collapse">
+  <li><a href="#scenario-4" id="toc-scenario-4" class="nav-link" data-scroll-target="#scenario-4">Scenario 4</a></li>
+  <li><a href="#scenario-5" id="toc-scenario-5" class="nav-link" data-scroll-target="#scenario-5">Scenario 5</a></li>
+  <li><a href="#scenario-6" id="toc-scenario-6" class="nav-link" data-scroll-target="#scenario-6">Scenario 6</a></li>
+  </ul></li>
+  <li><a href="#including-a-random-slope" id="toc-including-a-random-slope" class="nav-link" data-scroll-target="#including-a-random-slope">Including a Random Slope</a></li>
   </ul>
 </nav>
 </div>
@@ -159,8 +169,11 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 </div>
 </section>
-<section id="scenario-1" class="level2">
-<h2 class="anchored" data-anchor-id="scenario-1">Scenario 1</h2>
+<section id="regression-of-y-on-x" class="level2">
+<h2 class="anchored" data-anchor-id="regression-of-y-on-x">Regression of <span class="math inline">\(Y\)</span> on <span class="math inline">\(X\)</span></h2>
+<p>In de eerste drie scenarios zullen we kijken naar de effecten van <span class="math inline">\(X\)</span> op <span class="math inline">\(Y\)</span> in een multilevel model. In scenario 1 zullen we kijken naar een situatie waarin er geen tussen-persoon verschillen zijn in de gemiddelde waarde van <span class="math inline">\(X\)</span> over tijd; in scenario 2 zullen we kijken naar een situatie waarin er wel tussen-persoon verschillen zijn in de gemiddelde waarde van <span class="math inline">\(X\)</span> over tijd; en in scenario 3 zullen we kijken naar een situatie waarin er tussen-persoon verschillen zijn in de gemiddelde waarde van <span class="math inline">\(X\)</span> over tijd en die samenhangt met de random intercept van <span class="math inline">\(Y\)</span>.</p>
+<section id="scenario-1" class="level3">
+<h3 class="anchored" data-anchor-id="scenario-1">Scenario 1</h3>
 <p><strong>SCM with random intercept and a time-varying <span class="math inline">\(X\)</span> <em>without</em> between-person differences in <span class="math inline">\(\bar{X}_i\)</span> (a mean of 0 for everyone)</strong></p>
 <hr>
 <p>For the first DGM, using the multilevel notation (Raudenbusch and Bryk, 2002), we can specify the within person equation</p>
@@ -353,8 +366,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <li><p>slope: voor een eenheid verandering in slaapproblemen (<span class="math inline">\(X\)</span>), wordt verwacht dat angst (<span class="math inline">\(Y\)</span>) verandert met <span class="math inline">\(\approx 0.6\)</span>, waarbij variatie tussen proefpersonen genegeerd wordt. In technische termen, we nemen gelijke waarden aan voor de random effecten.</p></li>
 </ul>
 </section>
-<section id="scenario-2" class="level2">
-<h2 class="anchored" data-anchor-id="scenario-2">Scenario 2</h2>
+<section id="scenario-2" class="level3">
+<h3 class="anchored" data-anchor-id="scenario-2">Scenario 2</h3>
 <p><strong>SCM met een random intercept, time-varying <span class="math inline">\(X\)</span> en <em>met</em> between-person verschillen in <span class="math inline">\(\bar{\mu}_{i}\)</span> (de ene proefpersoon heeft een hogere gemiddelde dan een ander over de tijdspunten)</strong></p>
 <hr>
 <p>For the second DGM, using the multilevel notation (Raudenbusch and Bryk, 2002), we can specify the within person equation with the predictor within-person centered</p>
@@ -624,8 +637,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <li><p>slope beta_1 (within-person interpretatie): <em>In vergelijking met het persoonlijk gemiddelde van een persoon</em>, gaat een eenheid toename in slaapproblemen gepaard met een toename van <span class="math inline">\(\approx 0.6\)</span> in angst (<span class="math inline">\(Y\)</span>), waarbij variatie tussen proefpersonen genegeerd wordt. In technische termen, we nemen gelijke waarden aan voor de random effecten.</p></li>
 </ul>
 </section>
-<section id="scenario-3" class="level2">
-<h2 class="anchored" data-anchor-id="scenario-3">Scenario 3</h2>
+<section id="scenario-3" class="level3">
+<h3 class="anchored" data-anchor-id="scenario-3">Scenario 3</h3>
 <p><strong>SCM met een random intercept, time-varying <span class="math inline">\(X\)</span> en <em>met</em> between-person verschillen in <span class="math inline">\(\bar{\mu}_{i}\)</span> (de ene proefpersoon heeft een hogere gemiddelde dan een ander over de tijdspunten) die gerelateerd zijn aan de intercept (van <span class="math inline">\(Y\)</span>)</strong></p>
 <hr>
 <p>For the third DGM, using the multilevel notation (Raudenbusch and Bryk, 2002), we can specify the within person equation</p>
@@ -902,6 +915,46 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 </div>
 <p>Again, the point estimates are essentially the same across all methods with <span class="math inline">\(n = 1.000\)</span>. As a reminder, we specified the overall intercept <span class="math inline">\(\gamma_{00} = 2\)</span>, the fixed within-person slope <span class="math inline">\(\beta_1 = 0.6\)</span>, and the between person slope <span class="math inline">\(\gamma_{01} = 0.8\)</span>. The point estimates are very close to the true values. Although the intercept is consistently off by more than 0.1.</p>
+</section>
+</section>
+<section id="including-covariate-z" class="level2">
+<h2 class="anchored" data-anchor-id="including-covariate-z">Including Covariate <span class="math inline">\(Z\)</span></h2>
+<p>Nu zullen we verder bouwen op scenario 3 en een covariaat <span class="math inline">\(Z\)</span> toevoegen aan het model. Hierbij zullen we in scenario 4 een time-invariante covariaat <span class="math inline">\(Z\)</span> toevoegen, in scenario 5 een time-varying exogenous covariaat <span class="math inline">\(Z\)</span> toevoegen en in scenario 6 een time-varying endogenous covariaat <span class="math inline">\(Z\)</span> toevoegen. We zullen de effecten van <span class="math inline">\(X\)</span> en <span class="math inline">\(Z\)</span> op <span class="math inline">\(Y\)</span> schatten met behulp van MLM en GEE.</p>
+<section id="scenario-4" class="level3">
+<h3 class="anchored" data-anchor-id="scenario-4">Scenario 4</h3>
+<p><strong>Ten opzichte van scenario 3, wordt er in dit scenario een time-invariant covariate <span class="math inline">\(Z\)</span> toegevoegd aan het model</strong></p>
+<hr>
+<p>In verband met het toevoegen van een nieuwe variabele, kunnen we opnieuw de DAG tekenen.</p>
+<div class="cell" data-hash="Data-Generating-Models_cache/html/DAG2_144b5135154ca3f2efad3dca7ef0ac51">
+<div class="sourceCode cell-code" id="cb56"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb56-1"><a href="#cb56-1" aria-hidden="true" tabindex="-1"></a>dag2 <span class="ot">&lt;-</span> <span class="fu">dagitty</span>(<span class="st">'dag {</span></span>
+<span id="cb56-2"><a href="#cb56-2" aria-hidden="true" tabindex="-1"></a><span class="st">  "X_t" -&gt; "Y_t"</span></span>
+<span id="cb56-3"><a href="#cb56-3" aria-hidden="true" tabindex="-1"></a><span class="st">  "Z" -&gt; "Y_t"</span></span>
+<span id="cb56-4"><a href="#cb56-4" aria-hidden="true" tabindex="-1"></a><span class="st">  "X_t" -&gt; "X_t"</span></span>
+<span id="cb56-5"><a href="#cb56-5" aria-hidden="true" tabindex="-1"></a><span class="st">}'</span>)</span>
+<span id="cb56-6"><a href="#cb56-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb56-7"><a href="#cb56-7" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(dag2)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<figcaption class="figure-caption">DAG for the data generating models</figcaption>
+<p><img src="Data-Generating-Models_files/figure-html/DAG2-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="scenario-5" class="level3">
+<h3 class="anchored" data-anchor-id="scenario-5">Scenario 5</h3>
+<p><strong>Ten opzichte van scenario 3, wordt er in dit scenario een time-varying exogenous covariate <span class="math inline">\(Z\)</span> toegevoegd aan het model</strong></p>
+</section>
+<section id="scenario-6" class="level3">
+<h3 class="anchored" data-anchor-id="scenario-6">Scenario 6</h3>
+<p><strong>Ten opzichte van scenario 3, wordt er in dit scenario een time-varying endogenous covariate <span class="math inline">\(Z\)</span> toegevoegd aan het model</strong></p>
+</section>
+</section>
+<section id="including-a-random-slope" class="level2">
+<h2 class="anchored" data-anchor-id="including-a-random-slope">Including a Random Slope</h2>
+<p>Bij de vorige scenarios hebben we gekeken naar het effect van verschillende covariaaten in modellen met alleen een random intercept. In de volgende scenarios zullen we hier ook een random slope aan toevoegen. We zullen de effecten van <span class="math inline">\(X\)</span> en <span class="math inline">\(Z\)</span> op <span class="math inline">\(Y\)</span> schatten met behulp van MLM en GEE.</p>
 </section>
 
 </main>
