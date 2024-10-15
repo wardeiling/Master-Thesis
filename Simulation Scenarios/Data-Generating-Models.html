@@ -91,17 +91,26 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   <li><a href="#introduction" id="toc-introduction" class="nav-link active" data-scroll-target="#introduction">Introduction</a></li>
   <li><a href="#regression-of-y-on-x" id="toc-regression-of-y-on-x" class="nav-link" data-scroll-target="#regression-of-y-on-x">Regression of <span class="math inline">\(Y\)</span> on <span class="math inline">\(X\)</span></a>
   <ul class="collapse">
-  <li><a href="#scenario-1" id="toc-scenario-1" class="nav-link" data-scroll-target="#scenario-1">Scenario 1</a></li>
-  <li><a href="#scenario-2" id="toc-scenario-2" class="nav-link" data-scroll-target="#scenario-2">Scenario 2</a></li>
-  <li><a href="#scenario-3" id="toc-scenario-3" class="nav-link" data-scroll-target="#scenario-3">Scenario 3</a></li>
+  <li><a href="#scenario-1-without-between-person-differences-in-barmu_i" id="toc-scenario-1-without-between-person-differences-in-barmu_i" class="nav-link" data-scroll-target="#scenario-1-without-between-person-differences-in-barmu_i">Scenario 1: without between-person differences in <span class="math inline">\(\bar{\mu}_i\)</span></a></li>
+  <li><a href="#scenario-2-with-between-person-differences-in-barmu_i" id="toc-scenario-2-with-between-person-differences-in-barmu_i" class="nav-link" data-scroll-target="#scenario-2-with-between-person-differences-in-barmu_i">Scenario 2: with between person differences in <span class="math inline">\(\bar{\mu}_{i}\)</span></a></li>
+  <li><a href="#scenario-3-with-relation-between-beta_0i-and-barmu_i" id="toc-scenario-3-with-relation-between-beta_0i-and-barmu_i" class="nav-link" data-scroll-target="#scenario-3-with-relation-between-beta_0i-and-barmu_i">Scenario 3: with relation between <span class="math inline">\(\beta_{0i}\)</span> and <span class="math inline">\(\bar{\mu}_{i}\)</span></a></li>
   </ul></li>
-  <li><a href="#including-covariate-z" id="toc-including-covariate-z" class="nav-link" data-scroll-target="#including-covariate-z">Including Covariate <span class="math inline">\(Z\)</span></a>
+  <li><a href="#including-time-invariant-covariate-z" id="toc-including-time-invariant-covariate-z" class="nav-link" data-scroll-target="#including-time-invariant-covariate-z">Including Time-invariant Covariate <span class="math inline">\(Z\)</span></a>
   <ul class="collapse">
-  <li><a href="#scenario-4" id="toc-scenario-4" class="nav-link" data-scroll-target="#scenario-4">Scenario 4</a></li>
-  <li><a href="#scenario-5" id="toc-scenario-5" class="nav-link" data-scroll-target="#scenario-5">Scenario 5</a></li>
-  <li><a href="#scenario-6" id="toc-scenario-6" class="nav-link" data-scroll-target="#scenario-6">Scenario 6</a></li>
+  <li><a href="#scenario-4-time-invariant-covariate-z" id="toc-scenario-4-time-invariant-covariate-z" class="nav-link" data-scroll-target="#scenario-4-time-invariant-covariate-z">Scenario 4: Time-invariant Covariate <span class="math inline">\(Z\)</span></a></li>
+  </ul></li>
+  <li><a href="#including-time-varying-exogenous-covariate-z" id="toc-including-time-varying-exogenous-covariate-z" class="nav-link" data-scroll-target="#including-time-varying-exogenous-covariate-z">Including Time-varying Exogenous Covariate <span class="math inline">\(Z\)</span></a>
+  <ul class="collapse">
+  <li><a href="#scenario-5-time-varying-exogenous-covariate-z" id="toc-scenario-5-time-varying-exogenous-covariate-z" class="nav-link" data-scroll-target="#scenario-5-time-varying-exogenous-covariate-z">Scenario 5: Time-varying Exogenous Covariate <span class="math inline">\(Z\)</span></a></li>
+  </ul></li>
+  <li><a href="#including-time-varying-endogenous-covariate-z" id="toc-including-time-varying-endogenous-covariate-z" class="nav-link" data-scroll-target="#including-time-varying-endogenous-covariate-z">Including Time-varying Endogenous Covariate <span class="math inline">\(Z\)</span></a>
+  <ul class="collapse">
+  <li><a href="#scenario-6-time-varying-confounder-z_t1-of-effect-x_t-on-x_t2" id="toc-scenario-6-time-varying-confounder-z_t1-of-effect-x_t-on-x_t2" class="nav-link" data-scroll-target="#scenario-6-time-varying-confounder-z_t1-of-effect-x_t-on-x_t2">Scenario 6: Time-varying confounder <span class="math inline">\(Z_{t+1}\)</span> of effect <span class="math inline">\(X_t\)</span> on <span class="math inline">\(X_{t+2}\)</span></a></li>
+  <li><a href="#scenario-7-time-varying-mediator-z_t1-of-effect-x_t-on-y_t2" id="toc-scenario-7-time-varying-mediator-z_t1-of-effect-x_t-on-y_t2" class="nav-link" data-scroll-target="#scenario-7-time-varying-mediator-z_t1-of-effect-x_t-on-y_t2">Scenario 7: Time-varying mediator <span class="math inline">\(Z_{t+1}\)</span> of effect <span class="math inline">\(X_t\)</span> on <span class="math inline">\(Y_{t+2}\)</span></a></li>
+  <li><a href="#scenario-8-time-varying-moderator-z_t-of-effect-x_t-on-y_t1" id="toc-scenario-8-time-varying-moderator-z_t-of-effect-x_t-on-y_t1" class="nav-link" data-scroll-target="#scenario-8-time-varying-moderator-z_t-of-effect-x_t-on-y_t1">Scenario 8: Time-varying moderator <span class="math inline">\(Z_{t}\)</span> of effect <span class="math inline">\(X_t\)</span> on <span class="math inline">\(Y_{t+1}\)</span></a></li>
   </ul></li>
   <li><a href="#including-a-random-slope" id="toc-including-a-random-slope" class="nav-link" data-scroll-target="#including-a-random-slope">Including a Random Slope</a></li>
+  <li><a href="#including-autocorrelation" id="toc-including-autocorrelation" class="nav-link" data-scroll-target="#including-autocorrelation">Including autocorrelation</a></li>
   </ul>
 </nav>
 </div>
@@ -136,7 +145,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <h2 class="anchored" data-anchor-id="introduction">Introduction</h2>
 <p>In this document, we will compare estimation methods in the context of clustered data (measurements within invididuals): generalized estimating equations (GEE) and mixed linear models (MLM).</p>
 <p>Let’s first install and load necessary packages</p>
-<div class="cell">
+<div class="cell" data-hash="Data-Generating-Models_cache/html/Packages_5680c5ce89e9731941e87bd76105b66b">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Load packages</span></span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dagitty)</span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
@@ -152,13 +161,21 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(jtools)</span>
 <span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(cowplot)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<p>For all examples, we will use the same basic DAG, where we are estimating the effect of <span class="math inline">\(X_t\)</span> (sleep-problems) on <span class="math inline">\(Y_t\)</span> (anxiety). This implies that we are investigating the effect of sleep problems on anxiety within the same timepoint (we could also use a lagged effect, but we will keep it simple for now).</p>
-<div class="cell" data-hash="Data-Generating-Models_cache/html/DAG_36fcf578bc4d2a39f6c56928f5c41a9a">
+</section>
+<section id="regression-of-y-on-x" class="level2">
+<h2 class="anchored" data-anchor-id="regression-of-y-on-x">Regression of <span class="math inline">\(Y\)</span> on <span class="math inline">\(X\)</span></h2>
+<p>In de eerste drie scenarios zullen we kijken naar de effecten van <span class="math inline">\(X\)</span> op <span class="math inline">\(Y\)</span> in een multilevel model. In scenario 1 zullen we kijken naar een situatie waarin er geen tussen-persoon verschillen zijn in de gemiddelde waarde van <span class="math inline">\(X\)</span> over tijd; in scenario 2 zullen we kijken naar een situatie waarin er wel tussen-persoon verschillen zijn in de gemiddelde waarde van <span class="math inline">\(X\)</span> over tijd; en in scenario 3 zullen we kijken naar een situatie waarin er tussen-persoon verschillen zijn in de gemiddelde waarde van <span class="math inline">\(X\)</span> over tijd en die samenhangt met de random intercept van <span class="math inline">\(Y\)</span>.</p>
+<p>Accordingly, for the first three scenarios, we will use the same basic DAG, where we are estimating the effect of <span class="math inline">\(X_t\)</span> (sleep-problems) on <span class="math inline">\(Y_t\)</span> (anxiety). This implies that we are investigating the effect of sleep problems on anxiety within the same timepoint (we could also use a lagged effect, but we will keep it simple for now).</p>
+<div class="cell" data-hash="Data-Generating-Models_cache/html/DAG_f4fabac4283252563529b46fca64bf72">
 <div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>dag <span class="ot">&lt;-</span> <span class="fu">dagitty</span>(<span class="st">'dag {</span></span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="st">  "X_t" -&gt; "Y_t"</span></span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="st">}'</span>)</span>
-<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(dag)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="st">bb="0,0,1,1"</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="st">X [exposure,pos="0.169,0.440"]</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="st">Y [outcome,pos="0.567,0.440"]</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="st">X -&gt; Y</span></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a><span class="st">}</span></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a><span class="st">'</span>)</span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a><span class="fu">ggdag_status</span>(dag) <span class="sc">+</span> <span class="fu">theme_dag</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
@@ -168,13 +185,9 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 </div>
 </div>
-</section>
-<section id="regression-of-y-on-x" class="level2">
-<h2 class="anchored" data-anchor-id="regression-of-y-on-x">Regression of <span class="math inline">\(Y\)</span> on <span class="math inline">\(X\)</span></h2>
-<p>In de eerste drie scenarios zullen we kijken naar de effecten van <span class="math inline">\(X\)</span> op <span class="math inline">\(Y\)</span> in een multilevel model. In scenario 1 zullen we kijken naar een situatie waarin er geen tussen-persoon verschillen zijn in de gemiddelde waarde van <span class="math inline">\(X\)</span> over tijd; in scenario 2 zullen we kijken naar een situatie waarin er wel tussen-persoon verschillen zijn in de gemiddelde waarde van <span class="math inline">\(X\)</span> over tijd; en in scenario 3 zullen we kijken naar een situatie waarin er tussen-persoon verschillen zijn in de gemiddelde waarde van <span class="math inline">\(X\)</span> over tijd en die samenhangt met de random intercept van <span class="math inline">\(Y\)</span>.</p>
-<section id="scenario-1" class="level3">
-<h3 class="anchored" data-anchor-id="scenario-1">Scenario 1</h3>
-<p><strong>SCM with random intercept and a time-varying <span class="math inline">\(X\)</span> <em>without</em> between-person differences in <span class="math inline">\(\bar{X}_i\)</span> (a mean of 0 for everyone)</strong></p>
+<section id="scenario-1-without-between-person-differences-in-barmu_i" class="level3">
+<h3 class="anchored" data-anchor-id="scenario-1-without-between-person-differences-in-barmu_i">Scenario 1: without between-person differences in <span class="math inline">\(\bar{\mu}_i\)</span></h3>
+<p>SCM with random intercept and a time-varying <span class="math inline">\(X\)</span> <em>without</em> between-person differences in <span class="math inline">\(\bar{\mu}_i\)</span> (a mean of 0 for everyone)</p>
 <hr>
 <p>For the first DGM, using the multilevel notation (Raudenbusch and Bryk, 2002), we can specify the within person equation</p>
 <p><span class="math display">\[Y_{it} = \beta_{0i} + \beta_1 X_{it} + e_{it} \quad \text{where} \quad e_{it} \sim \mathcal{N}(0, \sigma^2_{e}), \text{iid}\]</span></p>
@@ -366,9 +379,9 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <li><p>slope: voor een eenheid verandering in slaapproblemen (<span class="math inline">\(X\)</span>), wordt verwacht dat angst (<span class="math inline">\(Y\)</span>) verandert met <span class="math inline">\(\approx 0.6\)</span>, waarbij variatie tussen proefpersonen genegeerd wordt. In technische termen, we nemen gelijke waarden aan voor de random effecten.</p></li>
 </ul>
 </section>
-<section id="scenario-2" class="level3">
-<h3 class="anchored" data-anchor-id="scenario-2">Scenario 2</h3>
-<p><strong>SCM met een random intercept, time-varying <span class="math inline">\(X\)</span> en <em>met</em> between-person verschillen in <span class="math inline">\(\bar{\mu}_{i}\)</span> (de ene proefpersoon heeft een hogere gemiddelde dan een ander over de tijdspunten)</strong></p>
+<section id="scenario-2-with-between-person-differences-in-barmu_i" class="level3">
+<h3 class="anchored" data-anchor-id="scenario-2-with-between-person-differences-in-barmu_i">Scenario 2: with between person differences in <span class="math inline">\(\bar{\mu}_{i}\)</span></h3>
+<p>SCM met een random intercept, time-varying <span class="math inline">\(X\)</span> en <em>met</em> between-person verschillen in <span class="math inline">\(\bar{\mu}_{i}\)</span> (de ene proefpersoon heeft een hogere gemiddelde dan een ander over de tijdspunten)</p>
 <hr>
 <p>For the second DGM, using the multilevel notation (Raudenbusch and Bryk, 2002), we can specify the within person equation with the predictor within-person centered</p>
 <p><span class="math display">\[Y_{it} = \beta_{0i} + \beta_1 (X_{it} - \bar{\mu}_{i}) + e_{it} \quad \text{where} \quad e_{it} \sim \mathcal{N}(0, \sigma^2_{e}), \text{iid}\]</span></p>
@@ -637,9 +650,9 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <li><p>slope beta_1 (within-person interpretatie): <em>In vergelijking met het persoonlijk gemiddelde van een persoon</em>, gaat een eenheid toename in slaapproblemen gepaard met een toename van <span class="math inline">\(\approx 0.6\)</span> in angst (<span class="math inline">\(Y\)</span>), waarbij variatie tussen proefpersonen genegeerd wordt. In technische termen, we nemen gelijke waarden aan voor de random effecten.</p></li>
 </ul>
 </section>
-<section id="scenario-3" class="level3">
-<h3 class="anchored" data-anchor-id="scenario-3">Scenario 3</h3>
-<p><strong>SCM met een random intercept, time-varying <span class="math inline">\(X\)</span> en <em>met</em> between-person verschillen in <span class="math inline">\(\bar{\mu}_{i}\)</span> (de ene proefpersoon heeft een hogere gemiddelde dan een ander over de tijdspunten) die gerelateerd zijn aan de intercept (van <span class="math inline">\(Y\)</span>)</strong></p>
+<section id="scenario-3-with-relation-between-beta_0i-and-barmu_i" class="level3">
+<h3 class="anchored" data-anchor-id="scenario-3-with-relation-between-beta_0i-and-barmu_i">Scenario 3: with relation between <span class="math inline">\(\beta_{0i}\)</span> and <span class="math inline">\(\bar{\mu}_{i}\)</span></h3>
+<p>SCM met een random intercept, time-varying <span class="math inline">\(X\)</span> en <em>met</em> between-person verschillen in <span class="math inline">\(\bar{\mu}_{i}\)</span> (de ene proefpersoon heeft een hogere gemiddelde dan een ander over de tijdspunten) die gerelateerd zijn aan de intercept (van <span class="math inline">\(Y\)</span>)</p>
 <hr>
 <p>For the third DGM, using the multilevel notation (Raudenbusch and Bryk, 2002), we can specify the within person equation</p>
 <p><span class="math display">\[Y_{it} = \beta_{0i} + \beta_1 (X_{it} - \bar{\mu}_{i}) + e_{it} \quad \text{where} \quad e_{it} \sim \mathcal{N}(0, \sigma^2_{e}), \text{iid}\]</span></p>
@@ -917,44 +930,214 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <p>Again, the point estimates are essentially the same across all methods with <span class="math inline">\(n = 1.000\)</span>. As a reminder, we specified the overall intercept <span class="math inline">\(\gamma_{00} = 2\)</span>, the fixed within-person slope <span class="math inline">\(\beta_1 = 0.6\)</span>, and the between person slope <span class="math inline">\(\gamma_{01} = 0.8\)</span>. The point estimates are very close to the true values. Although the intercept is consistently off by more than 0.1.</p>
 </section>
 </section>
-<section id="including-covariate-z" class="level2">
-<h2 class="anchored" data-anchor-id="including-covariate-z">Including Covariate <span class="math inline">\(Z\)</span></h2>
+<section id="including-time-invariant-covariate-z" class="level2">
+<h2 class="anchored" data-anchor-id="including-time-invariant-covariate-z">Including Time-invariant Covariate <span class="math inline">\(Z\)</span></h2>
 <p>Nu zullen we verder bouwen op scenario 3 en een covariaat <span class="math inline">\(Z\)</span> toevoegen aan het model. Hierbij zullen we in scenario 4 een time-invariante covariaat <span class="math inline">\(Z\)</span> toevoegen, in scenario 5 een time-varying exogenous covariaat <span class="math inline">\(Z\)</span> toevoegen en in scenario 6 een time-varying endogenous covariaat <span class="math inline">\(Z\)</span> toevoegen. We zullen de effecten van <span class="math inline">\(X\)</span> en <span class="math inline">\(Z\)</span> op <span class="math inline">\(Y\)</span> schatten met behulp van MLM en GEE.</p>
-<section id="scenario-4" class="level3">
-<h3 class="anchored" data-anchor-id="scenario-4">Scenario 4</h3>
-<p><strong>Ten opzichte van scenario 3, wordt er in dit scenario een time-invariant covariate <span class="math inline">\(Z\)</span> toegevoegd aan het model</strong></p>
+<section id="scenario-4-time-invariant-covariate-z" class="level3">
+<h3 class="anchored" data-anchor-id="scenario-4-time-invariant-covariate-z">Scenario 4: Time-invariant Covariate <span class="math inline">\(Z\)</span></h3>
+<p>Er zijn vier opties voor een time-invariant covariate <span class="math inline">\(Z\)</span>. Zo kunnen we een confounder toevoegen, een mediator toevoegen, een moderator toevoegen of een collider toevoegen. In dit geval zullen we een moderator toevoegen. Ten opzichte van scenario 3, wordt er in dit scenario een time-invariant moderator <span class="math inline">\(Z\)</span> toegevoegd aan het model in het effect van <span class="math inline">\(X\)</span> op <span class="math inline">\(Y\)</span></p>
 <hr>
 <p>In verband met het toevoegen van een nieuwe variabele, kunnen we opnieuw de DAG tekenen.</p>
-<div class="cell" data-hash="Data-Generating-Models_cache/html/DAG2_144b5135154ca3f2efad3dca7ef0ac51">
+<div class="cell" data-hash="Data-Generating-Models_cache/html/DAG2_00bcc6b8e8da00aebe1fc7d64b6014fe">
 <div class="sourceCode cell-code" id="cb56"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb56-1"><a href="#cb56-1" aria-hidden="true" tabindex="-1"></a>dag2 <span class="ot">&lt;-</span> <span class="fu">dagitty</span>(<span class="st">'dag {</span></span>
-<span id="cb56-2"><a href="#cb56-2" aria-hidden="true" tabindex="-1"></a><span class="st">  "X_t" -&gt; "Y_t"</span></span>
-<span id="cb56-3"><a href="#cb56-3" aria-hidden="true" tabindex="-1"></a><span class="st">  "Z" -&gt; "Y_t"</span></span>
-<span id="cb56-4"><a href="#cb56-4" aria-hidden="true" tabindex="-1"></a><span class="st">  "X_t" -&gt; "X_t"</span></span>
-<span id="cb56-5"><a href="#cb56-5" aria-hidden="true" tabindex="-1"></a><span class="st">}'</span>)</span>
-<span id="cb56-6"><a href="#cb56-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb56-7"><a href="#cb56-7" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(dag2)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb56-2"><a href="#cb56-2" aria-hidden="true" tabindex="-1"></a><span class="st">bb="0,0,1,1"</span></span>
+<span id="cb56-3"><a href="#cb56-3" aria-hidden="true" tabindex="-1"></a><span class="st">"X_t * Z" [pos="0.367,0.236"]</span></span>
+<span id="cb56-4"><a href="#cb56-4" aria-hidden="true" tabindex="-1"></a><span class="st">"Y_t+1" [outcome,pos="0.567,0.440"]</span></span>
+<span id="cb56-5"><a href="#cb56-5" aria-hidden="true" tabindex="-1"></a><span class="st">X_t [exposure,pos="0.169,0.440"]</span></span>
+<span id="cb56-6"><a href="#cb56-6" aria-hidden="true" tabindex="-1"></a><span class="st">Z [pos="0.166,0.232"]</span></span>
+<span id="cb56-7"><a href="#cb56-7" aria-hidden="true" tabindex="-1"></a><span class="st">"X_t * Z" -&gt; "Y_t+1"</span></span>
+<span id="cb56-8"><a href="#cb56-8" aria-hidden="true" tabindex="-1"></a><span class="st">X_t -&gt; "X_t * Z"</span></span>
+<span id="cb56-9"><a href="#cb56-9" aria-hidden="true" tabindex="-1"></a><span class="st">X_t -&gt; "Y_t+1"</span></span>
+<span id="cb56-10"><a href="#cb56-10" aria-hidden="true" tabindex="-1"></a><span class="st">Z -&gt; "X_t * Z"</span></span>
+<span id="cb56-11"><a href="#cb56-11" aria-hidden="true" tabindex="-1"></a><span class="st">}</span></span>
+<span id="cb56-12"><a href="#cb56-12" aria-hidden="true" tabindex="-1"></a><span class="st">'</span>)</span>
+<span id="cb56-13"><a href="#cb56-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb56-14"><a href="#cb56-14" aria-hidden="true" tabindex="-1"></a><span class="fu">ggdag_status</span>(dag2) <span class="sc">+</span> <span class="fu">theme_dag</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<figcaption class="figure-caption">DAG for the data generating models</figcaption>
+<figcaption class="figure-caption">DAG with covariate Z</figcaption>
 <p><img src="Data-Generating-Models_files/figure-html/DAG2-1.png" class="img-fluid figure-img" width="672"></p>
 </figure>
 </div>
 </div>
 </div>
 </section>
-<section id="scenario-5" class="level3">
-<h3 class="anchored" data-anchor-id="scenario-5">Scenario 5</h3>
-<p><strong>Ten opzichte van scenario 3, wordt er in dit scenario een time-varying exogenous covariate <span class="math inline">\(Z\)</span> toegevoegd aan het model</strong></p>
 </section>
-<section id="scenario-6" class="level3">
-<h3 class="anchored" data-anchor-id="scenario-6">Scenario 6</h3>
-<p><strong>Ten opzichte van scenario 3, wordt er in dit scenario een time-varying endogenous covariate <span class="math inline">\(Z\)</span> toegevoegd aan het model</strong></p>
+<section id="including-time-varying-exogenous-covariate-z" class="level2">
+<h2 class="anchored" data-anchor-id="including-time-varying-exogenous-covariate-z">Including Time-varying Exogenous Covariate <span class="math inline">\(Z\)</span></h2>
+<section id="scenario-5-time-varying-exogenous-covariate-z" class="level3">
+<h3 class="anchored" data-anchor-id="scenario-5-time-varying-exogenous-covariate-z">Scenario 5: Time-varying Exogenous Covariate <span class="math inline">\(Z\)</span></h3>
+<p>Ten opzichte van scenario 3, wordt er in dit scenario een time-varying exogenous covariate <span class="math inline">\(Z\)</span> toegevoegd aan het model. Een time-varying exogene covariaat beïnvloedt de uitkomst variabele <span class="math inline">\(Y\)</span> en/of de exposure <span class="math inline">\(X\)</span>, maar wordt zelf niet beïnvloed door <span class="math inline">\(Y\)</span> of andere factoren in het model.</p>
+<p>In verband met het toevoegen van een nieuwe variabele, kunnen we opnieuw de DAG tekenen.</p>
+<hr>
+<p>Voor een time-varying exogene covariaat kunnen we of (1) een time-varying confounder toe voegen aan het effect van <span class="math inline">\(X\)</span> op <span class="math inline">\(Y\)</span> of (2) een time-varying covariaat toe voegen die alleen een effect heeft op <span class="math inline">\(Y\)</span>.</p>
+<div class="cell" data-hash="Data-Generating-Models_cache/html/DAG5.1_2429dd7262ce8ffae4b5f8c355d62715">
+<div class="sourceCode cell-code" id="cb57"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb57-1"><a href="#cb57-1" aria-hidden="true" tabindex="-1"></a>dag2 <span class="ot">&lt;-</span> <span class="fu">dagitty</span>(<span class="st">'dag {</span></span>
+<span id="cb57-2"><a href="#cb57-2" aria-hidden="true" tabindex="-1"></a><span class="st">bb="0,0,1,1"</span></span>
+<span id="cb57-3"><a href="#cb57-3" aria-hidden="true" tabindex="-1"></a><span class="st">"X_t+1" [exposure,pos="0.383,0.442"]</span></span>
+<span id="cb57-4"><a href="#cb57-4" aria-hidden="true" tabindex="-1"></a><span class="st">"Y_t+1" [outcome,pos="0.364,0.330"]</span></span>
+<span id="cb57-5"><a href="#cb57-5" aria-hidden="true" tabindex="-1"></a><span class="st">"Y_t+2" [outcome,pos="0.585,0.333"]</span></span>
+<span id="cb57-6"><a href="#cb57-6" aria-hidden="true" tabindex="-1"></a><span class="st">"Z_t+1" [pos="0.364,0.206"]</span></span>
+<span id="cb57-7"><a href="#cb57-7" aria-hidden="true" tabindex="-1"></a><span class="st">"Z_t+2" [pos="0.579,0.201"]</span></span>
+<span id="cb57-8"><a href="#cb57-8" aria-hidden="true" tabindex="-1"></a><span class="st">X_t [exposure,pos="0.146,0.440"]</span></span>
+<span id="cb57-9"><a href="#cb57-9" aria-hidden="true" tabindex="-1"></a><span class="st">Z_t [pos="0.130,0.209"]</span></span>
+<span id="cb57-10"><a href="#cb57-10" aria-hidden="true" tabindex="-1"></a><span class="st">"X_t+1" -&gt; "Y_t+2"</span></span>
+<span id="cb57-11"><a href="#cb57-11" aria-hidden="true" tabindex="-1"></a><span class="st">"Z_t+1" -&gt; "Y_t+2"</span></span>
+<span id="cb57-12"><a href="#cb57-12" aria-hidden="true" tabindex="-1"></a><span class="st">"Z_t+1" -&gt; X_t</span></span>
+<span id="cb57-13"><a href="#cb57-13" aria-hidden="true" tabindex="-1"></a><span class="st">"Z_t+2" -&gt; "X_t+1"</span></span>
+<span id="cb57-14"><a href="#cb57-14" aria-hidden="true" tabindex="-1"></a><span class="st">X_t -&gt; "Y_t+1"</span></span>
+<span id="cb57-15"><a href="#cb57-15" aria-hidden="true" tabindex="-1"></a><span class="st">Z_t -&gt; "Y_t+1"</span></span>
+<span id="cb57-16"><a href="#cb57-16" aria-hidden="true" tabindex="-1"></a><span class="st">}</span></span>
+<span id="cb57-17"><a href="#cb57-17" aria-hidden="true" tabindex="-1"></a><span class="st">'</span>)</span>
+<span id="cb57-18"><a href="#cb57-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb57-19"><a href="#cb57-19" aria-hidden="true" tabindex="-1"></a><span class="fu">ggdag_status</span>(dag2) <span class="sc">+</span> <span class="fu">theme_dag</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<figcaption class="figure-caption">DAG with time-varying confounder Z</figcaption>
+<p><img src="Data-Generating-Models_files/figure-html/DAG5.1-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<div class="cell" data-hash="Data-Generating-Models_cache/html/DAG5.2_b21155912e1912f2d406e09518b5acd1">
+<div class="sourceCode cell-code" id="cb58"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb58-1"><a href="#cb58-1" aria-hidden="true" tabindex="-1"></a>dag2 <span class="ot">&lt;-</span> <span class="fu">dagitty</span>(<span class="st">'dag {</span></span>
+<span id="cb58-2"><a href="#cb58-2" aria-hidden="true" tabindex="-1"></a><span class="st">bb="0,0,1,1"</span></span>
+<span id="cb58-3"><a href="#cb58-3" aria-hidden="true" tabindex="-1"></a><span class="st">"Y_t+1" [outcome,pos="0.431,0.350"]</span></span>
+<span id="cb58-4"><a href="#cb58-4" aria-hidden="true" tabindex="-1"></a><span class="st">X_t [exposure,pos="0.169,0.440"]</span></span>
+<span id="cb58-5"><a href="#cb58-5" aria-hidden="true" tabindex="-1"></a><span class="st">Z_t [pos="0.158,0.261"]</span></span>
+<span id="cb58-6"><a href="#cb58-6" aria-hidden="true" tabindex="-1"></a><span class="st">X_t -&gt; "Y_t+1"</span></span>
+<span id="cb58-7"><a href="#cb58-7" aria-hidden="true" tabindex="-1"></a><span class="st">Z_t -&gt; "Y_t+1"</span></span>
+<span id="cb58-8"><a href="#cb58-8" aria-hidden="true" tabindex="-1"></a><span class="st">}</span></span>
+<span id="cb58-9"><a href="#cb58-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb58-10"><a href="#cb58-10" aria-hidden="true" tabindex="-1"></a><span class="st">'</span>)</span>
+<span id="cb58-11"><a href="#cb58-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb58-12"><a href="#cb58-12" aria-hidden="true" tabindex="-1"></a><span class="fu">ggdag_status</span>(dag2) <span class="sc">+</span> <span class="fu">theme_dag</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<figcaption class="figure-caption">DAG with time-varying covariate Z</figcaption>
+<p><img src="Data-Generating-Models_files/figure-html/DAG5.2-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+</section>
+<section id="including-time-varying-endogenous-covariate-z" class="level2">
+<h2 class="anchored" data-anchor-id="including-time-varying-endogenous-covariate-z">Including Time-varying Endogenous Covariate <span class="math inline">\(Z\)</span></h2>
+<section id="scenario-6-time-varying-confounder-z_t1-of-effect-x_t-on-x_t2" class="level3">
+<h3 class="anchored" data-anchor-id="scenario-6-time-varying-confounder-z_t1-of-effect-x_t-on-x_t2">Scenario 6: Time-varying confounder <span class="math inline">\(Z_{t+1}\)</span> of effect <span class="math inline">\(X_t\)</span> on <span class="math inline">\(X_{t+2}\)</span></h3>
+<p>Ten opzichte van scenario 3, wordt er in dit scenario een time-varying endogenous <span class="math inline">\(Z\)</span> toegevoegd aan het model. Een time-varying endogene covariaat is niet onafhankelijk van eerdere waarden van de uitkomst variabele <span class="math inline">\(Y\)</span> en/of de exposure <span class="math inline">\(X\)</span>. In dit geval is <span class="math inline">\(Z\)</span> een <em>time-varying confounder</em>, wat Qian et al.&nbsp;(2020) definieert als: “a covariate that is affected by previous treatment (hence is endogenous) and affects future treatment assignment.”</p>
+<hr>
+<p>…</p>
+<div class="cell" data-hash="Data-Generating-Models_cache/html/DAG6_e72f02762f4013ec1d60ec4248fd1e16">
+<div class="sourceCode cell-code" id="cb59"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb59-1"><a href="#cb59-1" aria-hidden="true" tabindex="-1"></a>dag2 <span class="ot">&lt;-</span> <span class="fu">dagitty</span>(<span class="st">'dag {</span></span>
+<span id="cb59-2"><a href="#cb59-2" aria-hidden="true" tabindex="-1"></a><span class="st">bb="0,0,1,1"</span></span>
+<span id="cb59-3"><a href="#cb59-3" aria-hidden="true" tabindex="-1"></a><span class="st">"X_t+1" [exposure,pos="0.550,0.442"]</span></span>
+<span id="cb59-4"><a href="#cb59-4" aria-hidden="true" tabindex="-1"></a><span class="st">"X_t+2" [exposure,pos="0.841,0.439"]</span></span>
+<span id="cb59-5"><a href="#cb59-5" aria-hidden="true" tabindex="-1"></a><span class="st">"Y_t+1" [outcome,pos="0.554,0.320"]</span></span>
+<span id="cb59-6"><a href="#cb59-6" aria-hidden="true" tabindex="-1"></a><span class="st">"Y_t+2" [outcome,pos="0.855,0.323"]</span></span>
+<span id="cb59-7"><a href="#cb59-7" aria-hidden="true" tabindex="-1"></a><span class="st">"Z_t+1" [pos="0.564,0.215"]</span></span>
+<span id="cb59-8"><a href="#cb59-8" aria-hidden="true" tabindex="-1"></a><span class="st">X_t [exposure,pos="0.204,0.444"]</span></span>
+<span id="cb59-9"><a href="#cb59-9" aria-hidden="true" tabindex="-1"></a><span class="st">Z_t [pos="0.207,0.217"]</span></span>
+<span id="cb59-10"><a href="#cb59-10" aria-hidden="true" tabindex="-1"></a><span class="st">"X_t+1" -&gt; "Y_t+2"</span></span>
+<span id="cb59-11"><a href="#cb59-11" aria-hidden="true" tabindex="-1"></a><span class="st">"Z_t+1" -&gt; "X_t+2"</span></span>
+<span id="cb59-12"><a href="#cb59-12" aria-hidden="true" tabindex="-1"></a><span class="st">X_t -&gt; "Y_t+1"</span></span>
+<span id="cb59-13"><a href="#cb59-13" aria-hidden="true" tabindex="-1"></a><span class="st">X_t -&gt; "Z_t+1"</span></span>
+<span id="cb59-14"><a href="#cb59-14" aria-hidden="true" tabindex="-1"></a><span class="st">Z_t -&gt; "X_t+1"</span></span>
+<span id="cb59-15"><a href="#cb59-15" aria-hidden="true" tabindex="-1"></a><span class="st">}</span></span>
+<span id="cb59-16"><a href="#cb59-16" aria-hidden="true" tabindex="-1"></a><span class="st">'</span>)</span>
+<span id="cb59-17"><a href="#cb59-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb59-18"><a href="#cb59-18" aria-hidden="true" tabindex="-1"></a><span class="fu">ggdag_status</span>(dag2) <span class="sc">+</span> <span class="fu">theme_dag</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<figcaption class="figure-caption">DAG with time-varying confounder Z</figcaption>
+<p><img src="Data-Generating-Models_files/figure-html/DAG6-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="scenario-7-time-varying-mediator-z_t1-of-effect-x_t-on-y_t2" class="level3">
+<h3 class="anchored" data-anchor-id="scenario-7-time-varying-mediator-z_t1-of-effect-x_t-on-y_t2">Scenario 7: Time-varying mediator <span class="math inline">\(Z_{t+1}\)</span> of effect <span class="math inline">\(X_t\)</span> on <span class="math inline">\(Y_{t+2}\)</span></h3>
+<p>Net zoals in scenario 6, wordt er in dit scenario een time-varying endogene covariaat <span class="math inline">\(Z\)</span> toegevoegd aan het model. Echter, in dit scenario is <span class="math inline">\(Z\)</span> een <em>mediator</em> van de relatie tussen <span class="math inline">\(X\)</span> en <span class="math inline">\(Y\)</span>.</p>
+<hr>
+<p>…</p>
+<div class="cell" data-hash="Data-Generating-Models_cache/html/DAG7_5f1a85e6df62d1c535f92bd71f94128c">
+<div class="sourceCode cell-code" id="cb60"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb60-1"><a href="#cb60-1" aria-hidden="true" tabindex="-1"></a>dag2 <span class="ot">&lt;-</span> <span class="fu">dagitty</span>(<span class="st">'dag {</span></span>
+<span id="cb60-2"><a href="#cb60-2" aria-hidden="true" tabindex="-1"></a><span class="st">bb="0,0,1,1"</span></span>
+<span id="cb60-3"><a href="#cb60-3" aria-hidden="true" tabindex="-1"></a><span class="st">"X_t+1" [exposure,pos="0.566,0.572"]</span></span>
+<span id="cb60-4"><a href="#cb60-4" aria-hidden="true" tabindex="-1"></a><span class="st">"Y_t+1" [outcome,pos="0.567,0.440"]</span></span>
+<span id="cb60-5"><a href="#cb60-5" aria-hidden="true" tabindex="-1"></a><span class="st">"Y_t+2" [outcome,pos="0.841,0.439"]</span></span>
+<span id="cb60-6"><a href="#cb60-6" aria-hidden="true" tabindex="-1"></a><span class="st">"Z_t+1" [pos="0.565,0.310"]</span></span>
+<span id="cb60-7"><a href="#cb60-7" aria-hidden="true" tabindex="-1"></a><span class="st">"Z_t+2" [pos="0.844,0.308"]</span></span>
+<span id="cb60-8"><a href="#cb60-8" aria-hidden="true" tabindex="-1"></a><span class="st">X_t [exposure,pos="0.298,0.573"]</span></span>
+<span id="cb60-9"><a href="#cb60-9" aria-hidden="true" tabindex="-1"></a><span class="st">Z_t [pos="0.296,0.312"]</span></span>
+<span id="cb60-10"><a href="#cb60-10" aria-hidden="true" tabindex="-1"></a><span class="st">"X_t+1" -&gt; "Y_t+2"</span></span>
+<span id="cb60-11"><a href="#cb60-11" aria-hidden="true" tabindex="-1"></a><span class="st">"X_t+1" -&gt; "Z_t+2"</span></span>
+<span id="cb60-12"><a href="#cb60-12" aria-hidden="true" tabindex="-1"></a><span class="st">"Z_t+1" -&gt; "Y_t+2"</span></span>
+<span id="cb60-13"><a href="#cb60-13" aria-hidden="true" tabindex="-1"></a><span class="st">X_t -&gt; "Y_t+1"</span></span>
+<span id="cb60-14"><a href="#cb60-14" aria-hidden="true" tabindex="-1"></a><span class="st">X_t -&gt; "Z_t+1"</span></span>
+<span id="cb60-15"><a href="#cb60-15" aria-hidden="true" tabindex="-1"></a><span class="st">Z_t -&gt; "Y_t+1"</span></span>
+<span id="cb60-16"><a href="#cb60-16" aria-hidden="true" tabindex="-1"></a><span class="st">}</span></span>
+<span id="cb60-17"><a href="#cb60-17" aria-hidden="true" tabindex="-1"></a><span class="st">'</span>)</span>
+<span id="cb60-18"><a href="#cb60-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb60-19"><a href="#cb60-19" aria-hidden="true" tabindex="-1"></a><span class="fu">ggdag_status</span>(dag2) <span class="sc">+</span> <span class="fu">theme_dag</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<figcaption class="figure-caption">DAG with time-varying mediator Z of the treatment effect</figcaption>
+<p><img src="Data-Generating-Models_files/figure-html/DAG7-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="scenario-8-time-varying-moderator-z_t-of-effect-x_t-on-y_t1" class="level3">
+<h3 class="anchored" data-anchor-id="scenario-8-time-varying-moderator-z_t-of-effect-x_t-on-y_t1">Scenario 8: Time-varying moderator <span class="math inline">\(Z_{t}\)</span> of effect <span class="math inline">\(X_t\)</span> on <span class="math inline">\(Y_{t+1}\)</span></h3>
+<p>Net zoals in scenario 6 en 7, wordt er in dit scenario een time-varying endogene covariaat <span class="math inline">\(Z\)</span> toegevoegd aan het model. Echter, in dit scenario is <span class="math inline">\(Z\)</span> een <em>moderator</em> van de relatie tussen <span class="math inline">\(X\)</span> en <span class="math inline">\(Y\)</span>.</p>
+<hr>
+<p>…</p>
+<div class="cell" data-hash="Data-Generating-Models_cache/html/DAG8_37bc563fed987de7eec1b5f7fe3caff9">
+<div class="sourceCode cell-code" id="cb61"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb61-1"><a href="#cb61-1" aria-hidden="true" tabindex="-1"></a>dag2 <span class="ot">&lt;-</span> <span class="fu">dagitty</span>(<span class="st">'dag {</span></span>
+<span id="cb61-2"><a href="#cb61-2" aria-hidden="true" tabindex="-1"></a><span class="st">bb="0,0,1,1"</span></span>
+<span id="cb61-3"><a href="#cb61-3" aria-hidden="true" tabindex="-1"></a><span class="st">"X*Z (t)" [pos="0.428,0.331"]</span></span>
+<span id="cb61-4"><a href="#cb61-4" aria-hidden="true" tabindex="-1"></a><span class="st">"Y_t+1" [outcome,pos="0.567,0.440"]</span></span>
+<span id="cb61-5"><a href="#cb61-5" aria-hidden="true" tabindex="-1"></a><span class="st">X_t [exposure,pos="0.298,0.573"]</span></span>
+<span id="cb61-6"><a href="#cb61-6" aria-hidden="true" tabindex="-1"></a><span class="st">Z_t [pos="0.290,0.212"]</span></span>
+<span id="cb61-7"><a href="#cb61-7" aria-hidden="true" tabindex="-1"></a><span class="st">"X*Z (t)" -&gt; "Y_t+1"</span></span>
+<span id="cb61-8"><a href="#cb61-8" aria-hidden="true" tabindex="-1"></a><span class="st">X_t -&gt; "X*Z (t)"</span></span>
+<span id="cb61-9"><a href="#cb61-9" aria-hidden="true" tabindex="-1"></a><span class="st">X_t -&gt; "Y_t+1"</span></span>
+<span id="cb61-10"><a href="#cb61-10" aria-hidden="true" tabindex="-1"></a><span class="st">Z_t -&gt; "X*Z (t)"</span></span>
+<span id="cb61-11"><a href="#cb61-11" aria-hidden="true" tabindex="-1"></a><span class="st">}</span></span>
+<span id="cb61-12"><a href="#cb61-12" aria-hidden="true" tabindex="-1"></a><span class="st">'</span>)</span>
+<span id="cb61-13"><a href="#cb61-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb61-14"><a href="#cb61-14" aria-hidden="true" tabindex="-1"></a><span class="fu">ggdag_status</span>(dag2) <span class="sc">+</span> <span class="fu">theme_dag</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<figcaption class="figure-caption">DAG with time-varying moderator Z of the treatment effect</figcaption>
+<p><img src="Data-Generating-Models_files/figure-html/DAG8-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
 </section>
 </section>
 <section id="including-a-random-slope" class="level2">
 <h2 class="anchored" data-anchor-id="including-a-random-slope">Including a Random Slope</h2>
 <p>Bij de vorige scenarios hebben we gekeken naar het effect van verschillende covariaaten in modellen met alleen een random intercept. In de volgende scenarios zullen we hier ook een random slope aan toevoegen. We zullen de effecten van <span class="math inline">\(X\)</span> en <span class="math inline">\(Z\)</span> op <span class="math inline">\(Y\)</span> schatten met behulp van MLM en GEE.</p>
+<hr>
+<p>…</p>
+</section>
+<section id="including-autocorrelation" class="level2">
+<h2 class="anchored" data-anchor-id="including-autocorrelation">Including autocorrelation</h2>
+<p>Ten opzichte van de vorige scenarios voegen we nu een autocorrelatie toe aan de data. Dit is plausibel in real-world scenarios, omdat de uitkomst van een bepaalde tijd vaak afhankelijk is van de uitkomst van de vorige tijd. We zullen de effecten van <span class="math inline">\(X\)</span> en <span class="math inline">\(Z\)</span> op <span class="math inline">\(Y\)</span> schatten met behulp van MLM en GEE.</p>
+<hr>
+<p>…</p>
 </section>
 
 </main>

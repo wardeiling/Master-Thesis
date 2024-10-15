@@ -26,6 +26,7 @@ Let's first install and load necessary packages
 
 ```{r}
 #| label: Packages
+#| cache: true
 
 # Load packages
 library(dagitty)
@@ -43,7 +44,11 @@ library(jtools)
 library(cowplot)
 ```
 
-For all examples, we will use the same basic DAG, where we are estimating the effect of $X_t$ (sleep-problems) on $Y_t$ (anxiety). This implies that we are investigating the effect of sleep problems on anxiety within the same timepoint (we could also use a lagged effect, but we will keep it simple for now).
+## Regression of $Y$ on $X$
+
+In de eerste drie scenarios zullen we kijken naar de effecten van $X$ op $Y$ in een multilevel model. In scenario 1 zullen we kijken naar een situatie waarin er geen tussen-persoon verschillen zijn in de gemiddelde waarde van $X$ over tijd; in scenario 2 zullen we kijken naar een situatie waarin er wel tussen-persoon verschillen zijn in de gemiddelde waarde van $X$ over tijd; en in scenario 3 zullen we kijken naar een situatie waarin er tussen-persoon verschillen zijn in de gemiddelde waarde van $X$ over tijd en die samenhangt met de random intercept van $Y$.
+
+Accordingly, for the first three scenarios, we will use the same basic DAG, where we are estimating the effect of $X_t$ (sleep-problems) on $Y_t$ (anxiety). This implies that we are investigating the effect of sleep problems on anxiety within the same timepoint (we could also use a lagged effect, but we will keep it simple for now).
 
 ```{r}
 #| label: DAG
@@ -51,19 +56,19 @@ For all examples, we will use the same basic DAG, where we are estimating the ef
 #| fig-cap: "DAG for the data generating models"
 
 dag <- dagitty('dag {
-  "X_t" -> "Y_t"
-}')
+bb="0,0,1,1"
+X [exposure,pos="0.169,0.440"]
+Y [outcome,pos="0.567,0.440"]
+X -> Y
+}
+')
 
-plot(dag)
+ggdag_status(dag) + theme_dag()
 ```
 
-## Regression of $Y$ on $X$
+### Scenario 1: without between-person differences in $\bar{\mu}_i$
 
-In de eerste drie scenarios zullen we kijken naar de effecten van $X$ op $Y$ in een multilevel model. In scenario 1 zullen we kijken naar een situatie waarin er geen tussen-persoon verschillen zijn in de gemiddelde waarde van $X$ over tijd; in scenario 2 zullen we kijken naar een situatie waarin er wel tussen-persoon verschillen zijn in de gemiddelde waarde van $X$ over tijd; en in scenario 3 zullen we kijken naar een situatie waarin er tussen-persoon verschillen zijn in de gemiddelde waarde van $X$ over tijd en die samenhangt met de random intercept van $Y$.
-
-### Scenario 1
-
-**SCM with random intercept and a time-varying $X$ *without* between-person differences in $\bar{X}_i$ (a mean of 0 for everyone)**
+SCM with random intercept and a time-varying $X$ *without* between-person differences in $\bar{\mu}_i$ (a mean of 0 for everyone)
 
 -----
 
@@ -218,9 +223,9 @@ De interpretatie for the fixed effects is als volgt:
 
 -   slope: voor een eenheid verandering in slaapproblemen ($X$), wordt verwacht dat angst ($Y$) verandert met $\approx 0.6$, waarbij variatie tussen proefpersonen genegeerd wordt. In technische termen, we nemen gelijke waarden aan voor de random effecten.
 
-### Scenario 2
+### Scenario 2: with between person differences in $\bar{\mu}_{i}$
 
-**SCM met een random intercept, time-varying $X$ en *met* between-person verschillen in $\bar{\mu}_{i}$ (de ene proefpersoon heeft een hogere gemiddelde dan een ander over de tijdspunten)**
+SCM met een random intercept, time-varying $X$ en *met* between-person verschillen in $\bar{\mu}_{i}$ (de ene proefpersoon heeft een hogere gemiddelde dan een ander over de tijdspunten)
 
 -----
 
@@ -433,9 +438,9 @@ Nu dat we de within-person centered predictor gebruiken is de interpretatie ande
 
 -   slope beta_1 (within-person interpretatie): *In vergelijking met het persoonlijk gemiddelde van een persoon*, gaat een eenheid toename in slaapproblemen gepaard met een toename van $\approx 0.6$ in angst ($Y$), waarbij variatie tussen proefpersonen genegeerd wordt. In technische termen, we nemen gelijke waarden aan voor de random effecten.
 
-### Scenario 3
+### Scenario 3: with relation between $\beta_{0i}$ and $\bar{\mu}_{i}$
 
-**SCM met een random intercept, time-varying $X$ en *met* between-person verschillen in $\bar{\mu}_{i}$ (de ene proefpersoon heeft een hogere gemiddelde dan een ander over de tijdspunten) die gerelateerd zijn aan de intercept (van $Y$)**
+SCM met een random intercept, time-varying $X$ en *met* between-person verschillen in $\bar{\mu}_{i}$ (de ene proefpersoon heeft een hogere gemiddelde dan een ander over de tijdspunten) die gerelateerd zijn aan de intercept (van $Y$)
 
 -----
 
@@ -645,13 +650,13 @@ knitr::kable(scenario3.coefs, digits = 3)
 
 Again, the point estimates are essentially the same across all methods with $n = 1.000$. As a reminder, we specified the overall intercept $\gamma_{00} = 2$, the fixed within-person slope $\beta_1 = 0.6$, and the between person slope $\gamma_{01} = 0.8$. The point estimates are very close to the true values. Although the intercept is consistently off by more than 0.1.
 
-## Including Covariate $Z$
+## Including Time-invariant Covariate $Z$
 
 Nu zullen we verder bouwen op scenario 3 en een covariaat $Z$ toevoegen aan het model. Hierbij zullen we in scenario 4 een time-invariante covariaat $Z$ toevoegen, in scenario 5 een time-varying exogenous covariaat $Z$ toevoegen en in scenario 6 een time-varying endogenous covariaat $Z$ toevoegen. We zullen de effecten van $X$ en $Z$ op $Y$ schatten met behulp van MLM en GEE.
 
-### Scenario 4
+### Scenario 4: Time-invariant Covariate $Z$
 
-**Ten opzichte van scenario 3, wordt er in dit scenario een time-invariant moderator $Z$ toegevoegd aan het model in het effect van $X$ op $Y$**
+Er zijn vier opties voor een time-invariant covariate $Z$. Zo kunnen we een confounder toevoegen, een mediator toevoegen, een moderator toevoegen of een collider toevoegen. In dit geval zullen we een moderator toevoegen. Ten opzichte van scenario 3, wordt er in dit scenario een time-invariant moderator $Z$ toegevoegd aan het model in het effect van $X$ op $Y$
 
 ----
 
@@ -660,30 +665,189 @@ In verband met het toevoegen van een nieuwe variabele, kunnen we opnieuw de DAG 
 ```{r}
 #| label: DAG2
 #| cache: true
-#| fig-cap: "DAG for the data generating models"
+#| fig-cap: "DAG with covariate Z"
 
 dag2 <- dagitty('dag {
-  "X_t" -> "Y_t"
-  "Z" -> "Y_t"
-  "X_t" -> "Z_t"
-}')
+bb="0,0,1,1"
+"X_t * Z" [pos="0.367,0.236"]
+"Y_t+1" [outcome,pos="0.567,0.440"]
+X_t [exposure,pos="0.169,0.440"]
+Z [pos="0.166,0.232"]
+"X_t * Z" -> "Y_t+1"
+X_t -> "X_t * Z"
+X_t -> "Y_t+1"
+Z -> "X_t * Z"
+}
+')
 
-plot(dag2)
+ggdag_status(dag2) + theme_dag()
 ```
 
-### Scenario 5
+## Including Time-varying Exogenous Covariate $Z$
 
-**Ten opzichte van scenario 3, wordt er in dit scenario een time-varying exogenous covariate $Z$ toegevoegd aan het model**
+### Scenario 5: Time-varying Exogenous Covariate $Z$
 
+Ten opzichte van scenario 3, wordt er in dit scenario een time-varying exogenous covariate $Z$ toegevoegd aan het model. Een time-varying exogene covariaat beïnvloedt de uitkomst variabele $Y$ en/of de exposure $X$, maar wordt zelf niet beïnvloed door $Y$ of andere factoren in het model.
 
+In verband met het toevoegen van een nieuwe variabele, kunnen we opnieuw de DAG tekenen.
 
-### Scenario 6
+----
 
-**Ten opzichte van scenario 3, wordt er in dit scenario een time-varying endogenous covariate $Z$ toegevoegd aan het model**
+Voor een time-varying exogene covariaat kunnen we of (1) een time-varying confounder toe voegen aan het effect van $X$ op $Y$ of (2) een time-varying covariaat toe voegen die alleen een effect heeft op $Y$.
+
+```{r}
+#| label: DAG5.1
+#| cache: true
+#| fig-cap: "DAG with time-varying confounder Z"
+
+dag2 <- dagitty('dag {
+bb="0,0,1,1"
+"X_t+1" [exposure,pos="0.383,0.442"]
+"Y_t+1" [outcome,pos="0.364,0.330"]
+"Y_t+2" [outcome,pos="0.585,0.333"]
+"Z_t+1" [pos="0.364,0.206"]
+"Z_t+2" [pos="0.579,0.201"]
+X_t [exposure,pos="0.146,0.440"]
+Z_t [pos="0.130,0.209"]
+"X_t+1" -> "Y_t+2"
+"Z_t+1" -> "Y_t+2"
+"Z_t+1" -> X_t
+"Z_t+2" -> "X_t+1"
+X_t -> "Y_t+1"
+Z_t -> "Y_t+1"
+}
+')
+
+ggdag_status(dag2) + theme_dag()
+```
+
+```{r}
+#| label: DAG5.2
+#| cache: true
+#| fig-cap: "DAG with time-varying covariate Z"
+
+dag2 <- dagitty('dag {
+bb="0,0,1,1"
+"Y_t+1" [outcome,pos="0.431,0.350"]
+X_t [exposure,pos="0.169,0.440"]
+Z_t [pos="0.158,0.261"]
+X_t -> "Y_t+1"
+Z_t -> "Y_t+1"
+}
+
+')
+
+ggdag_status(dag2) + theme_dag()
+```
+## Including Time-varying Endogenous Covariate $Z$
+
+### Scenario 6: Time-varying confounder $Z_{t+1}$ of effect $X_t$ on $X_{t+2}$
+
+Ten opzichte van scenario 3, wordt er in dit scenario een time-varying endogenous $Z$ toegevoegd aan het model. Een time-varying endogene covariaat is niet onafhankelijk van eerdere waarden van de uitkomst variabele $Y$ en/of de exposure $X$. In dit geval is $Z$ een *time-varying confounder*, wat Qian et al. (2020) definieert als: "a covariate that is affected by previous treatment (hence is endogenous) and affects future treatment assignment."
+
+----
+
+...
+
+```{r}
+#| label: DAG6
+#| cache: true
+#| fig-cap: "DAG with time-varying confounder Z"
+
+dag2 <- dagitty('dag {
+bb="0,0,1,1"
+"X_t+1" [exposure,pos="0.550,0.442"]
+"X_t+2" [exposure,pos="0.841,0.439"]
+"Y_t+1" [outcome,pos="0.554,0.320"]
+"Y_t+2" [outcome,pos="0.855,0.323"]
+"Z_t+1" [pos="0.564,0.215"]
+X_t [exposure,pos="0.204,0.444"]
+Z_t [pos="0.207,0.217"]
+"X_t+1" -> "Y_t+2"
+"Z_t+1" -> "X_t+2"
+X_t -> "Y_t+1"
+X_t -> "Z_t+1"
+Z_t -> "X_t+1"
+}
+')
+
+ggdag_status(dag2) + theme_dag()
+```
+
+### Scenario 7: Time-varying mediator $Z_{t+1}$ of effect $X_t$ on $Y_{t+2}$
+
+Net zoals in scenario 6, wordt er in dit scenario een time-varying endogene covariaat $Z$ toegevoegd aan het model. Echter, in dit scenario is $Z$ een *mediator* van de relatie tussen $X$ en $Y$.
+
+----
+
+...
+
+```{r}
+#| label: DAG7
+#| cache: true
+#| fig-cap: "DAG with time-varying mediator Z of the treatment effect"
+
+dag2 <- dagitty('dag {
+bb="0,0,1,1"
+"X_t+1" [exposure,pos="0.566,0.572"]
+"Y_t+1" [outcome,pos="0.567,0.440"]
+"Y_t+2" [outcome,pos="0.841,0.439"]
+"Z_t+1" [pos="0.565,0.310"]
+"Z_t+2" [pos="0.844,0.308"]
+X_t [exposure,pos="0.298,0.573"]
+Z_t [pos="0.296,0.312"]
+"X_t+1" -> "Y_t+2"
+"X_t+1" -> "Z_t+2"
+"Z_t+1" -> "Y_t+2"
+X_t -> "Y_t+1"
+X_t -> "Z_t+1"
+Z_t -> "Y_t+1"
+}
+')
+
+ggdag_status(dag2) + theme_dag()
+```
+### Scenario 8: Time-varying moderator $Z_{t}$ of effect $X_t$ on $Y_{t+1}$
+
+Net zoals in scenario 6 en 7, wordt er in dit scenario een time-varying endogene covariaat $Z$ toegevoegd aan het model. Echter, in dit scenario is $Z$ een *moderator* van de relatie tussen $X$ en $Y$.
+
+----
+
+...
+
+```{r}
+#| label: DAG8
+#| cache: true
+#| fig-cap: "DAG with time-varying moderator Z of the treatment effect"
+
+dag2 <- dagitty('dag {
+bb="0,0,1,1"
+"X*Z (t)" [pos="0.428,0.331"]
+"Y_t+1" [outcome,pos="0.567,0.440"]
+X_t [exposure,pos="0.298,0.573"]
+Z_t [pos="0.290,0.212"]
+"X*Z (t)" -> "Y_t+1"
+X_t -> "X*Z (t)"
+X_t -> "Y_t+1"
+Z_t -> "X*Z (t)"
+}
+')
+
+ggdag_status(dag2) + theme_dag()
+```
 
 ## Including a Random Slope
 
 Bij de vorige scenarios hebben we gekeken naar het effect van verschillende covariaaten in modellen met alleen een random intercept. In de volgende scenarios zullen we hier ook een random slope aan toevoegen. We zullen de effecten van $X$ en $Z$ op $Y$ schatten met behulp van MLM en GEE.
 
+----
 
+...
 
+## Including autocorrelation
+
+Ten opzichte van de vorige scenarios voegen we nu een autocorrelatie toe aan de data. Dit is plausibel in real-world scenarios, omdat de uitkomst van een bepaalde tijd vaak afhankelijk is van de uitkomst van de vorige tijd. We zullen de effecten van $X$ en $Z$ op $Y$ schatten met behulp van MLM en GEE.
+
+----
+
+...
