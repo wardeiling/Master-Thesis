@@ -5,7 +5,7 @@ format: html
 execute:
   message: false
   warning: false
-embed-resources: true
+embed-resources: false
 ---
 
 ## Introduction
@@ -33,6 +33,10 @@ library(jtools)
 For all examples, we will use the same basic DAG, where we are estimating the effect of $X_t$ (sleep-problems) on $Y_t$ (anxiety). This implies that we are investigating the effect of sleep problems on anxiety within the same timepoint (we could also use a lagged effect, but we will keep it simple for now).
 
 ```{r}
+#| label: DAG
+#| cache: true
+#| fig.cap: "DAG for the data generating models"
+
 dag <- dagitty('dag {
   "X_t" -> "Y_t"
 }')
