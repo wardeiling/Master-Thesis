@@ -1,11 +1,20 @@
 ---
 title: "Estimation Methods"
 author: "Ward B. Eiling"
-format: html
+format: 
+  html:
+    toc: true
+    toc-location: left
+    number-sections: false
+    # embed-resources: false
+    default-image-extension: svg
 execute:
   message: false
   warning: false
-embed-resources: false
+comments:
+  hypothesis: 
+    theme: clean
+fig-cap-location: top
 ---
 
 ## Introduction
@@ -28,6 +37,7 @@ library(geex)
 library(gee)
 library(MASS)
 library(jtools)
+library(cowplot)
 ```
 
 For all examples, we will use the same basic DAG, where we are estimating the effect of $X_t$ (sleep-problems) on $Y_t$ (anxiety). This implies that we are investigating the effect of sleep problems on anxiety within the same timepoint (we could also use a lagged effect, but we will keep it simple for now).
@@ -35,7 +45,7 @@ For all examples, we will use the same basic DAG, where we are estimating the ef
 ```{r}
 #| label: DAG
 #| cache: true
-#| fig.cap: "DAG for the data generating models"
+#| fig-cap: "DAG for the data generating models"
 
 dag <- dagitty('dag {
   "X_t" -> "Y_t"
@@ -44,7 +54,11 @@ dag <- dagitty('dag {
 plot(dag)
 ```
 
-## Scenario 1: SCM with random intercept and a time-varying $X$ *without* between-person differences in $\bar{X}_i$ (a mean of 0 for everyone)
+## Scenario 1
+
+**SCM with random intercept and a time-varying $X$ *without* between-person differences in $\bar{X}_i$ (a mean of 0 for everyone)**
+
+-----
 
 For the first DGM, using the multilevel notation (Raudenbusch and Bryk, 2002), we can specify the within person equation
 
@@ -75,6 +89,9 @@ Now we may, for instance, give the parameters arbitrary values (note that I defi
 Let us now simulate data according to data generating model 1
 
 ```{r}
+#| label: DataScenario1
+#| cache: true
+
 # Specify parameters
 set.seed(123)  # For reproducibility
 n_i <- 10000  # Number of individuals
@@ -107,6 +124,9 @@ head(scenario1.data)
 Let's plot the first 10 individuals with different colors for each participant and separate regression lines for each participant
 
 ```{r}
+#| label: Plot_lm_Scenario1
+#| cache: true
+
 scenario1.data %>%
   filter(id <= 5) %>%
   ggplot(aes(x = X, y = Y, group = id)) +
@@ -119,6 +139,9 @@ scenario1.data %>%
 Let's now do the same but with the true regression lines for each individual
 
 ```{r}
+#| label: Plot_true_Scenario1
+#| cache: true
+
 head(u_0i, 5)
 
 scenario1.data %>%
@@ -137,6 +160,9 @@ scenario1.data %>%
 Let's estimate the effect of $X$ on $Y$ using MLM
 
 ```{r}
+#| label: MLM_Scenario1
+#| cache: true
+
 scenario1.MLM_reml <- lmer(Y ~ 1 + X + (1 | id), data = scenario1.data, REML = TRUE)
 scenario1.MLM_mle <- lmer(Y ~ 1 + X + (1 | id), data = scenario1.data, REML = FALSE)
 
@@ -146,6 +172,9 @@ scenario1.MLM_mle <- lmer(Y ~ 1 + X + (1 | id), data = scenario1.data, REML = FA
 Let's now estimate the effect of $X$ on $Y$ using GEE
 
 ```{r}
+#| label: GEE_Scenario1
+#| cache: true
+
 # displays initial regression estimate of GLM
 scenario1.GEE_exch <- gee(Y ~ X, data = scenario1.data, id = id, family = gaussian(), corstr = "exchangeable")
 scenario1.GEE_ind <- gee(Y ~ X, data = scenario1.data, id = id, family = gaussian(), corstr = "independence")
@@ -157,6 +186,9 @@ scenario1.GEE_uns <- gee(Y ~ X, data = scenario1.data, id = id, family = gaussia
 Let's compare the point estimates
 
 ```{r}
+#| label: Coefs_Scenario1
+#| cache: true
+
 # Extracting the coefficients
 scenario1.coefs <- data.frame(
   row.names = c("Intercept", "X"),
@@ -179,7 +211,11 @@ De interpretatie for the fixed effects is als volgt:
 
 -   slope: voor een eenheid verandering in slaapproblemen ($X$), wordt verwacht dat angst ($Y$) verandert met $\approx 0.6$, waarbij variatie tussen proefpersonen genegeerd wordt. In technische termen, we nemen gelijke waarden aan voor de random effecten.
 
-## Scenario 2: SCM met een random intercept, time-varying $X$ en *met* between-person verschillen in $\bar{\mu}_{i}$ (de ene proefpersoon heeft een hogere gemiddelde dan een ander over de tijdspunten)
+## Scenario 2
+
+**SCM met een random intercept, time-varying $X$ en *met* between-person verschillen in $\bar{\mu}_{i}$ (de ene proefpersoon heeft een hogere gemiddelde dan een ander over de tijdspunten)**
+
+-----
 
 For the second DGM, using the multilevel notation (Raudenbusch and Bryk, 2002), we can specify the within person equation with the predictor within-person centered
 
@@ -221,6 +257,9 @@ We now have to also define
 Let us now simulate data according to data generating model 2
 
 ```{r}
+#| label: DataScenario2
+#| cache: true
+
 # Specify parameters
 set.seed(123)  # For reproducibility
 n_i <- 1000  # Number of individuals
@@ -263,6 +302,9 @@ head(scenario2.data)
 first, we have to estimate $\bar{\mu}_i$. One way to do this is by computing the sample mean $\bar{X}_i$ for every individual. Now we can create the centered within clusters variable $X_{it} - \bar{X}_{i}$
 
 ```{r}
+#| label: CenterScenario2
+#| cache: true
+
 scenario2.data <- scenario2.data %>%
   group_by(id) %>%
   mutate(X_bar = mean(X)) 
@@ -276,6 +318,9 @@ head(scenario2.data)
 Let's plot the first 10 individuals with different colors for each participant and separate regression lines for each participant
 
 ```{r}
+#| label: Plot_lm_Scenario2
+#| cache: true
+
 scenario2.data %>%
   filter(id <= 5) %>%
   ggplot(aes(x = X_cwc, y = Y, group = id)) +
@@ -285,9 +330,17 @@ scenario2.data %>%
   theme_minimal()
 ```
 
-Let's now do the same but with the true regression lines for each individual
+Let's now do the same but with the true regression lines for each individual and make a Scatterplot of centered X and Y with true regression lines for each individual (first 5 individuals). First plot uses population mean centered values, whereas second plot uses sample mean centered values.
 
 ```{r}
+#| label: Plot_true_Scenario2
+#| cache: true
+#| fig-subcap:
+#|   - "Population mean centering"
+#|   - "Sample mean centering"
+#| layout-ncol: 2
+
+# show population values
 head(u_0i, 5)
 head(mu_bar_i, 5)
 
@@ -323,6 +376,9 @@ Let's estimate the effect of $X$ on $Y$ using MLM
 Now let's fit the models
 
 ```{r}
+#| label: MLM_Scenario2
+#| cache: true
+
 scenario2.MLM_reml <- lmer(Y ~ 1 + X_cwc + (1 | id), data = scenario2.data, REML = TRUE)
 scenario2.MLM_mle <- lmer(Y ~ 1 + X_cwc + (1 | id), data = scenario2.data, REML = FALSE)
 
@@ -332,6 +388,9 @@ scenario2.MLM_mle <- lmer(Y ~ 1 + X_cwc + (1 | id), data = scenario2.data, REML 
 Let's now estimate the effect of $X_t$ on $Y_t$ using GEE
 
 ```{r}
+#| label: GEE_Scenario2
+#| cache: true
+
 # displays initial regression estimate of GLM
 scenario2.GEE_exch <- gee(Y ~ X_cwc, data = scenario2.data, id = id, family = gaussian(), corstr = "exchangeable")
 scenario2.GEE_ind <- gee(Y ~ X_cwc, data = scenario2.data, id = id, family = gaussian(), corstr = "independence")
@@ -342,6 +401,9 @@ scenario2.GEE_uns <- gee(Y ~ X_cwc, data = scenario2.data, id = id, family = gau
 Let's compare the point estimates
 
 ```{r}
+#| label: Coefs_Scenario2
+#| cache: true
+
 # Extracting the coefficients
 scenario2.coefs <- data.frame(
   row.names = c("Intercept", "X"),
@@ -364,7 +426,11 @@ Nu dat we de within-person centered predictor gebruiken is de interpretatie ande
 
 -   slope beta_1 (within-person interpretatie): *In vergelijking met het persoonlijk gemiddelde van een persoon*, gaat een eenheid toename in slaapproblemen gepaard met een toename van $\approx 0.6$ in angst ($Y$), waarbij variatie tussen proefpersonen genegeerd wordt. In technische termen, we nemen gelijke waarden aan voor de random effecten.
 
-## Scenario 3: SCM met een random intercept, time-varying $X$ en *met* between-person verschillen in $\bar{\mu}_{i}$ (de ene proefpersoon heeft een hogere gemiddelde dan een ander over de tijdspunten) die gerelateerd zijn aan de intercept (van $Y$)
+## Scenario 3
+
+**SCM met een random intercept, time-varying $X$ en *met* between-person verschillen in $\bar{\mu}_{i}$ (de ene proefpersoon heeft een hogere gemiddelde dan een ander over de tijdspunten) die gerelateerd zijn aan de intercept (van $Y$)**
+
+-----
 
 For the third DGM, using the multilevel notation (Raudenbusch and Bryk, 2002), we can specify the within person equation
 
@@ -407,6 +473,9 @@ we have to define
 Let us now simulate data according to data generating model 3
 
 ```{r}
+#| label: DataScenario3
+#| cache: true
+
 # Specify parameters
 set.seed(123)  # For reproducibility
 n_i <- 1000  # Number of individuals
@@ -450,6 +519,9 @@ head(scenario3.data)
 first, we have to estimate $\bar{\mu}_i$. One way to do this is by computing the sample mean $\bar{X}_i$ for every individual. Now we can create the centered within clusters variable $X_{it} - \bar{X}_{i}$
 
 ```{r}
+#| label: CenterScenario3
+#| cache: true
+
 scenario3.data <- scenario3.data %>%
   group_by(id) %>%
   mutate(X_bar = mean(X)) 
@@ -463,6 +535,9 @@ head(scenario3.data)
 Let's plot the first 10 individuals with different colors for each participant and separate regression lines for each participant
 
 ```{r}
+#| label: Plot_lm_Scenario3
+#| cache: true
+
 scenario3.data %>%
   filter(id <= 5) %>%
   ggplot(aes(x = X_cwc, y = Y, group = id)) +
@@ -472,9 +547,16 @@ scenario3.data %>%
   theme_minimal()
 ```
 
-Let's now do the same but with the true regression lines for each individual
+Let's now do the same but with the true regression lines for each individual and make a Scatterplot of centered X and Y with true regression lines for each individual (first 5 individuals). First plot uses population mean centered values, whereas second plot uses sample mean centered values.
 
 ```{r}
+#| label: Plot_true_Scenario3
+#| cache: true
+#| fig-subcap:
+#|   - "Population mean centering"
+#|   - "Sample mean centering"
+#| layout-ncol: 2
+
 head(u_0i, 5)
 head(mu_bar_i, 5)
 X_bar_i <- unique(scenario3.data$X_bar)
@@ -498,11 +580,11 @@ scenario3.data %>%
   ggplot(aes(x = X_cwc, y = Y, group = id)) +
   geom_point(aes(color = as.factor(id))) +
   geom_abline(intercept = gamma_00, slope = beta_1, color = "black", size = 1) + # overall regression line
-  geom_abline(intercept = gamma_00 + gamma_01 * X_bar_i[1] + u_0i[1], slope = beta_1, color = "red", size = 1) + # for id = 1
-  geom_abline(intercept = gamma_00 + gamma_01 * X_bar_i[2] + u_0i[2], slope = beta_1, color = "orange", size = 1) + # for id = 2
-  geom_abline(intercept = gamma_00 + gamma_01 * X_bar_i[3] + u_0i[3], slope = beta_1, color = "green", size = 1) + # for id = 3
-  geom_abline(intercept = gamma_00 + gamma_01 * X_bar_i[4] + u_0i[4], slope = beta_1, color = "blue", size = 1) + # for id = 4
-  geom_abline(intercept = gamma_00 + gamma_01 * X_bar_i[5] + u_0i[5], slope = beta_1, color = "purple", size = 1) + # for id = 5
+  geom_abline(intercept = gamma_00 + gamma_01 * mu_bar_i[1] + u_0i[1], slope = beta_1, color = "red", size = 1) + # for id = 1
+  geom_abline(intercept = gamma_00 + gamma_01 * mu_bar_i[2] + u_0i[2], slope = beta_1, color = "orange", size = 1) + # for id = 2
+  geom_abline(intercept = gamma_00 + gamma_01 * mu_bar_i[3] + u_0i[3], slope = beta_1, color = "green", size = 1) + # for id = 3
+  geom_abline(intercept = gamma_00 + gamma_01 * mu_bar_i[4] + u_0i[4], slope = beta_1, color = "blue", size = 1) + # for id = 4
+  geom_abline(intercept = gamma_00 + gamma_01 * mu_bar_i[5] + u_0i[5], slope = beta_1, color = "purple", size = 1) + # for id = 5
   theme_minimal()
 ```
 
@@ -511,6 +593,9 @@ Let's estimate the effect of $X$ on $Y$ using MLM
 Now let's fit the models
 
 ```{r}
+#| label: MLM_Scenario3
+#| cache: true
+
 scenario3.MLM_reml <- lmer(Y ~ 1 + X_cwc + X_bar + (1 | id), data = scenario3.data, REML = TRUE)
 scenario3.MLM_mle <- lmer(Y ~ 1 + X_cwc + X_bar + (1 | id), data = scenario3.data, REML = FALSE)
 
@@ -521,6 +606,9 @@ scenario3.MLM_mle <- lmer(Y ~ 1 + X_cwc + X_bar + (1 | id), data = scenario3.dat
 Let's now estimate the effect of $X$ on $Y$ using GEE
 
 ```{r}
+#| label: GEE_Scenario3
+#| cache: true
+
 # displays initial regression estimate of GLM
 scenario3.GEE_exch <- gee(Y ~ X_cwc + X_bar, data = scenario3.data, id = id, family = gaussian(), corstr = "exchangeable")
 scenario3.GEE_ind <- gee(Y ~ X_cwc + X_bar, data = scenario3.data, id = id, family = gaussian(), corstr = "independence")
@@ -531,6 +619,9 @@ scenario3.GEE_uns <- gee(Y ~ X_cwc + X_bar, data = scenario3.data, id = id, fami
 Let's compare the point estimates
 
 ```{r}
+#| label: Coefs_Scenario3
+#| cache: true
+
 # Extracting the coefficients
 scenario3.coefs <- data.frame(
   row.names = c("Intercept", "X", "X_bar"),
