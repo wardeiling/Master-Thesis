@@ -5,8 +5,8 @@ format:
   html:
     toc: true
     toc-location: left
-    toc-expand: 3
-    number-sections: false
+    toc-expand: 5
+    number-sections: true
     # embed-resources: false
     default-image-extension: svg
 execute:
@@ -32,16 +32,15 @@ Let's first install and load necessary packages
 library(dagitty)
 library(tidyverse)
 library(ggdag)
-library(purrr)
-library(qgraph)
-library(pcalg)
-library(sjPlot)
 library(lme4)
-library(geex)
 library(gee)
-library(MASS)
-library(jtools)
-library(cowplot)
+# library(geex)
+# library(purrr)
+# library(qgraph)
+# library(pcalg)
+# library(sjPlot)
+# library(MASS)
+# library(jtools)
 ```
 
 ## Regression of $Y$ on $X$
@@ -70,7 +69,7 @@ ggdag_status(dag) + theme_dag()
 
 SCM with random intercept and a time-varying $X$ *without* between-person differences in $\bar{\mu}_i$ (a mean of 0 for everyone)
 
------
+------------------------------------------------------------------------
 
 For the first DGM, using the multilevel notation (Raudenbusch and Bryk, 2002), we can specify the within person equation
 
@@ -227,7 +226,7 @@ De interpretatie for the fixed effects is als volgt:
 
 SCM met een random intercept, time-varying $X$ en *met* between-person verschillen in $\bar{\mu}_{i}$ (de ene proefpersoon heeft een hogere gemiddelde dan een ander over de tijdspunten)
 
------
+------------------------------------------------------------------------
 
 For the second DGM, using the multilevel notation (Raudenbusch and Bryk, 2002), we can specify the within person equation with the predictor within-person centered
 
@@ -442,7 +441,7 @@ Nu dat we de within-person centered predictor gebruiken is de interpretatie ande
 
 SCM met een random intercept, time-varying $X$ en *met* between-person verschillen in $\bar{\mu}_{i}$ (de ene proefpersoon heeft een hogere gemiddelde dan een ander over de tijdspunten) die gerelateerd zijn aan de intercept (van $Y$)
 
------
+------------------------------------------------------------------------
 
 For the third DGM, using the multilevel notation (Raudenbusch and Bryk, 2002), we can specify the within person equation
 
@@ -650,22 +649,24 @@ knitr::kable(scenario3.coefs, digits = 3)
 
 Again, the point estimates are essentially the same across all methods with $n = 1.000$. As a reminder, we specified the overall intercept $\gamma_{00} = 2$, the fixed within-person slope $\beta_1 = 0.6$, and the between person slope $\gamma_{01} = 0.8$. The point estimates are very close to the true values. Although the intercept is consistently off by more than 0.1.
 
-## Including Time-invariant Covariate $Z$
+## Including Covariates $Z$: no bias?
 
-Nu zullen we verder bouwen op scenario 3 en een covariaat $Z$ toevoegen aan het model. Hierbij zullen we in scenario 4 een time-invariante covariaat $Z$ toevoegen, in scenario 5 een time-varying exogenous covariaat $Z$ toevoegen en in scenario 6 een time-varying endogenous covariaat $Z$ toevoegen. We zullen de effecten van $X$ en $Z$ op $Y$ schatten met behulp van MLM en GEE.
+Nu zullen we verder bouwen op scenario 3 en een covariaat $Z$ toevoegen aan het model, maar verneemelijk nog zonder dat dit biased estimates veroorzaakt. Hierbij zullen we in scenario 4 een time-invariante covariaat $Z$ toevoegen, in scenario 5 een time-varying exogenous covariaat $Z$ toevoegen.
 
-### Scenario 4: Time-invariant Covariate $Z$
+### Scenario 4: Time-invariant $Z$
 
-Er zijn vier opties voor een time-invariant covariate $Z$. Zo kunnen we een confounder toevoegen, een mediator toevoegen, een moderator toevoegen of een collider toevoegen. In dit geval zullen we een moderator toevoegen. Ten opzichte van scenario 3, wordt er in dit scenario een time-invariant moderator $Z$ toegevoegd aan het model in het effect van $X$ op $Y$
+In dit scenario is $Z$ een *moderator* in de relatie tussen $X$ en $Y$.
 
-----
+Note: Er zijn in principe vier opties voor een time-invariante covariaat $Z$. Zo kunnen we een confounder toevoegen, een mediator toevoegen, een moderator toevoegen of een collider toevoegen. In dit geval zullen we een moderator toevoegen om te kijken of het toevoegen van *time-invariant endogene covariaat* ook kan leiden tot biased estimates (en dus niet alleen maar endogenous time-varying covariates).
 
-In verband met het toevoegen van een nieuwe variabele, kunnen we opnieuw de DAG tekenen.
+------------------------------------------------------------------------
+
 
 ```{r}
 #| label: DAG2
 #| cache: true
 #| fig-cap: "DAG with covariate Z"
+#| echo: false
 
 dag2 <- dagitty('dag {
 bb="0,0,1,1"
@@ -683,48 +684,21 @@ Z -> "X_t * Z"
 ggdag_status(dag2) + theme_dag()
 ```
 
-## Including Time-varying Exogenous Covariate $Z$
+### Scenario 5: TV Exogenous $Z$
 
-### Scenario 5: Time-varying Exogenous Covariate $Z$
+In dit scenario is $Z$ een *exogene covariaat*: (1) $Z_t$ een exogene covariaat die alleen een effect heeft op $Y_{t+1}$ of (2) $Z_t$ een time-varying *confounder* in de relatie tussen $X_t$ en $Y_{t+1}$
 
-Ten opzichte van scenario 3, wordt er in dit scenario een time-varying exogenous covariate $Z$ toegevoegd aan het model. Een time-varying exogene covariaat beïnvloedt de uitkomst variabele $Y$ en/of de exposure $X$, maar wordt zelf niet beïnvloed door $Y$ of andere factoren in het model.
+*Note.* Een time-varying exogene covariaat beïnvloedt de uitkomst variabele $Y$ en/of de exposure $X$, maar wordt zelf niet beïnvloed door $Y$ of andere factoren in het model.
 
-In verband met het toevoegen van een nieuwe variabele, kunnen we opnieuw de DAG tekenen.
+------------------------------------------------------------------------
 
-----
-
-Voor een time-varying exogene covariaat kunnen we of (1) een time-varying confounder toe voegen aan het effect van $X$ op $Y$ of (2) een time-varying covariaat toe voegen die alleen een effect heeft op $Y$.
+In deze DAG is de TV covariaat een $Z_t$ een exogene covariaat die alleen een effect heeft op $Y_{t+1}$
 
 ```{r}
 #| label: DAG5.1
 #| cache: true
-#| fig-cap: "DAG with time-varying confounder Z"
-
-dag2 <- dagitty('dag {
-bb="0,0,1,1"
-"X_t+1" [exposure,pos="0.383,0.442"]
-"Y_t+1" [outcome,pos="0.364,0.330"]
-"Y_t+2" [outcome,pos="0.585,0.333"]
-"Z_t+1" [pos="0.364,0.206"]
-"Z_t+2" [pos="0.579,0.201"]
-X_t [exposure,pos="0.146,0.440"]
-Z_t [pos="0.130,0.209"]
-"X_t+1" -> "Y_t+2"
-"Z_t+1" -> "Y_t+2"
-"Z_t+1" -> X_t
-"Z_t+2" -> "X_t+1"
-X_t -> "Y_t+1"
-Z_t -> "Y_t+1"
-}
-')
-
-ggdag_status(dag2) + theme_dag()
-```
-
-```{r}
-#| label: DAG5.2
-#| cache: true
 #| fig-cap: "DAG with time-varying covariate Z"
+#| echo: false
 
 dag2 <- dagitty('dag {
 bb="0,0,1,1"
@@ -739,20 +713,59 @@ Z_t -> "Y_t+1"
 
 ggdag_status(dag2) + theme_dag()
 ```
-## Including Time-varying Endogenous Covariate $Z$
 
-### Scenario 6: Time-varying confounder $Z_{t+1}$ of effect $X_t$ on $X_{t+2}$
+In deze DAG is de TV exogene covariaat een $Z_t$ een confounder in het effect van $X_{t+1}$ op $Y_{t+1}$
 
-Ten opzichte van scenario 3, wordt er in dit scenario een time-varying endogenous $Z$ toegevoegd aan het model. Een time-varying endogene covariaat is niet onafhankelijk van eerdere waarden van de uitkomst variabele $Y$ en/of de exposure $X$. In dit geval is $Z$ een *time-varying confounder*, wat Qian et al. (2020) definieert als: "a covariate that is affected by previous treatment (hence is endogenous) and affects future treatment assignment."
+```{r}
+#| label: DAG5.2
+#| cache: true
+#| fig-cap: "DAG with time-varying confounder Z"
+#| echo: false
 
-----
+dag2 <- dagitty('dag {
+bb="0,0,1,1"
+"X_t+1" [exposure,pos="0.383,0.442"]
+"X_t+2" [exposure,pos="0.585,0.442"]
+"Y_t+1" [outcome,pos="0.379,0.321"]
+"Y_t+2" [outcome,pos="0.582,0.322"]
+"Z_t+1" [pos="0.378,0.198"]
+"Z_t+2" [pos="0.579,0.201"]
+X_t [exposure,pos="0.171,0.445"]
+Z_t [pos="0.172,0.198"]
+"X_t+1" -> "Y_t+2"
+"Z_t+1" -> "X_t+2"
+"Z_t+1" -> "Y_t+2"
+X_t -> "Y_t+1"
+Z_t -> "X_t+1"
+Z_t -> "Y_t+1"
+}
+')
 
-...
+ggdag_status(dag2) + theme_dag()
+```
+
+Welk scenario is hier het meest nuttig? of allebei?
+
+## Including TV Endogenous Covariates $Z$: bias?
+
+Nu zullen we een time-varying endogenous covariates toevoegen aan het baseline model 3 om te kijken of, zoals Qian et al. (2020) aangeven, de fixed parameter estimates biased worden.
+
+### Scenario 6: TV confounder
+
+In dit scenario is $Z_{t+1}$ een *confounder* in de relatie tussen $X_{t}$ en $X_{t+2}$
+
+*Note.* Een time-varying endogene covariaat is niet onafhankelijk van eerdere waarden van de uitkomst variabele $Y$ en/of de exposure $X$. In dit geval is $Z$ een *time-varying confounder*, wat Qian et al. (2020) definieert als: "a covariate that is affected by previous treatment (hence is endogenous) and affects future treatment assignment."
+
+-  Waarom wordt dit een confounder genoemd? Confounders zijn toch exogeen?
+
+------------------------------------------------------------------------
+
 
 ```{r}
 #| label: DAG6
 #| cache: true
 #| fig-cap: "DAG with time-varying confounder Z"
+#| echo: false
 
 dag2 <- dagitty('dag {
 bb="0,0,1,1"
@@ -774,18 +787,18 @@ Z_t -> "X_t+1"
 ggdag_status(dag2) + theme_dag()
 ```
 
-### Scenario 7: Time-varying mediator $Z_{t+1}$ of effect $X_t$ on $Y_{t+2}$
+### Scenario 7: TV mediator
 
-Net zoals in scenario 6, wordt er in dit scenario een time-varying endogene covariaat $Z$ toegevoegd aan het model. Echter, in dit scenario is $Z$ een *mediator* van de relatie tussen $X$ en $Y$.
+In dit scenario is $Z_{t+1}$ een *mediator* in de relatie tussen $X_t$ en $Y_{t+2}$.
 
-----
+------------------------------------------------------------------------
 
-...
 
 ```{r}
 #| label: DAG7
 #| cache: true
 #| fig-cap: "DAG with time-varying mediator Z of the treatment effect"
+#| echo: false
 
 dag2 <- dagitty('dag {
 bb="0,0,1,1"
@@ -807,18 +820,19 @@ Z_t -> "Y_t+1"
 
 ggdag_status(dag2) + theme_dag()
 ```
-### Scenario 8: Time-varying moderator $Z_{t}$ of effect $X_t$ on $Y_{t+1}$
 
-Net zoals in scenario 6 en 7, wordt er in dit scenario een time-varying endogene covariaat $Z$ toegevoegd aan het model. Echter, in dit scenario is $Z$ een *moderator* van de relatie tussen $X$ en $Y$.
+### Scenario 8: TV moderator
 
-----
+In dit scenario is $Z$ een *moderator* in de relatie tussen $X_t$ en $Y_{t+1}$.
 
-...
+------------------------------------------------------------------------
+
 
 ```{r}
 #| label: DAG8
 #| cache: true
 #| fig-cap: "DAG with time-varying moderator Z of the treatment effect"
+#| echo: false
 
 dag2 <- dagitty('dag {
 bb="0,0,1,1"
@@ -838,16 +852,16 @@ ggdag_status(dag2) + theme_dag()
 
 ## Including a Random Slope
 
-Bij de vorige scenarios hebben we gekeken naar het effect van verschillende covariaaten in modellen met alleen een random intercept. In de volgende scenarios zullen we hier ook een random slope aan toevoegen. We zullen de effecten van $X$ en $Z$ op $Y$ schatten met behulp van MLM en GEE.
+Bij de vorige scenarios hebben we gekeken naar het effect van verschillende covariaaten in modellen met alleen een random intercept. In de volgende scenarios zullen we hier ook een random slope aan toevoegen. 
 
-----
+------------------------------------------------------------------------
 
 ...
 
 ## Including autocorrelation
 
-Ten opzichte van de vorige scenarios voegen we nu een autocorrelatie toe aan de data. Dit is plausibel in real-world scenarios, omdat de uitkomst van een bepaalde tijd vaak afhankelijk is van de uitkomst van de vorige tijd. We zullen de effecten van $X$ en $Z$ op $Y$ schatten met behulp van MLM en GEE.
+Ten opzichte van de vorige scenarios voegen we nu een autocorrelatie toe aan de data. Dit is plausibel in real-world scenarios, omdat de uitkomst van een bepaalde tijd vaak afhankelijk is van de uitkomst van de vorige tijd. 
 
-----
+------------------------------------------------------------------------
 
 ...
