@@ -1,0 +1,167 @@
+---
+title: "Data Generating Models of Qian et al. (2020)"
+author: "Ward B. Eiling"
+date: "2024-10-17"
+format: 
+  html:
+    toc: true
+    toc-location: left
+    toc-expand: 5
+    number-sections: true
+    # embed-resources: false
+    default-image-extension: svg
+execute:
+  message: false
+  warning: false
+comments:
+  hypothesis: 
+    theme: clean
+fig-cap-location: top
+---
+
+
+## Introduction
+
+In this document, I will recreate the data generating models presented by Qian et al. (2020), accompanied by visual representations of these models.
+
+```{r}
+#| label: Packages
+#| cache: true
+
+# Load packages
+library(dagitty)
+library(tidyverse)
+library(ggdag)
+library(lme4)
+library(gee)
+```
+
+## Simple Concrete Example: No Exposure
+
+### Example in section 2.2 of Qian et al. (2020)
+
+As a concrete example, consider the case where each individual is observed for 2 time points ($T_i = 2$), and the covariate at the second time point is the lag-1 outcome: $X_{i2} = Y_{i2}$.
+
+> By lagging the outcome, we essentially have three time points: $X_{i1}$, $X_{i2} = Y_{i2}$, and $Y_{i3}$.
+
+Suppose the variables are generated from the following multilevel linear model (MLM) with a random intercept:
+
+$$
+b_i \sim N(0, \sigma_u^2),
+$$
+
+$$
+X_{i1} \sim N(0, \sigma_{X_1}^2) \text{ independently of } b_i,
+$$
+
+$$
+Y_{i2} \mid X_{i1}, b_i \sim N(\beta_0 + \beta_1 X_{i1} + b_i, \sigma_\epsilon^2),
+$$
+
+$$
+X_{i2} = Y_{i2},
+$$
+
+$$
+Y_{i3} \mid X_{i1}, Y_{i2}, X_{i2}, b_i \sim N(\beta_0 + \beta_1 X_{i2} + b_i, \sigma_\epsilon^2).
+$$
+
+### Translating the notation
+
+The notation here is different from the notation used in the psychological sciences. In the psychological sciences, we would typically denote the random intercept as $u_{0i}$ instead of $b_i$. We would also denote the fixed intercept as $\gamma_{00}$ instead of $\beta_0$ and $\sigma_\epsilon^2$ as $\sigma_e^2$, but keep the fixed slope as $\beta_1$.
+
+Let's now rewrite the model in this notation
+
+$$
+u_{0i} \sim N(0, \sigma_u^2),
+$$
+
+$$
+X_{i1} \sim N(0, \sigma_{X_1}^2) \text{ independently of } u_{0i},
+$$
+
+$$
+Y_{i2} \mid X_{i1}, u_{0i} \sim N(\gamma_{00} + \beta_1 X_{i1} + u_{0i}, \sigma_e^2),
+$$
+
+$$
+X_{i2} = Y_{i2},
+$$
+
+$$
+Y_{i3} \mid X_{i1}, Y_{i2}, X_{i2}, u_{0i} \sim N(\gamma_{00} + \beta_1 X_{i2} + u_{0i}, \sigma_e^2).
+$$
+
+### Generating the data
+
+Let's now generate the data according to this model.
+
+```{r}
+#| label: Data Generation
+#| cache: true
+
+set.seed(123)
+
+# specify parameters
+n_i <- 5000
+
+sigma_u <- 1 # variance of random intercept
+sigma_X1 <- 1 # variance of X1
+sigma_e <- 0.1 # residual variance
+beta_1 <- 0.8 # overall slope
+gamma_00 <- 2 # overall intercept
+
+# simulate data
+u_0i <- rnorm(n_i, 0, sigma_u)
+X_i1 <- rnorm(n_i, 0, sigma_X1)
+Y_i2 <- rnorm(n_i, gamma_00 + beta_1 * X_i1 + u_0i, sigma_e)
+X_i2 <- Y_i2
+Y_i3 <- rnorm(n_i, gamma_00 + beta_1 * X_i2 + u_0i, sigma_e)
+
+# create data frame in wide format
+section2.2.data_wide <- data.frame(id = 1:n_i,
+                                   X_i1 = X_i1,
+                                   Y_i2 = Y_i2,
+                                   X_i2 = X_i2,
+                                   Y_i3 = Y_i3)
+
+head(section2.2.data_wide)
+
+# create data frame in long format
+section2.2data_long <- data.frame(id = rep(1:n_i, each = 3),
+                             time = rep(1:3, n_i),
+                             X = rep(NA, 3 * n_i),
+                             Y = rep(NA, 3 * n_i))
+
+for (i in 1:n_i){
+  section2.2data_long$X[section2.2data_long$id == i & section2.2data_long$time == 1] <- X_i1[i]
+  section2.2data_long$Y[section2.2data_long$id == i & section2.2data_long$time == 2] <- Y_i2[i]
+  section2.2data_long$X[section2.2data_long$id == i & section2.2data_long$time == 2] <- X_i2[i]
+  section2.2data_long$Y[section2.2data_long$id == i & section2.2data_long$time == 3] <- Y_i3[i]
+}
+
+
+head(section2.2data_long)
+```
+
+### Estimating the model
+
+Let's now estimate the model using a multilevel linear model (MLM) and a generalized estimating equation (GEE) model.
+
+```{r}
+#| label: Model Estimation
+#| cache: true
+
+# section2.2_mlm_reml <- lmer(Y ~ 1 + X + (1 | id), data = section2.2data_long)
+# 
+# section2.2_mlm_reml <- lmer(Y_i3 ~ X_i1 + X_i2 + (1 | id), data = section2.2data)
+# section2.2_mlm_mle <- lmer(Y_i3 ~ X_i1 + X_i2 + (1 | id), data = section2.2data, REML = FALSE)
+# section2.2_gee_ind <- gee(Y_i3 ~ X_i1 + X_i2, id = id, data = section2.2data, family = gaussian, corstr = "independence")
+# section2.2_gee_exch <- gee(Y_i3 ~ X_i1 + X_i2, id = id, data = section2.2data, family = gaussian, corstr = "exchangeable")
+# section2.2_gee_ar <- gee(Y_i3 ~ X_i1 + X_i2, id = id, data = section2.2data, family = gaussian, corstr = "AR-M")
+# section2.2_gee_uns <- gee(Y_i3 ~ X_i1 + X_i2, id = id, data = section2.2data, family = gaussian, corstr = "unstructured")
+```
+
+
+
+

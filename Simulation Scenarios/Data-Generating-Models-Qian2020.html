@@ -1,0 +1,513 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.3.450">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="Ward B. Eiling">
+<meta name="dcterms.date" content="2024-10-17">
+
+<title>Data Generating Models of Qian et al.&nbsp;(2020)</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="Data-Generating-Models-Qian2020_files/libs/clipboard/clipboard.min.js"></script>
+<script src="Data-Generating-Models-Qian2020_files/libs/quarto-html/quarto.js"></script>
+<script src="Data-Generating-Models-Qian2020_files/libs/quarto-html/popper.min.js"></script>
+<script src="Data-Generating-Models-Qian2020_files/libs/quarto-html/tippy.umd.min.js"></script>
+<script src="Data-Generating-Models-Qian2020_files/libs/quarto-html/anchor.min.js"></script>
+<link href="Data-Generating-Models-Qian2020_files/libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="Data-Generating-Models-Qian2020_files/libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="Data-Generating-Models-Qian2020_files/libs/bootstrap/bootstrap.min.js"></script>
+<link href="Data-Generating-Models-Qian2020_files/libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="Data-Generating-Models-Qian2020_files/libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script type="application/json" class="js-hypothesis-config">
+{
+  "theme": "clean"
+}
+</script>
+<script async="" src="https://hypothes.is/embed.js"></script>
+
+  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+</head>
+
+<body>
+
+<div id="quarto-content" class="page-columns page-rows-contents page-layout-article toc-left">
+<div id="quarto-sidebar-toc-left" class="sidebar toc-left">
+  <nav id="TOC" role="doc-toc" class="toc-active" data-toc-expanded="5">
+    <h2 id="toc-title">Table of contents</h2>
+   
+  <ul>
+  <li><a href="#introduction" id="toc-introduction" class="nav-link active" data-scroll-target="#introduction"><span class="header-section-number">1</span> Introduction</a></li>
+  <li><a href="#simple-concrete-example-no-exposure" id="toc-simple-concrete-example-no-exposure" class="nav-link" data-scroll-target="#simple-concrete-example-no-exposure"><span class="header-section-number">2</span> Simple Concrete Example: No Exposure</a>
+  <ul class="collapse">
+  <li><a href="#example-in-section-2.2-of-qian-et-al.-2020" id="toc-example-in-section-2.2-of-qian-et-al.-2020" class="nav-link" data-scroll-target="#example-in-section-2.2-of-qian-et-al.-2020"><span class="header-section-number">2.1</span> Example in section 2.2 of Qian et al.&nbsp;(2020)</a></li>
+  <li><a href="#translating-the-notation" id="toc-translating-the-notation" class="nav-link" data-scroll-target="#translating-the-notation"><span class="header-section-number">2.2</span> Translating the notation</a></li>
+  <li><a href="#generating-the-data" id="toc-generating-the-data" class="nav-link" data-scroll-target="#generating-the-data"><span class="header-section-number">2.3</span> Generating the data</a></li>
+  <li><a href="#estimating-the-model" id="toc-estimating-the-model" class="nav-link" data-scroll-target="#estimating-the-model"><span class="header-section-number">2.4</span> Estimating the model</a></li>
+  </ul></li>
+  </ul>
+</nav>
+</div>
+<div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+</div>
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">Data Generating Models of Qian et al.&nbsp;(2020)</h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    <div>
+    <div class="quarto-title-meta-heading">Author</div>
+    <div class="quarto-title-meta-contents">
+             <p>Ward B. Eiling </p>
+          </div>
+  </div>
+    
+    <div>
+    <div class="quarto-title-meta-heading">Published</div>
+    <div class="quarto-title-meta-contents">
+      <p class="date">October 17, 2024</p>
+    </div>
+  </div>
+  
+    
+  </div>
+  
+
+</header>
+
+<section id="introduction" class="level2" data-number="1">
+<h2 data-number="1" class="anchored" data-anchor-id="introduction"><span class="header-section-number">1</span> Introduction</h2>
+<p>In this document, I will recreate the data generating models presented by Qian et al.&nbsp;(2020), accompanied by visual representations of these models.</p>
+<div class="cell" data-hash="Data-Generating-Models-Qian2020_cache/html/Packages_a03a479011d90062b6effa06f4900406">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Load packages</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dagitty)</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggdag)</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(lme4)</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(gee)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="simple-concrete-example-no-exposure" class="level2" data-number="2">
+<h2 data-number="2" class="anchored" data-anchor-id="simple-concrete-example-no-exposure"><span class="header-section-number">2</span> Simple Concrete Example: No Exposure</h2>
+<section id="example-in-section-2.2-of-qian-et-al.-2020" class="level3" data-number="2.1">
+<h3 data-number="2.1" class="anchored" data-anchor-id="example-in-section-2.2-of-qian-et-al.-2020"><span class="header-section-number">2.1</span> Example in section 2.2 of Qian et al.&nbsp;(2020)</h3>
+<p>As a concrete example, consider the case where each individual is observed for 2 time points (<span class="math inline">\(T_i = 2\)</span>), and the covariate at the second time point is the lag-1 outcome: <span class="math inline">\(X_{i2} = Y_{i2}\)</span>.</p>
+<blockquote class="blockquote">
+<p>By lagging the outcome, we essentially have three time points: <span class="math inline">\(X_{i1}\)</span>, <span class="math inline">\(X_{i2} = Y_{i2}\)</span>, and <span class="math inline">\(Y_{i3}\)</span>.</p>
+</blockquote>
+<p>Suppose the variables are generated from the following multilevel linear model (MLM) with a random intercept:</p>
+<p><span class="math display">\[
+b_i \sim N(0, \sigma_u^2),
+\]</span></p>
+<p><span class="math display">\[
+X_{i1} \sim N(0, \sigma_{X_1}^2) \text{ independently of } b_i,
+\]</span></p>
+<p><span class="math display">\[
+Y_{i2} \mid X_{i1}, b_i \sim N(\beta_0 + \beta_1 X_{i1} + b_i, \sigma_\epsilon^2),
+\]</span></p>
+<p><span class="math display">\[
+X_{i2} = Y_{i2},
+\]</span></p>
+<p><span class="math display">\[
+Y_{i3} \mid X_{i1}, Y_{i2}, X_{i2}, b_i \sim N(\beta_0 + \beta_1 X_{i2} + b_i, \sigma_\epsilon^2).
+\]</span></p>
+</section>
+<section id="translating-the-notation" class="level3" data-number="2.2">
+<h3 data-number="2.2" class="anchored" data-anchor-id="translating-the-notation"><span class="header-section-number">2.2</span> Translating the notation</h3>
+<p>The notation here is different from the notation used in the psychological sciences. In the psychological sciences, we would typically denote the random intercept as <span class="math inline">\(u_{0i}\)</span> instead of <span class="math inline">\(b_i\)</span>. We would also denote the fixed intercept as <span class="math inline">\(\gamma_{00}\)</span> instead of <span class="math inline">\(\beta_0\)</span> and <span class="math inline">\(\sigma_\epsilon^2\)</span> as <span class="math inline">\(\sigma_e^2\)</span>, but keep the fixed slope as <span class="math inline">\(\beta_1\)</span>.</p>
+<p>Let’s now rewrite the model in this notation</p>
+<p><span class="math display">\[
+u_{0i} \sim N(0, \sigma_u^2),
+\]</span></p>
+<p><span class="math display">\[
+X_{i1} \sim N(0, \sigma_{X_1}^2) \text{ independently of } u_{0i},
+\]</span></p>
+<p><span class="math display">\[
+Y_{i2} \mid X_{i1}, u_{0i} \sim N(\gamma_{00} + \beta_1 X_{i1} + u_{0i}, \sigma_e^2),
+\]</span></p>
+<p><span class="math display">\[
+X_{i2} = Y_{i2},
+\]</span></p>
+<p><span class="math display">\[
+Y_{i3} \mid X_{i1}, Y_{i2}, X_{i2}, u_{0i} \sim N(\gamma_{00} + \beta_1 X_{i2} + u_{0i}, \sigma_e^2).
+\]</span></p>
+</section>
+<section id="generating-the-data" class="level3" data-number="2.3">
+<h3 data-number="2.3" class="anchored" data-anchor-id="generating-the-data"><span class="header-section-number">2.3</span> Generating the data</h3>
+<p>Let’s now generate the data according to this model.</p>
+<div class="cell" data-hash="Data-Generating-Models-Qian2020_cache/html/Data Generation_8d463a4984d44c6a04a2b08141a8405c">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">123</span>)</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="co"># specify parameters</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>n_i <span class="ot">&lt;-</span> <span class="dv">5000</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>sigma_u <span class="ot">&lt;-</span> <span class="dv">1</span> <span class="co"># variance of random intercept</span></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>sigma_X1 <span class="ot">&lt;-</span> <span class="dv">1</span> <span class="co"># variance of X1</span></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>sigma_e <span class="ot">&lt;-</span> <span class="fl">0.1</span> <span class="co"># residual variance</span></span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>beta_1 <span class="ot">&lt;-</span> <span class="fl">0.8</span> <span class="co"># overall slope</span></span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>gamma_00 <span class="ot">&lt;-</span> <span class="dv">2</span> <span class="co"># overall intercept</span></span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a><span class="co"># simulate data</span></span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>u_0i <span class="ot">&lt;-</span> <span class="fu">rnorm</span>(n_i, <span class="dv">0</span>, sigma_u)</span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>X_i1 <span class="ot">&lt;-</span> <span class="fu">rnorm</span>(n_i, <span class="dv">0</span>, sigma_X1)</span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a>Y_i2 <span class="ot">&lt;-</span> <span class="fu">rnorm</span>(n_i, gamma_00 <span class="sc">+</span> beta_1 <span class="sc">*</span> X_i1 <span class="sc">+</span> u_0i, sigma_e)</span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a>X_i2 <span class="ot">&lt;-</span> Y_i2</span>
+<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a>Y_i3 <span class="ot">&lt;-</span> <span class="fu">rnorm</span>(n_i, gamma_00 <span class="sc">+</span> beta_1 <span class="sc">*</span> X_i2 <span class="sc">+</span> u_0i, sigma_e)</span>
+<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a><span class="co"># create data frame in wide format</span></span>
+<span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a>section2.<span class="fl">2.</span>data_wide <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">id =</span> <span class="dv">1</span><span class="sc">:</span>n_i,</span>
+<span id="cb2-21"><a href="#cb2-21" aria-hidden="true" tabindex="-1"></a>                                   <span class="at">X_i1 =</span> X_i1,</span>
+<span id="cb2-22"><a href="#cb2-22" aria-hidden="true" tabindex="-1"></a>                                   <span class="at">Y_i2 =</span> Y_i2,</span>
+<span id="cb2-23"><a href="#cb2-23" aria-hidden="true" tabindex="-1"></a>                                   <span class="at">X_i2 =</span> X_i2,</span>
+<span id="cb2-24"><a href="#cb2-24" aria-hidden="true" tabindex="-1"></a>                                   <span class="at">Y_i3 =</span> Y_i3)</span>
+<span id="cb2-25"><a href="#cb2-25" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-26"><a href="#cb2-26" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(section2.<span class="fl">2.</span>data_wide)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>  id       X_i1     Y_i2     X_i2     Y_i3
+1  1 -0.4941739 1.281258 1.281258 2.329146
+2  2  1.1275935 2.655216 2.655216 3.836058
+3  3 -1.1469495 2.733845 2.733845 5.659680
+4  4  1.4810186 3.198508 3.198508 4.726583
+5  5  0.9161912 2.884750 2.884750 4.499002
+6  6  0.3351310 4.096368 4.096368 7.130704</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co"># create data frame in long format</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>section2<span class="fl">.2</span>data_long <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">id =</span> <span class="fu">rep</span>(<span class="dv">1</span><span class="sc">:</span>n_i, <span class="at">each =</span> <span class="dv">3</span>),</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>                             <span class="at">time =</span> <span class="fu">rep</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">3</span>, n_i),</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>                             <span class="at">X =</span> <span class="fu">rep</span>(<span class="cn">NA</span>, <span class="dv">3</span> <span class="sc">*</span> n_i),</span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>                             <span class="at">Y =</span> <span class="fu">rep</span>(<span class="cn">NA</span>, <span class="dv">3</span> <span class="sc">*</span> n_i))</span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>n_i){</span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>  section2<span class="fl">.2</span>data_long<span class="sc">$</span>X[section2<span class="fl">.2</span>data_long<span class="sc">$</span>id <span class="sc">==</span> i <span class="sc">&amp;</span> section2<span class="fl">.2</span>data_long<span class="sc">$</span>time <span class="sc">==</span> <span class="dv">1</span>] <span class="ot">&lt;-</span> X_i1[i]</span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>  section2<span class="fl">.2</span>data_long<span class="sc">$</span>Y[section2<span class="fl">.2</span>data_long<span class="sc">$</span>id <span class="sc">==</span> i <span class="sc">&amp;</span> section2<span class="fl">.2</span>data_long<span class="sc">$</span>time <span class="sc">==</span> <span class="dv">2</span>] <span class="ot">&lt;-</span> Y_i2[i]</span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>  section2<span class="fl">.2</span>data_long<span class="sc">$</span>X[section2<span class="fl">.2</span>data_long<span class="sc">$</span>id <span class="sc">==</span> i <span class="sc">&amp;</span> section2<span class="fl">.2</span>data_long<span class="sc">$</span>time <span class="sc">==</span> <span class="dv">2</span>] <span class="ot">&lt;-</span> X_i2[i]</span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>  section2<span class="fl">.2</span>data_long<span class="sc">$</span>Y[section2<span class="fl">.2</span>data_long<span class="sc">$</span>id <span class="sc">==</span> i <span class="sc">&amp;</span> section2<span class="fl">.2</span>data_long<span class="sc">$</span>time <span class="sc">==</span> <span class="dv">3</span>] <span class="ot">&lt;-</span> Y_i3[i]</span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(section2<span class="fl">.2</span>data_long)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>  id time          X        Y
+1  1    1 -0.4941739       NA
+2  1    2  1.2812578 1.281258
+3  1    3         NA 2.329146
+4  2    1  1.1275935       NA
+5  2    2  2.6552161 2.655216
+6  2    3         NA 3.836058</code></pre>
+</div>
+</div>
+</section>
+<section id="estimating-the-model" class="level3" data-number="2.4">
+<h3 data-number="2.4" class="anchored" data-anchor-id="estimating-the-model"><span class="header-section-number">2.4</span> Estimating the model</h3>
+<p>Let’s now estimate the model using a multilevel linear model (MLM) and a generalized estimating equation (GEE) model.</p>
+<div class="cell" data-hash="Data-Generating-Models-Qian2020_cache/html/Model Estimation_8939734f523ab725e002568dd6b1c8e5">
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co"># section2.2_mlm_reml &lt;- lmer(Y ~ 1 + X + (1 | id), data = section2.2data_long)</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="co"># </span></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a><span class="co"># section2.2_mlm_reml &lt;- lmer(Y_i3 ~ X_i1 + X_i2 + (1 | id), data = section2.2data)</span></span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a><span class="co"># section2.2_mlm_mle &lt;- lmer(Y_i3 ~ X_i1 + X_i2 + (1 | id), data = section2.2data, REML = FALSE)</span></span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a><span class="co"># section2.2_gee_ind &lt;- gee(Y_i3 ~ X_i1 + X_i2, id = id, data = section2.2data, family = gaussian, corstr = "independence")</span></span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a><span class="co"># section2.2_gee_exch &lt;- gee(Y_i3 ~ X_i1 + X_i2, id = id, data = section2.2data, family = gaussian, corstr = "exchangeable")</span></span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a><span class="co"># section2.2_gee_ar &lt;- gee(Y_i3 ~ X_i1 + X_i2, id = id, data = section2.2data, family = gaussian, corstr = "AR-M")</span></span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a><span class="co"># section2.2_gee_uns &lt;- gee(Y_i3 ~ X_i1 + X_i2, id = id, data = section2.2data, family = gaussian, corstr = "unstructured")</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+</section>
+
+</main>
+<!-- /main column -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    text: function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn) {
+    const config = {
+      allowHTML: true,
+      content: contentFn,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start'
+    };
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+</body></html>

@@ -1,6 +1,7 @@
 ---
-title: "Estimation Methods"
+title: "Data Generating Models and Estimation Methods"
 author: "Ward B. Eiling"
+date: "2024-10-17"
 format: 
   html:
     toc: true
