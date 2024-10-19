@@ -32,6 +32,7 @@ library(dagitty)
 library(tidyverse)
 library(ggdag)
 library(lme4)
+library(jtools)
 library(gee)
 library(geex)
 ```
@@ -92,6 +93,52 @@ $$
 Y_{i3} \mid X_{i1}, Y_{i2}, X_{i2}, u_{0i} \sim N(\gamma_{00} + \beta_1 X_{i2} + u_{0i}, \sigma_e^2).
 $$
 
+### Visualizing the Model
+
+We may now draw the DAG for this model
+
+```{r}
+#| label: DAG
+#| cache: true
+#| fig-cap: DAG for the data generating model in section 2.2 of Qian et al. (2020)
+#| echo: false
+
+section2.2_DAG <- dagitty(
+  'dag {
+bb="0,0,1,1"
+X_1 [exposure,pos="0.182,0.160"]
+X_2 [exposure,pos="0.454,0.160"]
+Y_2 [outcome,pos="0.458,0.282"]
+Y_3 [outcome,pos="0.732,0.283"]
+X_1 -> Y_2
+X_2 -> Y_3
+Y_2 -> X_2
+}')
+
+ggdag::ggdag_status(section2.2_DAG) + ggdag::theme_dag()
+
+# alternatively, we can include the random intercept
+section2.2_DAG_randomeff <- dagitty(
+  'dag {
+bb="0,0,1,1"
+X_1 [exposure,pos="0.182,0.160"]
+X_2 [exposure,pos="0.454,0.160"]
+Y_2 [outcome,pos="0.458,0.282"]
+Y_3 [outcome,pos="0.732,0.283"]
+u_0 [latent,pos="0.621,0.399"]
+X_1 -> Y_2
+X_2 -> Y_3
+Y_2 -> X_2
+u_0 -> Y_2
+u_0 -> Y_3
+}
+')
+
+ggdag::ggdag_status(section2.2_DAG_randomeff) + ggdag::theme_dag()
+```
+
+Note that there is an open biasing path from $Y_2$ to $X_2$ in the DAG: the exposure/predictor $X_2$ is *caused by* (in this case equivalent to) the previous outcome $Y_2$---and thus this time-varying covariate is *endogenous*.
+
 ### Generating the data
 
 Let's now generate the data according to this model.
@@ -102,8 +149,7 @@ Let's now generate the data according to this model.
 
 set.seed(123)
 
-# specify parameters
-n_i <- 5000
+n_i <- 5000 # number of individuals
 
 sigma_u <- 1 # variance of random intercept
 sigma_X1 <- 1 # variance of X1
@@ -118,30 +164,30 @@ Y_i2 <- rnorm(n_i, gamma_00 + beta_1 * X_i1 + u_0i, sigma_e)
 X_i2 <- Y_i2
 Y_i3 <- rnorm(n_i, gamma_00 + beta_1 * X_i2 + u_0i, sigma_e)
 
-# create data frame in wide format
-section2.2.data_wide <- data.frame(id = 1:n_i,
-                                   X_i1 = X_i1,
-                                   Y_i2 = Y_i2,
-                                   X_i2 = X_i2,
-                                   Y_i3 = Y_i3)
-
-head(section2.2.data_wide)
-
-# create data frame in long format
-section2.2data_long <- data.frame(id = rep(1:n_i, each = 3),
-                             time = rep(1:3, n_i),
-                             X = rep(NA, 3 * n_i),
-                             Y = rep(NA, 3 * n_i))
-
-for (i in 1:n_i){
-  section2.2data_long$X[section2.2data_long$id == i & section2.2data_long$time == 1] <- X_i1[i]
-  section2.2data_long$Y[section2.2data_long$id == i & section2.2data_long$time == 2] <- Y_i2[i]
-  section2.2data_long$X[section2.2data_long$id == i & section2.2data_long$time == 2] <- X_i2[i]
-  section2.2data_long$Y[section2.2data_long$id == i & section2.2data_long$time == 3] <- Y_i3[i]
-}
-
-
-head(section2.2data_long)
+# # create data frame in wide format
+# section2.2.data_wide <- data.frame(id = 1:n_i,
+#                                    X_i1 = X_i1,
+#                                    Y_i2 = Y_i2,
+#                                    X_i2 = X_i2,
+#                                    Y_i3 = Y_i3)
+# 
+# head(section2.2.data_wide)
+# 
+# # create data frame in long format
+# section2.2data_long <- data.frame(id = rep(1:n_i, each = 3),
+#                              time = rep(1:3, n_i),
+#                              X = rep(NA, 3 * n_i),
+#                              Y = rep(NA, 3 * n_i))
+# 
+# for (i in 1:n_i){
+#   section2.2data_long$X[section2.2data_long$id == i & section2.2data_long$time == 1] <- X_i1[i]
+#   section2.2data_long$Y[section2.2data_long$id == i & section2.2data_long$time == 2] <- Y_i2[i]
+#   section2.2data_long$X[section2.2data_long$id == i & section2.2data_long$time == 2] <- X_i2[i]
+#   section2.2data_long$Y[section2.2data_long$id == i & section2.2data_long$time == 3] <- Y_i3[i]
+# }
+# 
+# 
+# head(section2.2data_long)
 
 
 # create data frame in long format with lagged predictor
@@ -158,7 +204,6 @@ for (i in 1:n_i){
 }
 
 head(section2.2data_long_lagged)
-
 ```
 
 ### Estimating the model
@@ -191,9 +236,48 @@ knitr::kable(caption = "Section 2.2: Estimated coefficients from the MLM and GEE
 
 We can clearly see that the MLM and GEE models provide exactly the same estimates for the fixed intercept and fixed regression coefficient, with the exception of the GEE with independence working correlation structure.
 
-> According to Pepe and Anderson (1994), this is the only structure that can avoid bias in the estimation of the fixed effects.
+> According to Pepe and Anderson (1994), this is the only structure that can avoid bias in the estimation of the fixed effects (i.e., that has a valid marginal interpretation).
 
-As a reminder, the fixed effects were specified as $\gamma_{00} = 2$ and $\beta_1 = 0.8$. Thus, we can see that all models except the GEE with independence working correlation structure returns estimates that are very close to the true values.
+As a reminder, the fixed effects were specified as $\gamma_{00} = 2$ and $\beta_1 = 0.8$. Thus, we can see that all models except the GEE with independence working correlation structure returns estimates that are very close to the true values---which represented the conditional mean of $Y$ given $X$ and $u_{0i}$ rather than the marginal mean of $Y$ given $X$.
+
+To see why this makes sense, it is important to realize that the parameter estimates represent the parsimonious conditional relationship
+
+$$
+E[Y_{it+1} \mid X_{it}, u_{0i}] = \gamma_{00} + \beta_1 X_{it} + u_{0i}
+$$
+And not the marginal relationship, which is given by:
+
+$$
+E[Y_{i2} \mid X_{i1}] = \gamma_{00} + \beta_1 X_{i1}
+$$
+
+$$
+E[Y_{i3} \mid X_{i2}] = (1- \rho \zeta - \rho ) \gamma_{00} + [(1-\rho \zeta)  \beta_1 + \rho] X_{i2}
+$$
+
+Let's confirm this by calculating the marginal effects with the conditional parameter estimates
+
+```{r}
+#| label: Marginal Effects
+
+# summary(section2.2_mlm_mle)
+gamma_00_hat <- section2.2_coefs$MLM_MLE[1]
+beta_1_hat <- section2.2_coefs$MLM_MLE[2]
+
+# extract rho/ICC
+sigma2_u0_hat <- 0.99024 # <- VarCorr(section2.2_mlm_mle)$id[1]
+sigma2_e_hat <- 0.01021
+rho = sigma2_u0_hat / (sigma2_u0_hat + sigma2_e_hat)
+
+# Compute zeta
+sigma2_X1 <- 1
+zeta = beta_1_hat * sigma2_X1 / (beta_1_hat * sigma2_X1 + sigma2_u0_hat + sigma2_e_hat)
+
+# Now let's compute the marginal effect of X1 on Y2
+marginal_effect_X1_Y2 <- gamma_00_hat + beta_1_hat
+marginaleffect_X2_Y3 <- (1 - rho * zeta - rho) * gamma_00_hat + ((1 - rho * zeta) * beta_1_hat + rho)
+```
+
 
 > This hints at the fact that the marginal effect is not simply the effect that was specified.
 
@@ -201,14 +285,34 @@ As a reminder, the fixed effects were specified as $\gamma_{00} = 2$ and $\beta_
 
 Marginal models are a class of models that are used to estimate the population average effect of a covariate on an outcome. This may be useful, for instance, when prediction or indeed complete modelling of the data are not the main goal of an analysis (Pepe and Anderson, 1994).
 
-> "Consider, for example, the future practice of screening for risk of respiratory disease, where one might simply ascertain Vitamin A deficiency, weight, height and other covariates a t a single time point and make a determination of the child's risk based on these measurements." (Pepe and Anderson, 1994)
+> "Consider, for example, the future practice of screening for risk of respiratory disease, where one might simply ascertain Vitamin A deficiency, weight, height and other covariates at a single time point and make a determination of the child's risk based on these measurements." (Pepe and Anderson, 1994)
 
 Here, the cross-sectional model is of primary interest for use in future screening practices and an in-depth model of longitudinal data is of secondary interest (Pepe and Anderson, 1994).
 
-This contrasts with psychological research, where the cross-sectional model is often deemed problematic in the context of longitudinal data analysis, because it conflates (rather than separates) within-subject and between-subject effects. Instead, we tend to be much more interested in (1) the model that best describes the data (i.e., has the best model fit) and (2) the complete model of the effects (including within- and between-person effects). What differs here is the aim of the study.
+This contrasts with psychological research, where the cross-sectional model is often deemed problematic in the context of longitudinal data analysis, because it conflates (rather than separates) within-subject and between-subject effects. Instead, we tend to be much more interested in (1) the model that best describes the data (i.e., has the best model fit) and (2) the "why" question: complete model of the effects (including within- and between-person effects). What differs here is the aim of the study.
 
-> Food for thought: Are there scenarios in psychological researchers where marginal effects are of interest?
+In what situations may psychological researchers be primarily interested in marginal effects over finding the best description of the data?
+
+1.    A *clinical psychologist* may be interested in screening for depression among a large sample of patients in a primary care setting.
+
+2.    A *school psychologist* may focus on understanding how classroom behaviors (e.g., attention problems, peer conflicts) relate to academic achievement across a large student population.
+
+3.    A *social psychologist* may study the impact of discrimination on mental health outcomes across different demographic groups.
+
+4.    A *developmental psychologist* may study how early childhood factors (e.g., parental education, socioeconomic status, early trauma) influence cognitive development in children.
 
 Whether marginal or conditional models are preferred depends simply upon the research question and aim of the study:
 
 > "We do not suggest that marginal models are preferable in general to conditional models. In Section 1 we provided one example where the marginal model is, in fact, preferable but in many cases it will not be. Indeed, which model should be used depends entirely on the questions to be addressed with the data. If a good description of the process generating the data is required then fully conditional or random effects models might be pursued." (Pepe and Anderson, 1994)
+
+### Intermezzo: What is the difference between REML and MLE?
+
+When fitting a multilevel linear model (MLM) we can choose between restricted maximum likelihood (REML) and maximum likelihood estimation (MLE). In REML, $\sigma^2$ and $\rho$ (intra class correlation) are essentially considered nuisance parameters, which makes sure that small sample bias is reduced. However, since we do not obtain the full likelihood, we cannot compare models using the likelihood ratio test. When sample sizes are sufficiently large, the two methods are asymptotically equivalent.
+
+the variance components $\sigma^2_u$ are estimated by maximizing the likelihood of the residuals, conditional on the fixed effects. In MLE, the residual variance $\sigma^2$ and the variance components $\sigma^2_u$ are estimated by maximizing the likelihood of the residuals, conditional on the fixed effects and the random effects.
+
+The difference between the two methods lies in the way they estimate the variance components of the model.
+
+source: [STAT 437: 007. Linear Marginal Models: Likelihood, Inference, and Asymptotics (Theory)](https://www.youtube.com/watch?v=ZjQo0H_FFwI&list=PL0Y1Z_F8RtX7jIbexsd3lizDXMET_WGX0&index=7)
+
+

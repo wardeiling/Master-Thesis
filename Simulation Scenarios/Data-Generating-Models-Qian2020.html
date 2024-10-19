@@ -94,9 +94,11 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   <ul class="collapse">
   <li><a href="#example-in-section-2.2-of-qian-et-al.-2020" id="toc-example-in-section-2.2-of-qian-et-al.-2020" class="nav-link" data-scroll-target="#example-in-section-2.2-of-qian-et-al.-2020"><span class="header-section-number">2.1</span> Example in section 2.2 of Qian et al.&nbsp;(2020)</a></li>
   <li><a href="#translating-the-notation" id="toc-translating-the-notation" class="nav-link" data-scroll-target="#translating-the-notation"><span class="header-section-number">2.2</span> Translating the notation</a></li>
-  <li><a href="#generating-the-data" id="toc-generating-the-data" class="nav-link" data-scroll-target="#generating-the-data"><span class="header-section-number">2.3</span> Generating the data</a></li>
-  <li><a href="#estimating-the-model" id="toc-estimating-the-model" class="nav-link" data-scroll-target="#estimating-the-model"><span class="header-section-number">2.4</span> Estimating the model</a></li>
-  <li><a href="#intermezzo-what-are-marginal-effectsmodels" id="toc-intermezzo-what-are-marginal-effectsmodels" class="nav-link" data-scroll-target="#intermezzo-what-are-marginal-effectsmodels"><span class="header-section-number">2.5</span> Intermezzo: What are marginal effects/models?</a></li>
+  <li><a href="#visualizing-the-model" id="toc-visualizing-the-model" class="nav-link" data-scroll-target="#visualizing-the-model"><span class="header-section-number">2.3</span> Visualizing the Model</a></li>
+  <li><a href="#generating-the-data" id="toc-generating-the-data" class="nav-link" data-scroll-target="#generating-the-data"><span class="header-section-number">2.4</span> Generating the data</a></li>
+  <li><a href="#estimating-the-model" id="toc-estimating-the-model" class="nav-link" data-scroll-target="#estimating-the-model"><span class="header-section-number">2.5</span> Estimating the model</a></li>
+  <li><a href="#intermezzo-what-are-marginal-effectsmodels" id="toc-intermezzo-what-are-marginal-effectsmodels" class="nav-link" data-scroll-target="#intermezzo-what-are-marginal-effectsmodels"><span class="header-section-number">2.6</span> Intermezzo: What are marginal effects/models?</a></li>
+  <li><a href="#intermezzo-what-is-the-difference-between-reml-and-mle" id="toc-intermezzo-what-is-the-difference-between-reml-and-mle" class="nav-link" data-scroll-target="#intermezzo-what-is-the-difference-between-reml-and-mle"><span class="header-section-number">2.7</span> Intermezzo: What is the difference between REML and MLE?</a></li>
   </ul></li>
   </ul>
 </nav>
@@ -137,14 +139,15 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <section id="introduction" class="level2" data-number="1">
 <h2 data-number="1" class="anchored" data-anchor-id="introduction"><span class="header-section-number">1</span> Introduction</h2>
 <p>In this document, I will recreate the data generating models presented by Qian et al.&nbsp;(2020), accompanied by visual representations of these models.</p>
-<div class="cell" data-hash="Data-Generating-Models-Qian2020_cache/html/Packages_2233ffad19f6be761dc9fe3d2c66f322">
+<div class="cell" data-hash="Data-Generating-Models-Qian2020_cache/html/Packages_e5acf6eccc54c880959b4f55e9786c0d">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Load packages</span></span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dagitty)</span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
 <span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggdag)</span>
 <span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(lme4)</span>
-<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(gee)</span>
-<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(geex)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(jtools)</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(gee)</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(geex)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
 <section id="simple-concrete-example-no-exposure" class="level2" data-number="2">
@@ -192,83 +195,90 @@ X_{i2} = Y_{i2},
 Y_{i3} \mid X_{i1}, Y_{i2}, X_{i2}, u_{0i} \sim N(\gamma_{00} + \beta_1 X_{i2} + u_{0i}, \sigma_e^2).
 \]</span></p>
 </section>
-<section id="generating-the-data" class="level3" data-number="2.3">
-<h3 data-number="2.3" class="anchored" data-anchor-id="generating-the-data"><span class="header-section-number">2.3</span> Generating the data</h3>
+<section id="visualizing-the-model" class="level3" data-number="2.3">
+<h3 data-number="2.3" class="anchored" data-anchor-id="visualizing-the-model"><span class="header-section-number">2.3</span> Visualizing the Model</h3>
+<p>We may now draw the DAG for this model</p>
+<div class="cell" data-hash="Data-Generating-Models-Qian2020_cache/html/DAG_b8ec75096352d0fa72ada3a122bfaa5d">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<figcaption class="figure-caption">DAG for the data generating model in section 2.2 of Qian et al.&nbsp;(2020)</figcaption>
+<p><img src="Data-Generating-Models-Qian2020_files/figure-html/DAG-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<figcaption class="figure-caption">DAG for the data generating model in section 2.2 of Qian et al.&nbsp;(2020)</figcaption>
+<p><img src="Data-Generating-Models-Qian2020_files/figure-html/DAG-2.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>Note that there is an open biasing path from <span class="math inline">\(Y_2\)</span> to <span class="math inline">\(X_2\)</span> in the DAG: the exposure/predictor <span class="math inline">\(X_2\)</span> is <em>caused by</em> (in this case equivalent to) the previous outcome <span class="math inline">\(Y_2\)</span>—and thus this time-varying covariate is <em>endogenous</em>.</p>
+</section>
+<section id="generating-the-data" class="level3" data-number="2.4">
+<h3 data-number="2.4" class="anchored" data-anchor-id="generating-the-data"><span class="header-section-number">2.4</span> Generating the data</h3>
 <p>Let’s now generate the data according to this model.</p>
-<div class="cell" data-hash="Data-Generating-Models-Qian2020_cache/html/Data Generation_c6624da096b40e6f69e1c6616fa0a526">
+<div class="cell" data-hash="Data-Generating-Models-Qian2020_cache/html/Data Generation_2e013a2d65d938f70297fc25a7441534">
 <div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">123</span>)</span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="co"># specify parameters</span></span>
-<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>n_i <span class="ot">&lt;-</span> <span class="dv">5000</span></span>
-<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>sigma_u <span class="ot">&lt;-</span> <span class="dv">1</span> <span class="co"># variance of random intercept</span></span>
-<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>sigma_X1 <span class="ot">&lt;-</span> <span class="dv">1</span> <span class="co"># variance of X1</span></span>
-<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>sigma_e <span class="ot">&lt;-</span> <span class="fl">0.1</span> <span class="co"># residual variance</span></span>
-<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>beta_1 <span class="ot">&lt;-</span> <span class="fl">0.8</span> <span class="co"># overall slope</span></span>
-<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>gamma_00 <span class="ot">&lt;-</span> <span class="dv">2</span> <span class="co"># overall intercept</span></span>
-<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a><span class="co"># simulate data</span></span>
-<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>u_0i <span class="ot">&lt;-</span> <span class="fu">rnorm</span>(n_i, <span class="dv">0</span>, sigma_u)</span>
-<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>X_i1 <span class="ot">&lt;-</span> <span class="fu">rnorm</span>(n_i, <span class="dv">0</span>, sigma_X1)</span>
-<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a>Y_i2 <span class="ot">&lt;-</span> <span class="fu">rnorm</span>(n_i, gamma_00 <span class="sc">+</span> beta_1 <span class="sc">*</span> X_i1 <span class="sc">+</span> u_0i, sigma_e)</span>
-<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a>X_i2 <span class="ot">&lt;-</span> Y_i2</span>
-<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a>Y_i3 <span class="ot">&lt;-</span> <span class="fu">rnorm</span>(n_i, gamma_00 <span class="sc">+</span> beta_1 <span class="sc">*</span> X_i2 <span class="sc">+</span> u_0i, sigma_e)</span>
-<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a><span class="co"># create data frame in wide format</span></span>
-<span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a>section2.<span class="fl">2.</span>data_wide <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">id =</span> <span class="dv">1</span><span class="sc">:</span>n_i,</span>
-<span id="cb2-21"><a href="#cb2-21" aria-hidden="true" tabindex="-1"></a>                                   <span class="at">X_i1 =</span> X_i1,</span>
-<span id="cb2-22"><a href="#cb2-22" aria-hidden="true" tabindex="-1"></a>                                   <span class="at">Y_i2 =</span> Y_i2,</span>
-<span id="cb2-23"><a href="#cb2-23" aria-hidden="true" tabindex="-1"></a>                                   <span class="at">X_i2 =</span> X_i2,</span>
-<span id="cb2-24"><a href="#cb2-24" aria-hidden="true" tabindex="-1"></a>                                   <span class="at">Y_i3 =</span> Y_i3)</span>
-<span id="cb2-25"><a href="#cb2-25" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-26"><a href="#cb2-26" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(section2.<span class="fl">2.</span>data_wide)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>  id       X_i1     Y_i2     X_i2     Y_i3
-1  1 -0.4941739 1.281258 1.281258 2.329146
-2  2  1.1275935 2.655216 2.655216 3.836058
-3  3 -1.1469495 2.733845 2.733845 5.659680
-4  4  1.4810186 3.198508 3.198508 4.726583
-5  5  0.9161912 2.884750 2.884750 4.499002
-6  6  0.3351310 4.096368 4.096368 7.130704</code></pre>
-</div>
-<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co"># create data frame in long format</span></span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>section2<span class="fl">.2</span>data_long <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">id =</span> <span class="fu">rep</span>(<span class="dv">1</span><span class="sc">:</span>n_i, <span class="at">each =</span> <span class="dv">3</span>),</span>
-<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>                             <span class="at">time =</span> <span class="fu">rep</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">3</span>, n_i),</span>
-<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>                             <span class="at">X =</span> <span class="fu">rep</span>(<span class="cn">NA</span>, <span class="dv">3</span> <span class="sc">*</span> n_i),</span>
-<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>                             <span class="at">Y =</span> <span class="fu">rep</span>(<span class="cn">NA</span>, <span class="dv">3</span> <span class="sc">*</span> n_i))</span>
-<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>n_i){</span>
-<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>  section2<span class="fl">.2</span>data_long<span class="sc">$</span>X[section2<span class="fl">.2</span>data_long<span class="sc">$</span>id <span class="sc">==</span> i <span class="sc">&amp;</span> section2<span class="fl">.2</span>data_long<span class="sc">$</span>time <span class="sc">==</span> <span class="dv">1</span>] <span class="ot">&lt;-</span> X_i1[i]</span>
-<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>  section2<span class="fl">.2</span>data_long<span class="sc">$</span>Y[section2<span class="fl">.2</span>data_long<span class="sc">$</span>id <span class="sc">==</span> i <span class="sc">&amp;</span> section2<span class="fl">.2</span>data_long<span class="sc">$</span>time <span class="sc">==</span> <span class="dv">2</span>] <span class="ot">&lt;-</span> Y_i2[i]</span>
-<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>  section2<span class="fl">.2</span>data_long<span class="sc">$</span>X[section2<span class="fl">.2</span>data_long<span class="sc">$</span>id <span class="sc">==</span> i <span class="sc">&amp;</span> section2<span class="fl">.2</span>data_long<span class="sc">$</span>time <span class="sc">==</span> <span class="dv">2</span>] <span class="ot">&lt;-</span> X_i2[i]</span>
-<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>  section2<span class="fl">.2</span>data_long<span class="sc">$</span>Y[section2<span class="fl">.2</span>data_long<span class="sc">$</span>id <span class="sc">==</span> i <span class="sc">&amp;</span> section2<span class="fl">.2</span>data_long<span class="sc">$</span>time <span class="sc">==</span> <span class="dv">3</span>] <span class="ot">&lt;-</span> Y_i3[i]</span>
-<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(section2<span class="fl">.2</span>data_long)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>  id time          X        Y
-1  1    1 -0.4941739       NA
-2  1    2  1.2812578 1.281258
-3  1    3         NA 2.329146
-4  2    1  1.1275935       NA
-5  2    2  2.6552161 2.655216
-6  2    3         NA 3.836058</code></pre>
-</div>
-<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co"># create data frame in long format with lagged predictor</span></span>
-<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>section2<span class="fl">.2</span>data_long_lagged <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">id =</span> <span class="fu">rep</span>(<span class="dv">1</span><span class="sc">:</span>n_i, <span class="at">each =</span> <span class="dv">2</span>),</span>
-<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>                             <span class="st">"time"</span> <span class="ot">=</span> <span class="fu">rep</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">2</span>, n_i),</span>
-<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>                             <span class="st">"X_lag1"</span> <span class="ot">=</span> <span class="fu">rep</span>(<span class="cn">NA</span>, <span class="dv">2</span> <span class="sc">*</span> n_i),</span>
-<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>                             <span class="st">"Y"</span> <span class="ot">=</span> <span class="fu">rep</span>(<span class="cn">NA</span>, <span class="dv">2</span> <span class="sc">*</span> n_i))</span>
-<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>n_i){</span>
-<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>  section2<span class="fl">.2</span>data_long_lagged<span class="sc">$</span>X_lag1[section2<span class="fl">.2</span>data_long_lagged<span class="sc">$</span>id <span class="sc">==</span> i <span class="sc">&amp;</span> section2<span class="fl">.2</span>data_long_lagged<span class="sc">$</span>time <span class="sc">==</span> <span class="dv">1</span>] <span class="ot">&lt;-</span> X_i1[i]</span>
-<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>  section2<span class="fl">.2</span>data_long_lagged<span class="sc">$</span>X_lag1[section2<span class="fl">.2</span>data_long_lagged<span class="sc">$</span>id <span class="sc">==</span> i <span class="sc">&amp;</span> section2<span class="fl">.2</span>data_long_lagged<span class="sc">$</span>time <span class="sc">==</span> <span class="dv">2</span>] <span class="ot">&lt;-</span> X_i2[i]</span>
-<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a>  section2<span class="fl">.2</span>data_long_lagged<span class="sc">$</span>Y[section2<span class="fl">.2</span>data_long_lagged<span class="sc">$</span>id <span class="sc">==</span> i <span class="sc">&amp;</span> section2<span class="fl">.2</span>data_long_lagged<span class="sc">$</span>time <span class="sc">==</span> <span class="dv">1</span>] <span class="ot">&lt;-</span> Y_i2[i]</span>
-<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a>  section2<span class="fl">.2</span>data_long_lagged<span class="sc">$</span>Y[section2<span class="fl">.2</span>data_long_lagged<span class="sc">$</span>id <span class="sc">==</span> i <span class="sc">&amp;</span> section2<span class="fl">.2</span>data_long_lagged<span class="sc">$</span>time <span class="sc">==</span> <span class="dv">2</span>] <span class="ot">&lt;-</span> Y_i3[i]</span>
-<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(section2<span class="fl">.2</span>data_long_lagged)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>n_i <span class="ot">&lt;-</span> <span class="dv">5000</span> <span class="co"># number of individuals</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>sigma_u <span class="ot">&lt;-</span> <span class="dv">1</span> <span class="co"># variance of random intercept</span></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>sigma_X1 <span class="ot">&lt;-</span> <span class="dv">1</span> <span class="co"># variance of X1</span></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>sigma_e <span class="ot">&lt;-</span> <span class="fl">0.1</span> <span class="co"># residual variance</span></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>beta_1 <span class="ot">&lt;-</span> <span class="fl">0.8</span> <span class="co"># overall slope</span></span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>gamma_00 <span class="ot">&lt;-</span> <span class="dv">2</span> <span class="co"># overall intercept</span></span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a><span class="co"># simulate data</span></span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>u_0i <span class="ot">&lt;-</span> <span class="fu">rnorm</span>(n_i, <span class="dv">0</span>, sigma_u)</span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>X_i1 <span class="ot">&lt;-</span> <span class="fu">rnorm</span>(n_i, <span class="dv">0</span>, sigma_X1)</span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>Y_i2 <span class="ot">&lt;-</span> <span class="fu">rnorm</span>(n_i, gamma_00 <span class="sc">+</span> beta_1 <span class="sc">*</span> X_i1 <span class="sc">+</span> u_0i, sigma_e)</span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a>X_i2 <span class="ot">&lt;-</span> Y_i2</span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a>Y_i3 <span class="ot">&lt;-</span> <span class="fu">rnorm</span>(n_i, gamma_00 <span class="sc">+</span> beta_1 <span class="sc">*</span> X_i2 <span class="sc">+</span> u_0i, sigma_e)</span>
+<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a><span class="co"># # create data frame in wide format</span></span>
+<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a><span class="co"># section2.2.data_wide &lt;- data.frame(id = 1:n_i,</span></span>
+<span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a><span class="co">#                                    X_i1 = X_i1,</span></span>
+<span id="cb2-21"><a href="#cb2-21" aria-hidden="true" tabindex="-1"></a><span class="co">#                                    Y_i2 = Y_i2,</span></span>
+<span id="cb2-22"><a href="#cb2-22" aria-hidden="true" tabindex="-1"></a><span class="co">#                                    X_i2 = X_i2,</span></span>
+<span id="cb2-23"><a href="#cb2-23" aria-hidden="true" tabindex="-1"></a><span class="co">#                                    Y_i3 = Y_i3)</span></span>
+<span id="cb2-24"><a href="#cb2-24" aria-hidden="true" tabindex="-1"></a><span class="co"># </span></span>
+<span id="cb2-25"><a href="#cb2-25" aria-hidden="true" tabindex="-1"></a><span class="co"># head(section2.2.data_wide)</span></span>
+<span id="cb2-26"><a href="#cb2-26" aria-hidden="true" tabindex="-1"></a><span class="co"># </span></span>
+<span id="cb2-27"><a href="#cb2-27" aria-hidden="true" tabindex="-1"></a><span class="co"># # create data frame in long format</span></span>
+<span id="cb2-28"><a href="#cb2-28" aria-hidden="true" tabindex="-1"></a><span class="co"># section2.2data_long &lt;- data.frame(id = rep(1:n_i, each = 3),</span></span>
+<span id="cb2-29"><a href="#cb2-29" aria-hidden="true" tabindex="-1"></a><span class="co">#                              time = rep(1:3, n_i),</span></span>
+<span id="cb2-30"><a href="#cb2-30" aria-hidden="true" tabindex="-1"></a><span class="co">#                              X = rep(NA, 3 * n_i),</span></span>
+<span id="cb2-31"><a href="#cb2-31" aria-hidden="true" tabindex="-1"></a><span class="co">#                              Y = rep(NA, 3 * n_i))</span></span>
+<span id="cb2-32"><a href="#cb2-32" aria-hidden="true" tabindex="-1"></a><span class="co"># </span></span>
+<span id="cb2-33"><a href="#cb2-33" aria-hidden="true" tabindex="-1"></a><span class="co"># for (i in 1:n_i){</span></span>
+<span id="cb2-34"><a href="#cb2-34" aria-hidden="true" tabindex="-1"></a><span class="co">#   section2.2data_long$X[section2.2data_long$id == i &amp; section2.2data_long$time == 1] &lt;- X_i1[i]</span></span>
+<span id="cb2-35"><a href="#cb2-35" aria-hidden="true" tabindex="-1"></a><span class="co">#   section2.2data_long$Y[section2.2data_long$id == i &amp; section2.2data_long$time == 2] &lt;- Y_i2[i]</span></span>
+<span id="cb2-36"><a href="#cb2-36" aria-hidden="true" tabindex="-1"></a><span class="co">#   section2.2data_long$X[section2.2data_long$id == i &amp; section2.2data_long$time == 2] &lt;- X_i2[i]</span></span>
+<span id="cb2-37"><a href="#cb2-37" aria-hidden="true" tabindex="-1"></a><span class="co">#   section2.2data_long$Y[section2.2data_long$id == i &amp; section2.2data_long$time == 3] &lt;- Y_i3[i]</span></span>
+<span id="cb2-38"><a href="#cb2-38" aria-hidden="true" tabindex="-1"></a><span class="co"># }</span></span>
+<span id="cb2-39"><a href="#cb2-39" aria-hidden="true" tabindex="-1"></a><span class="co"># </span></span>
+<span id="cb2-40"><a href="#cb2-40" aria-hidden="true" tabindex="-1"></a><span class="co"># </span></span>
+<span id="cb2-41"><a href="#cb2-41" aria-hidden="true" tabindex="-1"></a><span class="co"># head(section2.2data_long)</span></span>
+<span id="cb2-42"><a href="#cb2-42" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-43"><a href="#cb2-43" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-44"><a href="#cb2-44" aria-hidden="true" tabindex="-1"></a><span class="co"># create data frame in long format with lagged predictor</span></span>
+<span id="cb2-45"><a href="#cb2-45" aria-hidden="true" tabindex="-1"></a>section2<span class="fl">.2</span>data_long_lagged <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">id =</span> <span class="fu">rep</span>(<span class="dv">1</span><span class="sc">:</span>n_i, <span class="at">each =</span> <span class="dv">2</span>),</span>
+<span id="cb2-46"><a href="#cb2-46" aria-hidden="true" tabindex="-1"></a>                             <span class="st">"time"</span> <span class="ot">=</span> <span class="fu">rep</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">2</span>, n_i),</span>
+<span id="cb2-47"><a href="#cb2-47" aria-hidden="true" tabindex="-1"></a>                             <span class="st">"X_lag1"</span> <span class="ot">=</span> <span class="fu">rep</span>(<span class="cn">NA</span>, <span class="dv">2</span> <span class="sc">*</span> n_i),</span>
+<span id="cb2-48"><a href="#cb2-48" aria-hidden="true" tabindex="-1"></a>                             <span class="st">"Y"</span> <span class="ot">=</span> <span class="fu">rep</span>(<span class="cn">NA</span>, <span class="dv">2</span> <span class="sc">*</span> n_i))</span>
+<span id="cb2-49"><a href="#cb2-49" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-50"><a href="#cb2-50" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>n_i){</span>
+<span id="cb2-51"><a href="#cb2-51" aria-hidden="true" tabindex="-1"></a>  section2<span class="fl">.2</span>data_long_lagged<span class="sc">$</span>X_lag1[section2<span class="fl">.2</span>data_long_lagged<span class="sc">$</span>id <span class="sc">==</span> i <span class="sc">&amp;</span> section2<span class="fl">.2</span>data_long_lagged<span class="sc">$</span>time <span class="sc">==</span> <span class="dv">1</span>] <span class="ot">&lt;-</span> X_i1[i]</span>
+<span id="cb2-52"><a href="#cb2-52" aria-hidden="true" tabindex="-1"></a>  section2<span class="fl">.2</span>data_long_lagged<span class="sc">$</span>X_lag1[section2<span class="fl">.2</span>data_long_lagged<span class="sc">$</span>id <span class="sc">==</span> i <span class="sc">&amp;</span> section2<span class="fl">.2</span>data_long_lagged<span class="sc">$</span>time <span class="sc">==</span> <span class="dv">2</span>] <span class="ot">&lt;-</span> X_i2[i]</span>
+<span id="cb2-53"><a href="#cb2-53" aria-hidden="true" tabindex="-1"></a>  section2<span class="fl">.2</span>data_long_lagged<span class="sc">$</span>Y[section2<span class="fl">.2</span>data_long_lagged<span class="sc">$</span>id <span class="sc">==</span> i <span class="sc">&amp;</span> section2<span class="fl">.2</span>data_long_lagged<span class="sc">$</span>time <span class="sc">==</span> <span class="dv">1</span>] <span class="ot">&lt;-</span> Y_i2[i]</span>
+<span id="cb2-54"><a href="#cb2-54" aria-hidden="true" tabindex="-1"></a>  section2<span class="fl">.2</span>data_long_lagged<span class="sc">$</span>Y[section2<span class="fl">.2</span>data_long_lagged<span class="sc">$</span>id <span class="sc">==</span> i <span class="sc">&amp;</span> section2<span class="fl">.2</span>data_long_lagged<span class="sc">$</span>time <span class="sc">==</span> <span class="dv">2</span>] <span class="ot">&lt;-</span> Y_i3[i]</span>
+<span id="cb2-55"><a href="#cb2-55" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb2-56"><a href="#cb2-56" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-57"><a href="#cb2-57" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(section2<span class="fl">.2</span>data_long_lagged)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>  id time     X_lag1        Y
 1  1    1 -0.4941739 1.281258
@@ -280,43 +290,43 @@ Y_{i3} \mid X_{i1}, Y_{i2}, X_{i2}, u_{0i} \sim N(\gamma_{00} + \beta_1 X_{i2} +
 </div>
 </div>
 </section>
-<section id="estimating-the-model" class="level3" data-number="2.4">
-<h3 data-number="2.4" class="anchored" data-anchor-id="estimating-the-model"><span class="header-section-number">2.4</span> Estimating the model</h3>
+<section id="estimating-the-model" class="level3" data-number="2.5">
+<h3 data-number="2.5" class="anchored" data-anchor-id="estimating-the-model"><span class="header-section-number">2.5</span> Estimating the model</h3>
 <p>Let’s now estimate the model using a multilevel linear model (MLM) and a generalized estimating equation (GEE) model.</p>
 <div class="cell" data-hash="Data-Generating-Models-Qian2020_cache/html/Model Estimation_c541d6e886e865d2c59c0ff4b74dab5d">
-<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>section2<span class="fl">.2</span>_mlm_reml <span class="ot">&lt;-</span> <span class="fu">lmer</span>(Y <span class="sc">~</span> <span class="dv">1</span> <span class="sc">+</span> X_lag1 <span class="sc">+</span> (<span class="dv">1</span> <span class="sc">|</span> id), <span class="at">data =</span> section2<span class="fl">.2</span>data_long_lagged)</span>
-<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>section2<span class="fl">.2</span>_mlm_mle <span class="ot">&lt;-</span> <span class="fu">lmer</span>(Y <span class="sc">~</span> <span class="dv">1</span> <span class="sc">+</span> X_lag1 <span class="sc">+</span> (<span class="dv">1</span> <span class="sc">|</span> id), <span class="at">data =</span> section2<span class="fl">.2</span>data_long_lagged, <span class="at">REML =</span> <span class="cn">FALSE</span>)</span>
-<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>section2<span class="fl">.2</span>_gee_ind <span class="ot">&lt;-</span> <span class="fu">gee</span>(Y <span class="sc">~</span> <span class="dv">1</span> <span class="sc">+</span> X_lag1, <span class="at">id =</span> id, <span class="at">data =</span> section2<span class="fl">.2</span>data_long_lagged, <span class="at">family =</span> gaussian, <span class="at">corstr =</span> <span class="st">"independence"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>section2<span class="fl">.2</span>_mlm_reml <span class="ot">&lt;-</span> <span class="fu">lmer</span>(Y <span class="sc">~</span> <span class="dv">1</span> <span class="sc">+</span> X_lag1 <span class="sc">+</span> (<span class="dv">1</span> <span class="sc">|</span> id), <span class="at">data =</span> section2<span class="fl">.2</span>data_long_lagged)</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>section2<span class="fl">.2</span>_mlm_mle <span class="ot">&lt;-</span> <span class="fu">lmer</span>(Y <span class="sc">~</span> <span class="dv">1</span> <span class="sc">+</span> X_lag1 <span class="sc">+</span> (<span class="dv">1</span> <span class="sc">|</span> id), <span class="at">data =</span> section2<span class="fl">.2</span>data_long_lagged, <span class="at">REML =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>section2<span class="fl">.2</span>_gee_ind <span class="ot">&lt;-</span> <span class="fu">gee</span>(Y <span class="sc">~</span> <span class="dv">1</span> <span class="sc">+</span> X_lag1, <span class="at">id =</span> id, <span class="at">data =</span> section2<span class="fl">.2</span>data_long_lagged, <span class="at">family =</span> gaussian, <span class="at">corstr =</span> <span class="st">"independence"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>(Intercept)      X_lag1 
    1.789170    1.010113 </code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>section2<span class="fl">.2</span>_gee_exch <span class="ot">&lt;-</span> <span class="fu">gee</span>(Y <span class="sc">~</span> <span class="dv">1</span> <span class="sc">+</span> X_lag1, <span class="at">id =</span> id, <span class="at">data =</span> section2<span class="fl">.2</span>data_long_lagged, <span class="at">family =</span> gaussian, <span class="at">corstr =</span> <span class="st">"exchangeable"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>section2<span class="fl">.2</span>_gee_exch <span class="ot">&lt;-</span> <span class="fu">gee</span>(Y <span class="sc">~</span> <span class="dv">1</span> <span class="sc">+</span> X_lag1, <span class="at">id =</span> id, <span class="at">data =</span> section2<span class="fl">.2</span>data_long_lagged, <span class="at">family =</span> gaussian, <span class="at">corstr =</span> <span class="st">"exchangeable"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>(Intercept)      X_lag1 
    1.789170    1.010113 </code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>section2<span class="fl">.2</span>_gee_ar1 <span class="ot">&lt;-</span> <span class="fu">gee</span>(Y <span class="sc">~</span> <span class="dv">1</span> <span class="sc">+</span> X_lag1, <span class="at">id =</span> id, <span class="at">data =</span> section2<span class="fl">.2</span>data_long_lagged, <span class="at">family =</span> gaussian, <span class="at">corstr =</span> <span class="st">"AR-M"</span>, <span class="at">Mv =</span> <span class="dv">1</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>section2<span class="fl">.2</span>_gee_ar1 <span class="ot">&lt;-</span> <span class="fu">gee</span>(Y <span class="sc">~</span> <span class="dv">1</span> <span class="sc">+</span> X_lag1, <span class="at">id =</span> id, <span class="at">data =</span> section2<span class="fl">.2</span>data_long_lagged, <span class="at">family =</span> gaussian, <span class="at">corstr =</span> <span class="st">"AR-M"</span>, <span class="at">Mv =</span> <span class="dv">1</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>(Intercept)      X_lag1 
    1.789170    1.010113 </code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>section2<span class="fl">.2</span>_gee_unstr <span class="ot">&lt;-</span> <span class="fu">gee</span>(Y <span class="sc">~</span> <span class="dv">1</span> <span class="sc">+</span> X_lag1, <span class="at">id =</span> id, <span class="at">data =</span> section2<span class="fl">.2</span>data_long_lagged, <span class="at">family =</span> gaussian, <span class="at">corstr =</span> <span class="st">"unstructured"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>section2<span class="fl">.2</span>_gee_unstr <span class="ot">&lt;-</span> <span class="fu">gee</span>(Y <span class="sc">~</span> <span class="dv">1</span> <span class="sc">+</span> X_lag1, <span class="at">id =</span> id, <span class="at">data =</span> section2<span class="fl">.2</span>data_long_lagged, <span class="at">family =</span> gaussian, <span class="at">corstr =</span> <span class="st">"unstructured"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>(Intercept)      X_lag1 
    1.789170    1.010113 </code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>section2<span class="fl">.2</span>_coefs <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
-<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">row.names =</span> <span class="fu">c</span>(<span class="st">"Intercept"</span>, <span class="st">"X_lag1"</span>),</span>
-<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">MLM_REML =</span> <span class="fu">fixef</span>(section2<span class="fl">.2</span>_mlm_reml),</span>
-<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">MLM_MLE =</span> <span class="fu">fixef</span>(section2<span class="fl">.2</span>_mlm_mle),</span>
-<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">GEE_Ind =</span> <span class="fu">coef</span>(section2<span class="fl">.2</span>_gee_ind),</span>
-<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">GEE_Exchange =</span> <span class="fu">coef</span>(section2<span class="fl">.2</span>_gee_exch),</span>
-<span id="cb16-7"><a href="#cb16-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">GEE_AR1 =</span> <span class="fu">coef</span>(section2<span class="fl">.2</span>_gee_ar1),</span>
-<span id="cb16-8"><a href="#cb16-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">GEE_Unstructured =</span> <span class="fu">coef</span>(section2<span class="fl">.2</span>_gee_unstr)</span>
-<span id="cb16-9"><a href="#cb16-9" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb16-10"><a href="#cb16-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb16-11"><a href="#cb16-11" aria-hidden="true" tabindex="-1"></a>knitr<span class="sc">::</span><span class="fu">kable</span>(<span class="at">caption =</span> <span class="st">"Section 2.2: Estimated coefficients from the MLM and GEE models"</span>, section2<span class="fl">.2</span>_coefs, <span class="at">digits =</span> <span class="dv">3</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>section2<span class="fl">.2</span>_coefs <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">row.names =</span> <span class="fu">c</span>(<span class="st">"Intercept"</span>, <span class="st">"X_lag1"</span>),</span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">MLM_REML =</span> <span class="fu">fixef</span>(section2<span class="fl">.2</span>_mlm_reml),</span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">MLM_MLE =</span> <span class="fu">fixef</span>(section2<span class="fl">.2</span>_mlm_mle),</span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">GEE_Ind =</span> <span class="fu">coef</span>(section2<span class="fl">.2</span>_gee_ind),</span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">GEE_Exchange =</span> <span class="fu">coef</span>(section2<span class="fl">.2</span>_gee_exch),</span>
+<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">GEE_AR1 =</span> <span class="fu">coef</span>(section2<span class="fl">.2</span>_gee_ar1),</span>
+<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">GEE_Unstructured =</span> <span class="fu">coef</span>(section2<span class="fl">.2</span>_gee_unstr)</span>
+<span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb12-10"><a href="#cb12-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-11"><a href="#cb12-11" aria-hidden="true" tabindex="-1"></a>knitr<span class="sc">::</span><span class="fu">kable</span>(<span class="at">caption =</span> <span class="st">"Section 2.2: Estimated coefficients from the MLM and GEE models"</span>, section2<span class="fl">.2</span>_coefs, <span class="at">digits =</span> <span class="dv">3</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <table class="table table-sm table-striped small">
 <caption>Section 2.2: Estimated coefficients from the MLM and GEE models</caption>
@@ -365,28 +375,68 @@ Y_{i3} \mid X_{i1}, Y_{i2}, X_{i2}, u_{0i} \sim N(\gamma_{00} + \beta_1 X_{i2} +
 </div>
 <p>We can clearly see that the MLM and GEE models provide exactly the same estimates for the fixed intercept and fixed regression coefficient, with the exception of the GEE with independence working correlation structure.</p>
 <blockquote class="blockquote">
-<p>According to Pepe and Anderson (1994), this is the only structure that can avoid bias in the estimation of the fixed effects.</p>
+<p>According to Pepe and Anderson (1994), this is the only structure that can avoid bias in the estimation of the fixed effects (i.e., that has a valid marginal interpretation).</p>
 </blockquote>
-<p>As a reminder, the fixed effects were specified as <span class="math inline">\(\gamma_{00} = 2\)</span> and <span class="math inline">\(\beta_1 = 0.8\)</span>. Thus, we can see that all models except the GEE with independence working correlation structure returns estimates that are very close to the true values.</p>
+<p>As a reminder, the fixed effects were specified as <span class="math inline">\(\gamma_{00} = 2\)</span> and <span class="math inline">\(\beta_1 = 0.8\)</span>. Thus, we can see that all models except the GEE with independence working correlation structure returns estimates that are very close to the true values—which represented the conditional mean of <span class="math inline">\(Y\)</span> given <span class="math inline">\(X\)</span> and <span class="math inline">\(u_{0i}\)</span> rather than the marginal mean of <span class="math inline">\(Y\)</span> given <span class="math inline">\(X\)</span>.</p>
+<p>To see why this makes sense, it is important to realize that the parameter estimates represent the parsimonious conditional relationship</p>
+<p><span class="math display">\[
+E[Y_{it+1} \mid X_{it}, u_{0i}] = \gamma_{00} + \beta_1 X_{it} + u_{0i}
+\]</span> And not the marginal relationship, which is given by:</p>
+<p><span class="math display">\[
+E[Y_{i2} \mid X_{i1}] = \gamma_{00} + \beta_1 X_{i1}
+\]</span></p>
+<p><span class="math display">\[
+E[Y_{i3} \mid X_{i2}] = (1- \rho \zeta - \rho ) \gamma_{00} + [(1-\rho \zeta)  \beta_1 + \rho] X_{i2}
+\]</span></p>
+<p>Let’s confirm this by calculating the marginal effects with the conditional parameter estimates</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="co"># summary(section2.2_mlm_mle)</span></span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>gamma_00_hat <span class="ot">&lt;-</span> section2<span class="fl">.2</span>_coefs<span class="sc">$</span>MLM_MLE[<span class="dv">1</span>]</span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>beta_1_hat <span class="ot">&lt;-</span> section2<span class="fl">.2</span>_coefs<span class="sc">$</span>MLM_MLE[<span class="dv">2</span>]</span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a><span class="co"># extract rho/ICC</span></span>
+<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a>sigma2_u0_hat <span class="ot">&lt;-</span> <span class="fl">0.99024</span> <span class="co"># &lt;- VarCorr(section2.2_mlm_mle)$id[1]</span></span>
+<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a>sigma2_e_hat <span class="ot">&lt;-</span> <span class="fl">0.01021</span></span>
+<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a>rho <span class="ot">=</span> sigma2_u0_hat <span class="sc">/</span> (sigma2_u0_hat <span class="sc">+</span> sigma2_e_hat)</span>
+<span id="cb13-9"><a href="#cb13-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-10"><a href="#cb13-10" aria-hidden="true" tabindex="-1"></a><span class="co"># Compute zeta</span></span>
+<span id="cb13-11"><a href="#cb13-11" aria-hidden="true" tabindex="-1"></a>sigma2_X1 <span class="ot">&lt;-</span> <span class="dv">1</span></span>
+<span id="cb13-12"><a href="#cb13-12" aria-hidden="true" tabindex="-1"></a>zeta <span class="ot">=</span> beta_1_hat <span class="sc">*</span> sigma2_X1 <span class="sc">/</span> (beta_1_hat <span class="sc">*</span> sigma2_X1 <span class="sc">+</span> sigma2_u0_hat <span class="sc">+</span> sigma2_e_hat)</span>
+<span id="cb13-13"><a href="#cb13-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-14"><a href="#cb13-14" aria-hidden="true" tabindex="-1"></a><span class="co"># Now let's compute the marginal effect of X1 on Y2</span></span>
+<span id="cb13-15"><a href="#cb13-15" aria-hidden="true" tabindex="-1"></a>marginal_effect_X1_Y2 <span class="ot">&lt;-</span> gamma_00_hat <span class="sc">+</span> beta_1_hat</span>
+<span id="cb13-16"><a href="#cb13-16" aria-hidden="true" tabindex="-1"></a>marginaleffect_X2_Y3 <span class="ot">&lt;-</span> (<span class="dv">1</span> <span class="sc">-</span> rho <span class="sc">*</span> zeta <span class="sc">-</span> rho) <span class="sc">*</span> gamma_00_hat <span class="sc">+</span> ((<span class="dv">1</span> <span class="sc">-</span> rho <span class="sc">*</span> zeta) <span class="sc">*</span> beta_1_hat <span class="sc">+</span> rho)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
 <blockquote class="blockquote">
 <p>This hints at the fact that the marginal effect is not simply the effect that was specified.</p>
 </blockquote>
 </section>
-<section id="intermezzo-what-are-marginal-effectsmodels" class="level3" data-number="2.5">
-<h3 data-number="2.5" class="anchored" data-anchor-id="intermezzo-what-are-marginal-effectsmodels"><span class="header-section-number">2.5</span> Intermezzo: What are marginal effects/models?</h3>
+<section id="intermezzo-what-are-marginal-effectsmodels" class="level3" data-number="2.6">
+<h3 data-number="2.6" class="anchored" data-anchor-id="intermezzo-what-are-marginal-effectsmodels"><span class="header-section-number">2.6</span> Intermezzo: What are marginal effects/models?</h3>
 <p>Marginal models are a class of models that are used to estimate the population average effect of a covariate on an outcome. This may be useful, for instance, when prediction or indeed complete modelling of the data are not the main goal of an analysis (Pepe and Anderson, 1994).</p>
 <blockquote class="blockquote">
-<p>“Consider, for example, the future practice of screening for risk of respiratory disease, where one might simply ascertain Vitamin A deficiency, weight, height and other covariates a t a single time point and make a determination of the child’s risk based on these measurements.” (Pepe and Anderson, 1994)</p>
+<p>“Consider, for example, the future practice of screening for risk of respiratory disease, where one might simply ascertain Vitamin A deficiency, weight, height and other covariates at a single time point and make a determination of the child’s risk based on these measurements.” (Pepe and Anderson, 1994)</p>
 </blockquote>
 <p>Here, the cross-sectional model is of primary interest for use in future screening practices and an in-depth model of longitudinal data is of secondary interest (Pepe and Anderson, 1994).</p>
-<p>This contrasts with psychological research, where the cross-sectional model is often deemed problematic in the context of longitudinal data analysis, because it conflates (rather than separates) within-subject and between-subject effects. Instead, we tend to be much more interested in (1) the model that best describes the data (i.e., has the best model fit) and (2) the complete model of the effects (including within- and between-person effects). What differs here is the aim of the study.</p>
-<blockquote class="blockquote">
-<p>Food for thought: Are there scenarios in psychological researchers where marginal effects are of interest?</p>
-</blockquote>
+<p>This contrasts with psychological research, where the cross-sectional model is often deemed problematic in the context of longitudinal data analysis, because it conflates (rather than separates) within-subject and between-subject effects. Instead, we tend to be much more interested in (1) the model that best describes the data (i.e., has the best model fit) and (2) the “why” question: complete model of the effects (including within- and between-person effects). What differs here is the aim of the study.</p>
+<p>In what situations may psychological researchers be primarily interested in marginal effects over finding the best description of the data?</p>
+<ol type="1">
+<li><p>A <em>clinical psychologist</em> may be interested in screening for depression among a large sample of patients in a primary care setting.</p></li>
+<li><p>A <em>school psychologist</em> may focus on understanding how classroom behaviors (e.g., attention problems, peer conflicts) relate to academic achievement across a large student population.</p></li>
+<li><p>A <em>social psychologist</em> may study the impact of discrimination on mental health outcomes across different demographic groups.</p></li>
+<li><p>A <em>developmental psychologist</em> may study how early childhood factors (e.g., parental education, socioeconomic status, early trauma) influence cognitive development in children.</p></li>
+</ol>
 <p>Whether marginal or conditional models are preferred depends simply upon the research question and aim of the study:</p>
 <blockquote class="blockquote">
 <p>“We do not suggest that marginal models are preferable in general to conditional models. In Section 1 we provided one example where the marginal model is, in fact, preferable but in many cases it will not be. Indeed, which model should be used depends entirely on the questions to be addressed with the data. If a good description of the process generating the data is required then fully conditional or random effects models might be pursued.” (Pepe and Anderson, 1994)</p>
 </blockquote>
+</section>
+<section id="intermezzo-what-is-the-difference-between-reml-and-mle" class="level3" data-number="2.7">
+<h3 data-number="2.7" class="anchored" data-anchor-id="intermezzo-what-is-the-difference-between-reml-and-mle"><span class="header-section-number">2.7</span> Intermezzo: What is the difference between REML and MLE?</h3>
+<p>When fitting a multilevel linear model (MLM) we can choose between restricted maximum likelihood (REML) and maximum likelihood estimation (MLE). In REML, <span class="math inline">\(\sigma^2\)</span> and <span class="math inline">\(\rho\)</span> (intra class correlation) are essentially considered nuisance parameters, which makes sure that small sample bias is reduced. However, since we do not obtain the full likelihood, we cannot compare models using the likelihood ratio test. When sample sizes are sufficiently large, the two methods are asymptotically equivalent.</p>
+<p>the variance components <span class="math inline">\(\sigma^2_u\)</span> are estimated by maximizing the likelihood of the residuals, conditional on the fixed effects. In MLE, the residual variance <span class="math inline">\(\sigma^2\)</span> and the variance components <span class="math inline">\(\sigma^2_u\)</span> are estimated by maximizing the likelihood of the residuals, conditional on the fixed effects and the random effects.</p>
+<p>The difference between the two methods lies in the way they estimate the variance components of the model.</p>
+<p>source: <a href="https://www.youtube.com/watch?v=ZjQo0H_FFwI&amp;list=PL0Y1Z_F8RtX7jIbexsd3lizDXMET_WGX0&amp;index=7">STAT 437: 007. Linear Marginal Models: Likelihood, Inference, and Asymptotics (Theory)</a></p>
 </section>
 </section>
 
