@@ -19,7 +19,6 @@ comments:
 fig-cap-location: top
 ---
 
-
 ## Introduction
 
 In this document, I will recreate the data generating models presented by Qian et al. (2020), accompanied by visual representations of these models.
@@ -34,6 +33,7 @@ library(tidyverse)
 library(ggdag)
 library(lme4)
 library(gee)
+library(geex)
 ```
 
 ## Simple Concrete Example: No Exposure
@@ -142,6 +142,23 @@ for (i in 1:n_i){
 
 
 head(section2.2data_long)
+
+
+# create data frame in long format with lagged predictor
+section2.2data_long_lagged <- data.frame(id = rep(1:n_i, each = 2),
+                             "time" = rep(1:2, n_i),
+                             "X_lag1" = rep(NA, 2 * n_i),
+                             "Y" = rep(NA, 2 * n_i))
+
+for (i in 1:n_i){
+  section2.2data_long_lagged$X_lag1[section2.2data_long_lagged$id == i & section2.2data_long_lagged$time == 1] <- X_i1[i]
+  section2.2data_long_lagged$X_lag1[section2.2data_long_lagged$id == i & section2.2data_long_lagged$time == 2] <- X_i2[i]
+  section2.2data_long_lagged$Y[section2.2data_long_lagged$id == i & section2.2data_long_lagged$time == 1] <- Y_i2[i]
+  section2.2data_long_lagged$Y[section2.2data_long_lagged$id == i & section2.2data_long_lagged$time == 2] <- Y_i3[i]
+}
+
+head(section2.2data_long_lagged)
+
 ```
 
 ### Estimating the model
@@ -152,16 +169,46 @@ Let's now estimate the model using a multilevel linear model (MLM) and a general
 #| label: Model Estimation
 #| cache: true
 
-# section2.2_mlm_reml <- lmer(Y ~ 1 + X + (1 | id), data = section2.2data_long)
-# 
-# section2.2_mlm_reml <- lmer(Y_i3 ~ X_i1 + X_i2 + (1 | id), data = section2.2data)
-# section2.2_mlm_mle <- lmer(Y_i3 ~ X_i1 + X_i2 + (1 | id), data = section2.2data, REML = FALSE)
-# section2.2_gee_ind <- gee(Y_i3 ~ X_i1 + X_i2, id = id, data = section2.2data, family = gaussian, corstr = "independence")
-# section2.2_gee_exch <- gee(Y_i3 ~ X_i1 + X_i2, id = id, data = section2.2data, family = gaussian, corstr = "exchangeable")
-# section2.2_gee_ar <- gee(Y_i3 ~ X_i1 + X_i2, id = id, data = section2.2data, family = gaussian, corstr = "AR-M")
-# section2.2_gee_uns <- gee(Y_i3 ~ X_i1 + X_i2, id = id, data = section2.2data, family = gaussian, corstr = "unstructured")
+section2.2_mlm_reml <- lmer(Y ~ 1 + X_lag1 + (1 | id), data = section2.2data_long_lagged)
+section2.2_mlm_mle <- lmer(Y ~ 1 + X_lag1 + (1 | id), data = section2.2data_long_lagged, REML = FALSE)
+section2.2_gee_ind <- gee(Y ~ 1 + X_lag1, id = id, data = section2.2data_long_lagged, family = gaussian, corstr = "independence")
+section2.2_gee_exch <- gee(Y ~ 1 + X_lag1, id = id, data = section2.2data_long_lagged, family = gaussian, corstr = "exchangeable")
+section2.2_gee_ar1 <- gee(Y ~ 1 + X_lag1, id = id, data = section2.2data_long_lagged, family = gaussian, corstr = "AR-M", Mv = 1)
+section2.2_gee_unstr <- gee(Y ~ 1 + X_lag1, id = id, data = section2.2data_long_lagged, family = gaussian, corstr = "unstructured")
+
+section2.2_coefs <- data.frame(
+  row.names = c("Intercept", "X_lag1"),
+  MLM_REML = fixef(section2.2_mlm_reml),
+  MLM_MLE = fixef(section2.2_mlm_mle),
+  GEE_Ind = coef(section2.2_gee_ind),
+  GEE_Exchange = coef(section2.2_gee_exch),
+  GEE_AR1 = coef(section2.2_gee_ar1),
+  GEE_Unstructured = coef(section2.2_gee_unstr)
+)
+
+knitr::kable(caption = "Section 2.2: Estimated coefficients from the MLM and GEE models", section2.2_coefs, digits = 3)
 ```
 
+We can clearly see that the MLM and GEE models provide exactly the same estimates for the fixed intercept and fixed regression coefficient, with the exception of the GEE with independence working correlation structure.
 
+> According to Pepe and Anderson (1994), this is the only structure that can avoid bias in the estimation of the fixed effects.
 
+As a reminder, the fixed effects were specified as $\gamma_{00} = 2$ and $\beta_1 = 0.8$. Thus, we can see that all models except the GEE with independence working correlation structure returns estimates that are very close to the true values.
 
+> This hints at the fact that the marginal effect is not simply the effect that was specified.
+
+### Intermezzo: What are marginal effects/models?
+
+Marginal models are a class of models that are used to estimate the population average effect of a covariate on an outcome. This may be useful, for instance, when prediction or indeed complete modelling of the data are not the main goal of an analysis (Pepe and Anderson, 1994).
+
+> "Consider, for example, the future practice of screening for risk of respiratory disease, where one might simply ascertain Vitamin A deficiency, weight, height and other covariates a t a single time point and make a determination of the child's risk based on these measurements." (Pepe and Anderson, 1994)
+
+Here, the cross-sectional model is of primary interest for use in future screening practices and an in-depth model of longitudinal data is of secondary interest (Pepe and Anderson, 1994).
+
+This contrasts with psychological research, where the cross-sectional model is often deemed problematic in the context of longitudinal data analysis, because it conflates (rather than separates) within-subject and between-subject effects. Instead, we tend to be much more interested in (1) the model that best describes the data (i.e., has the best model fit) and (2) the complete model of the effects (including within- and between-person effects). What differs here is the aim of the study.
+
+> Food for thought: Are there scenarios in psychological researchers where marginal effects are of interest?
+
+Whether marginal or conditional models are preferred depends simply upon the research question and aim of the study:
+
+> "We do not suggest that marginal models are preferable in general to conditional models. In Section 1 we provided one example where the marginal model is, in fact, preferable but in many cases it will not be. Indeed, which model should be used depends entirely on the questions to be addressed with the data. If a good description of the process generating the data is required then fully conditional or random effects models might be pursued." (Pepe and Anderson, 1994)
