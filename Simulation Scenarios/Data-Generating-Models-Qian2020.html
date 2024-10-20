@@ -90,7 +90,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
    
   <ul>
   <li><a href="#introduction" id="toc-introduction" class="nav-link active" data-scroll-target="#introduction"><span class="header-section-number">1</span> Introduction</a></li>
-  <li><a href="#simple-concrete-example-no-exposure" id="toc-simple-concrete-example-no-exposure" class="nav-link" data-scroll-target="#simple-concrete-example-no-exposure"><span class="header-section-number">2</span> Simple Concrete Example: No Exposure</a>
+  <li><a href="#simple-concrete-example-without-treatment" id="toc-simple-concrete-example-without-treatment" class="nav-link" data-scroll-target="#simple-concrete-example-without-treatment"><span class="header-section-number">2</span> Simple Concrete Example: Without Treatment</a>
   <ul class="collapse">
   <li><a href="#example-in-section-2.2-of-qian-et-al.-2020" id="toc-example-in-section-2.2-of-qian-et-al.-2020" class="nav-link" data-scroll-target="#example-in-section-2.2-of-qian-et-al.-2020"><span class="header-section-number">2.1</span> Example in section 2.2 of Qian et al.&nbsp;(2020)</a></li>
   <li><a href="#translating-the-notation" id="toc-translating-the-notation" class="nav-link" data-scroll-target="#translating-the-notation"><span class="header-section-number">2.2</span> Translating the notation</a></li>
@@ -99,6 +99,25 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   <li><a href="#estimating-the-model" id="toc-estimating-the-model" class="nav-link" data-scroll-target="#estimating-the-model"><span class="header-section-number">2.5</span> Estimating the model</a></li>
   <li><a href="#intermezzo-what-are-marginal-effectsmodels" id="toc-intermezzo-what-are-marginal-effectsmodels" class="nav-link" data-scroll-target="#intermezzo-what-are-marginal-effectsmodels"><span class="header-section-number">2.6</span> Intermezzo: What are marginal effects/models?</a></li>
   <li><a href="#intermezzo-what-is-the-difference-between-reml-and-mle" id="toc-intermezzo-what-is-the-difference-between-reml-and-mle" class="nav-link" data-scroll-target="#intermezzo-what-is-the-difference-between-reml-and-mle"><span class="header-section-number">2.7</span> Intermezzo: What is the difference between REML and MLE?</a></li>
+  </ul></li>
+  <li><a href="#main-simulation-of-qian-et-al.-2020-with-treatment" id="toc-main-simulation-of-qian-et-al.-2020-with-treatment" class="nav-link" data-scroll-target="#main-simulation-of-qian-et-al.-2020-with-treatment"><span class="header-section-number">3</span> Main Simulation of Qian et al.&nbsp;(2020): With Treatment</a>
+  <ul class="collapse">
+  <li><a href="#original-section-4.-simulation" id="toc-original-section-4.-simulation" class="nav-link" data-scroll-target="#original-section-4.-simulation"><span class="header-section-number">3.1</span> Original Section: “4. Simulation”</a></li>
+  </ul></li>
+  <li><a href="#generative-model-1" id="toc-generative-model-1" class="nav-link" data-scroll-target="#generative-model-1"><span class="header-section-number">4</span> Generative Model 1</a>
+  <ul class="collapse">
+  <li><a href="#translation-of-notation" id="toc-translation-of-notation" class="nav-link" data-scroll-target="#translation-of-notation"><span class="header-section-number">4.1</span> Translation of Notation</a></li>
+  <li><a href="#visualzing-the-model" id="toc-visualzing-the-model" class="nav-link" data-scroll-target="#visualzing-the-model"><span class="header-section-number">4.2</span> Visualzing the Model</a></li>
+  </ul></li>
+  <li><a href="#generative-model-2" id="toc-generative-model-2" class="nav-link" data-scroll-target="#generative-model-2"><span class="header-section-number">5</span> Generative Model 2</a>
+  <ul class="collapse">
+  <li><a href="#translation-of-notation-1" id="toc-translation-of-notation-1" class="nav-link" data-scroll-target="#translation-of-notation-1"><span class="header-section-number">5.1</span> Translation of Notation</a></li>
+  <li><a href="#visualizing-the-model-1" id="toc-visualizing-the-model-1" class="nav-link" data-scroll-target="#visualizing-the-model-1"><span class="header-section-number">5.2</span> Visualizing the Model</a></li>
+  </ul></li>
+  <li><a href="#generative-model-3" id="toc-generative-model-3" class="nav-link" data-scroll-target="#generative-model-3"><span class="header-section-number">6</span> Generative Model 3</a>
+  <ul class="collapse">
+  <li><a href="#translation-of-notation-2" id="toc-translation-of-notation-2" class="nav-link" data-scroll-target="#translation-of-notation-2"><span class="header-section-number">6.1</span> Translation of Notation</a></li>
+  <li><a href="#visualizing-the-model-2" id="toc-visualizing-the-model-2" class="nav-link" data-scroll-target="#visualizing-the-model-2"><span class="header-section-number">6.2</span> Visualizing the Model</a></li>
   </ul></li>
   </ul>
 </nav>
@@ -139,7 +158,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <section id="introduction" class="level2" data-number="1">
 <h2 data-number="1" class="anchored" data-anchor-id="introduction"><span class="header-section-number">1</span> Introduction</h2>
 <p>In this document, I will recreate the data generating models presented by Qian et al.&nbsp;(2020), accompanied by visual representations of these models.</p>
-<div class="cell" data-hash="Data-Generating-Models-Qian2020_cache/html/Packages_e5acf6eccc54c880959b4f55e9786c0d">
+<div class="cell" data-hash="Data-Generating-Models-Qian2020_cache/html/Packages_0c62c7cd307c35eab8bc5223a4a840df">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Load packages</span></span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dagitty)</span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
@@ -147,11 +166,12 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(lme4)</span>
 <span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(jtools)</span>
 <span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(gee)</span>
-<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(geex)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(geex)</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(nlme)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
-<section id="simple-concrete-example-no-exposure" class="level2" data-number="2">
-<h2 data-number="2" class="anchored" data-anchor-id="simple-concrete-example-no-exposure"><span class="header-section-number">2</span> Simple Concrete Example: No Exposure</h2>
+<section id="simple-concrete-example-without-treatment" class="level2" data-number="2">
+<h2 data-number="2" class="anchored" data-anchor-id="simple-concrete-example-without-treatment"><span class="header-section-number">2</span> Simple Concrete Example: Without Treatment</h2>
 <section id="example-in-section-2.2-of-qian-et-al.-2020" class="level3" data-number="2.1">
 <h3 data-number="2.1" class="anchored" data-anchor-id="example-in-section-2.2-of-qian-et-al.-2020"><span class="header-section-number">2.1</span> Example in section 2.2 of Qian et al.&nbsp;(2020)</h3>
 <p>As a concrete example, consider the case where each individual is observed for 2 time points (<span class="math inline">\(T_i = 2\)</span>), and the covariate at the second time point is the lag-1 outcome: <span class="math inline">\(X_{i2} = Y_{i2}\)</span>.</p>
@@ -293,10 +313,12 @@ Y_{i3} \mid X_{i1}, Y_{i2}, X_{i2}, u_{0i} \sim N(\gamma_{00} + \beta_1 X_{i2} +
 <section id="estimating-the-model" class="level3" data-number="2.5">
 <h3 data-number="2.5" class="anchored" data-anchor-id="estimating-the-model"><span class="header-section-number">2.5</span> Estimating the model</h3>
 <p>Let’s now estimate the model using a multilevel linear model (MLM) and a generalized estimating equation (GEE) model.</p>
-<div class="cell" data-hash="Data-Generating-Models-Qian2020_cache/html/Model Estimation_c541d6e886e865d2c59c0ff4b74dab5d">
-<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>section2<span class="fl">.2</span>_mlm_reml <span class="ot">&lt;-</span> <span class="fu">lmer</span>(Y <span class="sc">~</span> <span class="dv">1</span> <span class="sc">+</span> X_lag1 <span class="sc">+</span> (<span class="dv">1</span> <span class="sc">|</span> id), <span class="at">data =</span> section2<span class="fl">.2</span>data_long_lagged)</span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>section2<span class="fl">.2</span>_mlm_mle <span class="ot">&lt;-</span> <span class="fu">lmer</span>(Y <span class="sc">~</span> <span class="dv">1</span> <span class="sc">+</span> X_lag1 <span class="sc">+</span> (<span class="dv">1</span> <span class="sc">|</span> id), <span class="at">data =</span> section2<span class="fl">.2</span>data_long_lagged, <span class="at">REML =</span> <span class="cn">FALSE</span>)</span>
-<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>section2<span class="fl">.2</span>_gee_ind <span class="ot">&lt;-</span> <span class="fu">gee</span>(Y <span class="sc">~</span> <span class="dv">1</span> <span class="sc">+</span> X_lag1, <span class="at">id =</span> id, <span class="at">data =</span> section2<span class="fl">.2</span>data_long_lagged, <span class="at">family =</span> gaussian, <span class="at">corstr =</span> <span class="st">"independence"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell" data-hash="Data-Generating-Models-Qian2020_cache/html/Model Estimation_980851454025b597cae1393977610594">
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Multilevel Linear Model</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>section2<span class="fl">.2</span>_mlm_reml <span class="ot">&lt;-</span> <span class="fu">lmer</span>(Y <span class="sc">~</span> <span class="dv">1</span> <span class="sc">+</span> X_lag1 <span class="sc">+</span> (<span class="dv">1</span> <span class="sc">|</span> id), <span class="at">data =</span> section2<span class="fl">.2</span>data_long_lagged)</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>section2<span class="fl">.2</span>_mlm_mle <span class="ot">&lt;-</span> <span class="fu">lmer</span>(Y <span class="sc">~</span> <span class="dv">1</span> <span class="sc">+</span> X_lag1 <span class="sc">+</span> (<span class="dv">1</span> <span class="sc">|</span> id), <span class="at">data =</span> section2<span class="fl">.2</span>data_long_lagged, <span class="at">REML =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Generalized Estimating Equations</span></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>section2<span class="fl">.2</span>_gee_ind <span class="ot">&lt;-</span> <span class="fu">gee</span>(Y <span class="sc">~</span> <span class="dv">1</span> <span class="sc">+</span> X_lag1, <span class="at">id =</span> id, <span class="at">data =</span> section2<span class="fl">.2</span>data_long_lagged, <span class="at">family =</span> gaussian, <span class="at">corstr =</span> <span class="st">"independence"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>(Intercept)      X_lag1 
    1.789170    1.010113 </code></pre>
@@ -316,38 +338,84 @@ Y_{i3} \mid X_{i1}, Y_{i2}, X_{i2}, u_{0i} \sim N(\gamma_{00} + \beta_1 X_{i2} +
 <pre><code>(Intercept)      X_lag1 
    1.789170    1.010113 </code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>section2<span class="fl">.2</span>_coefs <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
-<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">row.names =</span> <span class="fu">c</span>(<span class="st">"Intercept"</span>, <span class="st">"X_lag1"</span>),</span>
-<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">MLM_REML =</span> <span class="fu">fixef</span>(section2<span class="fl">.2</span>_mlm_reml),</span>
-<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">MLM_MLE =</span> <span class="fu">fixef</span>(section2<span class="fl">.2</span>_mlm_mle),</span>
-<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">GEE_Ind =</span> <span class="fu">coef</span>(section2<span class="fl">.2</span>_gee_ind),</span>
-<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">GEE_Exchange =</span> <span class="fu">coef</span>(section2<span class="fl">.2</span>_gee_exch),</span>
-<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">GEE_AR1 =</span> <span class="fu">coef</span>(section2<span class="fl">.2</span>_gee_ar1),</span>
-<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">GEE_Unstructured =</span> <span class="fu">coef</span>(section2<span class="fl">.2</span>_gee_unstr)</span>
-<span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb12-10"><a href="#cb12-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-11"><a href="#cb12-11" aria-hidden="true" tabindex="-1"></a>knitr<span class="sc">::</span><span class="fu">kable</span>(<span class="at">caption =</span> <span class="st">"Section 2.2: Estimated coefficients from the MLM and GEE models"</span>, section2<span class="fl">.2</span>_coefs, <span class="at">digits =</span> <span class="dv">3</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Generalized linear model (OLS): assumes independence of observations</span></span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>section2<span class="fl">.2</span>_glm <span class="ot">&lt;-</span> <span class="fu">glm</span>(Y <span class="sc">~</span> <span class="dv">1</span> <span class="sc">+</span> X_lag1, <span class="at">data =</span> section2<span class="fl">.2</span>data_long_lagged, <span class="at">family =</span> gaussian) </span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Marginal linear model (GLS)</span></span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>section2<span class="fl">.2</span>_gls_symm_mle <span class="ot">&lt;-</span> nlme<span class="sc">::</span><span class="fu">gls</span>(Y <span class="sc">~</span> <span class="dv">1</span> <span class="sc">+</span> X_lag1, <span class="at">data =</span> section2<span class="fl">.2</span>data_long_lagged, <span class="at">correlation =</span> <span class="fu">corSymm</span>(<span class="at">form =</span> <span class="sc">~</span> <span class="dv">1</span> <span class="sc">|</span> id), <span class="at">method =</span> <span class="st">"ML"</span>) </span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>section2<span class="fl">.2</span>_gls_compsymm_mle <span class="ot">&lt;-</span> nlme<span class="sc">::</span><span class="fu">gls</span>(Y <span class="sc">~</span> <span class="dv">1</span> <span class="sc">+</span> X_lag1, <span class="at">data =</span> section2<span class="fl">.2</span>data_long_lagged, <span class="at">correlation =</span> <span class="fu">corCompSymm</span>(<span class="at">form =</span> <span class="sc">~</span> <span class="dv">1</span> <span class="sc">|</span> id), <span class="at">method =</span> <span class="st">"ML"</span>)</span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(section2<span class="fl">.2</span>_gls_symm_mle)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Generalized least squares fit by maximum likelihood
+  Model: Y ~ 1 + X_lag1 
+  Data: section2.2data_long_lagged 
+       AIC      BIC    logLik
+  8908.115 8936.956 -4450.057
+
+Correlation Structure: General
+ Formula: ~1 | id 
+ Parameter estimate(s):
+ Correlation: 
+  1   
+2 0.99
+
+Coefficients:
+                Value   Std.Error  t-value p-value
+(Intercept) 2.0001338 0.014138919 141.4630       0
+X_lag1      0.7983801 0.000897811 889.2519       0
+
+ Correlation: 
+       (Intr)
+X_lag1 -0.063
+
+Standardized residuals:
+         Min           Q1          Med           Q3          Max 
+-3.275390043 -0.659680887 -0.001194166  0.672938257  3.513982237 
+
+Residual standard error: 1.000225 
+Degrees of freedom: 10000 total; 9998 residual</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>section2<span class="fl">.2</span>_coefs <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">row.names =</span> <span class="fu">c</span>(<span class="st">"Intercept"</span>, <span class="st">"X_lag1"</span>),</span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">MLM_reml =</span> <span class="fu">fixef</span>(section2<span class="fl">.2</span>_mlm_reml),</span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">MLM_mle =</span> <span class="fu">fixef</span>(section2<span class="fl">.2</span>_mlm_mle),</span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">GEE_ind =</span> <span class="fu">coef</span>(section2<span class="fl">.2</span>_gee_ind),</span>
+<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">GEE_exch =</span> <span class="fu">coef</span>(section2<span class="fl">.2</span>_gee_exch),</span>
+<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">GEE_ar1 =</span> <span class="fu">coef</span>(section2<span class="fl">.2</span>_gee_ar1),</span>
+<span id="cb14-8"><a href="#cb14-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">GEE_unstr =</span> <span class="fu">coef</span>(section2<span class="fl">.2</span>_gee_unstr),</span>
+<span id="cb14-9"><a href="#cb14-9" aria-hidden="true" tabindex="-1"></a>  <span class="at">GLM =</span> <span class="fu">coef</span>(section2<span class="fl">.2</span>_glm),</span>
+<span id="cb14-10"><a href="#cb14-10" aria-hidden="true" tabindex="-1"></a>  <span class="at">GLS_Symm =</span> <span class="fu">coef</span>(section2<span class="fl">.2</span>_gls_symm_mle),</span>
+<span id="cb14-11"><a href="#cb14-11" aria-hidden="true" tabindex="-1"></a>  <span class="at">GLS_CompSymm =</span> <span class="fu">coef</span>(section2<span class="fl">.2</span>_gls_compsymm_mle)</span>
+<span id="cb14-12"><a href="#cb14-12" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb14-13"><a href="#cb14-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-14"><a href="#cb14-14" aria-hidden="true" tabindex="-1"></a>knitr<span class="sc">::</span><span class="fu">kable</span>(<span class="at">caption =</span> <span class="st">"Section 2.2: Estimated coefficients from the MLM and GEE models"</span>, section2<span class="fl">.2</span>_coefs, <span class="at">digits =</span> <span class="dv">3</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <table class="table table-sm table-striped small">
 <caption>Section 2.2: Estimated coefficients from the MLM and GEE models</caption>
 <colgroup>
-<col style="width: 13%">
-<col style="width: 12%">
+<col style="width: 11%">
 <col style="width: 10%">
+<col style="width: 8%">
+<col style="width: 8%">
 <col style="width: 10%">
-<col style="width: 17%">
+<col style="width: 8%">
+<col style="width: 11%">
+<col style="width: 6%">
 <col style="width: 10%">
-<col style="width: 23%">
+<col style="width: 14%">
 </colgroup>
 <thead>
 <tr class="header">
 <th style="text-align: left;"></th>
-<th style="text-align: right;">MLM_REML</th>
-<th style="text-align: right;">MLM_MLE</th>
-<th style="text-align: right;">GEE_Ind</th>
-<th style="text-align: right;">GEE_Exchange</th>
-<th style="text-align: right;">GEE_AR1</th>
-<th style="text-align: right;">GEE_Unstructured</th>
+<th style="text-align: right;">MLM_reml</th>
+<th style="text-align: right;">MLM_mle</th>
+<th style="text-align: right;">GEE_ind</th>
+<th style="text-align: right;">GEE_exch</th>
+<th style="text-align: right;">GEE_ar1</th>
+<th style="text-align: right;">GEE_unstr</th>
+<th style="text-align: right;">GLM</th>
+<th style="text-align: right;">GLS_Symm</th>
+<th style="text-align: right;">GLS_CompSymm</th>
 </tr>
 </thead>
 <tbody>
@@ -359,6 +427,9 @@ Y_{i3} \mid X_{i1}, Y_{i2}, X_{i2}, u_{0i} \sim N(\gamma_{00} + \beta_1 X_{i2} +
 <td style="text-align: right;">2.000</td>
 <td style="text-align: right;">2.000</td>
 <td style="text-align: right;">2.000</td>
+<td style="text-align: right;">1.789</td>
+<td style="text-align: right;">2.000</td>
+<td style="text-align: right;">2.000</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">X_lag1</td>
@@ -366,6 +437,9 @@ Y_{i3} \mid X_{i1}, Y_{i2}, X_{i2}, u_{0i} \sim N(\gamma_{00} + \beta_1 X_{i2} +
 <td style="text-align: right;">0.798</td>
 <td style="text-align: right;">1.010</td>
 <td style="text-align: right;">0.798</td>
+<td style="text-align: right;">0.798</td>
+<td style="text-align: right;">0.798</td>
+<td style="text-align: right;">1.010</td>
 <td style="text-align: right;">0.798</td>
 <td style="text-align: right;">0.798</td>
 </tr>
@@ -388,27 +462,22 @@ E[Y_{i2} \mid X_{i1}] = \gamma_{00} + \beta_1 X_{i1}
 <p><span class="math display">\[
 E[Y_{i3} \mid X_{i2}] = (1- \rho \zeta - \rho ) \gamma_{00} + [(1-\rho \zeta)  \beta_1 + \rho] X_{i2}
 \]</span></p>
-<p>Let’s confirm this by calculating the marginal effects with the conditional parameter estimates</p>
+<p>Let’s confirm this by calculating the true marginal effect</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="co"># summary(section2.2_mlm_mle)</span></span>
-<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>gamma_00_hat <span class="ot">&lt;-</span> section2<span class="fl">.2</span>_coefs<span class="sc">$</span>MLM_MLE[<span class="dv">1</span>]</span>
-<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>beta_1_hat <span class="ot">&lt;-</span> section2<span class="fl">.2</span>_coefs<span class="sc">$</span>MLM_MLE[<span class="dv">2</span>]</span>
-<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a><span class="co"># extract rho/ICC</span></span>
-<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a>sigma2_u0_hat <span class="ot">&lt;-</span> <span class="fl">0.99024</span> <span class="co"># &lt;- VarCorr(section2.2_mlm_mle)$id[1]</span></span>
-<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a>sigma2_e_hat <span class="ot">&lt;-</span> <span class="fl">0.01021</span></span>
-<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a>rho <span class="ot">=</span> sigma2_u0_hat <span class="sc">/</span> (sigma2_u0_hat <span class="sc">+</span> sigma2_e_hat)</span>
-<span id="cb13-9"><a href="#cb13-9" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-10"><a href="#cb13-10" aria-hidden="true" tabindex="-1"></a><span class="co"># Compute zeta</span></span>
-<span id="cb13-11"><a href="#cb13-11" aria-hidden="true" tabindex="-1"></a>sigma2_X1 <span class="ot">&lt;-</span> <span class="dv">1</span></span>
-<span id="cb13-12"><a href="#cb13-12" aria-hidden="true" tabindex="-1"></a>zeta <span class="ot">=</span> beta_1_hat <span class="sc">*</span> sigma2_X1 <span class="sc">/</span> (beta_1_hat <span class="sc">*</span> sigma2_X1 <span class="sc">+</span> sigma2_u0_hat <span class="sc">+</span> sigma2_e_hat)</span>
-<span id="cb13-13"><a href="#cb13-13" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-14"><a href="#cb13-14" aria-hidden="true" tabindex="-1"></a><span class="co"># Now let's compute the marginal effect of X1 on Y2</span></span>
-<span id="cb13-15"><a href="#cb13-15" aria-hidden="true" tabindex="-1"></a>marginal_effect_X1_Y2 <span class="ot">&lt;-</span> gamma_00_hat <span class="sc">+</span> beta_1_hat</span>
-<span id="cb13-16"><a href="#cb13-16" aria-hidden="true" tabindex="-1"></a>marginaleffect_X2_Y3 <span class="ot">&lt;-</span> (<span class="dv">1</span> <span class="sc">-</span> rho <span class="sc">*</span> zeta <span class="sc">-</span> rho) <span class="sc">*</span> gamma_00_hat <span class="sc">+</span> ((<span class="dv">1</span> <span class="sc">-</span> rho <span class="sc">*</span> zeta) <span class="sc">*</span> beta_1_hat <span class="sc">+</span> rho)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>sigma2_u0 <span class="ot">=</span> sigma_u<span class="sc">^</span><span class="dv">2</span></span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>sigma2_e <span class="ot">=</span> sigma_e<span class="sc">^</span><span class="dv">2</span></span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>rho <span class="ot">=</span> sigma2_u0 <span class="sc">/</span> (sigma2_u0 <span class="sc">+</span> sigma2_e)</span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a>sigma2_X1 <span class="ot">=</span> sigma_X1<span class="sc">^</span><span class="dv">2</span></span>
+<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a>zeta <span class="ot">=</span> beta_1 <span class="sc">*</span> sigma2_X1 <span class="sc">/</span> (beta_1 <span class="sc">*</span> sigma2_X1 <span class="sc">+</span> sigma2_u0 <span class="sc">+</span> sigma2_e)</span>
+<span id="cb15-8"><a href="#cb15-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-9"><a href="#cb15-9" aria-hidden="true" tabindex="-1"></a><span class="co"># Now let's compute the marginal effect of X1 on Y2</span></span>
+<span id="cb15-10"><a href="#cb15-10" aria-hidden="true" tabindex="-1"></a>marginal_effect_X1_Y2 <span class="ot">&lt;-</span> gamma_00 <span class="sc">+</span> beta_1</span>
+<span id="cb15-11"><a href="#cb15-11" aria-hidden="true" tabindex="-1"></a>marginaleffect_X2_Y3 <span class="ot">&lt;-</span> (<span class="dv">1</span> <span class="sc">-</span> rho <span class="sc">*</span> zeta <span class="sc">-</span> rho) <span class="sc">*</span> gamma_00 <span class="sc">+</span> ((<span class="dv">1</span> <span class="sc">-</span> rho <span class="sc">*</span> zeta) <span class="sc">*</span> beta_1 <span class="sc">+</span> rho)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <blockquote class="blockquote">
-<p>This hints at the fact that the marginal effect is not simply the effect that was specified.</p>
+<p>This is not correct, but how do we calculate the true marginal effects for intercept and slope?</p>
 </blockquote>
 </section>
 <section id="intermezzo-what-are-marginal-effectsmodels" class="level3" data-number="2.6">
@@ -433,10 +502,316 @@ E[Y_{i3} \mid X_{i2}] = (1- \rho \zeta - \rho ) \gamma_{00} + [(1-\rho \zeta)  \
 </section>
 <section id="intermezzo-what-is-the-difference-between-reml-and-mle" class="level3" data-number="2.7">
 <h3 data-number="2.7" class="anchored" data-anchor-id="intermezzo-what-is-the-difference-between-reml-and-mle"><span class="header-section-number">2.7</span> Intermezzo: What is the difference between REML and MLE?</h3>
-<p>When fitting a multilevel linear model (MLM) we can choose between restricted maximum likelihood (REML) and maximum likelihood estimation (MLE). In REML, <span class="math inline">\(\sigma^2\)</span> and <span class="math inline">\(\rho\)</span> (intra class correlation) are essentially considered nuisance parameters, which makes sure that small sample bias is reduced. However, since we do not obtain the full likelihood, we cannot compare models using the likelihood ratio test. When sample sizes are sufficiently large, the two methods are asymptotically equivalent.</p>
+<p>When fitting a multilevel linear model (MLM) we can choose between restricted maximum likelihood (REML) and maximum likelihood estimation (MLE). In REML, <span class="math inline">\(\sigma^2\)</span> and <span class="math inline">\(\rho\)</span> (intra class correlation) are essentially considered nuisance parameters, which makes sure that small sample bias is reduced. However, since we do not obtain the complete log likelihood, we cannot compare models using the likelihood ratio test. When sample sizes are sufficiently large, the two methods are asymptotically equivalent.</p>
 <p>the variance components <span class="math inline">\(\sigma^2_u\)</span> are estimated by maximizing the likelihood of the residuals, conditional on the fixed effects. In MLE, the residual variance <span class="math inline">\(\sigma^2\)</span> and the variance components <span class="math inline">\(\sigma^2_u\)</span> are estimated by maximizing the likelihood of the residuals, conditional on the fixed effects and the random effects.</p>
 <p>The difference between the two methods lies in the way they estimate the variance components of the model.</p>
 <p>source: <a href="https://www.youtube.com/watch?v=ZjQo0H_FFwI&amp;list=PL0Y1Z_F8RtX7jIbexsd3lizDXMET_WGX0&amp;index=7">STAT 437: 007. Linear Marginal Models: Likelihood, Inference, and Asymptotics (Theory)</a></p>
+</section>
+</section>
+<section id="main-simulation-of-qian-et-al.-2020-with-treatment" class="level2" data-number="3">
+<h2 data-number="3" class="anchored" data-anchor-id="main-simulation-of-qian-et-al.-2020-with-treatment"><span class="header-section-number">3</span> Main Simulation of Qian et al.&nbsp;(2020): With Treatment</h2>
+<section id="original-section-4.-simulation" class="level3" data-number="3.1">
+<h3 data-number="3.1" class="anchored" data-anchor-id="original-section-4.-simulation"><span class="header-section-number">3.1</span> Original Section: “4. Simulation”</h3>
+<p>In the simulation, we considered three generative models (GMs), all of which have an endogenous covariate. In the first two GMs, the endogenous covariate <span class="math inline">\(X_{it}\)</span> equals the previous outcome <span class="math inline">\(Y_{it}\)</span> plus some random noise, so the conditional independence assumption (10) is valid. In GM 3, the endogenous covariate depends directly on <span class="math inline">\(b_i\)</span>, violating assumption (10). The details of the generative models are described below.</p>
+<p>In GM1, we considered a simple case with only a random intercept and a random slope for <span class="math inline">\(A_{it}\)</span>, so that <span class="math inline">\(Z_{i(t_0)} = Z_{i(t_2)} = 1\)</span> in model (7). The outcome is generated as:</p>
+<p><span class="math display">\[
+Y_{it+1} = \alpha_0 + \alpha_1 X_{it} + b_{i0} + A_{it} (\beta_0 + \beta_1 X_{it} + b_{i2}) + \epsilon_{it+1}.
+\]</span></p>
+<p>The random effects <span class="math inline">\(b_{i0} \sim N(0, \sigma_{b0}^2)\)</span> and <span class="math inline">\(b_{i2} \sim N(0, \sigma_{b2}^2)\)</span> are independent of each other. The covariate is generated as <span class="math inline">\(X_{i1} \sim N(0, 1)\)</span>, and for <span class="math inline">\(t \geq 2\)</span>,</p>
+<p><span class="math display">\[
+X_{it} = Y_{it} + N(0, 1).
+\]</span></p>
+<p>The randomization probability <span class="math inline">\(p_t\)</span> is constant at <span class="math inline">\(1/2\)</span>. The exogenous noise is <span class="math inline">\(\epsilon_{it+1} \sim N(0, \sigma_\epsilon^2)\)</span>.</p>
+<p>In GM2, we considered the case where <span class="math inline">\(Z_{i(t_0)} = Z_{i(t_2)} = 1\)</span>, with time-varying randomization probability. The outcome is generated as:</p>
+<p><span class="math display">\[
+Y_{it+1} = \alpha_0 + \alpha_1 X_{it} + b_{i0} + b_{i1} X_{it} + A_{it} (\beta_0 + \beta_1 X_{it} + b_{i2} + b_{i3} X_{it}) + \epsilon_{it+1}.
+\]</span></p>
+<p>The random effects <span class="math inline">\(b_{ij} \sim N(0, \sigma_{b_j}^2)\)</span>, for <span class="math inline">\(0 \leq j \leq 3\)</span>, are independent of each other. The covariate is generated as <span class="math inline">\(X_{i1} \sim N(0, 1)\)</span>, and for <span class="math inline">\(t \geq 2\)</span>,</p>
+<p><span class="math display">\[
+X_{it} = Y_{it} + N(0, 1).
+\]</span></p>
+<p>The randomization probability depends on <span class="math inline">\(X_{it}\)</span>:</p>
+<p><span class="math display">\[
+p_t = 0.7 \cdot 1(X_{it} &gt; -1.27) + 0.3 \cdot 1(X_{it} \leq -1.27),
+\]</span></p>
+<p>where <span class="math inline">\(1(\cdot)\)</span> represents the indicator function, and the cutoff <span class="math inline">\(-1.27\)</span> was chosen so that <span class="math inline">\(p_t\)</span> equals 0.7 or 0.3 for about half of the time. The exogenous noise is <span class="math inline">\(\epsilon_{it+1} \sim N(0, \sigma_\epsilon^2)\)</span>.</p>
+<p>GM3 is the same as GM 1, except that the covariate <span class="math inline">\(X_{it}\)</span> depends directly on <span class="math inline">\(b_i\)</span>:</p>
+<p><span class="math display">\[
+X_{i1} \sim N(b_{i0}, 1), \quad X_{it} = Y_{it} + N(b_{i0}, 1) \text{ for } t \geq 2.
+\]</span> We chose the following parameter values:</p>
+<p><span class="math display">\[
+\alpha_0 = -2, \quad \alpha_1 = -0.3, \quad \beta_0 = 1, \quad \beta_1 = 0.3,
+\]</span></p>
+<p><span class="math display">\[
+\sigma_{b0}^2 = 4, \quad \sigma_{b1}^2 = \frac{1}{4}, \quad \sigma_{b2}^2 = 1, \quad \sigma_{b3}^2 = \frac{1}{4}, \quad \sigma_\epsilon^2 = 1.
+\]</span></p>
+</section>
+</section>
+<section id="generative-model-1" class="level2" data-number="4">
+<h2 data-number="4" class="anchored" data-anchor-id="generative-model-1"><span class="header-section-number">4</span> Generative Model 1</h2>
+<section id="translation-of-notation" class="level3" data-number="4.1">
+<h3 data-number="4.1" class="anchored" data-anchor-id="translation-of-notation"><span class="header-section-number">4.1</span> Translation of Notation</h3>
+<p>In the table below, we will provide the translation of original notation in Qian et al.&nbsp;(2020) to notation more common in psychological research</p>
+<table class="table">
+<colgroup>
+<col style="width: 38%">
+<col style="width: 30%">
+<col style="width: 30%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Parameter</th>
+<th>Original</th>
+<th>New</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Fixed intercept</td>
+<td><span class="math inline">\(\alpha_0\)</span></td>
+<td><span class="math inline">\(\gamma_{00}\)</span></td>
+</tr>
+<tr class="even">
+<td>Fixed slope for <span class="math inline">\(X_{it}\)</span></td>
+<td><span class="math inline">\(\alpha_1\)</span></td>
+<td><span class="math inline">\(\gamma_{01}\)</span></td>
+</tr>
+<tr class="odd">
+<td>Random intercept</td>
+<td><span class="math inline">\(b_{i0}\)</span></td>
+<td><span class="math inline">\(u_{0i}\)</span></td>
+</tr>
+<tr class="even">
+<td>Random slope for <span class="math inline">\(A_{it}\)</span></td>
+<td><span class="math inline">\(b_{i2}\)</span></td>
+<td><span class="math inline">\(u_{1i}\)</span></td>
+</tr>
+<tr class="odd">
+<td>Error term</td>
+<td><span class="math inline">\(\epsilon_{it+1}\)</span></td>
+<td><span class="math inline">\(e_{it+1}\)</span></td>
+</tr>
+<tr class="even">
+<td>Fixed effect of <span class="math inline">\(A_{it}\)</span></td>
+<td><span class="math inline">\(\beta_0\)</span></td>
+<td><span class="math inline">\(\gamma_{10}\)</span></td>
+</tr>
+<tr class="odd">
+<td>Interaction effect of <span class="math inline">\(A_{it}\)</span> and <span class="math inline">\(X_{it}\)</span></td>
+<td><span class="math inline">\(\beta_1\)</span></td>
+<td><span class="math inline">\(\gamma_{11}\)</span></td>
+</tr>
+<tr class="even">
+<td>Covariate</td>
+<td><span class="math inline">\(X_{it}\)</span></td>
+<td><span class="math inline">\(Z_{it}\)</span></td>
+</tr>
+<tr class="odd">
+<td>Treatment</td>
+<td><span class="math inline">\(A_{it}\)</span></td>
+<td><span class="math inline">\(X_{it}\)</span></td>
+</tr>
+</tbody>
+</table>
+<p>Let’s first state the original model:</p>
+<p><span class="math display">\[
+Y_{it+1} = \alpha_0 + \alpha_1 X_{it} + b_{i0} + A_{it} (\beta_0 + \beta_1 X_{it} + b_{i2}) + \epsilon_{it+1}.
+\]</span></p>
+<p>Using this new notation, we may thus rewrite GM1 as a within model:</p>
+<p><span class="math display">\[
+Y_{it+1} = \beta_{0i} + \beta_{1i} X_{it} + e_{it+1},
+\]</span></p>
+<p>where:</p>
+<p><span class="math display">\[
+\beta_{0i} = \gamma_{00} + \gamma_{01} Z_{it} + u_{0i} \quad \text{with} \quad u_{0i} \sim \mathcal{N}(0, \sigma^2_u),
+\]</span></p>
+<p><span class="math display">\[
+\beta_{1i} = \gamma_{10} + \gamma_{11} Z_{it} + u_{1i} \quad \text{with} \quad u_{1i} \sim \mathcal{N}(0, \sigma^2_u).
+\]</span></p>
+<p>Combining these two equations, the model can be expressed as:</p>
+<p><span class="math display">\[
+Y_{it+1} = \gamma_{00} + \gamma_{01} Z_{it} + u_{0i} + X_{it} (\gamma_{10} + \gamma_{11} Z_{it} + u_{1i}) + e_{it+1}.
+\]</span></p>
+</section>
+<section id="visualzing-the-model" class="level3" data-number="4.2">
+<h3 data-number="4.2" class="anchored" data-anchor-id="visualzing-the-model"><span class="header-section-number">4.2</span> Visualzing the Model</h3>
+<p>As mentioned by Ellen in the last meeting (17-10):</p>
+<blockquote class="blockquote">
+<p>Conventional DAGs do not only represent main effects but rather the combination of main effects and interactions. Once you have drawn your DAG, you already assume that any variables pointing to the same outcome can modify the effect of the others pointing to the same outcome. <a href="https://stats.stackexchange.com/questions/157775/representing-interaction-effects-in-directed-acyclic-graphs">stackexchange</a></p>
+</blockquote>
+<p>For <span class="math inline">\(t = 1\)</span>, the DAG and path diagram are as follows:</p>
+<div class="cell quarto-layout-panel" data-hash="Data-Generating-Models-Qian2020_cache/html/GM1_visual_a09b65fe177f8621e32164503896d538">
+<div class="quarto-layout-row quarto-layout-valign-top">
+<div class="cell-output-display quarto-layout-cell" style="flex-basis: 100.0%;justify-content: center;">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<figcaption class="figure-caption">DAG</figcaption>
+<p><img src="Data-Generating-Models-Qian2020_files/figure-html/GM1_visual-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<div class="quarto-layout-row quarto-layout-valign-top">
+<div class="cell-output-display quarto-layout-cell" style="flex-basis: 100.0%;justify-content: center;">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<figcaption class="figure-caption">Path Diagam</figcaption>
+<p><img src="Data-Generating-Models-Qian2020_files/figure-html/GM1_visual-2.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+</div>
+<p>Note that the interaction between <span class="math inline">\(X_{it}\)</span> and <span class="math inline">\(Z_{it}\)</span> is not explicitly shown in the DAG, but is explicit in the path diagram. This is because the interaction is a model assumption, which is not explicitly represented in the non-parametric DAG.</p>
+<p>For <span class="math inline">\(t \geq 2\)</span>, the DAG and path diagram are as follows:</p>
+<div class="cell quarto-layout-panel" data-hash="Data-Generating-Models-Qian2020_cache/html/GM1_visual2_71b5f28ec35a66cfe2d80195693a4392">
+<div class="quarto-layout-row quarto-layout-valign-top">
+<div class="cell-output-display quarto-layout-cell" style="flex-basis: 100.0%;justify-content: center;">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<figcaption class="figure-caption">DAG</figcaption>
+<p><img src="Data-Generating-Models-Qian2020_files/figure-html/GM1_visual2-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<div class="quarto-layout-row quarto-layout-valign-top">
+<div class="cell-output-display quarto-layout-cell" style="flex-basis: 100.0%;justify-content: center;">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<figcaption class="figure-caption">Path Diagam</figcaption>
+<p><img src="Data-Generating-Models-Qian2020_files/figure-html/GM1_visual2-2.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+</div>
+<p>So the DAG for the first two observations looks like</p>
+<div class="cell" data-hash="Data-Generating-Models-Qian2020_cache/html/GM1_visual3_360f5d4d16851c1dcb4c29f48aae1f1e">
+<div class="cell-output-display">
+<p><img src="Data-Generating-Models-Qian2020_files/figure-html/GM1_visual3-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+</section>
+</section>
+<section id="generative-model-2" class="level2" data-number="5">
+<h2 data-number="5" class="anchored" data-anchor-id="generative-model-2"><span class="header-section-number">5</span> Generative Model 2</h2>
+<section id="translation-of-notation-1" class="level3" data-number="5.1">
+<h3 data-number="5.1" class="anchored" data-anchor-id="translation-of-notation-1"><span class="header-section-number">5.1</span> Translation of Notation</h3>
+<p>Now we need to translate more parameters:</p>
+<table class="table">
+<colgroup>
+<col style="width: 51%">
+<col style="width: 24%">
+<col style="width: 24%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Parameter</th>
+<th>Original</th>
+<th>New</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Fixed intercept</td>
+<td><span class="math inline">\(\alpha_0\)</span></td>
+<td><span class="math inline">\(\gamma_{00}\)</span></td>
+</tr>
+<tr class="even">
+<td>Fixed slope for <span class="math inline">\(X_{it}\)</span></td>
+<td><span class="math inline">\(\alpha_1\)</span></td>
+<td><span class="math inline">\(\gamma_{10}\)</span></td>
+</tr>
+<tr class="odd">
+<td>Random intercept</td>
+<td><span class="math inline">\(b_{i0}\)</span></td>
+<td><span class="math inline">\(u_{0i}\)</span></td>
+</tr>
+<tr class="even">
+<td>Random slope for <span class="math inline">\(X_{it}\)</span></td>
+<td><span class="math inline">\(b_{i1}\)</span></td>
+<td><span class="math inline">\(u_{1i}\)</span></td>
+</tr>
+<tr class="odd">
+<td>Fixed effect of <span class="math inline">\(A_{it}\)</span></td>
+<td><span class="math inline">\(\beta_0\)</span></td>
+<td><span class="math inline">\(\gamma_{20}\)</span></td>
+</tr>
+<tr class="even">
+<td>Interaction effect of <span class="math inline">\(A_{it}\)</span> and <span class="math inline">\(X_{it}\)</span></td>
+<td><span class="math inline">\(\beta_1\)</span></td>
+<td><span class="math inline">\(\gamma_{30}\)</span></td>
+</tr>
+<tr class="odd">
+<td>Random slope for <span class="math inline">\(A_{it}\)</span></td>
+<td><span class="math inline">\(b_{i2}\)</span></td>
+<td><span class="math inline">\(u_{2i}\)</span></td>
+</tr>
+<tr class="even">
+<td>Random interaction effect for <span class="math inline">\(A_{it} \times X_{it}\)</span></td>
+<td><span class="math inline">\(b_{i3}\)</span></td>
+<td><span class="math inline">\(u_{3i}\)</span></td>
+</tr>
+<tr class="odd">
+<td>Error term</td>
+<td><span class="math inline">\(\epsilon_{it+1}\)</span></td>
+<td><span class="math inline">\(e_{it+1}\)</span></td>
+</tr>
+<tr class="even">
+<td>Covariate</td>
+<td><span class="math inline">\(X_{it}\)</span></td>
+<td><span class="math inline">\(Z_{it}\)</span></td>
+</tr>
+<tr class="odd">
+<td>Treatment</td>
+<td><span class="math inline">\(A_{it}\)</span></td>
+<td><span class="math inline">\(X_{it}\)</span></td>
+</tr>
+</tbody>
+</table>
+<p>Let’s first restate the original model:</p>
+<p><span class="math display">\[
+Y_{it+1} = \alpha_0 + \alpha_1 X_{it} + b_{i0} + b_{i1} X_{it} + A_{it} (\beta_0 + \beta_1 X_{it} + b_{i2} + b_{i3} X_{it}) + \epsilon_{it+1}.
+\]</span></p>
+<p>Using the psychological notation, we rewrite GM2 as a within-person model:</p>
+<p><span class="math display">\[
+Y_{it+1} = \beta_{0i} + \beta_{1i} Z_{it} + \beta_{2i} X_{it} + \beta_{3i} X_{it} Z_{it} + e_{it+1},
+\]</span></p>
+<p>with:</p>
+<p><span class="math display">\[
+\beta_{0i} = \gamma_{00} + u_{0i} \quad \text{where} \quad u_{0i} \sim \mathcal{N}(0, \sigma^2_u),
+\]</span></p>
+<p><span class="math display">\[
+\beta_{1i} = \gamma_{10} + u_{1i} \quad \text{where} \quad u_{1i} \sim \mathcal{N}(0, \sigma^2_u),
+\]</span></p>
+<p><span class="math display">\[
+\beta_{2i} = \gamma_{20} + u_{2i} \quad \text{where} \quad u_{2i} \sim \mathcal{N}(0, \sigma^2_u),
+\]</span></p>
+<p><span class="math display">\[
+\beta_{3i} = \gamma_{30} + u_{3i} \quad \text{where} \quad u_{3i} \sim \mathcal{N}(0, \sigma^2_u).
+\]</span></p>
+<p>Combining these, the full model becomes:</p>
+<p><span class="math display">\[
+Y_{it+1} = (\gamma_{00} + u_{0i}) + (\gamma_{10} + u_{1i}) Z_{it} + (\gamma_{20} + u_{2i}) X_{it} + (\gamma_{30} + u_{3i}) X_{it} Z_{it} + e_{it+1}.
+\]</span></p>
+</section>
+<section id="visualizing-the-model-1" class="level3" data-number="5.2">
+<h3 data-number="5.2" class="anchored" data-anchor-id="visualizing-the-model-1"><span class="header-section-number">5.2</span> Visualizing the Model</h3>
+<div class="cell quarto-layout-panel" data-hash="Data-Generating-Models-Qian2020_cache/html/GM2_visual_dae10f69d304f6b2c929fab9d06935e1">
+
+</div>
+</section>
+</section>
+<section id="generative-model-3" class="level2" data-number="6">
+<h2 data-number="6" class="anchored" data-anchor-id="generative-model-3"><span class="header-section-number">6</span> Generative Model 3</h2>
+<section id="translation-of-notation-2" class="level3" data-number="6.1">
+<h3 data-number="6.1" class="anchored" data-anchor-id="translation-of-notation-2"><span class="header-section-number">6.1</span> Translation of Notation</h3>
+<p>…</p>
+</section>
+<section id="visualizing-the-model-2" class="level3" data-number="6.2">
+<h3 data-number="6.2" class="anchored" data-anchor-id="visualizing-the-model-2"><span class="header-section-number">6.2</span> Visualizing the Model</h3>
+<p>…</p>
 </section>
 </section>
 
