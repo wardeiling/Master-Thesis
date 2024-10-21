@@ -4,20 +4,23 @@ author: "Ward B. Eiling"
 date: "2024-10-17"
 format: 
   html:
+    # fig-pos: 'h'
     toc: true
     toc-location: left
     toc-expand: 5
     number-sections: true
     # embed-resources: false
-    default-image-extension: svg
+    # default-image-extension: svg
 execute:
   message: false
   warning: false
-comments:
-  hypothesis: 
-    theme: clean
+# comments:
+#   hypothesis: 
+#     theme: clean
 fig-cap-location: top
 ---
+
+\newpage
 
 ## Introduction
 
@@ -70,7 +73,16 @@ $$
 
 ### Translating the notation
 
-The notation here is different from the notation used in the psychological sciences. In the psychological sciences, we would typically denote the random intercept as $u_{0i}$ instead of $b_i$. We would also denote the fixed intercept as $\gamma_{00}$ instead of $\beta_0$ and $\sigma_\epsilon^2$ as $\sigma_e^2$, but keep the fixed slope as $\beta_1$.
+In the table below, we will provide the translation of original notation in Qian et al. (2020) to notation more common in psychological research
+
+| Parameter               | Original           | New                |
+|-------------------------|--------------------|--------------------|
+| Fixed intercept         | $\alpha_0$         | $\gamma_{00}$       |
+| Fixed slope for $X_{it}$| $\beta_1$         | $\beta_1$        |
+| Random intercept        | $b_{i0}$           | $u_{0i}$            |
+| Residual variance of Error term              | $\sigma_\epsilon^2$  | $\sigma_e^2$          |
+| Covariate               | $X_{it}$           | $Z_{it}$           |
+
 
 Let's now rewrite the model in this notation
 
@@ -79,19 +91,19 @@ u_{0i} \sim N(0, \sigma_u^2),
 $$
 
 $$
-X_{i1} \sim N(0, \sigma_{X_1}^2) \text{ independently of } u_{0i},
+Z_{i1} \sim N(0, \sigma_{Z_1}^2) \text{ independently of } u_{0i},
 $$
 
 $$
-Y_{i2} \mid X_{i1}, u_{0i} \sim N(\gamma_{00} + \beta_1 X_{i1} + u_{0i}, \sigma_e^2),
+Y_{i2} \mid Z_{i1}, u_{0i} \sim N(\gamma_{00} + \beta_1 Z_{i1} + u_{0i}, \sigma_e^2),
 $$
 
 $$
-X_{i2} = Y_{i2},
+Z_{i2} = Y_{i2},
 $$
 
 $$
-Y_{i3} \mid X_{i1}, Y_{i2}, X_{i2}, u_{0i} \sim N(\gamma_{00} + \beta_1 X_{i2} + u_{0i}, \sigma_e^2).
+Y_{i3} \mid Z_{i1}, Y_{i2}, Z_{i2}, u_{0i} \sim N(\gamma_{00} + \beta_1 Z_{i2} + u_{0i}, \sigma_e^2).
 $$
 
 ### Visualizing the Model
@@ -101,19 +113,21 @@ We may now draw the DAG for this model
 ```{r}
 #| label: DAG
 #| cache: true
-#| fig-cap: DAG for the data generating model in section 2.2 of Qian et al. (2020)
+#| fig-subcap:
+#| - DAG with fixed effects
+#| - DAG with random intercept
 #| echo: false
 
 section2.2_DAG <- dagitty(
   'dag {
 bb="0,0,1,1"
-X_1 [exposure,pos="0.182,0.160"]
-X_2 [exposure,pos="0.454,0.160"]
+Z_1 [exposure,pos="0.182,0.160"]
+Z_2 [exposure,pos="0.454,0.160"]
 Y_2 [outcome,pos="0.458,0.282"]
 Y_3 [outcome,pos="0.732,0.283"]
-X_1 -> Y_2
-X_2 -> Y_3
-Y_2 -> X_2
+Z_1 -> Y_2
+Z_2 -> Y_3
+Y_2 -> Z_2
 }')
 
 ggdag::ggdag_status(section2.2_DAG) + ggdag::theme_dag()
@@ -122,14 +136,14 @@ ggdag::ggdag_status(section2.2_DAG) + ggdag::theme_dag()
 section2.2_DAG_randomeff <- dagitty(
   'dag {
 bb="0,0,1,1"
-X_1 [exposure,pos="0.182,0.160"]
-X_2 [exposure,pos="0.454,0.160"]
+Z_1 [exposure,pos="0.182,0.160"]
+Z_2 [exposure,pos="0.454,0.160"]
 Y_2 [outcome,pos="0.458,0.282"]
 Y_3 [outcome,pos="0.732,0.283"]
 u_0 [latent,pos="0.621,0.399"]
-X_1 -> Y_2
-X_2 -> Y_3
-Y_2 -> X_2
+Z_1 -> Y_2
+Z_2 -> Y_3
+Y_2 -> Z_2
 u_0 -> Y_2
 u_0 -> Y_3
 }
@@ -138,7 +152,7 @@ u_0 -> Y_3
 ggdag::ggdag_status(section2.2_DAG_randomeff) + ggdag::theme_dag()
 ```
 
-Note that there is an open biasing path from $Y_2$ to $X_2$ in the DAG: the exposure/predictor $X_2$ is *caused by* (in this case equivalent to) the previous outcome $Y_2$---and thus this time-varying covariate is *endogenous*.
+Note that there is an open biasing path from $Y_2$ to $Z_2$ in the DAG: the predictor/covariate $Z_2$ is *caused by* (in this case equivalent to) the previous outcome $Y_2$---and thus this time-varying covariate is *endogenous*.
 
 ### Generating the data
 
@@ -153,23 +167,23 @@ set.seed(123)
 n_i <- 5000 # number of individuals
 
 sigma_u <- 1 # variance of random intercept
-sigma_X1 <- 1 # variance of X1
+sigma_Z1 <- 1 # variance of Z1
 sigma_e <- 0.1 # residual variance
 beta_1 <- 0.8 # overall slope
 gamma_00 <- 2 # overall intercept
 
 # simulate data
 u_0i <- rnorm(n_i, 0, sigma_u)
-X_i1 <- rnorm(n_i, 0, sigma_X1)
-Y_i2 <- rnorm(n_i, gamma_00 + beta_1 * X_i1 + u_0i, sigma_e)
-X_i2 <- Y_i2
-Y_i3 <- rnorm(n_i, gamma_00 + beta_1 * X_i2 + u_0i, sigma_e)
+Z_i1 <- rnorm(n_i, 0, sigma_Z1)
+Y_i2 <- rnorm(n_i, gamma_00 + beta_1 * Z_i1 + u_0i, sigma_e)
+Z_i2 <- Y_i2
+Y_i3 <- rnorm(n_i, gamma_00 + beta_1 * Z_i2 + u_0i, sigma_e)
 
 # # create data frame in wide format
 # section2.2.data_wide <- data.frame(id = 1:n_i,
-#                                    X_i1 = X_i1,
+#                                    Z_i1 = Z_i1,
 #                                    Y_i2 = Y_i2,
-#                                    X_i2 = X_i2,
+#                                    Z_i2 = Z_i2,
 #                                    Y_i3 = Y_i3)
 # 
 # head(section2.2.data_wide)
@@ -177,13 +191,13 @@ Y_i3 <- rnorm(n_i, gamma_00 + beta_1 * X_i2 + u_0i, sigma_e)
 # # create data frame in long format
 # section2.2data_long <- data.frame(id = rep(1:n_i, each = 3),
 #                              time = rep(1:3, n_i),
-#                              X = rep(NA, 3 * n_i),
+#                              Z = rep(NA, 3 * n_i),
 #                              Y = rep(NA, 3 * n_i))
 # 
 # for (i in 1:n_i){
-#   section2.2data_long$X[section2.2data_long$id == i & section2.2data_long$time == 1] <- X_i1[i]
+#   section2.2data_long$Z[section2.2data_long$id == i & section2.2data_long$time == 1] <- Z_i1[i]
 #   section2.2data_long$Y[section2.2data_long$id == i & section2.2data_long$time == 2] <- Y_i2[i]
-#   section2.2data_long$X[section2.2data_long$id == i & section2.2data_long$time == 2] <- X_i2[i]
+#   section2.2data_long$Z[section2.2data_long$id == i & section2.2data_long$time == 2] <- Z_i2[i]
 #   section2.2data_long$Y[section2.2data_long$id == i & section2.2data_long$time == 3] <- Y_i3[i]
 # }
 # 
@@ -194,12 +208,12 @@ Y_i3 <- rnorm(n_i, gamma_00 + beta_1 * X_i2 + u_0i, sigma_e)
 # create data frame in long format with lagged predictor
 section2.2data_long_lagged <- data.frame(id = rep(1:n_i, each = 2),
                              "time" = rep(1:2, n_i),
-                             "X_lag1" = rep(NA, 2 * n_i),
+                             "Z_lag1" = rep(NA, 2 * n_i),
                              "Y" = rep(NA, 2 * n_i))
 
 for (i in 1:n_i){
-  section2.2data_long_lagged$X_lag1[section2.2data_long_lagged$id == i & section2.2data_long_lagged$time == 1] <- X_i1[i]
-  section2.2data_long_lagged$X_lag1[section2.2data_long_lagged$id == i & section2.2data_long_lagged$time == 2] <- X_i2[i]
+  section2.2data_long_lagged$Z_lag1[section2.2data_long_lagged$id == i & section2.2data_long_lagged$time == 1] <- Z_i1[i]
+  section2.2data_long_lagged$Z_lag1[section2.2data_long_lagged$id == i & section2.2data_long_lagged$time == 2] <- Z_i2[i]
   section2.2data_long_lagged$Y[section2.2data_long_lagged$id == i & section2.2data_long_lagged$time == 1] <- Y_i2[i]
   section2.2data_long_lagged$Y[section2.2data_long_lagged$id == i & section2.2data_long_lagged$time == 2] <- Y_i3[i]
 }
@@ -216,23 +230,21 @@ Let's now estimate the model using a multilevel linear model (MLM) and a general
 #| cache: true
 
 # Multilevel Linear Model
-section2.2_mlm_reml <- lmer(Y ~ 1 + X_lag1 + (1 | id), data = section2.2data_long_lagged)
-section2.2_mlm_mle <- lmer(Y ~ 1 + X_lag1 + (1 | id), data = section2.2data_long_lagged, REML = FALSE)
+section2.2_mlm_reml <- lmer(Y ~ 1 + Z_lag1 + (1 | id), data = section2.2data_long_lagged)
+section2.2_mlm_mle <- lmer(Y ~ 1 + Z_lag1 + (1 | id), data = section2.2data_long_lagged, REML = FALSE)
 # Generalized Estimating Equations
-section2.2_gee_ind <- gee(Y ~ 1 + X_lag1, id = id, data = section2.2data_long_lagged, family = gaussian, corstr = "independence")
-section2.2_gee_exch <- gee(Y ~ 1 + X_lag1, id = id, data = section2.2data_long_lagged, family = gaussian, corstr = "exchangeable")
-section2.2_gee_ar1 <- gee(Y ~ 1 + X_lag1, id = id, data = section2.2data_long_lagged, family = gaussian, corstr = "AR-M", Mv = 1)
-section2.2_gee_unstr <- gee(Y ~ 1 + X_lag1, id = id, data = section2.2data_long_lagged, family = gaussian, corstr = "unstructured")
+section2.2_gee_ind <- gee(Y ~ 1 + Z_lag1, id = id, data = section2.2data_long_lagged, family = gaussian, corstr = "independence")
+section2.2_gee_exch <- gee(Y ~ 1 + Z_lag1, id = id, data = section2.2data_long_lagged, family = gaussian, corstr = "exchangeable")
+section2.2_gee_ar1 <- gee(Y ~ 1 + Z_lag1, id = id, data = section2.2data_long_lagged, family = gaussian, corstr = "AR-M", Mv = 1)
+section2.2_gee_unstr <- gee(Y ~ 1 + Z_lag1, id = id, data = section2.2data_long_lagged, family = gaussian, corstr = "unstructured")
 # Generalized linear model (OLS): assumes independence of observations
-section2.2_glm <- glm(Y ~ 1 + X_lag1, data = section2.2data_long_lagged, family = gaussian) 
+section2.2_glm <- glm(Y ~ 1 + Z_lag1, data = section2.2data_long_lagged, family = gaussian) 
 # Marginal linear model (GLS)
-section2.2_gls_symm_mle <- nlme::gls(Y ~ 1 + X_lag1, data = section2.2data_long_lagged, correlation = corSymm(form = ~ 1 | id), method = "ML") 
-section2.2_gls_compsymm_mle <- nlme::gls(Y ~ 1 + X_lag1, data = section2.2data_long_lagged, correlation = corCompSymm(form = ~ 1 | id), method = "ML")
-
-summary(section2.2_gls_symm_mle)
+section2.2_gls_symm_mle <- nlme::gls(Y ~ 1 + Z_lag1, data = section2.2data_long_lagged, correlation = corSymm(form = ~ 1 | id), method = "ML") 
+section2.2_gls_compsymm_mle <- nlme::gls(Y ~ 1 + Z_lag1, data = section2.2data_long_lagged, correlation = corCompSymm(form = ~ 1 | id), method = "ML")
 
 section2.2_coefs <- data.frame(
-  row.names = c("Intercept", "X_lag1"),
+  row.names = c("Intercept", "Z_lag1"),
   MLM_reml = fixef(section2.2_mlm_reml),
   MLM_mle = fixef(section2.2_mlm_mle),
   GEE_ind = coef(section2.2_gee_ind),
@@ -244,27 +256,29 @@ section2.2_coefs <- data.frame(
   GLS_CompSymm = coef(section2.2_gls_compsymm_mle)
 )
 
-knitr::kable(caption = "Section 2.2: Estimated coefficients from the MLM and GEE models", section2.2_coefs, digits = 3)
+knitr::kable(caption = "Section 2.2: Estimated coefficients from the MLM and GEE models", section2.2_coefs, digits = 3, format = "html")
 ```
 
 We can clearly see that the MLM and GEE models provide exactly the same estimates for the fixed intercept and fixed regression coefficient, with the exception of the GEE with independence working correlation structure.
 
 > According to Pepe and Anderson (1994), this is the only structure that can avoid bias in the estimation of the fixed effects (i.e., that has a valid marginal interpretation).
 
-As a reminder, the fixed effects were specified as $\gamma_{00} = 2$ and $\beta_1 = 0.8$. Thus, we can see that all models except the GEE with independence working correlation structure returns estimates that are very close to the true values---which represented the conditional mean of $Y$ given $X$ and $u_{0i}$ rather than the marginal mean of $Y$ given $X$.
+As a reminder, the fixed effects were specified as $\gamma_{00} = 2$ and $\beta_1 = 0.8$. Thus, we can see that all models except the GEE with independence working correlation structure returns estimates that are very close to the true values---which represented the conditional mean of $Y$ given $Z$ and $u_{0i}$ (rather than the marginal mean of $Y$ given $Z$).
 
 To see why this makes sense, it is important to realize that the parameter estimates represent the parsimonious conditional relationship
 
 $$
-E[Y_{it+1} \mid X_{it}, u_{0i}] = \gamma_{00} + \beta_1 X_{it} + u_{0i}
-$$ And not the marginal relationship, which is given by:
+E[Y_{it+1} \mid Z_{it}, u_{0i}] = \gamma_{00} + \beta_1 Z_{it} + u_{0i}
+$$ 
+
+And not the marginal relationship, which according to Qian et al. (2020) is given by:
 
 $$
-E[Y_{i2} \mid X_{i1}] = \gamma_{00} + \beta_1 X_{i1}
+E[Y_{i2} \mid Z_{i1}] = \gamma_{00} + \beta_1 Z_{i1}
 $$
 
 $$
-E[Y_{i3} \mid X_{i2}] = (1- \rho \zeta - \rho ) \gamma_{00} + [(1-\rho \zeta)  \beta_1 + \rho] X_{i2}
+E[Y_{i3} \mid Z_{i2}] = (1- \rho \zeta - \rho ) \gamma_{00} + [(1-\rho \zeta)  \beta_1 + \rho] Z_{i2}
 $$
 
 Let's confirm this by calculating the true marginal effect
@@ -277,12 +291,17 @@ sigma2_e = sigma_e^2
 
 rho = sigma2_u0 / (sigma2_u0 + sigma2_e)
 
-sigma2_X1 = sigma_X1^2
-zeta = beta_1 * sigma2_X1 / (beta_1 * sigma2_X1 + sigma2_u0 + sigma2_e)
+rho*beta_1
 
-# Now let's compute the marginal effect of X1 on Y2
-marginal_effect_X1_Y2 <- gamma_00 + beta_1
-marginaleffect_X2_Y3 <- (1 - rho * zeta - rho) * gamma_00 + ((1 - rho * zeta) * beta_1 + rho)
+sigma2_Z1 = sigma_Z1^2
+zeta = (beta_1 * sigma2_Z1) / (beta_1 * sigma2_Z1 + sigma2_u0 + sigma2_e)
+
+Z1_mean = 0
+Z2_mean = gamma_00
+
+# Now let's compute the marginal effect of Z1 on Y2
+marginal_effect_Z1_Y2 <- gamma_00 + beta_1*Z1_mean
+marginal_effect_Z2_Y3 <- (1 - rho * zeta - rho) * gamma_00 + ((1 - rho * zeta) * beta_1 + rho)*Z2_mean
 ```
 
 > This is not correct, but how do we calculate the true marginal effects for intercept and slope?
@@ -425,7 +444,7 @@ $$
 
 As mentioned by Ellen in the last meeting (17-10):
 
-> Conventional DAGs do not only represent main effects but rather the combination of main effects and interactions. Once you have drawn your DAG, you already assume that any variables pointing to the same outcome can modify the effect of the others pointing to the same outcome. [stackexchange](https://stats.stackexchange.com/questions/157775/representing-interaction-effects-in-directed-acyclic-graphs)
+> "Conventional DAGs do not only represent main effects but rather the combination of main effects and interactions. Once you have drawn your DAG, you already assume that any variables pointing to the same outcome can modify the effect of the others pointing to the same outcome." ([stackexchange](https://stats.stackexchange.com/questions/157775/representing-interaction-effects-in-directed-acyclic-graphs))
 
 For $t = 1$, the DAG and path diagram are as follows:
 
@@ -535,6 +554,17 @@ Z_2 -> Y_3
 ggdag::ggdag_status(GM1_DAG3) + ggdag::theme_dag()
 ```
 
+The model is fitted as
+
+```{r}
+#| label: GM1_fit
+#| echo: true
+#| eval: false
+
+gm1_mlm <- lmer(Y ~ Z * X + (1 + X| id), data = data)
+```
+
+
 ## Generative Model 2
 
 ### Translation of Notation
@@ -607,6 +637,16 @@ $$
 
 ```
 
+The model is fitted as
+
+```{r}
+#| label: GM2_fit
+#| echo: true
+#| eval: false
+
+gm2_mlm <- lmer(Y ~ Z * X + (Z * X | id), data = data)
+```
+
 ## Generative Model 3
 
 ### Translation of Notation
@@ -616,5 +656,141 @@ $$
 ### Visualizing the Model
 
 ...
+
+## Diggle (2002)
+
+In "Longitudinal Data Analysis" bij Diggle et al. (2002), there is another example:
+
+The following data generating mechanism was used:
+
+$$Y_{it} = \gamma_0 + \gamma_1 X_{it} + \gamma_2 X_{it-1} + b_i + e_{it} \quad \text{where} \quad b_i \sim N(0,1), \quad e_{it} \sim N(0,1),$$
+
+$$
+X_{it} = \rho X_{it-1} + \epsilon_{it} \quad \text{where} \quad \epsilon_{it} \sim N(0,1).
+$$
+
+where $b_i$, $e_{it}$, and $\epsilon_{it}$ are mutually independent.
+
+For a range of correlations ($\rho = 0.9–0.1$) they simulated 100 data sets each of which contained data on $m = 200$ subjects with up to 10 observations per subject. The number of observations for each subject, $n_i$, was generated as a uniform random variable between 2 and 10.
+
+In this case, the true marginal relationship of the fixed slope between $X_{it}$ and $Y_{it}$ is given by
+
+$$\beta_1 = \gamma_1 + \rho \cdot \gamma_2$$
+
+```{r}
+#| label: Diggle2002
+#| echo: true
+#| cache: true
+#| results: asis
+
+# Load necessary libraries
+library(geepack)
+
+# Simulation parameters
+set.seed(123)
+n_subjects <- 200 # Number of subjects
+max_time <- 10    # Maximum number of observations per subject
+n_sim <- 100     # Number of simulations
+gamma_0 <- 0
+gamma_1 <- 1
+gamma_2 <- 1
+rho_values <- seq(0.9, 0.1, by = -0.2) # Range of autocorrelations
+
+# Compute true marginal means for the fixed slope
+true_marginal_b1 <- data.frame(
+  rho = rho_values,
+  beta1 = gamma_1 + rho_values * gamma_2
+)
+
+# Function to generate data for a single simulation
+generate_data <- function(rho) {
+  data_list <- list()
+  
+  for (i in 1:n_subjects) {
+    n_i <- sample(2:max_time, 1) # Random number of observations (2 to 10)
+    X_it <- numeric(n_i)
+    Y_it <- numeric(n_i)
+    b_i <- rnorm(1, 0, 1)        # Random intercept
+    e_it <- rnorm(n_i, 0, 1)
+    
+    # Generate covariate X_it with autoregressive structure
+    X_it[1] <- rnorm(1, 0, 1)    # Initial value for X_it
+    for (t in 2:n_i) {
+      X_it[t] <- rho * X_it[t-1] + rnorm(1, 0, sqrt(1 - rho^2))
+    }
+    
+    # Generate outcome Y_it based on current and lagged values of X_it
+    Y_it[1] <- gamma_0 + gamma_1 * X_it[1] + b_i + e_it[1]
+    if (n_i > 1) {
+      for (t in 2:n_i) {
+        Y_it[t] <- gamma_0 + gamma_1 * X_it[t] + gamma_2 * X_it[t-1] + b_i + e_it[t]
+      }
+    }
+    
+    # Store the data in a list
+    subject_data <- data.frame(
+      subject = i,
+      time = 1:n_i,
+      Y = Y_it,
+      X = X_it
+    )
+    data_list[[i]] <- subject_data
+  }
+  
+  # Combine all subjects' data into a single data frame
+  data <- do.call(rbind, data_list)
+  return(data)
+}
+
+# Simulation loop
+results <- data.frame()
+for (rho in rho_values) {
+  beta1_estimates <- matrix(NA, n_sim, 3) # Store beta1 estimates for each correlation structure
+  
+  for (sim in 1:n_sim) {
+    # Generate data for this simulation
+    sim_data <- generate_data(rho)
+    
+    # Fit GEE models with different working correlation structures
+    gee_ind <- geeglm(Y ~ X, id = subject, data = sim_data, corstr = "independence")
+    gee_exch <- geeglm(Y ~ X, id = subject, data = sim_data, corstr = "exchangeable")
+    gee_ar1 <- geeglm(Y ~ X, id = subject, data = sim_data, corstr = "ar1")
+    
+    # Store the estimated beta1 for each model
+    beta1_estimates[sim, 1] <- coef(gee_ind)["X"]
+    beta1_estimates[sim, 2] <- coef(gee_exch)["X"]
+    beta1_estimates[sim, 3] <- coef(gee_ar1)["X"]
+  }
+  
+  # Calculate average estimates of beta1 for each correlation structure
+  mean_estimates <- colMeans(beta1_estimates, na.rm = TRUE)
+  results <- rbind(results, data.frame(
+    rho = rho,
+    beta1_ind = mean_estimates[1],
+    beta1_exch = mean_estimates[2],
+    beta1_ar1 = mean_estimates[3]
+  ))
+}
+
+# format and print results
+results_complete <- cbind(results, beta1_true = true_marginal_b1$beta1) %>%
+  select(rho, beta1_true, beta1_ind, beta1_exch, beta1_ar1)
+
+# Print the results
+knitr::kable(results_complete, digits = 3, caption = "Average Estimates of Beta1 for Different Correlation Structures", format = "html")
+
+# Plot the results
+library(ggplot2)
+results_long <- reshape2::melt(results_complete, id.vars = "rho", variable.name = "correlation_structure", value.name = "beta1_estimate")
+ggplot(results_long, aes(x = rho, y = beta1_estimate, color = correlation_structure)) +
+  geom_line() +
+  labs(title = "Average Estimates of Beta1 for Different Correlation Structures",
+       x = "Autocorrelation (rho)",
+       y = "Estimated Beta1") +
+  theme_minimal()
+```
+
+
+
 
 
