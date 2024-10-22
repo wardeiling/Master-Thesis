@@ -28,7 +28,6 @@ In this document, I will recreate the data generating models presented by Qian e
 
 ```{r}
 #| label: Packages
-#| cache: true
 
 # Load packages
 library(dagitty)
@@ -75,14 +74,13 @@ $$
 
 In the table below, we will provide the translation of original notation in Qian et al. (2020) to notation more common in psychological research
 
-| Parameter               | Original           | New                |
-|-------------------------|--------------------|--------------------|
-| Fixed intercept         | $\alpha_0$         | $\gamma_{00}$       |
-| Fixed slope for $X_{it}$| $\beta_1$         | $\beta_1$        |
-| Random intercept        | $b_{i0}$           | $u_{0i}$            |
-| Residual variance of Error term              | $\sigma_\epsilon^2$  | $\sigma_e^2$          |
-| Covariate               | $X_{it}$           | $Z_{it}$           |
-
+| Parameter                       | Original            | New           |
+|---------------------------------|---------------------|---------------|
+| Fixed intercept                 | $\alpha_0$          | $\gamma_{00}$ |
+| Fixed slope for $X_{it}$        | $\beta_1$           | $\beta_1$     |
+| Random intercept                | $b_{i0}$            | $u_{0i}$      |
+| Residual variance of Error term | $\sigma_\epsilon^2$ | $\sigma_e^2$  |
+| Covariate                       | $X_{it}$            | $Z_{it}$      |
 
 Let's now rewrite the model in this notation
 
@@ -168,57 +166,32 @@ n_i <- 5000 # number of individuals
 
 sigma_u <- 1 # variance of random intercept
 sigma_Z1 <- 1 # variance of Z1
-sigma_e <- 0.1 # residual variance
+sigma_e <- 0.5 # residual variance
 beta_1 <- 0.8 # overall slope
 gamma_00 <- 2 # overall intercept
 
+data_list <- list()
+
 # simulate data
-u_0i <- rnorm(n_i, 0, sigma_u)
-Z_i1 <- rnorm(n_i, 0, sigma_Z1)
-Y_i2 <- rnorm(n_i, gamma_00 + beta_1 * Z_i1 + u_0i, sigma_e)
-Z_i2 <- Y_i2
-Y_i3 <- rnorm(n_i, gamma_00 + beta_1 * Z_i2 + u_0i, sigma_e)
-
-# # create data frame in wide format
-# section2.2.data_wide <- data.frame(id = 1:n_i,
-#                                    Z_i1 = Z_i1,
-#                                    Y_i2 = Y_i2,
-#                                    Z_i2 = Z_i2,
-#                                    Y_i3 = Y_i3)
-# 
-# head(section2.2.data_wide)
-# 
-# # create data frame in long format
-# section2.2data_long <- data.frame(id = rep(1:n_i, each = 3),
-#                              time = rep(1:3, n_i),
-#                              Z = rep(NA, 3 * n_i),
-#                              Y = rep(NA, 3 * n_i))
-# 
-# for (i in 1:n_i){
-#   section2.2data_long$Z[section2.2data_long$id == i & section2.2data_long$time == 1] <- Z_i1[i]
-#   section2.2data_long$Y[section2.2data_long$id == i & section2.2data_long$time == 2] <- Y_i2[i]
-#   section2.2data_long$Z[section2.2data_long$id == i & section2.2data_long$time == 2] <- Z_i2[i]
-#   section2.2data_long$Y[section2.2data_long$id == i & section2.2data_long$time == 3] <- Y_i3[i]
-# }
-# 
-# 
-# head(section2.2data_long)
-
-
-# create data frame in long format with lagged predictor
-section2.2data_long_lagged <- data.frame(id = rep(1:n_i, each = 2),
-                             "time" = rep(1:2, n_i),
-                             "Z_lag1" = rep(NA, 2 * n_i),
-                             "Y" = rep(NA, 2 * n_i))
-
 for (i in 1:n_i){
-  section2.2data_long_lagged$Z_lag1[section2.2data_long_lagged$id == i & section2.2data_long_lagged$time == 1] <- Z_i1[i]
-  section2.2data_long_lagged$Z_lag1[section2.2data_long_lagged$id == i & section2.2data_long_lagged$time == 2] <- Z_i2[i]
-  section2.2data_long_lagged$Y[section2.2data_long_lagged$id == i & section2.2data_long_lagged$time == 1] <- Y_i2[i]
-  section2.2data_long_lagged$Y[section2.2data_long_lagged$id == i & section2.2data_long_lagged$time == 2] <- Y_i3[i]
+  u_0i <- rnorm(1, 0, sigma_u)
+  Z_i2_lag <- Z_i1 <- rnorm(1, 0, sigma_Z1)
+  Y_i2 <- rnorm(1, gamma_00 + beta_1 * Z_i1 + u_0i, sigma_e)
+  Z_i3_lag <- Z_i2 <- Y_i2
+  Y_i3 <- rnorm(1, gamma_00 + beta_1 * Z_i2 + u_0i, sigma_e)
+  
+  # Store the data in a list
+  subject_data <- data.frame(
+    id = i,
+    time = 1:2,
+    Y = c(Y_i2, Y_i3),
+    Z_lag1 = c(Z_i2_lag, Z_i3_lag))
+  
+  data_list[[i]] <- subject_data
 }
-
-head(section2.2data_long_lagged)
+  
+# Combine all subjects' data into a single data frame
+section2.2data_long <- do.call(rbind, data_list)
 ```
 
 ### Estimating the model
@@ -230,18 +203,18 @@ Let's now estimate the model using a multilevel linear model (MLM) and a general
 #| cache: true
 
 # Multilevel Linear Model
-section2.2_mlm_reml <- lmer(Y ~ 1 + Z_lag1 + (1 | id), data = section2.2data_long_lagged)
-section2.2_mlm_mle <- lmer(Y ~ 1 + Z_lag1 + (1 | id), data = section2.2data_long_lagged, REML = FALSE)
+section2.2_mlm_reml <- lmer(Y ~ Z_lag1 + (1 | id), data = section2.2data_long)
+section2.2_mlm_mle <- lmer(Y ~ Z_lag1 + (1 | id), data = section2.2data_long, REML = FALSE)
 # Generalized Estimating Equations
-section2.2_gee_ind <- gee(Y ~ 1 + Z_lag1, id = id, data = section2.2data_long_lagged, family = gaussian, corstr = "independence")
-section2.2_gee_exch <- gee(Y ~ 1 + Z_lag1, id = id, data = section2.2data_long_lagged, family = gaussian, corstr = "exchangeable")
-section2.2_gee_ar1 <- gee(Y ~ 1 + Z_lag1, id = id, data = section2.2data_long_lagged, family = gaussian, corstr = "AR-M", Mv = 1)
-section2.2_gee_unstr <- gee(Y ~ 1 + Z_lag1, id = id, data = section2.2data_long_lagged, family = gaussian, corstr = "unstructured")
+section2.2_gee_ind <- gee(Y ~ Z_lag1, id = id, data = section2.2data_long, family = gaussian, corstr = "independence")
+section2.2_gee_exch <- gee(Y ~ Z_lag1, id = id, data = section2.2data_long, family = gaussian, corstr = "exchangeable")
+section2.2_gee_ar1 <- gee(Y ~ Z_lag1, id = id, data = section2.2data_long, family = gaussian, corstr = "AR-M", Mv = 1)
+section2.2_gee_unstr <- gee(Y ~ Z_lag1, id = id, data = section2.2data_long, family = gaussian, corstr = "unstructured")
 # Generalized linear model (OLS): assumes independence of observations
-section2.2_glm <- glm(Y ~ 1 + Z_lag1, data = section2.2data_long_lagged, family = gaussian) 
+section2.2_glm <- glm(Y ~ Z_lag1, data = section2.2data_long, family = gaussian) 
 # Marginal linear model (GLS)
-section2.2_gls_symm_mle <- nlme::gls(Y ~ 1 + Z_lag1, data = section2.2data_long_lagged, correlation = corSymm(form = ~ 1 | id), method = "ML") 
-section2.2_gls_compsymm_mle <- nlme::gls(Y ~ 1 + Z_lag1, data = section2.2data_long_lagged, correlation = corCompSymm(form = ~ 1 | id), method = "ML")
+section2.2_gls_symm_mle <- nlme::gls(Y ~ Z_lag1, data = section2.2data_long, correlation = corSymm(form = ~ 1 | id), method = "ML") 
+section2.2_gls_compsymm_mle <- nlme::gls(Y ~ Z_lag1, data = section2.2data_long, correlation = corCompSymm(form = ~ 1 | id), method = "ML")
 
 section2.2_coefs <- data.frame(
   row.names = c("Intercept", "Z_lag1"),
@@ -269,7 +242,7 @@ To see why this makes sense, it is important to realize that the parameter estim
 
 $$
 E[Y_{it+1} \mid Z_{it}, u_{0i}] = \gamma_{00} + \beta_1 Z_{it} + u_{0i}
-$$ 
+$$
 
 And not the marginal relationship, which according to Qian et al. (2020) is given by:
 
@@ -296,12 +269,11 @@ rho*beta_1
 sigma2_Z1 = sigma_Z1^2
 zeta = (beta_1 * sigma2_Z1) / (beta_1 * sigma2_Z1 + sigma2_u0 + sigma2_e)
 
-Z1_mean = 0
-Z2_mean = gamma_00
-
 # Now let's compute the marginal effect of Z1 on Y2
-marginal_effect_Z1_Y2 <- gamma_00 + beta_1*Z1_mean
-marginal_effect_Z2_Y3 <- (1 - rho * zeta - rho) * gamma_00 + ((1 - rho * zeta) * beta_1 + rho)*Z2_mean
+marginal_intercept_Z1_Y2 <- gamma_00
+marginal_slope_Z1_Y2 <- beta_1
+marginal_intercept_Z2_Y3 <- (1 - rho * zeta - rho) * gamma_00
+marginal_slope_Z2_Y3 <- ((1 - rho * zeta) * beta_1 + rho)
 ```
 
 > This is not correct, but how do we calculate the true marginal effects for intercept and slope?
@@ -400,17 +372,17 @@ $$
 
 In the table below, we will provide the translation of original notation in Qian et al. (2020) to notation more common in psychological research
 
-| Parameter               | Original           | New                |
-|-------------------------|--------------------|--------------------|
-| Fixed intercept         | $\alpha_0$         | $\gamma_{00}$       |
-| Fixed slope for $X_{it}$| $\alpha_1$         | $\gamma_{01}$       |
-| Random intercept        | $b_{i0}$           | $u_{0i}$            |
-| Random slope for $A_{it}$| $b_{i2}$           | $u_{1i}$            |
-| Error term              | $\epsilon_{it+1}$  | $e_{it+1}$          |
-| Fixed effect of $A_{it}$| $\beta_0$          | $\gamma_{10}$       |
-| Interaction effect of $A_{it}$ and $X_{it}$ | $\beta_1$ | $\gamma_{11}$ |
-| Covariate               | $X_{it}$           | $Z_{it}$           |
-| Treatment               | $A_{it}$           | $X_{it}$           |
+| Parameter                                   | Original          | New           |
+|----------------------------|----------------------|----------------------|
+| Fixed intercept                             | $\alpha_0$        | $\gamma_{00}$ |
+| Fixed slope for $X_{it}$                    | $\alpha_1$        | $\gamma_{01}$ |
+| Random intercept                            | $b_{i0}$          | $u_{0i}$      |
+| Random slope for $A_{it}$                   | $b_{i2}$          | $u_{1i}$      |
+| Error term                                  | $\epsilon_{it+1}$ | $e_{it+1}$    |
+| Fixed effect of $A_{it}$                    | $\beta_0$         | $\gamma_{10}$ |
+| Interaction effect of $A_{it}$ and $X_{it}$ | $\beta_1$         | $\gamma_{11}$ |
+| Covariate                                   | $X_{it}$          | $Z_{it}$      |
+| Treatment                                   | $A_{it}$          | $X_{it}$      |
 
 Let's first state the original model:
 
@@ -564,26 +536,25 @@ The model is fitted as
 gm1_mlm <- lmer(Y ~ Z * X + (1 + X| id), data = data)
 ```
 
-
 ## Generative Model 2
 
 ### Translation of Notation
 
 Now we need to translate more parameters:
 
-| Parameter                                | Original           | New                |
-|------------------------------------------|--------------------|--------------------|
-| Fixed intercept                          | $\alpha_0$         | $\gamma_{00}$       |
-| Fixed slope for $X_{it}$                 | $\alpha_1$         | $\gamma_{10}$       |
-| Random intercept                         | $b_{i0}$           | $u_{0i}$            |
-| Random slope for $X_{it}$                | $b_{i1}$           | $u_{1i}$            |
-| Fixed effect of $A_{it}$                 | $\beta_0$          | $\gamma_{20}$       |
-| Interaction effect of $A_{it}$ and $X_{it}$ | $\beta_1$          | $\gamma_{30}$       |
-| Random slope for $A_{it}$                | $b_{i2}$           | $u_{2i}$            |
-| Random interaction effect for $A_{it} \times X_{it}$ | $b_{i3}$          | $u_{3i}$            |
-| Error term                               | $\epsilon_{it+1}$  | $e_{it+1}$          |
-| Covariate                                | $X_{it}$           | $Z_{it}$           |
-| Treatment                                | $A_{it}$           | $X_{it}$           |
+| Parameter                                            | Original          | New           |
+|------------------------------------|------------------|------------------|
+| Fixed intercept                                      | $\alpha_0$        | $\gamma_{00}$ |
+| Fixed slope for $X_{it}$                             | $\alpha_1$        | $\gamma_{10}$ |
+| Random intercept                                     | $b_{i0}$          | $u_{0i}$      |
+| Random slope for $X_{it}$                            | $b_{i1}$          | $u_{1i}$      |
+| Fixed effect of $A_{it}$                             | $\beta_0$         | $\gamma_{20}$ |
+| Interaction effect of $A_{it}$ and $X_{it}$          | $\beta_1$         | $\gamma_{30}$ |
+| Random slope for $A_{it}$                            | $b_{i2}$          | $u_{2i}$      |
+| Random interaction effect for $A_{it} \times X_{it}$ | $b_{i3}$          | $u_{3i}$      |
+| Error term                                           | $\epsilon_{it+1}$ | $e_{it+1}$    |
+| Covariate                                            | $X_{it}$          | $Z_{it}$      |
+| Treatment                                            | $A_{it}$          | $X_{it}$      |
 
 Let's first restate the original model:
 
@@ -622,7 +593,6 @@ Y_{it+1} = (\gamma_{00} + u_{0i}) + (\gamma_{10} + u_{1i}) Z_{it} + (\gamma_{20}
 $$
 
 ### Visualizing the Model
-
 
 ```{r}
 #| label: GM2_visual
@@ -671,7 +641,29 @@ $$
 
 where $b_i$, $e_{it}$, and $\epsilon_{it}$ are mutually independent.
 
+This data generating mechanism has the following DAG
+
+```{r}
+#| label: Diggle2002_DAG
+#| cache: true
+#| fig-cap: "DAG for Diggle (2002)"
+
+Diggle2002_DAG <- dagitty('dag {
+bb="0,0,1,1"
+"X_t-1" [exposure,pos="0.290,0.343"]
+X_t [pos="0.439,0.344"]
+Y_t [outcome,pos="0.437,0.246"]
+"X_t-1" -> X_t
+"X_t-1" -> Y_t
+X_t -> Y_t
+}')
+
+ggdag::ggdag_status(Diggle2002_DAG) + theme_dag()
+```
+
 For a range of correlations ($\rho = 0.9–0.1$) they simulated 100 data sets each of which contained data on $m = 200$ subjects with up to 10 observations per subject. The number of observations for each subject, $n_i$, was generated as a uniform random variable between 2 and 10.
+
+> Because missing data did not help estimation, I changed this to 10 observations for each subject.
 
 In this case, the true marginal relationship of the fixed slope between $X_{it}$ and $Y_{it}$ is given by
 
@@ -681,7 +673,7 @@ $$\beta_1 = \gamma_1 + \rho \cdot \gamma_2$$
 #| label: Diggle2002
 #| echo: true
 #| cache: true
-#| results: asis
+#| eval: false
 
 # Load necessary libraries
 library(geepack)
@@ -690,7 +682,7 @@ library(geepack)
 set.seed(123)
 n_subjects <- 200 # Number of subjects
 max_time <- 10    # Maximum number of observations per subject
-n_sim <- 100     # Number of simulations
+n_sim <- 1000     # Number of simulations
 gamma_0 <- 0
 gamma_1 <- 1
 gamma_2 <- 1
@@ -707,7 +699,8 @@ generate_data <- function(rho) {
   data_list <- list()
   
   for (i in 1:n_subjects) {
-    n_i <- sample(2:max_time, 1) # Random number of observations (2 to 10)
+    # n_i <- sample(2:max_time, 1) # Random number of observations (2 to 10)
+    n_i <- 10 # or fixed number of observations
     X_it <- numeric(n_i)
     Y_it <- numeric(n_i)
     b_i <- rnorm(1, 0, 1)        # Random intercept
@@ -772,15 +765,26 @@ for (rho in rho_values) {
   ))
 }
 
-# format and print results
+# format and save results
 results_complete <- cbind(results, beta1_true = true_marginal_b1$beta1) %>%
   select(rho, beta1_true, beta1_ind, beta1_exch, beta1_ar1)
+
+saveRDS(results_complete, file = "Diggle2002_results.rds")
+```
+
+
+```{r}
+#| label: Diggle2002_results
+#| echo: false
+#| cache: false
+
+# Load the results
+results_complete <- readRDS("Diggle2002_results.rds")
 
 # Print the results
 knitr::kable(results_complete, digits = 3, caption = "Average Estimates of Beta1 for Different Correlation Structures", format = "html")
 
 # Plot the results
-library(ggplot2)
 results_long <- reshape2::melt(results_complete, id.vars = "rho", variable.name = "correlation_structure", value.name = "beta1_estimate")
 ggplot(results_long, aes(x = rho, y = beta1_estimate, color = correlation_structure)) +
   geom_line() +
@@ -790,7 +794,8 @@ ggplot(results_long, aes(x = rho, y = beta1_estimate, color = correlation_struct
   theme_minimal()
 ```
 
+These findings are somewhat similar to the original simulation results found by Diggle et al. (2002).
 
+![Simulation Results of Diggle et al. (2002)](images/clipboard-4123063606.png)
 
-
-
+The discrepancy may be due to a slight difference/mistake in its implementation. Nevertheless, like Diggle et al. (2002), we can see that the GEE with working independence is the least biased in terms of marginal effects, followed by the exchangeable and AR(1) working correlation structures.
