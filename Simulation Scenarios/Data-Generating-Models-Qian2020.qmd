@@ -264,16 +264,17 @@ sigma2_e = sigma_e^2
 
 rho = sigma2_u0 / (sigma2_u0 + sigma2_e)
 
-rho*beta_1
-
 sigma2_Z1 = sigma_Z1^2
 zeta = (beta_1 * sigma2_Z1) / (beta_1 * sigma2_Z1 + sigma2_u0 + sigma2_e)
 
-# Now let's compute the marginal effect of Z1 on Y2
-marginal_intercept_Z1_Y2 <- gamma_00
-marginal_slope_Z1_Y2 <- beta_1
-marginal_intercept_Z2_Y3 <- (1 - rho * zeta - rho) * gamma_00
-marginal_slope_Z2_Y3 <- ((1 - rho * zeta) * beta_1 + rho)
+# Now let's compute the marginal effects
+(marginal_intercept_Z1_Y2 <- gamma_00)
+(marginal_slope_Z1_Y2 <- beta_1)
+(marginal_intercept_Z2_Y3 <- (1 - rho * zeta - rho) * gamma_00)
+(marginal_slope_Z2_Y3 <- ((1 - rho * zeta) * beta_1 + rho))
+
+marginal_intercept_Z1_Y2 + marginal_intercept_Z2_Y3
+(marginal_slope_Z1_Y2 + marginal_slope_Z2_Y3) / 2
 ```
 
 > This is not correct, but how do we calculate the true marginal effects for intercept and slope?
