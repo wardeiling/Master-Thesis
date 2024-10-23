@@ -152,85 +152,123 @@ ggdag::ggdag_status(section2.2_DAG_randomeff) + ggdag::theme_dag()
 
 Note that there is an open biasing path from $Y_2$ to $Z_2$ in the DAG: the predictor/covariate $Z_2$ is *caused by* (in this case equivalent to) the previous outcome $Y_2$---and thus this time-varying covariate is *endogenous*.
 
-### Generating the data
+### Data Generation and Estimation
 
-Let's now generate the data according to this model.
+Let's now generate the data according to this model and estimate the model using a multilevel linear model (MLM) and a generalized estimating equation (GEE) model.
 
 ```{r}
 #| label: Data Generation
 #| cache: true
+#| eval: false
 
-set.seed(123)
-
-n_i <- 5000 # number of individuals
-
-sigma_u <- 1 # variance of random intercept
-sigma_Z1 <- 1 # variance of Z1
-sigma_e <- 0.5 # residual variance
-beta_1 <- 0.8 # overall slope
-gamma_00 <- 2 # overall intercept
-
-data_list <- list()
-
-# simulate data
-for (i in 1:n_i){
-  u_0i <- rnorm(1, 0, sigma_u)
-  Z_i2_lag <- Z_i1 <- rnorm(1, 0, sigma_Z1)
-  Y_i2 <- rnorm(1, gamma_00 + beta_1 * Z_i1 + u_0i, sigma_e)
-  Z_i3_lag <- Z_i2 <- Y_i2
-  Y_i3 <- rnorm(1, gamma_00 + beta_1 * Z_i2 + u_0i, sigma_e)
+# Create a function to generate the data
+generate_data <- function(n_i = 5000, sigma_u = 1, sigma_Z1 = 1, sigma_e = 0.5, beta_1 = 0.8, gamma_00 = 2) {
+  data_list <- list()
   
-  # Store the data in a list
-  subject_data <- data.frame(
-    id = i,
-    time = 1:2,
-    Y = c(Y_i2, Y_i3),
-    Z_lag1 = c(Z_i2_lag, Z_i3_lag))
+  # Simulate data for each individual
+  for (i in 1:n_i) {
+    u_0i <- rnorm(1, 0, sigma_u)
+    Z_i2_lag <- Z_i1 <- rnorm(1, 0, sigma_Z1)
+    Y_i2 <- rnorm(1, gamma_00 + beta_1 * Z_i1 + u_0i, sigma_e)
+    Z_i3_lag <- Z_i2 <- Y_i2
+    Y_i3 <- rnorm(1, gamma_00 + beta_1 * Z_i2 + u_0i, sigma_e)
+    
+    # Store the data in a list
+    subject_data <- data.frame(
+      id = i,
+      time = 1:2,
+      Y = c(Y_i2, Y_i3),
+      Z_lag1 = c(Z_i2_lag, Z_i3_lag)
+    )
+    
+    data_list[[i]] <- subject_data
+  }
   
-  data_list[[i]] <- subject_data
+  # Combine all subjects' data into a single data frame
+  data_long <- do.call(rbind, data_list)
+  return(data_long)
 }
+
+# Create a function that runs the simulations
+run_simulations <- function(n_sim, n_i, sigma_u, sigma_Z1, sigma_e, beta_1, gamma_00) {
   
-# Combine all subjects' data into a single data frame
-section2.2data_long <- do.call(rbind, data_list)
-```
+  # Initialize a list to store results
+  all_estimates <- list()
+  
+  # Simulation loop
+  for (sim in 1:n_sim) {
+    # Generate the data
+    data_sim <- generate_data(n_i, sigma_u, sigma_Z1, sigma_e, beta_1, gamma_00)
+    
+    # Fit the models
+    mlm_mle <- lmer(Y ~ Z_lag1 + (1 | id), data = data_sim, REML = FALSE)
+    gee_exch <- gee(Y ~ Z_lag1, id = id, data = data_sim, family = gaussian, corstr = "exchangeable")
+    gee_ind <- gee(Y ~ Z_lag1, id = id, data = data_sim, family = gaussian, corstr = "independence")
+    gee_ar1 <- gee(Y ~ Z_lag1, id = id, data = data_sim, family = gaussian, corstr = "AR-M", Mv = 1)
+    glm <- glm(Y ~ Z_lag1, data = data_sim, family = gaussian)
+    gls_symm <- nlme::gls(Y ~ Z_lag1, data = data_sim, correlation = corSymm(form = ~ 1 | id), method = "ML")
+    
+    # Extract the fixed effect estimates for each model
+    estimates <- data.frame(
+      sim = sim,
+      MLM_mle_intercept = fixef(mlm_mle)[1],
+      MLM_mle_slope = fixef(mlm_mle)[2],
+      GEE_exch_intercept = coef(gee_exch)[1],
+      GEE_exch_slope = coef(gee_exch)[2],
+      GEE_ind_intercept = coef(gee_ind)[1],
+      GEE_ind_slope = coef(gee_ind)[2],
+      GEE_ar1_intercept = coef(gee_ar1)[1],
+      GEE_ar1_slope = coef(gee_ar1)[2],
+      GLM_intercept = coef(glm)[1],
+      GLM_slope = coef(glm)[2],
+      GLS_symm_intercept = coef(gls_symm)[1],
+      GLS_symm_slope = coef(gls_symm)[2]
+    )
+    
+    # Store the estimates in the list
+    all_estimates[[sim]] <- estimates
+  }
+  
+  # Combine results into a single data frame
+  results <- do.call(rbind, all_estimates)
+  return(results)
+}
 
-### Estimating the model
+# Set the parameters for the simulation
+n_sim <- 1000  # Number of simulations
+n_i <- 200   # Number of individuals per simulation
+sigma_u <- 1  # Variance of random intercept
+sigma_Z1 <- 1 # Variance of Z1
+sigma_e <- 0.5 # Residual variance
+beta_1 <- 0.8  # Slope
+gamma_00 <- 2  # Intercept
 
-Let's now estimate the model using a multilevel linear model (MLM) and a generalized estimating equation (GEE) model.
+# Run the simulation and store the results
+section2.2_simulation_results <- run_simulations(n_sim, n_i, sigma_u, sigma_Z1, sigma_e, beta_1, gamma_00)
 
-```{r}
-#| label: Model Estimation
-#| cache: true
-
-# Multilevel Linear Model
-section2.2_mlm_reml <- lmer(Y ~ Z_lag1 + (1 | id), data = section2.2data_long)
-section2.2_mlm_mle <- lmer(Y ~ Z_lag1 + (1 | id), data = section2.2data_long, REML = FALSE)
-# Generalized Estimating Equations
-section2.2_gee_ind <- gee(Y ~ Z_lag1, id = id, data = section2.2data_long, family = gaussian, corstr = "independence")
-section2.2_gee_exch <- gee(Y ~ Z_lag1, id = id, data = section2.2data_long, family = gaussian, corstr = "exchangeable")
-section2.2_gee_ar1 <- gee(Y ~ Z_lag1, id = id, data = section2.2data_long, family = gaussian, corstr = "AR-M", Mv = 1)
-section2.2_gee_unstr <- gee(Y ~ Z_lag1, id = id, data = section2.2data_long, family = gaussian, corstr = "unstructured")
-# Generalized linear model (OLS): assumes independence of observations
-section2.2_glm <- glm(Y ~ Z_lag1, data = section2.2data_long, family = gaussian) 
-# Marginal linear model (GLS)
-section2.2_gls_symm_mle <- nlme::gls(Y ~ Z_lag1, data = section2.2data_long, correlation = corSymm(form = ~ 1 | id), method = "ML") 
-section2.2_gls_compsymm_mle <- nlme::gls(Y ~ Z_lag1, data = section2.2data_long, correlation = corCompSymm(form = ~ 1 | id), method = "ML")
-
-section2.2_coefs <- data.frame(
+# Calculate mean and standard deviation of estimates
+section2.2_summary_stats <- data.frame(
   row.names = c("Intercept", "Z_lag1"),
-  MLM_reml = fixef(section2.2_mlm_reml),
-  MLM_mle = fixef(section2.2_mlm_mle),
-  GEE_ind = coef(section2.2_gee_ind),
-  GEE_exch = coef(section2.2_gee_exch),
-  GEE_ar1 = coef(section2.2_gee_ar1),
-  GEE_unstr = coef(section2.2_gee_unstr),
-  GLM = coef(section2.2_glm),
-  GLS_Symm = coef(section2.2_gls_symm_mle),
-  GLS_CompSymm = coef(section2.2_gls_compsymm_mle)
+  MLM_mle = c(mean(simulation_results$MLM_mle_intercept), mean(simulation_results$MLM_mle_slope)),
+  GEE_exch = c(mean(simulation_results$GEE_exch_intercept), mean(simulation_results$GEE_exch_slope)),
+  GEE_ind = c(mean(simulation_results$GEE_ind_intercept), mean(simulation_results$GEE_ind_slope)),
+  GEE_ar1 = c(mean(simulation_results$GEE_ar1_intercept), mean(simulation_results$GEE_ar1_slope)),
+  GLM = c(mean(simulation_results$GLM_intercept), mean(simulation_results$GLM_slope)),
+  GLS_symm = c(mean(simulation_results$GLS_symm_intercept), mean(simulation_results$GLS_symm_slope))
 )
 
-knitr::kable(caption = "Section 2.2: Estimated coefficients from the MLM and GEE models", section2.2_coefs, digits = 3, format = "html")
+saveRDS(section2.2_simulation_results, "section2.2_simulation_results.rds")
+saveRDS(section2.2_summary_stats, "section2.2_summary_stats.rds")
 ```
+
+```{r}
+#| label: section2.2output
+#| echo: false
+
+section2.2_summary_stats <- readRDS("section2.2_summary_stats.rds")
+knitr::kable(summary_stats, digits = 2, caption = "Mean estimates of fixed effects across simulations")
+```
+
 
 We can clearly see that the MLM and GEE models provide exactly the same estimates for the fixed intercept and fixed regression coefficient, with the exception of the GEE with independence working correlation structure.
 
