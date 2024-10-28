@@ -352,16 +352,16 @@ run_simulations <- function(n_sim, n_i, sigma_u, sigma_Z1, sigma_e, beta_1, gamm
 }
 
 # Set the parameters for the simulation
-n_sim <- 1000  # Number of simulations
-n_i <- 200   # Number of individuals per simulation
+n_sim <- 1  # Number of simulations
+n_i <- 100000   # Number of individuals per simulation
 sigma_u <- 1  # Variance of random intercept
 sigma_Z1 <- 1 # Variance of Z1
-sigma_e <- 0.5 # Residual variance
+sigma_e <- 1 # Residual variance
 beta_1 <- 0.8  # Slope
 gamma_00 <- 2  # Intercept
 
 # Run the simulation and store the results
-section2.2_simulation_results <- run_simulations(n_sim, n_i, sigma_u, sigma_Z1, sigma_e, beta_1, gamma_00)
+simulation_results <- run_simulations(n_sim, n_i, sigma_u, sigma_Z1, sigma_e, beta_1, gamma_00)
 
 # Calculate mean and standard deviation of estimates
 section2.2_summary_stats <- data.frame(
@@ -374,8 +374,8 @@ section2.2_summary_stats <- data.frame(
   GLS_symm = c(mean(simulation_results$GLS_symm_intercept), mean(simulation_results$GLS_symm_slope))
 )
 
-saveRDS(section2.2_simulation_results, "section2.2_simulation_results.rds")
-saveRDS(section2.2_summary_stats, "section2.2_summary_stats.rds")
+saveRDS(section2.2_simulation_results, "section2.2_simulation_results_1_100000.rds")
+saveRDS(section2.2_summary_stats, "section2.2_summary_stats_1_100000.rds")
 ```
 
 ```{r}
@@ -638,7 +638,7 @@ for (rho in rho_values) {
 results_complete <- cbind(results, beta1_true = true_marginal_b1$beta1) %>%
   select(rho, beta1_true, beta1_ind, beta1_exch, beta1_ar1)
 
-saveRDS(results_complete, file = "Diggle2002_results.rds")
+saveRDS(results_complete, file = "Diggle2002_results_CSM.rds")
 ```
 
 Alternatively, we can include X_lag1 in the analysis/estimation and estimate the full conditional model:
@@ -747,7 +747,7 @@ for (rho in rho_values) {
 results_complete <- cbind(results, beta1_true = true_marginal_b1$beta1) %>%
   select(rho, beta1_true, beta1_ind, beta1_exch, beta1_ar1)
 
-saveRDS(results_complete, file = "Diggle2002_results_Xlag.rds")
+saveRDS(results_complete, file = "Diggle2002_results_FCM.rds")
 ```
 
 
@@ -758,19 +758,19 @@ Here are the results of the simulation
 #| echo: false
 
 # Load the results
-results_complete <- readRDS("Diggle2002_results.rds")
+results_CSM <- readRDS("Diggle2002_results_CSM.rds")
+results_FCM <- readRDS("Diggle2002_results_FCM.rds")
 
 # Print the results
-knitr::kable(results_complete, digits = 3, caption = "Average Estimates of Beta1 for Different Correlation Structures")
+knitr::kable(results_CSM, digits = 3, caption = "Cross-Sectional Model: Average Estimates of Beta1 for Different Correlation Structures")
+knitr::kable(results_FCM, digits = 3, caption = "Full Conditional Model: Average Estimates of Beta1 for Different Correlation Structures")
 ```
 
-If we instead add the lagged variable `X_lag1` in the model, we do not obtain the marginal estimate of the fixed slope. Instead, we obtain the conditional estimate of the fixed slope, which is the effect of `X` on `Y` after accounting for the effect of `X_lag1`. The results are shown below.
-
-
+If we instead add the lagged variable `X_lag1` in the model, we do not obtain the marginal estimate of the fixed slope. Instead, we obtain the conditional estimate of the fixed slope, which is the effect of `X` on `Y` after accounting for the effect of `X_lag1`. In other words, we get the coefficients for $\gamma_1$ and $\gamma_2$ in the model $Y_{it} = \gamma_0 + \gamma_1 X_{it} + \gamma_2 X_{it-1} + b_i + e_{it}$ rather than the coefficient $\beta_1$ in the marginal model $Y_{it} = \beta_0 + \beta_1 X_{it} + b_i + e_{it}$.
 
 ```{r}
 #| label: fig-Diggle2002
-#| fig-cap: Average Estimates of Beta1 for Different Correlation Structures
+#| fig-cap: Cross-Sectional Model: Average Estimates of Beta1 for Different Correlation Structures
 #| echo: false
 #| cache: false
 
