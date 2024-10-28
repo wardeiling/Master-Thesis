@@ -2,6 +2,7 @@
 title: "Data Generating Models of Qian et al. (2020)"
 author: "Ward B. Eiling"
 date: "2024-10-24"
+date-modified: last-modified
 format: 
   html:
     # fig-pos: 'h'
@@ -47,7 +48,7 @@ library(nlme)
 library(DiagrammeR)
 ```
 
-## Simple Concrete Example: Without Treatment
+## Situations Without Treatment
 
 ### Example in section 2.2 of Qian et al. (2020)
 
@@ -77,7 +78,7 @@ $$
 Y_{i3} \mid X_{i1}, Y_{i2}, X_{i2}, b_i \sim N(\beta_0 + \beta_1 X_{i2} + b_i, \sigma_\epsilon^2).
 $$
 
-### Translating the notation
+#### Translating the notation
 
 In the table below, we will provide the translation of original notation in Qian et al. (2020) to notation more common in psychological research
 
@@ -111,7 +112,7 @@ $$
 Y_{i3} \mid Z_{i1}, Y_{i2}, Z_{i2}, u_{0i} \sim N(\gamma_{00} + \beta_1 Z_{i2} + u_{0i}, \sigma_e^2).
 $$
 
-### Visualizing the Model
+#### Visualizing the Model
 
 We are interested in the effect of $Z_{it} = Y_{it}$ on $Y_{i(t+1)}$.
 
@@ -268,7 +269,7 @@ Note that there is an open biasing path from $Y_2$ to $Z_2$ in the DAG: the pred
 <!-- ") -->
 <!-- ``` -->
 
-### Data Generation and Estimation
+#### Data Generation and Estimation
 
 Let's now generate the data according to this model and estimate the model using a multilevel linear model (MLM) and a generalized estimating equation (GEE) model. Here we are interested in estimating the effect $Z_{it}$ on $Y_{i(t+1)}$. Accordingly, to carry out the analysis in long format, a lagged variable was used for $Z_{it}$, so that, $Y_{i2}$ is regressed on $Z_{i1}$, and $Y_{i3}$ is regressed on $Z_{i2}$.
 
@@ -472,7 +473,7 @@ The difference between the two methods lies in the way they estimate the varianc
 
 source: [STAT 437: 007. Linear Marginal Models: Likelihood, Inference, and Asymptotics (Theory)](https://www.youtube.com/watch?v=ZjQo0H_FFwI&list=PL0Y1Z_F8RtX7jIbexsd3lizDXMET_WGX0&index=7)
 
-## Diggle (2002)
+### Example in Diggle et al. (2002)
 
 In "Longitudinal Data Analysis" by Diggle et al. (2002), there is another example:
 
@@ -520,6 +521,8 @@ ggdag::ggdag_status(Diggle2002_DAG) + theme_dag()
 #   theme(legend.position='bottom')
 ```
 
+In this DAG, we can see that $X_{t-1}$ is a confounder of the relationship between $Y_{t}$ and $X_{t}$. As a result, the linear model
+
 For a range of correlations ($\rho = 0.9–0.1$) they simulated 100 data sets each of which contained data on $m = 200$ subjects with up to 10 observations per subject. The number of observations for each subject, $n_i$, was generated as a uniform random variable between 2 and 10.
 
 > Because missing data did not help estimation, I changed this to 10 observations for each subject.
@@ -527,6 +530,13 @@ For a range of correlations ($\rho = 0.9–0.1$) they simulated 100 data sets ea
 In this case, the true marginal relationship of the fixed slope between $X_{it}$ and $Y_{it}$ is given by
 
 $$\beta_1 = \gamma_1 + \rho \cdot \gamma_2$$
+
+We can do estimation in two ways:
+
+1. Using a *cross-sectional mean model* (i.e., marginal model): estimating the linear model $Y_{it} = \beta_0 + \beta_1 X_{it}$
+2. Using a *full conditional model*: estimating the linear model $Y_{it} = \gamma_0 + \gamma_1 X_{it} + \gamma_2 X_{it-1}$
+
+We can estimate the marginal model and its parameter $\beta_1$ using GEE models.
 
 ```{r}
 #| label: Diggle2002
@@ -584,7 +594,7 @@ generate_data <- function(rho) {
       subject = i,
       time = 1:n_i,
       Y = Y_it,
-      X = X_it
+      X = X_it,
     )
     data_list[[i]] <- subject_data
   }
@@ -631,6 +641,116 @@ results_complete <- cbind(results, beta1_true = true_marginal_b1$beta1) %>%
 saveRDS(results_complete, file = "Diggle2002_results.rds")
 ```
 
+Alternatively, we can include X_lag1 in the analysis/estimation and estimate the full conditional model:
+
+```{r}
+#| label: Diggle2002_lag1
+#| echo: true
+#| cache: true
+#| eval: false
+
+# Load necessary libraries
+library(geepack)
+
+# Simulation parameters
+set.seed(123)
+n_subjects <- 5000 # Number of subjects
+max_time <- 10    # Maximum number of observations per subject
+n_sim <- 10     # Number of simulations
+gamma_0 <- 0
+gamma_1 <- 1
+gamma_2 <- 1
+rho_values <- seq(0.9, 0.1, by = -0.2) # Range of autocorrelations
+
+# Compute true marginal means for the fixed slope
+true_marginal_b1 <- data.frame(
+  rho = rho_values,
+  beta1 = gamma_1 + rho_values * gamma_2
+)
+
+# Function to generate data for a single simulation
+generate_data <- function(rho) {
+  data_list <- list()
+  
+  for (i in 1:n_subjects) {
+    # n_i <- sample(2:max_time, 1) # Random number of observations (2 to 10)
+    n_i <- 10 # or fixed number of observations
+    X_it <- numeric(n_i)
+    Y_it <- numeric(n_i)
+    b_i <- rnorm(1, 0, 1)        # Random intercept
+    e_it <- rnorm(n_i, 0, 1)
+    
+    # Generate covariate X_it with autoregressive structure
+    X_it[1] <- rnorm(1, 0, 1)    # Initial value for X_it
+    for (t in 2:n_i) {
+      X_it[t] <- rho * X_it[t-1] + rnorm(1, 0, sqrt(1 - rho^2))
+    }
+    
+    # Generate outcome Y_it based on current and lagged values of X_it
+    Y_it[1] <- gamma_0 + gamma_1 * X_it[1] + b_i + e_it[1]
+    if (n_i > 1) {
+      for (t in 2:n_i) {
+        Y_it[t] <- gamma_0 + gamma_1 * X_it[t] + gamma_2 * X_it[t-1] + b_i + e_it[t]
+      }
+    }
+    
+    # Store the data in a list
+    subject_data <- data.frame(
+      subject = i,
+      time = 1:n_i,
+      Y = Y_it,
+      X = X_it,
+      X_lag1 = c(NA, X_it[-n_i]) # Lagged value of X, with NA for the first observation
+    )
+    data_list[[i]] <- subject_data
+  }
+  
+  # Combine all subjects' data into a single data frame
+  data <- do.call(rbind, data_list)
+  return(data)
+}
+
+# Simulation loop
+results <- data.frame()
+for (rho in rho_values) {
+  beta1_estimates <- matrix(NA, n_sim, 3) # Store beta1 estimates for each correlation structure
+  
+  for (sim in 1:n_sim) {
+    # Generate data for this simulation
+    sim_data <- generate_data(rho)
+    
+    # Remove rows with missing X_lag1 values
+    sim_data <- na.omit(sim_data)
+    
+    # Fit GEE models with different working correlation structures
+    gee_ind <- geeglm(Y ~ X + X_lag1, id = subject, data = sim_data, corstr = "independence")
+    gee_exch <- geeglm(Y ~ X + X_lag1, id = subject, data = sim_data, corstr = "exchangeable")
+    gee_ar1 <- geeglm(Y ~ X + X_lag1, id = subject, data = sim_data, corstr = "ar1")
+    
+    # Store the estimated beta1 for each model
+    beta1_estimates[sim, 1] <- coef(gee_ind)["X"]
+    beta1_estimates[sim, 2] <- coef(gee_exch)["X"]
+    beta1_estimates[sim, 3] <- coef(gee_ar1)["X"]
+  }
+  
+  # Calculate average estimates of beta1 for each correlation structure
+  mean_estimates <- colMeans(beta1_estimates, na.rm = TRUE)
+  results <- rbind(results, data.frame(
+    rho = rho,
+    beta1_ind = mean_estimates[1],
+    beta1_exch = mean_estimates[2],
+    beta1_ar1 = mean_estimates[3]
+  ))
+}
+
+# format and save results
+results_complete <- cbind(results, beta1_true = true_marginal_b1$beta1) %>%
+  select(rho, beta1_true, beta1_ind, beta1_exch, beta1_ar1)
+
+saveRDS(results_complete, file = "Diggle2002_results_Xlag.rds")
+```
+
+
 Here are the results of the simulation
 
 ```{r}
@@ -643,6 +763,10 @@ results_complete <- readRDS("Diggle2002_results.rds")
 # Print the results
 knitr::kable(results_complete, digits = 3, caption = "Average Estimates of Beta1 for Different Correlation Structures")
 ```
+
+If we instead add the lagged variable `X_lag1` in the model, we do not obtain the marginal estimate of the fixed slope. Instead, we obtain the conditional estimate of the fixed slope, which is the effect of `X` on `Y` after accounting for the effect of `X_lag1`. The results are shown below.
+
+
 
 ```{r}
 #| label: fig-Diggle2002
