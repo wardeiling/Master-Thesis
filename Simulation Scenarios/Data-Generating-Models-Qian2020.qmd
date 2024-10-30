@@ -26,14 +26,9 @@ execute:
 fig-cap-location: top
 ---
 
-\newpage
-
-## Introduction
-
-In this document, I will recreate the data generating models presented by Qian et al. (2020), accompanied by visual representations of these models.
-
 ```{r}
 #| label: Packages
+#| echo: false
 
 # for general data manipulation and plotting
 library(tidyverse)
@@ -53,39 +48,57 @@ library(magick)
 library(pdftools)
 ```
 
-Parameters in marginal models (e.g., GEE) are interpreted as population-level effects
+\newpage
 
-> That is, $\beta_j$ is the impact of variate j on average, across the whole population (assuming other variates fixed: Winter 437)
+## Introduction
 
--   These are not individual level effects!
+In dit document zal ik de data-genererende modellen gepresenteerd door Qian et al. (2020) opnieuw creëren, vergezeld door visuele weergaven van deze modellen.
 
--   Example: On the whole, how does aging impact the propensity to develop dementia
+Laten we eerst enkele hoofdpunten van GEE samenvatten.
 
-Note that the linear structure of the GEE implicitly assumes that $Y_{ij} \perp X_{ik} \mid X_{ij}$, for all $j \neq k$
+Parameters in marginale modellen (bijv. GEE) worden geïnterpreteerd als populatieniveau-effecten (en dus niet als individuele effecten!)
 
-> The outcome is conditionally independent of explanatory factors at all other times, given the current time's explanatory factors
->
-> Translated: The value of the outcome $Y$ at timepoint $t$ is independent of all variates that we are including except the variates measured at timepoint $t$.
+<!-- > That is, $\beta_j$ is the impact of variate j on average, across the whole population (assuming other variates fixed: Winter 437) -->
 
-This assumption holds with (a) time invariant covariates and (b) deterministic/exogenous time-varying covariates, but not with stochastic/endogenous time-varying covariates.
+-   Dat wil zeggen, $\beta_j$ is het effect van variant j gemiddeld over de hele populatie (ervan uitgaande dat andere varianten vastliggen: Winter 437).
 
-Let's show how this assumption may be violated:
+-   Voorbeeld: Hoe beïnvloedt veroudering de neiging om dementie te ontwikkelen in de gehele populatie?
 
-![](images/clipboard-205847465.png)
+Merk op dat de lineaire structuur van de GEE impliciet aanneemt dat $Y_{it} \perp X_{ik} \mid X_{it}$, voor alle $t \neq k$
 
-As illustrated by the red arrow, $Y1$ is not going to be independent of $X2$ given (that we know) $X1$
+-   Dit bekent: De uitkomst op tijdstip $t$ is conditioneel onafhankelijk van verklarende factoren op alle andere tijdstippen $k$, gegeven de verklarende factoren op het huidige tijdstip $t$
 
-problem: it becomes hard to determine how much of the observed effect is the hidden effect of the outcome changing the future covariate value.
+-   Dit wordt de "full covariate conditional mean (FCCM)" aanname genoemd door Diggle et al. (2002) en Qian et al. (2020). Maar zij herschrijven dit net iets anders (equation 5):
+
+    $$
+    E[Y_{it+1} \mid X_{it}] = E[Y_{it+1} \mid X_{i1}, \ldots, X_{iT}]
+    $$
+
+Deze aanname geldt bij (a) tijdsinvariante covariaten en (b) deterministische/exogene tijdsafhankelijke covariaten, maar niet bij stochastische/endogene tijdsafhankelijke covariaten!
+
+Laten we zien hoe deze aanname geschonden kan worden:
+
+![](images/clipboard-3131633457.png)
+
+Zoals geïllustreerd door de rode pijl, is $Y1$ niet onafhankelijk van $X2$, gegeven (dat we de waarde weten van) $X1$. Als we dus geinteresserd zijn in het marginale effect van $X2$ op $Y2$, dan is in dit geval de uitkomst biased door een schending van de FCCM aanname:
+
+$$
+E[Y_{i2} \mid X_{i2}] \neq E[Y_{i2} \mid X_{i1},X_{i2}]
+$$
+
+probleem: het wordt moeilijk te bepalen hoeveel van het waargenomen effect een verborgen effect is van de uitkomst die de toekomstige covariaat beïnvloedt.
+
+Vanuit een causaal perspectief kunnen we ook zeggen dat—in de bovenstaande DAG—$Y1$ een confounder is in de relatie tussen $X2$ en $Y2$. Als we hiervoor niet controleren is het effect van $X2$ op $Y2$ een ander effect (door deze invloed van $Y1$) dan het effect van $X1$ op $Y1$, wat wel aan de FCCM aanname voldoet.
 
 ## Situations Without Treatment
 
 ### Example in Section 2.2 of Qian et al. (2020)
 
-As a concrete example, consider the case where each individual is observed for 2 time points ($T_i = 2$), and the covariate at the second time point is the lag-1 outcome: $X_{i2} = Y_{i2}$.
+Beschouw als concreet voorbeeld het geval waarin elk individu op 2 tijdspunten wordt geobserveerd ($T_i = 2$), en de covariaat op het tweede tijdspunt de lag-1 uitkomst is: $X_{i2} = Y_{i2}$.
 
-> By lagging the outcome, we essentially have three time points: $X_{i1}$, $X_{i2} = Y_{i2}$, and $Y_{i3}$.
+> Door de uitkomst te laggen, hebben we in wezen drie tijdspunten: $X_{i1}$, $X_{i2} = Y_{i2}$, and $Y_{i3}$.
 
-Suppose the variables are generated from the following multilevel linear model (MLM) with a random intercept:
+Stel dat de variabelen worden gegenereerd volgens het volgende multilevel lineaire model (MLM) met een random intercept:
 
 $$
 b_i \sim N(0, \sigma_u^2),
@@ -109,7 +122,7 @@ $$
 
 #### Translating the notation
 
-In the table below, we will provide the translation of original notation in Qian et al. (2020) to notation more common in psychological research
+In de tabel hieronder geven we de vertaling van de originele notatie in Qian et al. (2020) naar notatie die gebruikelijker is in psychologisch onderzoek.
 
 | Parameter                       | Original            | New           |
 |---------------------------------|---------------------|---------------|
@@ -119,7 +132,7 @@ In the table below, we will provide the translation of original notation in Qian
 | Residual variance of Error term | $\sigma_\epsilon^2$ | $\sigma_e^2$  |
 | Covariate                       | $X_{it}$            | $Z_{it}$      |
 
-Let's now rewrite the model in this notation
+Laten we nu het model in deze notatie herschrijven:
 
 $$
 u_{0i} \sim N(0, \sigma_u^2),
@@ -178,7 +191,13 @@ ggdag::ggdag_status(section2.2_DAG_randomeff) + ggdag::theme_dag()
 #   theme(legend.position='bottom')
 ```
 
-Note that there is an open biasing path from $Y_2$ to $Z_2$ in the DAG: the predictor/covariate $Z_2$ is *caused by* (in this case equivalent to) the previous outcome $Y_2$---and thus this time-varying covariate is *endogenous*. In addition, $u_0$ is a confounder in the relationship between $Y_2$ and $Y_3$ and thus also in the relationship between $Z_2$ and $Y_3$ (since $Y_2 = Z_2$).
+Note that there is an open biasing path from $Y_2$ to $Z_2$ in the DAG: the predictor/covariate $Z_2$ is *caused by* (in this case equivalent to) the previous outcome $Y_2$---and thus this time-varying covariate is *endogenous*. In addition, $u_0$ is a confounder in the relationship between $Y_2$ and $Y_3$ and thus also in the relationship between $Z_2$ and $Y_3$ since $Y_2 = Z_2$. Therefore the "full covariate conditional mean (FCCM)" assumption does not hold:
+
+$$
+E[Y_{it+1} \mid Z_{it}] = E[Y_{it+1} \mid X_{i1}, \ldots, X_{iT}]
+$$
+
+> Deze formule (equation 5 of Qian) zegt dat de uitkomst op $t+1$ conditioneel onafhankelijk is van uitleggende factoren/covariaten op alle andere tijdspunten (incl. toekomst en verleden) gegeven dat we de waarden weten van de uitleggen de factoren covariaten op het huidige tijdstip $t$.
 
 Accordingly, taking into account dependencies between observations through (a) working correlation matrices in GEE (except independence) or (b) through the random intercept of the multilevel linear model, results in conditional-on-the-random-effects estimates and NOT population averaged estimates. Conversely, the GEE with working independence and GLM simply estimate the model while assuming independence.
 
@@ -221,17 +240,23 @@ In this specific case, the endogenous time-varying covariate is caused by the pr
 \end{tikzpicture}
 ```
 
-In @fig-pathdiagram.section2.2 it becomes clear that the marginal relationship between $Z_1$ and $Y_2$ is quite simple, but the relationship between $Z_2$ and $Y_3$ is more complex, because previous observations ...
-
-As explained by Qian et al., 2020, the marginal relationships are given by:
+In @fig-pathdiagram.section2.2 it becomes clear that the marginal relationship between $Z_1$ and $Y_2$ is quite simply
 
 $$
 E[Y_{i2} \mid Z_{i1}] = \gamma_{00} + \beta_1 Z_{i1}
 $$
 
+the relationship between $Z_2$ and $Y_3$ is more complex
+
 $$
 E[Y_{i3} \mid Z_{i2}] = (1- \rho \zeta - \rho ) \gamma_{00} + [(1-\rho \zeta)  \beta_1 + \rho] Z_{i2}
 $$
+
+Specifieker gezegd, de interpretatie van de slope $\beta_1$ als population level effects is alleen valide voor het effect van $Z_1$ op $Y_2$. Daarom kunnen we wel zeggen dat
+
+> $\beta_1$ is the impact of variate $Z_1$ on average on $Y_2$, across the whole population (assuming other variates fixed)
+
+maar ditzelfde kunnen we niet zeggen voor het effect van $Z_2$ op $Y_3$.
 
 The relationship between $Z_2$ and $Y_3$ is confounded by the unobserved random effect $u_{0i}$, which is also associated with $Y_2$.
 
