@@ -123,7 +123,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <div>
     <div class="quarto-title-meta-heading">Modified</div>
     <div class="quarto-title-meta-contents">
-      <p class="date-modified">October 29, 2024</p>
+      <p class="date-modified">October 30, 2024</p>
     </div>
   </div>
     
@@ -154,6 +154,24 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(magick)</span>
 <span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(pdftools)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
+<p>Parameters in marginal models (e.g., GEE) are interpreted as population-level effects</p>
+<blockquote class="blockquote">
+<p>That is, <span class="math inline">\(\beta_j\)</span> is the impact of variate j on average, across the whole population (assuming other variates fixed: Winter 437)</p>
+</blockquote>
+<ul>
+<li><p>These are not individual level effects!</p></li>
+<li><p>Example: On the whole, how does aging impact the propensity to develop dementia</p></li>
+</ul>
+<p>Note that the linear structure of the GEE implicitly assumes that <span class="math inline">\(Y_{ij} \perp X_{ik} \mid X_{ij}\)</span>, for all <span class="math inline">\(j \neq k\)</span></p>
+<blockquote class="blockquote">
+<p>The outcome is conditionally independent of explanatory factors at all other times, given the current time’s explanatory factors</p>
+<p>Translated: The value of the outcome <span class="math inline">\(Y\)</span> at timepoint <span class="math inline">\(t\)</span> is independent of all variates that we are including except the variates measured at timepoint <span class="math inline">\(t\)</span>.</p>
+</blockquote>
+<p>This assumption holds with (a) time invariant covariates and (b) deterministic/exogenous time-varying covariates, but not with stochastic/endogenous time-varying covariates.</p>
+<p>Let’s show how this assumption may be violated:</p>
+<p><img src="images/clipboard-205847465.png" class="img-fluid"></p>
+<p>As illustrated by the red arrow, <span class="math inline">\(Y1\)</span> is not going to be independent of <span class="math inline">\(X2\)</span> given (that we know) <span class="math inline">\(X1\)</span></p>
+<p>problem: it becomes hard to determine how much of the observed effect is the hidden effect of the outcome changing the future covariate value.</p>
 </section>
 <section id="situations-without-treatment" class="level2" data-number="2">
 <h2 data-number="2" class="anchored" data-anchor-id="situations-without-treatment"><span class="header-section-number">2</span> Situations Without Treatment</h2>
@@ -269,8 +287,8 @@ Y_{i3} \mid Z_{i1}, Y_{i2}, Z_{i2}, u_{0i} \sim N(\gamma_{00} + \beta_1 Z_{i2} +
 </div>
 </div>
 </div>
-<p>In <a href="#fig-pathdiagram.section2.2">Figure&nbsp;2</a> it becomes clear that the marginal relationship between <span class="math inline">\(Z_1\)</span> and <span class="math inline">\(Y_2\)</span> is quite simple, but the relationship between <span class="math inline">\(Z_2\)</span> and <span class="math inline">\(Y_3\)</span> is more complex, because previous observations</p>
-<p>(as explained by Qian et al., 2020)</p>
+<p>In <a href="#fig-pathdiagram.section2.2">Figure&nbsp;2</a> it becomes clear that the marginal relationship between <span class="math inline">\(Z_1\)</span> and <span class="math inline">\(Y_2\)</span> is quite simple, but the relationship between <span class="math inline">\(Z_2\)</span> and <span class="math inline">\(Y_3\)</span> is more complex, because previous observations …</p>
+<p>As explained by Qian et al., 2020, the marginal relationships are given by:</p>
 <p><span class="math display">\[
 E[Y_{i2} \mid Z_{i1}] = \gamma_{00} + \beta_1 Z_{i1}
 \]</span></p>

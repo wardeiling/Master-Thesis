@@ -53,6 +53,30 @@ library(magick)
 library(pdftools)
 ```
 
+Parameters in marginal models (e.g., GEE) are interpreted as population-level effects
+
+> That is, $\beta_j$ is the impact of variate j on average, across the whole population (assuming other variates fixed: Winter 437)
+
+-   These are not individual level effects!
+
+-   Example: On the whole, how does aging impact the propensity to develop dementia
+
+Note that the linear structure of the GEE implicitly assumes that $Y_{ij} \perp X_{ik} \mid X_{ij}$, for all $j \neq k$
+
+> The outcome is conditionally independent of explanatory factors at all other times, given the current time's explanatory factors
+>
+> Translated: The value of the outcome $Y$ at timepoint $t$ is independent of all variates that we are including except the variates measured at timepoint $t$.
+
+This assumption holds with (a) time invariant covariates and (b) deterministic/exogenous time-varying covariates, but not with stochastic/endogenous time-varying covariates.
+
+Let's show how this assumption may be violated:
+
+![](images/clipboard-205847465.png)
+
+As illustrated by the red arrow, $Y1$ is not going to be independent of $X2$ given (that we know) $X1$
+
+problem: it becomes hard to determine how much of the observed effect is the hidden effect of the outcome changing the future covariate value.
+
 ## Situations Without Treatment
 
 ### Example in Section 2.2 of Qian et al. (2020)
@@ -197,9 +221,9 @@ In this specific case, the endogenous time-varying covariate is caused by the pr
 \end{tikzpicture}
 ```
 
-In @fig-pathdiagram.section2.2 it becomes clear that the marginal relationship between $Z_1$ and $Y_2$ is quite simple, but the relationship between $Z_2$ and $Y_3$ is more complex, because previous observations
+In @fig-pathdiagram.section2.2 it becomes clear that the marginal relationship between $Z_1$ and $Y_2$ is quite simple, but the relationship between $Z_2$ and $Y_3$ is more complex, because previous observations ...
 
-(as explained by Qian et al., 2020)
+As explained by Qian et al., 2020, the marginal relationships are given by:
 
 $$
 E[Y_{i2} \mid Z_{i1}] = \gamma_{00} + \beta_1 Z_{i1}
