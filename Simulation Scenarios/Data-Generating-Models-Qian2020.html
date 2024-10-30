@@ -87,8 +87,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   <li><a href="#situations-without-treatment" id="toc-situations-without-treatment" class="nav-link" data-scroll-target="#situations-without-treatment"><span class="header-section-number">2</span> Situations Without Treatment</a>
   <ul class="collapse">
   <li><a href="#example-in-section-2.2-of-qian-et-al.-2020" id="toc-example-in-section-2.2-of-qian-et-al.-2020" class="nav-link" data-scroll-target="#example-in-section-2.2-of-qian-et-al.-2020"><span class="header-section-number">2.1</span> Example in Section 2.2 of Qian et al.&nbsp;(2020)</a></li>
-  <li><a href="#intermezzo-what-are-marginal-effectsmodels" id="toc-intermezzo-what-are-marginal-effectsmodels" class="nav-link" data-scroll-target="#intermezzo-what-are-marginal-effectsmodels"><span class="header-section-number">2.2</span> Intermezzo: What are marginal effects/models?</a></li>
-  <li><a href="#example-in-diggle-et-al.-2002" id="toc-example-in-diggle-et-al.-2002" class="nav-link" data-scroll-target="#example-in-diggle-et-al.-2002"><span class="header-section-number">2.3</span> Example in Diggle et al.&nbsp;(2002)</a></li>
+  <li><a href="#example-in-diggle-et-al.-2002" id="toc-example-in-diggle-et-al.-2002" class="nav-link" data-scroll-target="#example-in-diggle-et-al.-2002"><span class="header-section-number">2.2</span> Example in Diggle et al.&nbsp;(2002)</a></li>
   </ul></li>
   </ul>
 </nav>
@@ -135,8 +134,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <div style="page-break-after: always;"></div>
 <section id="introduction" class="level2" data-number="1">
 <h2 data-number="1" class="anchored" data-anchor-id="introduction"><span class="header-section-number">1</span> Introduction</h2>
-<p>In dit document zal ik de data-genererende modellen gepresenteerd door Qian et al.&nbsp;(2020) opnieuw creëren, vergezeld door visuele weergaven van deze modellen.</p>
-<p>Laten we eerst enkele hoofdpunten van GEE samenvatten.</p>
+<p>In dit document zal ik de data-genererende modellen gepresenteerd door Qian et al.&nbsp;(2020) opnieuw creëren, vergezeld door visuele weergaven van deze modellen. Laten we eerst enkele hoofdpunten van GEE samenvatten.</p>
 <p>Parameters in marginale modellen (bijv. GEE) worden geïnterpreteerd als populatieniveau-effecten (en dus niet als individuele effecten!)</p>
 <!-- > That is, $\beta_j$ is the impact of variate j on average, across the whole population (assuming other variates fixed: Winter 437) -->
 <ul>
@@ -152,13 +150,16 @@ E[Y_{it+1} \mid X_{it}] = E[Y_{it+1} \mid X_{i1}, \ldots, X_{iT}]
 \]</span></p></li>
 </ul>
 <p>Deze aanname geldt bij (a) tijdsinvariante covariaten en (b) deterministische/exogene tijdsafhankelijke covariaten, maar niet bij stochastische/endogene tijdsafhankelijke covariaten!</p>
+<blockquote class="blockquote">
+<p>Een uitzondering op deze regel is wanneer we een “diagonale weight matrix” gebruiken in de GEE (i.e., working independence).</p>
+</blockquote>
 <p>Laten we zien hoe deze aanname geschonden kan worden:</p>
 <p><img src="images/clipboard-3131633457.png" class="img-fluid"></p>
 <p>Zoals geïllustreerd door de rode pijl, is <span class="math inline">\(Y1\)</span> niet onafhankelijk van <span class="math inline">\(X2\)</span>, gegeven (dat we de waarde weten van) <span class="math inline">\(X1\)</span>. Als we dus geinteresserd zijn in het marginale effect van <span class="math inline">\(X2\)</span> op <span class="math inline">\(Y2\)</span>, dan is in dit geval de uitkomst biased door een schending van de FCCM aanname:</p>
 <p><span class="math display">\[
 E[Y_{i2} \mid X_{i2}] \neq E[Y_{i2} \mid X_{i1},X_{i2}]
 \]</span></p>
-<p>probleem: het wordt moeilijk te bepalen hoeveel van het waargenomen effect een verborgen effect is van de uitkomst die de toekomstige covariaat beïnvloedt.</p>
+<!-- probleem: het wordt moeilijk te bepalen hoeveel van het waargenomen effect een verborgen effect is van de uitkomst die de toekomstige covariaat beïnvloedt. -->
 <p>Vanuit een causaal perspectief kunnen we ook zeggen dat—in de bovenstaande DAG—<span class="math inline">\(Y1\)</span> een confounder is in de relatie tussen <span class="math inline">\(X2\)</span> en <span class="math inline">\(Y2\)</span>. Als we hiervoor niet controleren is het effect van <span class="math inline">\(X2\)</span> op <span class="math inline">\(Y2\)</span> een ander effect (door deze invloed van <span class="math inline">\(Y1\)</span>) dan het effect van <span class="math inline">\(X1\)</span> op <span class="math inline">\(Y1\)</span>, wat wel aan de FCCM aanname voldoet.</p>
 </section>
 <section id="situations-without-treatment" class="level2" data-number="2">
@@ -167,7 +168,7 @@ E[Y_{i2} \mid X_{i2}] \neq E[Y_{i2} \mid X_{i1},X_{i2}]
 <h3 data-number="2.1" class="anchored" data-anchor-id="example-in-section-2.2-of-qian-et-al.-2020"><span class="header-section-number">2.1</span> Example in Section 2.2 of Qian et al.&nbsp;(2020)</h3>
 <p>Beschouw als concreet voorbeeld het geval waarin elk individu op 2 tijdspunten wordt geobserveerd (<span class="math inline">\(T_i = 2\)</span>), en de covariaat op het tweede tijdspunt de lag-1 uitkomst is: <span class="math inline">\(X_{i2} = Y_{i2}\)</span>.</p>
 <blockquote class="blockquote">
-<p>Door de uitkomst te laggen, hebben we in wezen drie tijdspunten: <span class="math inline">\(X_{i1}\)</span>, <span class="math inline">\(X_{i2} = Y_{i2}\)</span>, and <span class="math inline">\(Y_{i3}\)</span>.</p>
+<p>Door de uitkomst te laggen, hebben we in wezen drie tijdspunten: <span class="math inline">\(X_{i1}\)</span>, <span class="math inline">\(X_{i2} = Y_{i2}\)</span>, en <span class="math inline">\(Y_{i3}\)</span>.</p>
 </blockquote>
 <p>Stel dat de variabelen worden gegenereerd volgens het volgende multilevel lineaire model (MLM) met een random intercept:</p>
 <p><span class="math display">\[
@@ -248,8 +249,8 @@ Y_{i3} \mid Z_{i1}, Y_{i2}, Z_{i2}, u_{0i} \sim N(\gamma_{00} + \beta_1 Z_{i2} +
 </section>
 <section id="visualizing-the-model" class="level4" data-number="2.1.2">
 <h4 data-number="2.1.2" class="anchored" data-anchor-id="visualizing-the-model"><span class="header-section-number">2.1.2</span> Visualizing the Model</h4>
-<p>We are interested in the effect of <span class="math inline">\(Z_{it} = Y_{it}\)</span> on <span class="math inline">\(Y_{i(t+1)}\)</span>.</p>
-<p>We may now draw the DAG for this model (see <a href="#fig-DAG">Figure&nbsp;1</a>)</p>
+<p>We zijn geinteresseerd in het effect van <span class="math inline">\(Z_{it}\)</span> (<span class="math inline">\(= Y_{it}\)</span>) op <span class="math inline">\(Y_{i(t+1)}\)</span>.</p>
+<p>Laten we eerst de DAG tekenen (see <a href="#fig-DAG">Figure&nbsp;1</a>). In dit specifieke geval wordt de endogene tijdsvariërende covariaat veroorzaakt door de vorige uitkomst en beïnvloedt het de toekomstige uitkomst.</p>
 <div class="cell" data-hash="Data-Generating-Models-Qian2020_cache/html/fig-DAG_be0324069a2ee92954354f1f9d2b71bb">
 <div class="cell-output-display">
 <div id="fig-DAG" class="quarto-figure quarto-figure-center anchored">
@@ -260,17 +261,30 @@ Y_{i3} \mid Z_{i1}, Y_{i2}, Z_{i2}, u_{0i} \sim N(\gamma_{00} + \beta_1 Z_{i2} +
 </div>
 </div>
 </div>
-<p>Note that there is an open biasing path from <span class="math inline">\(Y_2\)</span> to <span class="math inline">\(Z_2\)</span> in the DAG: the predictor/covariate <span class="math inline">\(Z_2\)</span> is <em>caused by</em> (in this case equivalent to) the previous outcome <span class="math inline">\(Y_2\)</span>—and thus this time-varying covariate is <em>endogenous</em>. In addition, <span class="math inline">\(u_0\)</span> is a confounder in the relationship between <span class="math inline">\(Y_2\)</span> and <span class="math inline">\(Y_3\)</span> and thus also in the relationship between <span class="math inline">\(Z_2\)</span> and <span class="math inline">\(Y_3\)</span> since <span class="math inline">\(Y_2 = Z_2\)</span>. Therefore the “full covariate conditional mean (FCCM)” assumption does not hold:</p>
+<p>Merk op dat er een open biasing path bestaat van <span class="math inline">\(Y_2\)</span> naar <span class="math inline">\(Z_2\)</span> in de DAG: de predictor/covariaat <span class="math inline">\(Z_2\)</span> wordt <em>veroorzaakt door</em> (in dit geval equivalent aan) de eerdere uitkomst <span class="math inline">\(Y_2\)</span>—en is dus een tijdsvariërende, <em>endogene</em> covariaat. Daarom gaat de aanname van de “full covariate conditional mean (FCCM)” niet op:</p>
 <p><span class="math display">\[
-E[Y_{it+1} \mid Z_{it}] = E[Y_{it+1} \mid X_{i1}, \ldots, X_{iT}]
+E[Y_{it+1} \mid Z_{it}] = E[Y_{it+1} \mid Z_{i1}, \ldots, Z_{iT}]
 \]</span></p>
+<p>aangezien</p>
+<p><span class="math display">\[
+E[Y_{i3} \mid Z_{i2}] \neq E[Y_{i3} \mid Z_{i1}, \ldots, Z_{i2}]
+\]</span></p>
+<p>Oftewel, de verwachte waarde van <span class="math inline">\(Y_i3\)</span> gegeven <span class="math inline">\(Z_{i2}\)</span> is niet gelijk aan de verwachte waarde van <span class="math inline">\(Y_{i3}\)</span> gegeven <span class="math inline">\(Z_{i1}\)</span> en <span class="math inline">\(Z_{i2}\)</span>. Anders gezegd, de uitkomst <span class="math inline">\(Y_3\)</span> is niet conditioneel onafhankelijk van de uitleggende factoren/covariaten op alle andere tijdspunten (i.e., <span class="math inline">\(Z_1\)</span>), gegeven dat we de waarden kennen van de covariaat <span class="math inline">\(Z_2\)</span> op het huidige tijdstip <span class="math inline">\(t=2\)</span>.</p>
+<p>Het in rekening brengen van afhankelijkheden tussen observaties in de uitkomst (i.e., het gebruik van “non-diagonal covariance weighting”, zie Diggle et al.&nbsp;(2002))—door middel van (a) working correlation matrices in GEE (behalve onafhankelijkheid) of (b) door de random intercept in het multilevel lineaire model—leid tot conditionele schattingen op basis van de random effecten, en niet tot schattingen op populatieniveau. Daarentegen schatten de GEE met working independence en GLM het model gewoon door onafhankelijkheid aan te nemen, waardoor de schattingen op populatieniveau wel valide zijn. <!-- Daarnaast is $u_0$ een confounder in de relatie tussen $Y_2$ en $Y_3$, en daarmee ook in de relatie tussen $Z_2$ en $Y_3$, aangezien $Y_2 = Z_2$.  --></p>
+<p>Wat gebeurt hier precies?</p>
+<ol type="1">
+<li>In de schatting d.m.v. de MLM is <span class="math inline">\(u_0\)</span> een confounder in de relatie tussen <span class="math inline">\(Y_2\)</span> en <span class="math inline">\(Y_3\)</span>, en daarmee ook in de relatie tussen <span class="math inline">\(Z_2\)</span> en <span class="math inline">\(Y_3\)</span> (aangezien <span class="math inline">\(Y_2 = Z_2\)</span>). Dus de random intercept beinvloedt de covariate <span class="math inline">\(Z_2\)</span> en daarmee ook de uitkomst <span class="math inline">\(Y_3\)</span>.</li>
+</ol>
 <blockquote class="blockquote">
-<p>Deze formule (equation 5 of Qian) zegt dat de uitkomst op <span class="math inline">\(t+1\)</span> conditioneel onafhankelijk is van uitleggende factoren/covariaten op alle andere tijdspunten (incl.&nbsp;toekomst en verleden) gegeven dat we de waarden weten van de uitleggen de factoren covariaten op het huidige tijdstip <span class="math inline">\(t\)</span>.</p>
+<p>“<span class="math inline">\(Z_{it}\)</span> being endogenous means it may depend on previous outcomes, which in turn implies dependence on the random effect <span class="math inline">\(u_{0i}\)</span>. Thus, <span class="math inline">\(E(u_{0i} \mid Z_{it})\)</span> is usually nonzero and the conditional model may no longer imply the marginal model” (Qian et al., 2020)</p>
 </blockquote>
-<p>Accordingly, taking into account dependencies between observations through (a) working correlation matrices in GEE (except independence) or (b) through the random intercept of the multilevel linear model, results in conditional-on-the-random-effects estimates and NOT population averaged estimates. Conversely, the GEE with working independence and GLM simply estimate the model while assuming independence.</p>
-<p>Why is it specifically an issue with endogenous covariates?</p>
-<p>In the MLM, the random intercept is estimated on basis of all available timepoints (history and future). Therefore, when estimating the fixed effect <span class="math inline">\(\beta_1\)</span> in the relationship between <span class="math inline">\(Z_2\)</span> and <span class="math inline">\(Y_3\)</span> we are biasing the marginal effect by using information of the relationship between <span class="math inline">\(Z_1\)</span> and <span class="math inline">\(Y_2\)</span>.</p>
-<p>In this specific case, the endogenous time-varying covariate is caused by the previous outcome and influences future outcome. As a result of this, controlling for the random intercept <span class="math inline">\(u_0\)</span></p>
+<!-- In andere woorden, de random intercept wordt geschat op basis van alle beschikbare tijdspunten (geschiedenis en toekomst). Door het open biasing/backdoor pad van $Y_2$ naar $Z_2$ word, wanneer we het fixed effect $\beta_1$ schatten in de relatie tussen $Z_2$ en $Y_3$, de marginale schatting vertekend doordat informatie van de relatie tussen $Z_1$ en $Y_2$ wordt meegenomen. -->
+<ol start="2" type="1">
+<li>In de GEE met working independence en GLM wordt de relatie tussen <span class="math inline">\(Z_2\)</span> en <span class="math inline">\(Y_3\)</span> geschat op basis van de aanname van onafhankelijkheid, en is er dus geen confounder <span class="math inline">\(u_0\)</span> in de relatie tussen <span class="math inline">\(Z_2\)</span> en <span class="math inline">\(Y_3\)</span>.</li>
+</ol>
+<blockquote class="blockquote">
+<p>Daardoor is <span class="math inline">\(E(u_{0i} \mid Z_{it}) = 0\)</span> en de marginale schatting van <span class="math inline">\(\beta_1\)</span> in de relatie tussen <span class="math inline">\(Z_2\)</span> en <span class="math inline">\(Y_3\)</span> is onvertekend.</p>
+</blockquote>
 <div class="cell" data-hash="Data-Generating-Models-Qian2020_cache/html/fig-pathdiagram.section2.2_243b84d970c315ec64e98b1198bf561b">
 <div class="cell-output-display">
 <div id="fig-pathdiagram.section2.2" class="quarto-figure quarto-figure-center anchored">
@@ -281,133 +295,63 @@ E[Y_{it+1} \mid Z_{it}] = E[Y_{it+1} \mid X_{i1}, \ldots, X_{iT}]
 </div>
 </div>
 </div>
-<p>In <a href="#fig-pathdiagram.section2.2">Figure&nbsp;2</a> it becomes clear that the marginal relationship between <span class="math inline">\(Z_1\)</span> and <span class="math inline">\(Y_2\)</span> is quite simply</p>
+<p>In <a href="#fig-pathdiagram.section2.2">Figure&nbsp;2</a> wordt duidelijk dat de marginale relatie tussen <span class="math inline">\(Z_1\)</span> en <span class="math inline">\(Y_2\)</span> eenvoudigweg is:</p>
 <p><span class="math display">\[
 E[Y_{i2} \mid Z_{i1}] = \gamma_{00} + \beta_1 Z_{i1}
 \]</span></p>
-<p>the relationship between <span class="math inline">\(Z_2\)</span> and <span class="math inline">\(Y_3\)</span> is more complex</p>
+<p>De relatie tussen <span class="math inline">\(Z_2\)</span> en <span class="math inline">\(Y_3\)</span> is complexer door de invloed van de random intercept <span class="math inline">\(u_{0i}\)</span></p>
 <p><span class="math display">\[
 E[Y_{i3} \mid Z_{i2}] = (1- \rho \zeta - \rho ) \gamma_{00} + [(1-\rho \zeta)  \beta_1 + \rho] Z_{i2}
 \]</span></p>
-<p>Specifieker gezegd, de interpretatie van de slope <span class="math inline">\(\beta_1\)</span> als population level effects is alleen valide voor het effect van <span class="math inline">\(Z_1\)</span> op <span class="math inline">\(Y_2\)</span>. Daarom kunnen we wel zeggen dat</p>
+<p>Specifieker gezegd, de interpretatie van de slope <span class="math inline">\(\beta_1\)</span> als effect op populatieniveau is alleen valide voor het effect van <span class="math inline">\(Z_1\)</span> op <span class="math inline">\(Y_2\)</span>. Daarom kunnen we wel zeggen dat</p>
 <blockquote class="blockquote">
-<p><span class="math inline">\(\beta_1\)</span> is the impact of variate <span class="math inline">\(Z_1\)</span> on average on <span class="math inline">\(Y_2\)</span>, across the whole population (assuming other variates fixed)</p>
+<p><span class="math inline">\(\beta_1\)</span> het effect is van variabele <span class="math inline">\(Z_1\)</span> gemiddeld op <span class="math inline">\(Y_2\)</span>, over de gehele populatie (onder voorwaarde van constante waarden van andere variabelen)</p>
 </blockquote>
 <p>maar ditzelfde kunnen we niet zeggen voor het effect van <span class="math inline">\(Z_2\)</span> op <span class="math inline">\(Y_3\)</span>.</p>
-<p>The relationship between <span class="math inline">\(Z_2\)</span> and <span class="math inline">\(Y_3\)</span> is confounded by the unobserved random effect <span class="math inline">\(u_{0i}\)</span>, which is also associated with <span class="math inline">\(Y_2\)</span>.</p>
+<p>De relatie tussen <span class="math inline">\(Z_2\)</span> en <span class="math inline">\(Y_3\)</span> wordt verstoord door het niet-geobserveerde random effect <span class="math inline">\(u_{0i}\)</span>, dat ook geassocieerd is met <span class="math inline">\(Y_2\)</span>.</p>
 </section>
 <section id="data-generation-and-estimation" class="level4" data-number="2.1.3">
 <h4 data-number="2.1.3" class="anchored" data-anchor-id="data-generation-and-estimation"><span class="header-section-number">2.1.3</span> Data Generation and Estimation</h4>
-<p>Let’s now generate the data according to this model and estimate the model using a multilevel linear model (MLM) and a generalized estimating equation (GEE) model. Here we are interested in estimating the effect <span class="math inline">\(Z_{it}\)</span> on <span class="math inline">\(Y_{i(t+1)}\)</span>. Accordingly, to carry out the analysis in long format, a lagged variable was used for <span class="math inline">\(Z_{it}\)</span>, so that, <span class="math inline">\(Y_{i2}\)</span> is regressed on <span class="math inline">\(Z_{i1}\)</span>, and <span class="math inline">\(Y_{i3}\)</span> is regressed on <span class="math inline">\(Z_{i2}\)</span>.</p>
-<div class="cell" data-hash="Data-Generating-Models-Qian2020_cache/html/Scenario2.2_DataGeneration_1f97caba88d9b7d2db6fe11b506e576d">
-<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Create a function to generate the data</span></span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>generate_data <span class="ot">&lt;-</span> <span class="cf">function</span>(<span class="at">n_i =</span> <span class="dv">5000</span>, <span class="at">sigma_u =</span> <span class="dv">1</span>, <span class="at">sigma_Z1 =</span> <span class="dv">1</span>, <span class="at">sigma_e =</span> <span class="dv">1</span>, <span class="at">beta_1 =</span> <span class="fl">0.8</span>, <span class="at">gamma_00 =</span> <span class="dv">2</span>) {</span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>  data_list <span class="ot">&lt;-</span> <span class="fu">list</span>()</span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Simulate data for each individual</span></span>
-<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>n_i) {</span>
-<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>    u_0i <span class="ot">&lt;-</span> <span class="fu">rnorm</span>(<span class="dv">1</span>, <span class="dv">0</span>, sigma_u)</span>
-<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>    Z_i2_lag <span class="ot">&lt;-</span> Z_i1 <span class="ot">&lt;-</span> <span class="fu">rnorm</span>(<span class="dv">1</span>, <span class="dv">0</span>, sigma_Z1)</span>
-<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>    Y_i2 <span class="ot">&lt;-</span> <span class="fu">rnorm</span>(<span class="dv">1</span>, gamma_00 <span class="sc">+</span> beta_1 <span class="sc">*</span> Z_i1 <span class="sc">+</span> u_0i, sigma_e)</span>
-<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>    Z_i3_lag <span class="ot">&lt;-</span> Z_i2 <span class="ot">&lt;-</span> Y_i2</span>
-<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>    Y_i3 <span class="ot">&lt;-</span> <span class="fu">rnorm</span>(<span class="dv">1</span>, gamma_00 <span class="sc">+</span> beta_1 <span class="sc">*</span> Z_i2 <span class="sc">+</span> u_0i, sigma_e)</span>
-<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Store the data in a list</span></span>
-<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>    subject_data <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
-<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>      <span class="at">id =</span> i,</span>
-<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>      <span class="at">time =</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">2</span>,</span>
-<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>      <span class="at">Y =</span> <span class="fu">c</span>(Y_i2, Y_i3),</span>
-<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>      <span class="at">Z_lag1 =</span> <span class="fu">c</span>(Z_i2_lag, Z_i3_lag)</span>
-<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a>    )</span>
-<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a>    data_list[[i]] <span class="ot">&lt;-</span> subject_data</span>
-<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a>  }</span>
-<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Combine all subjects' data into a single data frame</span></span>
-<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a>  data_long <span class="ot">&lt;-</span> <span class="fu">do.call</span>(rbind, data_list)</span>
-<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(data_long)</span>
+<p>Laten we nu de data genereren volgens dit model en het model schatten met een multilevel lineair model (MLM) en een generalized estimating equation (GEE)-model. Hier zijn we geïnteresseerd in het schatten van het effect van <span class="math inline">\(Z_{it}\)</span> op <span class="math inline">\(Y_{i(t+1)}\)</span>. Voor deze analyse in long-format werd daarom een lagged variabele gebruikt voor <span class="math inline">\(Z_{it}\)</span>, zodat <span class="math inline">\(Y_{i2}\)</span> wordt regressed op <span class="math inline">\(Z_{i1}\)</span> en <span class="math inline">\(Y_{i3}\)</span> op <span class="math inline">\(Z_{i2}\)</span>.</p>
+<p>We gebruiken de volgende specificatie</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Set the parameters for the simulation</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>n_sim <span class="ot">&lt;-</span> <span class="dv">1</span>  <span class="co"># Number of simulations</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>n_i <span class="ot">&lt;-</span> <span class="dv">100000</span>   <span class="co"># Number of individuals per simulation</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>sigma_u <span class="ot">&lt;-</span> <span class="dv">1</span>  <span class="co"># Variance of random intercept</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>sigma_Z1 <span class="ot">&lt;-</span> <span class="dv">1</span> <span class="co"># Variance of Z1</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>sigma_e <span class="ot">&lt;-</span> <span class="dv">1</span> <span class="co"># Residual variance</span></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>beta_1 <span class="ot">&lt;-</span> <span class="fl">0.8</span>  <span class="co"># Slope</span></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>gamma_00 <span class="ot">&lt;-</span> <span class="dv">2</span>  <span class="co"># Intercept</span></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a><span class="co"># Simulate data for each individual</span></span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>n_i) {</span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>  u_0i <span class="ot">&lt;-</span> <span class="fu">rnorm</span>(<span class="dv">1</span>, <span class="dv">0</span>, sigma_u)</span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>  Z_i2_lag <span class="ot">&lt;-</span> Z_i1 <span class="ot">&lt;-</span> <span class="fu">rnorm</span>(<span class="dv">1</span>, <span class="dv">0</span>, sigma_Z1)</span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>  Y_i2 <span class="ot">&lt;-</span> <span class="fu">rnorm</span>(<span class="dv">1</span>, gamma_00 <span class="sc">+</span> beta_1 <span class="sc">*</span> Z_i1 <span class="sc">+</span> u_0i, sigma_e)</span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>  Z_i3_lag <span class="ot">&lt;-</span> Z_i2 <span class="ot">&lt;-</span> Y_i2</span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>  Y_i3 <span class="ot">&lt;-</span> <span class="fu">rnorm</span>(<span class="dv">1</span>, gamma_00 <span class="sc">+</span> beta_1 <span class="sc">*</span> Z_i2 <span class="sc">+</span> u_0i, sigma_e)</span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Store the data in a list</span></span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a>  subject_data <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a>    <span class="at">id =</span> i,</span>
+<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a>    <span class="at">time =</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">2</span>,</span>
+<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a>    <span class="at">Y =</span> <span class="fu">c</span>(Y_i2, Y_i3),</span>
+<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a>    <span class="at">Z_lag1 =</span> <span class="fu">c</span>(Z_i2_lag, Z_i3_lag)</span>
+<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a>  data_list[[i]] <span class="ot">&lt;-</span> subject_data</span>
 <span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a>}</span>
 <span id="cb1-28"><a href="#cb1-28" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-29"><a href="#cb1-29" aria-hidden="true" tabindex="-1"></a><span class="co"># Create a function that runs the simulations</span></span>
-<span id="cb1-30"><a href="#cb1-30" aria-hidden="true" tabindex="-1"></a>run_simulations <span class="ot">&lt;-</span> <span class="cf">function</span>(n_sim, n_i, sigma_u, sigma_Z1, sigma_e, beta_1, gamma_00) {</span>
-<span id="cb1-31"><a href="#cb1-31" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb1-32"><a href="#cb1-32" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Initialize a list to store results</span></span>
-<span id="cb1-33"><a href="#cb1-33" aria-hidden="true" tabindex="-1"></a>  all_estimates <span class="ot">&lt;-</span> <span class="fu">list</span>()</span>
-<span id="cb1-34"><a href="#cb1-34" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb1-35"><a href="#cb1-35" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Simulation loop</span></span>
-<span id="cb1-36"><a href="#cb1-36" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span> (sim <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>n_sim) {</span>
-<span id="cb1-37"><a href="#cb1-37" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Generate the data</span></span>
-<span id="cb1-38"><a href="#cb1-38" aria-hidden="true" tabindex="-1"></a>    data_sim <span class="ot">&lt;-</span> <span class="fu">generate_data</span>(n_i, sigma_u, sigma_Z1, sigma_e, beta_1, gamma_00)</span>
-<span id="cb1-39"><a href="#cb1-39" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb1-40"><a href="#cb1-40" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Fit the models</span></span>
-<span id="cb1-41"><a href="#cb1-41" aria-hidden="true" tabindex="-1"></a>    mlm_mle <span class="ot">&lt;-</span> <span class="fu">lmer</span>(Y <span class="sc">~</span> Z_lag1 <span class="sc">+</span> (<span class="dv">1</span> <span class="sc">|</span> id), <span class="at">data =</span> data_sim, <span class="at">REML =</span> <span class="cn">FALSE</span>)</span>
-<span id="cb1-42"><a href="#cb1-42" aria-hidden="true" tabindex="-1"></a>    gee_exch <span class="ot">&lt;-</span> <span class="fu">gee</span>(Y <span class="sc">~</span> Z_lag1, <span class="at">id =</span> id, <span class="at">data =</span> data_sim, <span class="at">family =</span> gaussian, <span class="at">corstr =</span> <span class="st">"exchangeable"</span>)</span>
-<span id="cb1-43"><a href="#cb1-43" aria-hidden="true" tabindex="-1"></a>    gee_ind <span class="ot">&lt;-</span> <span class="fu">gee</span>(Y <span class="sc">~</span> Z_lag1, <span class="at">id =</span> id, <span class="at">data =</span> data_sim, <span class="at">family =</span> gaussian, <span class="at">corstr =</span> <span class="st">"independence"</span>)</span>
-<span id="cb1-44"><a href="#cb1-44" aria-hidden="true" tabindex="-1"></a>    gee_ar1 <span class="ot">&lt;-</span> <span class="fu">gee</span>(Y <span class="sc">~</span> Z_lag1, <span class="at">id =</span> id, <span class="at">data =</span> data_sim, <span class="at">family =</span> gaussian, <span class="at">corstr =</span> <span class="st">"AR-M"</span>, <span class="at">Mv =</span> <span class="dv">1</span>)</span>
-<span id="cb1-45"><a href="#cb1-45" aria-hidden="true" tabindex="-1"></a>    glm <span class="ot">&lt;-</span> <span class="fu">glm</span>(Y <span class="sc">~</span> Z_lag1, <span class="at">data =</span> data_sim, <span class="at">family =</span> gaussian)</span>
-<span id="cb1-46"><a href="#cb1-46" aria-hidden="true" tabindex="-1"></a>    gls_symm <span class="ot">&lt;-</span> nlme<span class="sc">::</span><span class="fu">gls</span>(Y <span class="sc">~</span> Z_lag1, <span class="at">data =</span> data_sim, <span class="at">correlation =</span> <span class="fu">corSymm</span>(<span class="at">form =</span> <span class="sc">~</span> <span class="dv">1</span> <span class="sc">|</span> id), <span class="at">method =</span> <span class="st">"ML"</span>)</span>
-<span id="cb1-47"><a href="#cb1-47" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb1-48"><a href="#cb1-48" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Extract the fixed effect estimates for each model</span></span>
-<span id="cb1-49"><a href="#cb1-49" aria-hidden="true" tabindex="-1"></a>    estimates <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
-<span id="cb1-50"><a href="#cb1-50" aria-hidden="true" tabindex="-1"></a>      <span class="at">sim =</span> sim,</span>
-<span id="cb1-51"><a href="#cb1-51" aria-hidden="true" tabindex="-1"></a>      <span class="at">MLM_mle_intercept =</span> <span class="fu">fixef</span>(mlm_mle)[<span class="dv">1</span>],</span>
-<span id="cb1-52"><a href="#cb1-52" aria-hidden="true" tabindex="-1"></a>      <span class="at">MLM_mle_slope =</span> <span class="fu">fixef</span>(mlm_mle)[<span class="dv">2</span>],</span>
-<span id="cb1-53"><a href="#cb1-53" aria-hidden="true" tabindex="-1"></a>      <span class="at">GEE_exch_intercept =</span> <span class="fu">coef</span>(gee_exch)[<span class="dv">1</span>],</span>
-<span id="cb1-54"><a href="#cb1-54" aria-hidden="true" tabindex="-1"></a>      <span class="at">GEE_exch_slope =</span> <span class="fu">coef</span>(gee_exch)[<span class="dv">2</span>],</span>
-<span id="cb1-55"><a href="#cb1-55" aria-hidden="true" tabindex="-1"></a>      <span class="at">GEE_ind_intercept =</span> <span class="fu">coef</span>(gee_ind)[<span class="dv">1</span>],</span>
-<span id="cb1-56"><a href="#cb1-56" aria-hidden="true" tabindex="-1"></a>      <span class="at">GEE_ind_slope =</span> <span class="fu">coef</span>(gee_ind)[<span class="dv">2</span>],</span>
-<span id="cb1-57"><a href="#cb1-57" aria-hidden="true" tabindex="-1"></a>      <span class="at">GEE_ar1_intercept =</span> <span class="fu">coef</span>(gee_ar1)[<span class="dv">1</span>],</span>
-<span id="cb1-58"><a href="#cb1-58" aria-hidden="true" tabindex="-1"></a>      <span class="at">GEE_ar1_slope =</span> <span class="fu">coef</span>(gee_ar1)[<span class="dv">2</span>],</span>
-<span id="cb1-59"><a href="#cb1-59" aria-hidden="true" tabindex="-1"></a>      <span class="at">GLM_intercept =</span> <span class="fu">coef</span>(glm)[<span class="dv">1</span>],</span>
-<span id="cb1-60"><a href="#cb1-60" aria-hidden="true" tabindex="-1"></a>      <span class="at">GLM_slope =</span> <span class="fu">coef</span>(glm)[<span class="dv">2</span>] <span class="co">#,</span></span>
-<span id="cb1-61"><a href="#cb1-61" aria-hidden="true" tabindex="-1"></a>      <span class="co">#GLS_symm_intercept = coef(gls_symm)[1],</span></span>
-<span id="cb1-62"><a href="#cb1-62" aria-hidden="true" tabindex="-1"></a>      <span class="co">#GLS_symm_slope = coef(gls_symm)[2]</span></span>
-<span id="cb1-63"><a href="#cb1-63" aria-hidden="true" tabindex="-1"></a>    )</span>
-<span id="cb1-64"><a href="#cb1-64" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb1-65"><a href="#cb1-65" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Store the estimates in the list</span></span>
-<span id="cb1-66"><a href="#cb1-66" aria-hidden="true" tabindex="-1"></a>    all_estimates[[sim]] <span class="ot">&lt;-</span> estimates</span>
-<span id="cb1-67"><a href="#cb1-67" aria-hidden="true" tabindex="-1"></a>  }</span>
-<span id="cb1-68"><a href="#cb1-68" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb1-69"><a href="#cb1-69" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Combine results into a single data frame</span></span>
-<span id="cb1-70"><a href="#cb1-70" aria-hidden="true" tabindex="-1"></a>  results <span class="ot">&lt;-</span> <span class="fu">do.call</span>(rbind, all_estimates)</span>
-<span id="cb1-71"><a href="#cb1-71" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(results)</span>
-<span id="cb1-72"><a href="#cb1-72" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb1-73"><a href="#cb1-73" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-74"><a href="#cb1-74" aria-hidden="true" tabindex="-1"></a><span class="co"># Set the parameters for the simulation</span></span>
-<span id="cb1-75"><a href="#cb1-75" aria-hidden="true" tabindex="-1"></a>n_sim <span class="ot">&lt;-</span> <span class="dv">1</span>  <span class="co"># Number of simulations</span></span>
-<span id="cb1-76"><a href="#cb1-76" aria-hidden="true" tabindex="-1"></a>n_i <span class="ot">&lt;-</span> <span class="dv">100000</span>   <span class="co"># Number of individuals per simulation</span></span>
-<span id="cb1-77"><a href="#cb1-77" aria-hidden="true" tabindex="-1"></a>sigma_u <span class="ot">&lt;-</span> <span class="dv">1</span>  <span class="co"># Variance of random intercept</span></span>
-<span id="cb1-78"><a href="#cb1-78" aria-hidden="true" tabindex="-1"></a>sigma_Z1 <span class="ot">&lt;-</span> <span class="dv">1</span> <span class="co"># Variance of Z1</span></span>
-<span id="cb1-79"><a href="#cb1-79" aria-hidden="true" tabindex="-1"></a>sigma_e <span class="ot">&lt;-</span> <span class="dv">1</span> <span class="co"># Residual variance</span></span>
-<span id="cb1-80"><a href="#cb1-80" aria-hidden="true" tabindex="-1"></a>beta_1 <span class="ot">&lt;-</span> <span class="fl">0.8</span>  <span class="co"># Slope</span></span>
-<span id="cb1-81"><a href="#cb1-81" aria-hidden="true" tabindex="-1"></a>gamma_00 <span class="ot">&lt;-</span> <span class="dv">2</span>  <span class="co"># Intercept</span></span>
-<span id="cb1-82"><a href="#cb1-82" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-83"><a href="#cb1-83" aria-hidden="true" tabindex="-1"></a><span class="co"># Run the simulation and store the results</span></span>
-<span id="cb1-84"><a href="#cb1-84" aria-hidden="true" tabindex="-1"></a>simulation_results <span class="ot">&lt;-</span> <span class="fu">run_simulations</span>(n_sim, n_i, sigma_u, sigma_Z1, sigma_e, beta_1, gamma_00)</span>
-<span id="cb1-85"><a href="#cb1-85" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-86"><a href="#cb1-86" aria-hidden="true" tabindex="-1"></a><span class="co"># Calculate mean and standard deviation of estimates</span></span>
-<span id="cb1-87"><a href="#cb1-87" aria-hidden="true" tabindex="-1"></a>section2<span class="fl">.2</span>_summary_stats <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
-<span id="cb1-88"><a href="#cb1-88" aria-hidden="true" tabindex="-1"></a>  <span class="at">row.names =</span> <span class="fu">c</span>(<span class="st">"Intercept"</span>, <span class="st">"Z_lag1"</span>),</span>
-<span id="cb1-89"><a href="#cb1-89" aria-hidden="true" tabindex="-1"></a>  <span class="at">MLM_mle =</span> <span class="fu">c</span>(<span class="fu">mean</span>(simulation_results<span class="sc">$</span>MLM_mle_intercept), <span class="fu">mean</span>(simulation_results<span class="sc">$</span>MLM_mle_slope)),</span>
-<span id="cb1-90"><a href="#cb1-90" aria-hidden="true" tabindex="-1"></a>  <span class="at">GEE_exch =</span> <span class="fu">c</span>(<span class="fu">mean</span>(simulation_results<span class="sc">$</span>GEE_exch_intercept), <span class="fu">mean</span>(simulation_results<span class="sc">$</span>GEE_exch_slope)),</span>
-<span id="cb1-91"><a href="#cb1-91" aria-hidden="true" tabindex="-1"></a>  <span class="at">GEE_ind =</span> <span class="fu">c</span>(<span class="fu">mean</span>(simulation_results<span class="sc">$</span>GEE_ind_intercept), <span class="fu">mean</span>(simulation_results<span class="sc">$</span>GEE_ind_slope)),</span>
-<span id="cb1-92"><a href="#cb1-92" aria-hidden="true" tabindex="-1"></a>  <span class="at">GEE_ar1 =</span> <span class="fu">c</span>(<span class="fu">mean</span>(simulation_results<span class="sc">$</span>GEE_ar1_intercept), <span class="fu">mean</span>(simulation_results<span class="sc">$</span>GEE_ar1_slope)),</span>
-<span id="cb1-93"><a href="#cb1-93" aria-hidden="true" tabindex="-1"></a>  <span class="at">GLM =</span> <span class="fu">c</span>(<span class="fu">mean</span>(simulation_results<span class="sc">$</span>GLM_intercept), <span class="fu">mean</span>(simulation_results<span class="sc">$</span>GLM_slope)) <span class="co">#,</span></span>
-<span id="cb1-94"><a href="#cb1-94" aria-hidden="true" tabindex="-1"></a>  <span class="co">#GLS_symm = c(mean(simulation_results$GLS_symm_intercept), mean(simulation_results$GLS_symm_slope))</span></span>
-<span id="cb1-95"><a href="#cb1-95" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb1-96"><a href="#cb1-96" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-97"><a href="#cb1-97" aria-hidden="true" tabindex="-1"></a><span class="fu">saveRDS</span>(section2<span class="fl">.2</span>_simulation_results, <span class="st">"section2.2_simulation_results_1_100000.rds"</span>)</span>
-<span id="cb1-98"><a href="#cb1-98" aria-hidden="true" tabindex="-1"></a><span class="fu">saveRDS</span>(section2<span class="fl">.2</span>_summary_stats, <span class="st">"section2.2_summary_stats_1_100000.rds"</span>)</span>
-<span id="cb1-99"><a href="#cb1-99" aria-hidden="true" tabindex="-1"></a><span class="co"># Test: If we run the code with n = 100.000 and u0 = 0, all models return the specified fixed effects.</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb1-29"><a href="#cb1-29" aria-hidden="true" tabindex="-1"></a><span class="co"># Fit the models</span></span>
+<span id="cb1-30"><a href="#cb1-30" aria-hidden="true" tabindex="-1"></a>mlm_mle <span class="ot">&lt;-</span> <span class="fu">lmer</span>(Y <span class="sc">~</span> Z_lag1 <span class="sc">+</span> (<span class="dv">1</span> <span class="sc">|</span> id), <span class="at">data =</span> data_sim, <span class="at">REML =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb1-31"><a href="#cb1-31" aria-hidden="true" tabindex="-1"></a>gee_exch <span class="ot">&lt;-</span> <span class="fu">gee</span>(Y <span class="sc">~</span> Z_lag1, <span class="at">id =</span> id, <span class="at">data =</span> data_sim, <span class="at">family =</span> gaussian, <span class="at">corstr =</span> <span class="st">"exchangeable"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<div id="tbl-section2.2output" class="cell tbl-parent quarto-layout-panel anchored">
-<div class="panel-caption table-caption">
-<p>Table&nbsp;1: <strong>?(caption)</strong></p>
-</div>
-<div class="quarto-layout-row quarto-layout-valign-top">
-<div id="tbl-section2.2output-1" class="quarto-layout-cell quarto-layout-cell-subref anchored" data-ref-parent="tbl-section2.2output" style="flex-basis: 100.0%;justify-content: center;">
+<div class="cell">
+<div class="cell-output-display">
+<div id="tbl-section2.2output" class="anchored">
 <table class="table table-sm table-striped small">
-<caption>(a) Fixed effects (N = 1.000.000, nsim = 1)</caption>
+<caption>Table&nbsp;1: Fixed effects (N = 1.000.000, nsim = 1)</caption>
 <thead>
 <tr class="header">
 <th style="text-align: left;"></th>
@@ -464,76 +408,58 @@ E[Y_{i3} \mid Z_{i2}] = (1- \rho \zeta - \rho ) \gamma_{00} + [(1-\rho \zeta)  \
 <div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Restate the parameters</span></span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>sigma_u <span class="ot">&lt;-</span> <span class="dv">1</span>  <span class="co"># Variance of random intercept</span></span>
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>sigma_Z1 <span class="ot">&lt;-</span> <span class="dv">1</span> <span class="co"># Variance of Z1</span></span>
-<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>sigma_e <span class="ot">&lt;-</span> <span class="fl">0.5</span> <span class="co"># Residual variance</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>sigma_e <span class="ot">&lt;-</span> <span class="dv">1</span> <span class="co"># Residual variance</span></span>
 <span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>beta_1 <span class="ot">&lt;-</span> <span class="fl">0.8</span>  <span class="co"># Slope</span></span>
 <span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>gamma_00 <span class="ot">&lt;-</span> <span class="dv">2</span>  <span class="co"># Intercept</span></span>
 <span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Compute rho and zeta</span></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a><span class="co"># prepare variances (instead of SD)</span></span>
 <span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>sigma2_u0 <span class="ot">=</span> sigma_u<span class="sc">^</span><span class="dv">2</span></span>
 <span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>sigma2_e <span class="ot">=</span> sigma_e<span class="sc">^</span><span class="dv">2</span></span>
-<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>rho <span class="ot">=</span> sigma2_u0 <span class="sc">/</span> (sigma2_u0 <span class="sc">+</span> sigma2_e)</span>
-<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>sigma2_Z1 <span class="ot">=</span> sigma_Z1<span class="sc">^</span><span class="dv">2</span></span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>sigma2_Z1 <span class="ot">=</span> sigma_Z1<span class="sc">^</span><span class="dv">2</span></span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a><span class="co"># Compute rho and zeta</span></span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>rho <span class="ot">=</span> sigma2_u0 <span class="sc">/</span> (sigma2_u0 <span class="sc">+</span> sigma2_e)</span>
 <span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a>zeta <span class="ot">=</span> (beta_1 <span class="sc">*</span> sigma2_Z1) <span class="sc">/</span> (beta_1 <span class="sc">*</span> sigma2_Z1 <span class="sc">+</span> sigma2_u0 <span class="sc">+</span> sigma2_e)</span>
 <span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a><span class="co"># Now let's compute the marginal effects</span></span>
-<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a>(marginal_intercept_Z1_Y2 <span class="ot">&lt;-</span> gamma_00)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a>marginal_intercept_Z1_Y2 <span class="ot">&lt;-</span> gamma_00</span>
+<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a>marginal_slope_Z1_Y2 <span class="ot">&lt;-</span> beta_1</span>
+<span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a>marginal_intercept_Z2_Y3 <span class="ot">&lt;-</span> (<span class="dv">1</span> <span class="sc">-</span> rho <span class="sc">*</span> zeta <span class="sc">-</span> rho) <span class="sc">*</span> gamma_00</span>
+<span id="cb2-21"><a href="#cb2-21" aria-hidden="true" tabindex="-1"></a>marginal_slope_Z2_Y3 <span class="ot">&lt;-</span> ((<span class="dv">1</span> <span class="sc">-</span> rho <span class="sc">*</span> zeta) <span class="sc">*</span> beta_1 <span class="sc">+</span> rho)</span>
+<span id="cb2-22"><a href="#cb2-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-23"><a href="#cb2-23" aria-hidden="true" tabindex="-1"></a>(marginal_intercept_Z1_Y2 <span class="sc">+</span> marginal_intercept_Z2_Y3) <span class="sc">/</span> <span class="dv">2</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>[1] 2</code></pre>
+<pre><code>[1] 1.357143</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>(marginal_slope_Z1_Y2 <span class="ot">&lt;-</span> beta_1)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>(marginal_slope_Z1_Y2 <span class="sc">+</span> marginal_slope_Z2_Y3) <span class="sc">/</span> <span class="dv">2</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>[1] 0.8</code></pre>
-</div>
-<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>(marginal_intercept_Z2_Y3 <span class="ot">&lt;-</span> (<span class="dv">1</span> <span class="sc">-</span> rho <span class="sc">*</span> zeta <span class="sc">-</span> rho) <span class="sc">*</span> gamma_00)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>[1] -0.2243902</code></pre>
-</div>
-<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>(marginal_slope_Z2_Y3 <span class="ot">&lt;-</span> ((<span class="dv">1</span> <span class="sc">-</span> rho <span class="sc">*</span> zeta) <span class="sc">*</span> beta_1 <span class="sc">+</span> rho))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>[1] 1.350244</code></pre>
-</div>
-<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>marginal_intercept_Z1_Y2 <span class="sc">+</span> marginal_intercept_Z2_Y3</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>[1] 1.77561</code></pre>
-</div>
-<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>(marginal_slope_Z1_Y2 <span class="sc">+</span> marginal_slope_Z2_Y3) <span class="sc">/</span> <span class="dv">2</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>[1] 1.075122</code></pre>
+<pre><code>[1] 0.9928571</code></pre>
 </div>
 </div>
+<p>Als we deze waarde voor de marginale slope vergelijken met estimatie van de GLM vinden we erg vergelijkbare waardes. Hetzelfde is niet waar voor de marginale intercept.</p>
 <blockquote class="blockquote">
-<p>This is not correct, but how do we calculate the true marginal effects for intercept and slope?</p>
+<p>Wat doen we fout? Hoe moet dit wel?</p>
 </blockquote>
-</section>
-</section>
-<section id="intermezzo-what-are-marginal-effectsmodels" class="level3" data-number="2.2">
-<h3 data-number="2.2" class="anchored" data-anchor-id="intermezzo-what-are-marginal-effectsmodels"><span class="header-section-number">2.2</span> Intermezzo: What are marginal effects/models?</h3>
-<p>Marginal models are a class of models that are used to estimate the population average effect of a covariate on an outcome. This may be useful, for instance, when prediction or indeed complete modelling of the data are not the main goal of an analysis (Pepe and Anderson, 1994).</p>
-<blockquote class="blockquote">
-<p>“Consider, for example, the future practice of screening for risk of respiratory disease, where one might simply ascertain Vitamin A deficiency, weight, height and other covariates at a single time point and make a determination of the child’s risk based on these measurements.” (Pepe and Anderson, 1994)</p>
-</blockquote>
-<p>Here, the cross-sectional model is of primary interest for use in future screening practices and an in-depth model of longitudinal data is of secondary interest (Pepe and Anderson, 1994).</p>
-<p>This contrasts with psychological research, where the cross-sectional model is often deemed problematic in the context of longitudinal data analysis, because it conflates (rather than separates) within-subject and between-subject effects. Instead, we tend to be much more interested in (1) the model that best describes the data (i.e., has the best model fit) and (2) the “why” question: complete model of the effects (including within- and between-person effects). What differs here is the aim of the study.</p>
-<p>In what situations may psychological researchers be primarily interested in marginal effects over finding the best description of the data?</p>
-<ol type="1">
-<li><p>Clinical Psychology - Making a diagnosis based on measurements of covariates at a single time point, so that patients can be identified and helped who are at risk of developing a mental disorder.</p></li>
-<li><p>Educational Psychology - Making predictions of course performance based on covariates (e.g., hours studying on average) at a single time point, so that students can be identified and helped who are at risk of failing a course.</p></li>
-</ol>
-<p>Whether marginal or conditional models are preferred depends simply upon the research question and aim of the study:</p>
-<blockquote class="blockquote">
-<p>“We do not suggest that marginal models are preferable in general to conditional models. In Section 1 we provided one example where the marginal model is, in fact, preferable but in many cases it will not be. Indeed, which model should be used depends entirely on the questions to be addressed with the data. If a good description of the process generating the data is required then fully conditional or random effects models might be pursued.” (Pepe and Anderson, 1994)</p>
-</blockquote>
+<!-- ### Intermezzo: What are marginal effects/models? -->
+<!-- Marginal models are a class of models that are used to estimate the population average effect of a covariate on an outcome. This may be useful, for instance, when prediction or indeed complete modelling of the data are not the main goal of an analysis (Pepe and Anderson, 1994). -->
+<!-- > "Consider, for example, the future practice of screening for risk of respiratory disease, where one might simply ascertain Vitamin A deficiency, weight, height and other covariates at a single time point and make a determination of the child's risk based on these measurements." (Pepe and Anderson, 1994) -->
+<!-- Here, the cross-sectional model is of primary interest for use in future screening practices and an in-depth model of longitudinal data is of secondary interest (Pepe and Anderson, 1994). -->
+<!-- This contrasts with psychological research, where the cross-sectional model is often deemed problematic in the context of longitudinal data analysis, because it conflates (rather than separates) within-subject and between-subject effects. Instead, we tend to be much more interested in (1) the model that best describes the data (i.e., has the best model fit) and (2) the "why" question: complete model of the effects (including within- and between-person effects). What differs here is the aim of the study. -->
+<!-- In what situations may psychological researchers be primarily interested in marginal effects over finding the best description of the data? -->
+<!-- 1.  Clinical Psychology - Making a diagnosis based on measurements of covariates at a single time point, so that patients can be identified and helped who are at risk of developing a mental disorder. -->
+<!-- 2.  Educational Psychology - Making predictions of course performance based on covariates (e.g., hours studying on average) at a single time point, so that students can be identified and helped who are at risk of failing a course. -->
+<!-- Whether marginal or conditional models are preferred depends simply upon the research question and aim of the study: -->
+<!-- > "We do not suggest that marginal models are preferable in general to conditional models. In Section 1 we provided one example where the marginal model is, in fact, preferable but in many cases it will not be. Indeed, which model should be used depends entirely on the questions to be addressed with the data. If a good description of the process generating the data is required then fully conditional or random effects models might be pursued." (Pepe and Anderson, 1994) -->
 <!-- ### Intermezzo: What is the difference between REML and MLE? -->
 <!-- When fitting a multilevel linear model (MLM) we can choose between restricted maximum likelihood (REML) and maximum likelihood estimation (MLE). In REML, $\sigma^2$ and $\rho$ (intra class correlation) are essentially considered nuisance parameters, which makes sure that small sample bias is reduced. However, since we do not obtain the complete log likelihood, we cannot compare models using the likelihood ratio test. When sample sizes are sufficiently large, the two methods are asymptotically equivalent. -->
 <!-- the variance components $\sigma^2_u$ are estimated by maximizing the likelihood of the residuals, conditional on the fixed effects. In MLE, the residual variance $\sigma^2$ and the variance components $\sigma^2_u$ are estimated by maximizing the likelihood of the residuals, conditional on the fixed effects and the random effects. -->
 <!-- The difference between the two methods lies in the way they estimate the variance components of the model. -->
 <!-- source: [STAT 437: 007. Linear Marginal Models: Likelihood, Inference, and Asymptotics (Theory)](https://www.youtube.com/watch?v=ZjQo0H_FFwI&list=PL0Y1Z_F8RtX7jIbexsd3lizDXMET_WGX0&index=7) -->
 </section>
-<section id="example-in-diggle-et-al.-2002" class="level3" data-number="2.3">
-<h3 data-number="2.3" class="anchored" data-anchor-id="example-in-diggle-et-al.-2002"><span class="header-section-number">2.3</span> Example in Diggle et al.&nbsp;(2002)</h3>
-<p>In “Longitudinal Data Analysis” by Diggle et al.&nbsp;(2002), there is another example:</p>
+</section>
+<section id="example-in-diggle-et-al.-2002" class="level3" data-number="2.2">
+<h3 data-number="2.2" class="anchored" data-anchor-id="example-in-diggle-et-al.-2002"><span class="header-section-number">2.2</span> Example in Diggle et al.&nbsp;(2002)</h3>
+<p>In “Longitudinal Data Analysis” by Diggle et al.&nbsp;(2002), there is another example, where there is a time-varying endogenous covariate <span class="math inline">\(X_t\)</span> which is not caused by previous outcomes <span class="math inline">\(Y_{t-1}\)</span>, but instead is caused by previous values of covariate <span class="math inline">\(X_{t-1}\)</span>, which simultaneously affects future outcomes <span class="math inline">\(Y_{t+1}\)</span>.</p>
 <p>The following data generating mechanism was used:</p>
 <p><span class="math display">\[Y_{it} = \gamma_0 + \gamma_1 X_{it} + \gamma_2 X_{it-1} + b_i + e_{it} \quad \text{where} \quad b_i \sim N(0,1), \quad e_{it} \sim N(0,1),\]</span></p>
 <p><span class="math display">\[
@@ -551,7 +477,7 @@ X_{it} = \rho X_{it-1} + \epsilon_{it} \quad \text{where} \quad \epsilon_{it} \s
 </div>
 </div>
 </div>
-<p>In this DAG, we can see that <span class="math inline">\(X_{t-1}\)</span> is a confounder of the relationship between <span class="math inline">\(Y_{t}\)</span> and <span class="math inline">\(X_{t}\)</span>. As a result, the linear model</p>
+<p>In this DAG, we can see that <span class="math inline">\(X_{t-1}\)</span> is a confounder of the relationship between <span class="math inline">\(Y_{t}\)</span> and <span class="math inline">\(X_{t}\)</span>. However, of course, this variable will be controlled for by including a lagged version of <span class="math inline">\(X\)</span> in the model.</p>
 <p>Alternatively, we can also use a path diagram to illustrate more clearly the types of dependencies and relationships present in the data generating model.</p>
 <div class="cell" data-hash="Data-Generating-Models-Qian2020_cache/html/fig-Diggle2002_PathDiagram_d33a991844d47cff1e2428297855ab4d">
 <div class="cell-output-display">
@@ -575,207 +501,106 @@ X_{it} = \rho X_{it-1} + \epsilon_{it} \quad \text{where} \quad \epsilon_{it} \s
 <li>Using a <em>full conditional model</em>: estimating the linear model <span class="math inline">\(Y_{it} = \gamma_0 + \gamma_1 X_{it} + \gamma_2 X_{it-1}\)</span></li>
 </ol>
 <p>We can estimate the marginal model and its parameter <span class="math inline">\(\beta_1\)</span> using GEE and MLM. In this case, however, the marginal model is biased under all conditions except the GEE with working independence correlation structure.</p>
-<div class="cell" data-hash="Data-Generating-Models-Qian2020_cache/html/Diggle2002_CSM_7785a7bf94888afc4c4a9ec7e939d6ea">
-<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Load necessary libraries</span></span>
-<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(geepack)</span>
-<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Simulation parameters</span></span>
-<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">123</span>)</span>
-<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a>n_subjects <span class="ot">&lt;-</span> <span class="dv">100000</span> <span class="co"># Number of subjects</span></span>
-<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a>max_time <span class="ot">&lt;-</span> <span class="dv">10</span>    <span class="co"># Maximum number of observations per subject</span></span>
-<span id="cb14-8"><a href="#cb14-8" aria-hidden="true" tabindex="-1"></a>n_sim <span class="ot">&lt;-</span> <span class="dv">1</span>     <span class="co"># Number of simulations</span></span>
-<span id="cb14-9"><a href="#cb14-9" aria-hidden="true" tabindex="-1"></a>gamma_0 <span class="ot">&lt;-</span> <span class="dv">0</span></span>
-<span id="cb14-10"><a href="#cb14-10" aria-hidden="true" tabindex="-1"></a>gamma_1 <span class="ot">&lt;-</span> <span class="dv">1</span></span>
-<span id="cb14-11"><a href="#cb14-11" aria-hidden="true" tabindex="-1"></a>gamma_2 <span class="ot">&lt;-</span> <span class="dv">1</span></span>
-<span id="cb14-12"><a href="#cb14-12" aria-hidden="true" tabindex="-1"></a>rho_values <span class="ot">&lt;-</span> <span class="fu">seq</span>(<span class="fl">0.9</span>, <span class="fl">0.1</span>, <span class="at">by =</span> <span class="sc">-</span><span class="fl">0.2</span>) <span class="co"># Range of autocorrelations</span></span>
-<span id="cb14-13"><a href="#cb14-13" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-14"><a href="#cb14-14" aria-hidden="true" tabindex="-1"></a><span class="co"># Compute true marginal means for the fixed slope</span></span>
-<span id="cb14-15"><a href="#cb14-15" aria-hidden="true" tabindex="-1"></a>true_marginal_b1 <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
-<span id="cb14-16"><a href="#cb14-16" aria-hidden="true" tabindex="-1"></a>  <span class="at">rho =</span> rho_values,</span>
-<span id="cb14-17"><a href="#cb14-17" aria-hidden="true" tabindex="-1"></a>  <span class="at">beta1 =</span> gamma_1 <span class="sc">+</span> rho_values <span class="sc">*</span> gamma_2</span>
-<span id="cb14-18"><a href="#cb14-18" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb14-19"><a href="#cb14-19" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-20"><a href="#cb14-20" aria-hidden="true" tabindex="-1"></a><span class="co"># Function to generate data for a single simulation</span></span>
-<span id="cb14-21"><a href="#cb14-21" aria-hidden="true" tabindex="-1"></a>generate_data <span class="ot">&lt;-</span> <span class="cf">function</span>(rho) {</span>
-<span id="cb14-22"><a href="#cb14-22" aria-hidden="true" tabindex="-1"></a>  data_list <span class="ot">&lt;-</span> <span class="fu">list</span>()</span>
-<span id="cb14-23"><a href="#cb14-23" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb14-24"><a href="#cb14-24" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>n_subjects) {</span>
-<span id="cb14-25"><a href="#cb14-25" aria-hidden="true" tabindex="-1"></a>    <span class="co"># n_i &lt;- sample(2:max_time, 1) # Random number of observations (2 to 10)</span></span>
-<span id="cb14-26"><a href="#cb14-26" aria-hidden="true" tabindex="-1"></a>    n_i <span class="ot">&lt;-</span> <span class="dv">10</span> <span class="co"># or fixed number of observations</span></span>
-<span id="cb14-27"><a href="#cb14-27" aria-hidden="true" tabindex="-1"></a>    X_it <span class="ot">&lt;-</span> <span class="fu">numeric</span>(n_i)</span>
-<span id="cb14-28"><a href="#cb14-28" aria-hidden="true" tabindex="-1"></a>    Y_it <span class="ot">&lt;-</span> <span class="fu">numeric</span>(n_i)</span>
-<span id="cb14-29"><a href="#cb14-29" aria-hidden="true" tabindex="-1"></a>    b_i <span class="ot">&lt;-</span> <span class="fu">rnorm</span>(<span class="dv">1</span>, <span class="dv">0</span>, <span class="dv">1</span>)        <span class="co"># Random intercept</span></span>
-<span id="cb14-30"><a href="#cb14-30" aria-hidden="true" tabindex="-1"></a>    e_it <span class="ot">&lt;-</span> <span class="fu">rnorm</span>(n_i, <span class="dv">0</span>, <span class="dv">1</span>)</span>
-<span id="cb14-31"><a href="#cb14-31" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb14-32"><a href="#cb14-32" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Generate covariate X_it with autoregressive structure</span></span>
-<span id="cb14-33"><a href="#cb14-33" aria-hidden="true" tabindex="-1"></a>    X_it[<span class="dv">1</span>] <span class="ot">&lt;-</span> <span class="fu">rnorm</span>(<span class="dv">1</span>, <span class="dv">0</span>, <span class="dv">1</span>)    <span class="co"># Initial value for X_it</span></span>
-<span id="cb14-34"><a href="#cb14-34" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> (t <span class="cf">in</span> <span class="dv">2</span><span class="sc">:</span>n_i) {</span>
-<span id="cb14-35"><a href="#cb14-35" aria-hidden="true" tabindex="-1"></a>      X_it[t] <span class="ot">&lt;-</span> rho <span class="sc">*</span> X_it[t<span class="dv">-1</span>] <span class="sc">+</span> <span class="fu">rnorm</span>(<span class="dv">1</span>, <span class="dv">0</span>, <span class="fu">sqrt</span>(<span class="dv">1</span> <span class="sc">-</span> rho<span class="sc">^</span><span class="dv">2</span>))</span>
-<span id="cb14-36"><a href="#cb14-36" aria-hidden="true" tabindex="-1"></a>    }</span>
-<span id="cb14-37"><a href="#cb14-37" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb14-38"><a href="#cb14-38" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Generate outcome Y_it based on current and lagged values of X_it</span></span>
-<span id="cb14-39"><a href="#cb14-39" aria-hidden="true" tabindex="-1"></a>    Y_it[<span class="dv">1</span>] <span class="ot">&lt;-</span> gamma_0 <span class="sc">+</span> gamma_1 <span class="sc">*</span> X_it[<span class="dv">1</span>] <span class="sc">+</span> b_i <span class="sc">+</span> e_it[<span class="dv">1</span>]</span>
-<span id="cb14-40"><a href="#cb14-40" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> (n_i <span class="sc">&gt;</span> <span class="dv">1</span>) {</span>
-<span id="cb14-41"><a href="#cb14-41" aria-hidden="true" tabindex="-1"></a>      <span class="cf">for</span> (t <span class="cf">in</span> <span class="dv">2</span><span class="sc">:</span>n_i) {</span>
-<span id="cb14-42"><a href="#cb14-42" aria-hidden="true" tabindex="-1"></a>        Y_it[t] <span class="ot">&lt;-</span> gamma_0 <span class="sc">+</span> gamma_1 <span class="sc">*</span> X_it[t] <span class="sc">+</span> gamma_2 <span class="sc">*</span> X_it[t<span class="dv">-1</span>] <span class="sc">+</span> b_i <span class="sc">+</span> e_it[t]</span>
-<span id="cb14-43"><a href="#cb14-43" aria-hidden="true" tabindex="-1"></a>      }</span>
-<span id="cb14-44"><a href="#cb14-44" aria-hidden="true" tabindex="-1"></a>    }</span>
-<span id="cb14-45"><a href="#cb14-45" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb14-46"><a href="#cb14-46" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Store the data in a list</span></span>
-<span id="cb14-47"><a href="#cb14-47" aria-hidden="true" tabindex="-1"></a>    subject_data <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
-<span id="cb14-48"><a href="#cb14-48" aria-hidden="true" tabindex="-1"></a>      <span class="at">subject =</span> i,</span>
-<span id="cb14-49"><a href="#cb14-49" aria-hidden="true" tabindex="-1"></a>      <span class="at">time =</span> <span class="dv">1</span><span class="sc">:</span>n_i,</span>
-<span id="cb14-50"><a href="#cb14-50" aria-hidden="true" tabindex="-1"></a>      <span class="at">Y =</span> Y_it,</span>
-<span id="cb14-51"><a href="#cb14-51" aria-hidden="true" tabindex="-1"></a>      <span class="at">X =</span> X_it</span>
-<span id="cb14-52"><a href="#cb14-52" aria-hidden="true" tabindex="-1"></a>    )</span>
-<span id="cb14-53"><a href="#cb14-53" aria-hidden="true" tabindex="-1"></a>    data_list[[i]] <span class="ot">&lt;-</span> subject_data</span>
-<span id="cb14-54"><a href="#cb14-54" aria-hidden="true" tabindex="-1"></a>  }</span>
-<span id="cb14-55"><a href="#cb14-55" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb14-56"><a href="#cb14-56" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Combine all subjects' data into a single data frame</span></span>
-<span id="cb14-57"><a href="#cb14-57" aria-hidden="true" tabindex="-1"></a>  data <span class="ot">&lt;-</span> <span class="fu">do.call</span>(rbind, data_list)</span>
-<span id="cb14-58"><a href="#cb14-58" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(data)</span>
-<span id="cb14-59"><a href="#cb14-59" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb14-60"><a href="#cb14-60" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-61"><a href="#cb14-61" aria-hidden="true" tabindex="-1"></a><span class="co"># Simulation loop</span></span>
-<span id="cb14-62"><a href="#cb14-62" aria-hidden="true" tabindex="-1"></a>results <span class="ot">&lt;-</span> <span class="fu">data.frame</span>()</span>
-<span id="cb14-63"><a href="#cb14-63" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (rho <span class="cf">in</span> rho_values) {</span>
-<span id="cb14-64"><a href="#cb14-64" aria-hidden="true" tabindex="-1"></a>  beta1_estimates <span class="ot">&lt;-</span> <span class="fu">matrix</span>(<span class="cn">NA</span>, n_sim, <span class="dv">4</span>) <span class="co"># Store beta1 estimates for each correlation structure</span></span>
-<span id="cb14-65"><a href="#cb14-65" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb14-66"><a href="#cb14-66" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span> (sim <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>n_sim) {</span>
-<span id="cb14-67"><a href="#cb14-67" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Generate data for this simulation</span></span>
-<span id="cb14-68"><a href="#cb14-68" aria-hidden="true" tabindex="-1"></a>    sim_data <span class="ot">&lt;-</span> <span class="fu">generate_data</span>(rho)</span>
-<span id="cb14-69"><a href="#cb14-69" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb14-70"><a href="#cb14-70" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Fit GEE models with different working correlation structures</span></span>
-<span id="cb14-71"><a href="#cb14-71" aria-hidden="true" tabindex="-1"></a>    gee_ind <span class="ot">&lt;-</span> <span class="fu">geeglm</span>(Y <span class="sc">~</span> X, <span class="at">id =</span> subject, <span class="at">data =</span> sim_data, <span class="at">corstr =</span> <span class="st">"independence"</span>)</span>
-<span id="cb14-72"><a href="#cb14-72" aria-hidden="true" tabindex="-1"></a>    gee_exch <span class="ot">&lt;-</span> <span class="fu">geeglm</span>(Y <span class="sc">~</span> X, <span class="at">id =</span> subject, <span class="at">data =</span> sim_data, <span class="at">corstr =</span> <span class="st">"exchangeable"</span>)</span>
-<span id="cb14-73"><a href="#cb14-73" aria-hidden="true" tabindex="-1"></a>    gee_ar1 <span class="ot">&lt;-</span> <span class="fu">geeglm</span>(Y <span class="sc">~</span> X, <span class="at">id =</span> subject, <span class="at">data =</span> sim_data, <span class="at">corstr =</span> <span class="st">"ar1"</span>)</span>
-<span id="cb14-74"><a href="#cb14-74" aria-hidden="true" tabindex="-1"></a>    mlm_mle <span class="ot">&lt;-</span> <span class="fu">lmer</span>(Y <span class="sc">~</span> X <span class="sc">+</span> (<span class="dv">1</span> <span class="sc">|</span> subject), <span class="at">data =</span> sim_data, <span class="at">REML =</span> <span class="cn">FALSE</span>)</span>
-<span id="cb14-75"><a href="#cb14-75" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb14-76"><a href="#cb14-76" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Store the estimated beta1 for each model</span></span>
-<span id="cb14-77"><a href="#cb14-77" aria-hidden="true" tabindex="-1"></a>    beta1_estimates[sim, <span class="dv">1</span>] <span class="ot">&lt;-</span> <span class="fu">coef</span>(gee_ind)[<span class="st">"X"</span>]</span>
-<span id="cb14-78"><a href="#cb14-78" aria-hidden="true" tabindex="-1"></a>    beta1_estimates[sim, <span class="dv">2</span>] <span class="ot">&lt;-</span> <span class="fu">coef</span>(gee_exch)[<span class="st">"X"</span>]</span>
-<span id="cb14-79"><a href="#cb14-79" aria-hidden="true" tabindex="-1"></a>    beta1_estimates[sim, <span class="dv">3</span>] <span class="ot">&lt;-</span> <span class="fu">coef</span>(gee_ar1)[<span class="st">"X"</span>]</span>
-<span id="cb14-80"><a href="#cb14-80" aria-hidden="true" tabindex="-1"></a>    beta1_estimates[sim, <span class="dv">4</span>] <span class="ot">&lt;-</span> <span class="fu">fixef</span>(mlm_mle)[<span class="st">"X"</span>]</span>
-<span id="cb14-81"><a href="#cb14-81" aria-hidden="true" tabindex="-1"></a>  }</span>
-<span id="cb14-82"><a href="#cb14-82" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb14-83"><a href="#cb14-83" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Calculate average estimates of beta1 for each correlation structure</span></span>
-<span id="cb14-84"><a href="#cb14-84" aria-hidden="true" tabindex="-1"></a>  mean_estimates <span class="ot">&lt;-</span> <span class="fu">colMeans</span>(beta1_estimates, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)</span>
-<span id="cb14-85"><a href="#cb14-85" aria-hidden="true" tabindex="-1"></a>  results <span class="ot">&lt;-</span> <span class="fu">rbind</span>(results, <span class="fu">data.frame</span>(</span>
-<span id="cb14-86"><a href="#cb14-86" aria-hidden="true" tabindex="-1"></a>    <span class="at">rho =</span> rho,</span>
-<span id="cb14-87"><a href="#cb14-87" aria-hidden="true" tabindex="-1"></a>    <span class="at">beta1_ind =</span> mean_estimates[<span class="dv">1</span>],</span>
-<span id="cb14-88"><a href="#cb14-88" aria-hidden="true" tabindex="-1"></a>    <span class="at">beta1_exch =</span> mean_estimates[<span class="dv">2</span>],</span>
-<span id="cb14-89"><a href="#cb14-89" aria-hidden="true" tabindex="-1"></a>    <span class="at">beta1_ar1 =</span> mean_estimates[<span class="dv">3</span>],</span>
-<span id="cb14-90"><a href="#cb14-90" aria-hidden="true" tabindex="-1"></a>    <span class="at">beta1_mlm =</span> mean_estimates[<span class="dv">4</span>]</span>
-<span id="cb14-91"><a href="#cb14-91" aria-hidden="true" tabindex="-1"></a>  ))</span>
-<span id="cb14-92"><a href="#cb14-92" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb14-93"><a href="#cb14-93" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-94"><a href="#cb14-94" aria-hidden="true" tabindex="-1"></a><span class="co"># format and save results</span></span>
-<span id="cb14-95"><a href="#cb14-95" aria-hidden="true" tabindex="-1"></a>results_complete <span class="ot">&lt;-</span> <span class="fu">cbind</span>(results, <span class="at">beta1_true =</span> true_marginal_b1<span class="sc">$</span>beta1) <span class="sc">%&gt;%</span></span>
-<span id="cb14-96"><a href="#cb14-96" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(rho, beta1_true, beta1_ind, beta1_exch, beta1_ar1, beta1_mlm)</span>
-<span id="cb14-97"><a href="#cb14-97" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-98"><a href="#cb14-98" aria-hidden="true" tabindex="-1"></a><span class="fu">saveRDS</span>(results_complete, <span class="at">file =</span> <span class="st">"Diggle2002_results_CSM_1_100000.rds"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Simulation parameters</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">123</span>)</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>n_subjects <span class="ot">&lt;-</span> <span class="dv">100000</span> <span class="co"># Number of subjects</span></span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>max_time <span class="ot">&lt;-</span> <span class="dv">10</span>    <span class="co"># Maximum number of observations per subject</span></span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>n_sim <span class="ot">&lt;-</span> <span class="dv">1</span>     <span class="co"># Number of simulations</span></span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>gamma_0 <span class="ot">&lt;-</span> <span class="dv">0</span></span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>gamma_1 <span class="ot">&lt;-</span> <span class="dv">1</span></span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>gamma_2 <span class="ot">&lt;-</span> <span class="dv">1</span></span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>rho_values <span class="ot">&lt;-</span> <span class="fu">seq</span>(<span class="fl">0.9</span>, <span class="fl">0.1</span>, <span class="at">by =</span> <span class="sc">-</span><span class="fl">0.2</span>) <span class="co"># Range of autocorrelations</span></span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>n_subjects) {</span>
+<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a>    n_i <span class="ot">&lt;-</span> <span class="dv">10</span> <span class="co"># or fixed number of observations</span></span>
+<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a>    X_it <span class="ot">&lt;-</span> <span class="fu">numeric</span>(n_i)</span>
+<span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a>    Y_it <span class="ot">&lt;-</span> <span class="fu">numeric</span>(n_i)</span>
+<span id="cb6-15"><a href="#cb6-15" aria-hidden="true" tabindex="-1"></a>    b_i <span class="ot">&lt;-</span> <span class="fu">rnorm</span>(<span class="dv">1</span>, <span class="dv">0</span>, <span class="dv">1</span>)        <span class="co"># Random intercept</span></span>
+<span id="cb6-16"><a href="#cb6-16" aria-hidden="true" tabindex="-1"></a>    e_it <span class="ot">&lt;-</span> <span class="fu">rnorm</span>(n_i, <span class="dv">0</span>, <span class="dv">1</span>)</span>
+<span id="cb6-17"><a href="#cb6-17" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb6-18"><a href="#cb6-18" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Generate covariate X_it with autoregressive structure</span></span>
+<span id="cb6-19"><a href="#cb6-19" aria-hidden="true" tabindex="-1"></a>    X_it[<span class="dv">1</span>] <span class="ot">&lt;-</span> <span class="fu">rnorm</span>(<span class="dv">1</span>, <span class="dv">0</span>, <span class="dv">1</span>)    <span class="co"># Initial value for X_it</span></span>
+<span id="cb6-20"><a href="#cb6-20" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> (t <span class="cf">in</span> <span class="dv">2</span><span class="sc">:</span>n_i) {</span>
+<span id="cb6-21"><a href="#cb6-21" aria-hidden="true" tabindex="-1"></a>      X_it[t] <span class="ot">&lt;-</span> rho <span class="sc">*</span> X_it[t<span class="dv">-1</span>] <span class="sc">+</span> <span class="fu">rnorm</span>(<span class="dv">1</span>, <span class="dv">0</span>, <span class="fu">sqrt</span>(<span class="dv">1</span> <span class="sc">-</span> rho<span class="sc">^</span><span class="dv">2</span>))</span>
+<span id="cb6-22"><a href="#cb6-22" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb6-23"><a href="#cb6-23" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb6-24"><a href="#cb6-24" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Generate outcome Y_it based on current and lagged values of X_it</span></span>
+<span id="cb6-25"><a href="#cb6-25" aria-hidden="true" tabindex="-1"></a>    Y_it[<span class="dv">1</span>] <span class="ot">&lt;-</span> gamma_0 <span class="sc">+</span> gamma_1 <span class="sc">*</span> X_it[<span class="dv">1</span>] <span class="sc">+</span> b_i <span class="sc">+</span> e_it[<span class="dv">1</span>]</span>
+<span id="cb6-26"><a href="#cb6-26" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> (n_i <span class="sc">&gt;</span> <span class="dv">1</span>) {</span>
+<span id="cb6-27"><a href="#cb6-27" aria-hidden="true" tabindex="-1"></a>      <span class="cf">for</span> (t <span class="cf">in</span> <span class="dv">2</span><span class="sc">:</span>n_i) {</span>
+<span id="cb6-28"><a href="#cb6-28" aria-hidden="true" tabindex="-1"></a>        Y_it[t] <span class="ot">&lt;-</span> gamma_0 <span class="sc">+</span> gamma_1 <span class="sc">*</span> X_it[t] <span class="sc">+</span> gamma_2 <span class="sc">*</span> X_it[t<span class="dv">-1</span>] <span class="sc">+</span> b_i <span class="sc">+</span> e_it[t]</span>
+<span id="cb6-29"><a href="#cb6-29" aria-hidden="true" tabindex="-1"></a>      }</span>
+<span id="cb6-30"><a href="#cb6-30" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb6-31"><a href="#cb6-31" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb6-32"><a href="#cb6-32" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Store the data in a list</span></span>
+<span id="cb6-33"><a href="#cb6-33" aria-hidden="true" tabindex="-1"></a>    subject_data <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
+<span id="cb6-34"><a href="#cb6-34" aria-hidden="true" tabindex="-1"></a>      <span class="at">subject =</span> i,</span>
+<span id="cb6-35"><a href="#cb6-35" aria-hidden="true" tabindex="-1"></a>      <span class="at">time =</span> <span class="dv">1</span><span class="sc">:</span>n_i,</span>
+<span id="cb6-36"><a href="#cb6-36" aria-hidden="true" tabindex="-1"></a>      <span class="at">Y =</span> Y_it,</span>
+<span id="cb6-37"><a href="#cb6-37" aria-hidden="true" tabindex="-1"></a>      <span class="at">X =</span> X_it</span>
+<span id="cb6-38"><a href="#cb6-38" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb6-39"><a href="#cb6-39" aria-hidden="true" tabindex="-1"></a>    data_list[[i]] <span class="ot">&lt;-</span> subject_data</span>
+<span id="cb6-40"><a href="#cb6-40" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb6-41"><a href="#cb6-41" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-42"><a href="#cb6-42" aria-hidden="true" tabindex="-1"></a><span class="co"># Fit GEE models with different working correlation structures</span></span>
+<span id="cb6-43"><a href="#cb6-43" aria-hidden="true" tabindex="-1"></a>gee_ind <span class="ot">&lt;-</span> <span class="fu">geeglm</span>(Y <span class="sc">~</span> X, <span class="at">id =</span> subject, <span class="at">data =</span> sim_data, <span class="at">corstr =</span> <span class="st">"independence"</span>)</span>
+<span id="cb6-44"><a href="#cb6-44" aria-hidden="true" tabindex="-1"></a>mlm_mle <span class="ot">&lt;-</span> <span class="fu">lmer</span>(Y <span class="sc">~</span> X <span class="sc">+</span> (<span class="dv">1</span> <span class="sc">|</span> subject), <span class="at">data =</span> sim_data, <span class="at">REML =</span> <span class="cn">FALSE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Alternatively, we can include X_lag1 in the analysis/estimation and estimate the full conditional model:</p>
-<div class="cell" data-hash="Data-Generating-Models-Qian2020_cache/html/Diggle2002_FCM_9974d03b4ccacbdf3c657123ffc5a6eb">
-<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Load necessary libraries</span></span>
-<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(geepack)</span>
-<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Simulation parameters</span></span>
-<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">123</span>)</span>
-<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a>n_subjects <span class="ot">&lt;-</span> <span class="dv">100000</span> <span class="co"># Number of subjects</span></span>
-<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a>max_time <span class="ot">&lt;-</span> <span class="dv">1</span>    <span class="co"># Maximum number of observations per subject</span></span>
-<span id="cb15-8"><a href="#cb15-8" aria-hidden="true" tabindex="-1"></a>n_sim <span class="ot">&lt;-</span> <span class="dv">1</span>     <span class="co"># Number of simulations</span></span>
-<span id="cb15-9"><a href="#cb15-9" aria-hidden="true" tabindex="-1"></a>gamma_0 <span class="ot">&lt;-</span> <span class="dv">0</span></span>
-<span id="cb15-10"><a href="#cb15-10" aria-hidden="true" tabindex="-1"></a>gamma_1 <span class="ot">&lt;-</span> <span class="dv">1</span></span>
-<span id="cb15-11"><a href="#cb15-11" aria-hidden="true" tabindex="-1"></a>gamma_2 <span class="ot">&lt;-</span> <span class="dv">1</span></span>
-<span id="cb15-12"><a href="#cb15-12" aria-hidden="true" tabindex="-1"></a>rho_values <span class="ot">&lt;-</span> <span class="fu">seq</span>(<span class="fl">0.9</span>, <span class="fl">0.1</span>, <span class="at">by =</span> <span class="sc">-</span><span class="fl">0.2</span>) <span class="co"># Range of autocorrelations</span></span>
-<span id="cb15-13"><a href="#cb15-13" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb15-14"><a href="#cb15-14" aria-hidden="true" tabindex="-1"></a><span class="co"># State true marginal conditional means for the fixed slope</span></span>
-<span id="cb15-15"><a href="#cb15-15" aria-hidden="true" tabindex="-1"></a>true_cond_gamma1 <span class="ot">&lt;-</span> <span class="fu">rep</span>(gamma_1, <span class="fu">length</span>(rho_values))</span>
-<span id="cb15-16"><a href="#cb15-16" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb15-17"><a href="#cb15-17" aria-hidden="true" tabindex="-1"></a><span class="co"># Function to generate data for a single simulation</span></span>
-<span id="cb15-18"><a href="#cb15-18" aria-hidden="true" tabindex="-1"></a>generate_data <span class="ot">&lt;-</span> <span class="cf">function</span>(rho) {</span>
-<span id="cb15-19"><a href="#cb15-19" aria-hidden="true" tabindex="-1"></a>  data_list <span class="ot">&lt;-</span> <span class="fu">list</span>()</span>
-<span id="cb15-20"><a href="#cb15-20" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb15-21"><a href="#cb15-21" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>n_subjects) {</span>
-<span id="cb15-22"><a href="#cb15-22" aria-hidden="true" tabindex="-1"></a>    <span class="co"># n_i &lt;- sample(2:max_time, 1) # Random number of observations (2 to 10)</span></span>
-<span id="cb15-23"><a href="#cb15-23" aria-hidden="true" tabindex="-1"></a>    n_i <span class="ot">&lt;-</span> <span class="dv">10</span> <span class="co"># or fixed number of observations</span></span>
-<span id="cb15-24"><a href="#cb15-24" aria-hidden="true" tabindex="-1"></a>    X_it <span class="ot">&lt;-</span> <span class="fu">numeric</span>(n_i)</span>
-<span id="cb15-25"><a href="#cb15-25" aria-hidden="true" tabindex="-1"></a>    Y_it <span class="ot">&lt;-</span> <span class="fu">numeric</span>(n_i)</span>
-<span id="cb15-26"><a href="#cb15-26" aria-hidden="true" tabindex="-1"></a>    b_i <span class="ot">&lt;-</span> <span class="fu">rnorm</span>(<span class="dv">1</span>, <span class="dv">0</span>, <span class="dv">1</span>)        <span class="co"># Random intercept</span></span>
-<span id="cb15-27"><a href="#cb15-27" aria-hidden="true" tabindex="-1"></a>    e_it <span class="ot">&lt;-</span> <span class="fu">rnorm</span>(n_i, <span class="dv">0</span>, <span class="dv">1</span>)</span>
-<span id="cb15-28"><a href="#cb15-28" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb15-29"><a href="#cb15-29" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Generate covariate X_it with autoregressive structure</span></span>
-<span id="cb15-30"><a href="#cb15-30" aria-hidden="true" tabindex="-1"></a>    X_it[<span class="dv">1</span>] <span class="ot">&lt;-</span> <span class="fu">rnorm</span>(<span class="dv">1</span>, <span class="dv">0</span>, <span class="dv">1</span>)    <span class="co"># Initial value for X_it</span></span>
-<span id="cb15-31"><a href="#cb15-31" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> (t <span class="cf">in</span> <span class="dv">2</span><span class="sc">:</span>n_i) {</span>
-<span id="cb15-32"><a href="#cb15-32" aria-hidden="true" tabindex="-1"></a>      X_it[t] <span class="ot">&lt;-</span> rho <span class="sc">*</span> X_it[t<span class="dv">-1</span>] <span class="sc">+</span> <span class="fu">rnorm</span>(<span class="dv">1</span>, <span class="dv">0</span>, <span class="fu">sqrt</span>(<span class="dv">1</span> <span class="sc">-</span> rho<span class="sc">^</span><span class="dv">2</span>))</span>
-<span id="cb15-33"><a href="#cb15-33" aria-hidden="true" tabindex="-1"></a>    }</span>
-<span id="cb15-34"><a href="#cb15-34" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb15-35"><a href="#cb15-35" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Generate outcome Y_it based on current and lagged values of X_it</span></span>
-<span id="cb15-36"><a href="#cb15-36" aria-hidden="true" tabindex="-1"></a>    Y_it[<span class="dv">1</span>] <span class="ot">&lt;-</span> gamma_0 <span class="sc">+</span> gamma_1 <span class="sc">*</span> X_it[<span class="dv">1</span>] <span class="sc">+</span> b_i <span class="sc">+</span> e_it[<span class="dv">1</span>]</span>
-<span id="cb15-37"><a href="#cb15-37" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> (n_i <span class="sc">&gt;</span> <span class="dv">1</span>) {</span>
-<span id="cb15-38"><a href="#cb15-38" aria-hidden="true" tabindex="-1"></a>      <span class="cf">for</span> (t <span class="cf">in</span> <span class="dv">2</span><span class="sc">:</span>n_i) {</span>
-<span id="cb15-39"><a href="#cb15-39" aria-hidden="true" tabindex="-1"></a>        Y_it[t] <span class="ot">&lt;-</span> gamma_0 <span class="sc">+</span> gamma_1 <span class="sc">*</span> X_it[t] <span class="sc">+</span> gamma_2 <span class="sc">*</span> X_it[t<span class="dv">-1</span>] <span class="sc">+</span> b_i <span class="sc">+</span> e_it[t]</span>
-<span id="cb15-40"><a href="#cb15-40" aria-hidden="true" tabindex="-1"></a>      }</span>
-<span id="cb15-41"><a href="#cb15-41" aria-hidden="true" tabindex="-1"></a>    }</span>
-<span id="cb15-42"><a href="#cb15-42" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb15-43"><a href="#cb15-43" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Store the data in a list</span></span>
-<span id="cb15-44"><a href="#cb15-44" aria-hidden="true" tabindex="-1"></a>    subject_data <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
-<span id="cb15-45"><a href="#cb15-45" aria-hidden="true" tabindex="-1"></a>      <span class="at">subject =</span> i,</span>
-<span id="cb15-46"><a href="#cb15-46" aria-hidden="true" tabindex="-1"></a>      <span class="at">time =</span> <span class="dv">1</span><span class="sc">:</span>n_i,</span>
-<span id="cb15-47"><a href="#cb15-47" aria-hidden="true" tabindex="-1"></a>      <span class="at">Y =</span> Y_it,</span>
-<span id="cb15-48"><a href="#cb15-48" aria-hidden="true" tabindex="-1"></a>      <span class="at">X =</span> X_it,</span>
-<span id="cb15-49"><a href="#cb15-49" aria-hidden="true" tabindex="-1"></a>      <span class="at">X_lag1 =</span> <span class="fu">c</span>(<span class="cn">NA</span>, X_it[<span class="sc">-</span>n_i]) <span class="co"># Lagged value of X, with NA for the first observation</span></span>
-<span id="cb15-50"><a href="#cb15-50" aria-hidden="true" tabindex="-1"></a>    )</span>
-<span id="cb15-51"><a href="#cb15-51" aria-hidden="true" tabindex="-1"></a>    data_list[[i]] <span class="ot">&lt;-</span> subject_data</span>
-<span id="cb15-52"><a href="#cb15-52" aria-hidden="true" tabindex="-1"></a>  }</span>
-<span id="cb15-53"><a href="#cb15-53" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb15-54"><a href="#cb15-54" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Combine all subjects' data into a single data frame</span></span>
-<span id="cb15-55"><a href="#cb15-55" aria-hidden="true" tabindex="-1"></a>  data <span class="ot">&lt;-</span> <span class="fu">do.call</span>(rbind, data_list)</span>
-<span id="cb15-56"><a href="#cb15-56" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(data)</span>
-<span id="cb15-57"><a href="#cb15-57" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb15-58"><a href="#cb15-58" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb15-59"><a href="#cb15-59" aria-hidden="true" tabindex="-1"></a><span class="co"># Simulation loop</span></span>
-<span id="cb15-60"><a href="#cb15-60" aria-hidden="true" tabindex="-1"></a>results <span class="ot">&lt;-</span> <span class="fu">data.frame</span>()</span>
-<span id="cb15-61"><a href="#cb15-61" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (rho <span class="cf">in</span> rho_values) {</span>
-<span id="cb15-62"><a href="#cb15-62" aria-hidden="true" tabindex="-1"></a>  gamma1_estimates <span class="ot">&lt;-</span> <span class="fu">matrix</span>(<span class="cn">NA</span>, n_sim, <span class="dv">4</span>) <span class="co"># Store beta1 estimates for each correlation structure</span></span>
-<span id="cb15-63"><a href="#cb15-63" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb15-64"><a href="#cb15-64" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span> (sim <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>n_sim) {</span>
-<span id="cb15-65"><a href="#cb15-65" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Generate data for this simulation</span></span>
-<span id="cb15-66"><a href="#cb15-66" aria-hidden="true" tabindex="-1"></a>    sim_data <span class="ot">&lt;-</span> <span class="fu">generate_data</span>(rho)</span>
-<span id="cb15-67"><a href="#cb15-67" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb15-68"><a href="#cb15-68" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Remove rows with missing X_lag1 values</span></span>
-<span id="cb15-69"><a href="#cb15-69" aria-hidden="true" tabindex="-1"></a>    sim_data <span class="ot">&lt;-</span> <span class="fu">na.omit</span>(sim_data)</span>
-<span id="cb15-70"><a href="#cb15-70" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb15-71"><a href="#cb15-71" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Fit GEE models with different working correlation structures</span></span>
-<span id="cb15-72"><a href="#cb15-72" aria-hidden="true" tabindex="-1"></a>    gee_ind <span class="ot">&lt;-</span> <span class="fu">geeglm</span>(Y <span class="sc">~</span> X <span class="sc">+</span> X_lag1, <span class="at">id =</span> subject, <span class="at">data =</span> sim_data, <span class="at">corstr =</span> <span class="st">"independence"</span>)</span>
-<span id="cb15-73"><a href="#cb15-73" aria-hidden="true" tabindex="-1"></a>    gee_exch <span class="ot">&lt;-</span> <span class="fu">geeglm</span>(Y <span class="sc">~</span> X <span class="sc">+</span> X_lag1, <span class="at">id =</span> subject, <span class="at">data =</span> sim_data, <span class="at">corstr =</span> <span class="st">"exchangeable"</span>)</span>
-<span id="cb15-74"><a href="#cb15-74" aria-hidden="true" tabindex="-1"></a>    gee_ar1 <span class="ot">&lt;-</span> <span class="fu">geeglm</span>(Y <span class="sc">~</span> X <span class="sc">+</span> X_lag1, <span class="at">id =</span> subject, <span class="at">data =</span> sim_data, <span class="at">corstr =</span> <span class="st">"ar1"</span>)</span>
-<span id="cb15-75"><a href="#cb15-75" aria-hidden="true" tabindex="-1"></a>    mlm_mle <span class="ot">&lt;-</span> <span class="fu">lmer</span>(Y <span class="sc">~</span> X <span class="sc">+</span> X_lag1 <span class="sc">+</span> (<span class="dv">1</span> <span class="sc">|</span> subject), <span class="at">data =</span> sim_data, <span class="at">REML =</span> <span class="cn">FALSE</span>)</span>
-<span id="cb15-76"><a href="#cb15-76" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb15-77"><a href="#cb15-77" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Store the estimated beta1 for each model</span></span>
-<span id="cb15-78"><a href="#cb15-78" aria-hidden="true" tabindex="-1"></a>    gamma1_estimates[sim, <span class="dv">1</span>] <span class="ot">&lt;-</span> <span class="fu">coef</span>(gee_ind)[<span class="st">"X"</span>]</span>
-<span id="cb15-79"><a href="#cb15-79" aria-hidden="true" tabindex="-1"></a>    gamma1_estimates[sim, <span class="dv">2</span>] <span class="ot">&lt;-</span> <span class="fu">coef</span>(gee_exch)[<span class="st">"X"</span>]</span>
-<span id="cb15-80"><a href="#cb15-80" aria-hidden="true" tabindex="-1"></a>    gamma1_estimates[sim, <span class="dv">3</span>] <span class="ot">&lt;-</span> <span class="fu">coef</span>(gee_ar1)[<span class="st">"X"</span>]</span>
-<span id="cb15-81"><a href="#cb15-81" aria-hidden="true" tabindex="-1"></a>    gamma1_estimates[sim, <span class="dv">4</span>] <span class="ot">&lt;-</span> <span class="fu">fixef</span>(mlm_mle)[<span class="st">"X"</span>]</span>
-<span id="cb15-82"><a href="#cb15-82" aria-hidden="true" tabindex="-1"></a>  }</span>
-<span id="cb15-83"><a href="#cb15-83" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb15-84"><a href="#cb15-84" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Calculate average estimates of beta1 for each correlation structure</span></span>
-<span id="cb15-85"><a href="#cb15-85" aria-hidden="true" tabindex="-1"></a>  mean_estimates <span class="ot">&lt;-</span> <span class="fu">colMeans</span>(beta1_estimates, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)</span>
-<span id="cb15-86"><a href="#cb15-86" aria-hidden="true" tabindex="-1"></a>  results <span class="ot">&lt;-</span> <span class="fu">rbind</span>(results, <span class="fu">data.frame</span>(</span>
-<span id="cb15-87"><a href="#cb15-87" aria-hidden="true" tabindex="-1"></a>    <span class="at">rho =</span> rho,</span>
-<span id="cb15-88"><a href="#cb15-88" aria-hidden="true" tabindex="-1"></a>    <span class="at">gamma1_ind =</span> mean_estimates[<span class="dv">1</span>],</span>
-<span id="cb15-89"><a href="#cb15-89" aria-hidden="true" tabindex="-1"></a>    <span class="at">gamma1_exch =</span> mean_estimates[<span class="dv">2</span>],</span>
-<span id="cb15-90"><a href="#cb15-90" aria-hidden="true" tabindex="-1"></a>    <span class="at">gamma1_ar1 =</span> mean_estimates[<span class="dv">3</span>],</span>
-<span id="cb15-91"><a href="#cb15-91" aria-hidden="true" tabindex="-1"></a>    <span class="at">gamma1_mlm =</span> mean_estimates[<span class="dv">4</span>]</span>
-<span id="cb15-92"><a href="#cb15-92" aria-hidden="true" tabindex="-1"></a>  ))</span>
-<span id="cb15-93"><a href="#cb15-93" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb15-94"><a href="#cb15-94" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb15-95"><a href="#cb15-95" aria-hidden="true" tabindex="-1"></a><span class="co"># format and save results</span></span>
-<span id="cb15-96"><a href="#cb15-96" aria-hidden="true" tabindex="-1"></a>results_complete <span class="ot">&lt;-</span> <span class="fu">cbind</span>(results, <span class="at">gamma1_true =</span> true_cond_gamma1) <span class="sc">%&gt;%</span></span>
-<span id="cb15-97"><a href="#cb15-97" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(rho, gamma1_true, gamma1_ind, gamma1_exch, gamma1_ar1, gamma1_mlm)</span>
-<span id="cb15-98"><a href="#cb15-98" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb15-99"><a href="#cb15-99" aria-hidden="true" tabindex="-1"></a><span class="fu">saveRDS</span>(results_complete, <span class="at">file =</span> <span class="st">"Diggle2002_results_FCM_1_100000.rds"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell" data-hash="Data-Generating-Models-Qian2020_cache/html/Diggle2002_FCM-spec_4e6e6e4e2ee9805bc4f62facd74fe41a">
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Load necessary libraries</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(geepack)</span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Simulation parameters</span></span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">123</span>)</span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>n_subjects <span class="ot">&lt;-</span> <span class="dv">100000</span> <span class="co"># Number of subjects</span></span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>max_time <span class="ot">&lt;-</span> <span class="dv">1</span>    <span class="co"># Maximum number of observations per subject</span></span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>n_sim <span class="ot">&lt;-</span> <span class="dv">1</span>     <span class="co"># Number of simulations</span></span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>gamma_0 <span class="ot">&lt;-</span> <span class="dv">0</span></span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a>gamma_1 <span class="ot">&lt;-</span> <span class="dv">1</span></span>
+<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a>gamma_2 <span class="ot">&lt;-</span> <span class="dv">1</span></span>
+<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a>rho_values <span class="ot">&lt;-</span> <span class="fu">seq</span>(<span class="fl">0.9</span>, <span class="fl">0.1</span>, <span class="at">by =</span> <span class="sc">-</span><span class="fl">0.2</span>) <span class="co"># Range of autocorrelations</span></span>
+<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>n_subjects) {</span>
+<span id="cb7-15"><a href="#cb7-15" aria-hidden="true" tabindex="-1"></a>  <span class="co"># n_i &lt;- sample(2:max_time, 1) # Random number of observations (2 to 10)</span></span>
+<span id="cb7-16"><a href="#cb7-16" aria-hidden="true" tabindex="-1"></a>  n_i <span class="ot">&lt;-</span> <span class="dv">10</span> <span class="co"># or fixed number of observations</span></span>
+<span id="cb7-17"><a href="#cb7-17" aria-hidden="true" tabindex="-1"></a>  X_it <span class="ot">&lt;-</span> <span class="fu">numeric</span>(n_i)</span>
+<span id="cb7-18"><a href="#cb7-18" aria-hidden="true" tabindex="-1"></a>  Y_it <span class="ot">&lt;-</span> <span class="fu">numeric</span>(n_i)</span>
+<span id="cb7-19"><a href="#cb7-19" aria-hidden="true" tabindex="-1"></a>  b_i <span class="ot">&lt;-</span> <span class="fu">rnorm</span>(<span class="dv">1</span>, <span class="dv">0</span>, <span class="dv">1</span>)        <span class="co"># Random intercept</span></span>
+<span id="cb7-20"><a href="#cb7-20" aria-hidden="true" tabindex="-1"></a>  e_it <span class="ot">&lt;-</span> <span class="fu">rnorm</span>(n_i, <span class="dv">0</span>, <span class="dv">1</span>)</span>
+<span id="cb7-21"><a href="#cb7-21" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb7-22"><a href="#cb7-22" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Generate covariate X_it with autoregressive structure</span></span>
+<span id="cb7-23"><a href="#cb7-23" aria-hidden="true" tabindex="-1"></a>  X_it[<span class="dv">1</span>] <span class="ot">&lt;-</span> <span class="fu">rnorm</span>(<span class="dv">1</span>, <span class="dv">0</span>, <span class="dv">1</span>)    <span class="co"># Initial value for X_it</span></span>
+<span id="cb7-24"><a href="#cb7-24" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span> (t <span class="cf">in</span> <span class="dv">2</span><span class="sc">:</span>n_i) {</span>
+<span id="cb7-25"><a href="#cb7-25" aria-hidden="true" tabindex="-1"></a>    X_it[t] <span class="ot">&lt;-</span> rho <span class="sc">*</span> X_it[t<span class="dv">-1</span>] <span class="sc">+</span> <span class="fu">rnorm</span>(<span class="dv">1</span>, <span class="dv">0</span>, <span class="fu">sqrt</span>(<span class="dv">1</span> <span class="sc">-</span> rho<span class="sc">^</span><span class="dv">2</span>))</span>
+<span id="cb7-26"><a href="#cb7-26" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb7-27"><a href="#cb7-27" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb7-28"><a href="#cb7-28" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Generate outcome Y_it based on current and lagged values of X_it</span></span>
+<span id="cb7-29"><a href="#cb7-29" aria-hidden="true" tabindex="-1"></a>  Y_it[<span class="dv">1</span>] <span class="ot">&lt;-</span> gamma_0 <span class="sc">+</span> gamma_1 <span class="sc">*</span> X_it[<span class="dv">1</span>] <span class="sc">+</span> b_i <span class="sc">+</span> e_it[<span class="dv">1</span>]</span>
+<span id="cb7-30"><a href="#cb7-30" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (n_i <span class="sc">&gt;</span> <span class="dv">1</span>) {</span>
+<span id="cb7-31"><a href="#cb7-31" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> (t <span class="cf">in</span> <span class="dv">2</span><span class="sc">:</span>n_i) {</span>
+<span id="cb7-32"><a href="#cb7-32" aria-hidden="true" tabindex="-1"></a>      Y_it[t] <span class="ot">&lt;-</span> gamma_0 <span class="sc">+</span> gamma_1 <span class="sc">*</span> X_it[t] <span class="sc">+</span> gamma_2 <span class="sc">*</span> X_it[t<span class="dv">-1</span>] <span class="sc">+</span> b_i <span class="sc">+</span> e_it[t]</span>
+<span id="cb7-33"><a href="#cb7-33" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb7-34"><a href="#cb7-34" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb7-35"><a href="#cb7-35" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb7-36"><a href="#cb7-36" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Store the data in a list</span></span>
+<span id="cb7-37"><a href="#cb7-37" aria-hidden="true" tabindex="-1"></a>  subject_data <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
+<span id="cb7-38"><a href="#cb7-38" aria-hidden="true" tabindex="-1"></a>    <span class="at">subject =</span> i,</span>
+<span id="cb7-39"><a href="#cb7-39" aria-hidden="true" tabindex="-1"></a>    <span class="at">time =</span> <span class="dv">1</span><span class="sc">:</span>n_i,</span>
+<span id="cb7-40"><a href="#cb7-40" aria-hidden="true" tabindex="-1"></a>    <span class="at">Y =</span> Y_it,</span>
+<span id="cb7-41"><a href="#cb7-41" aria-hidden="true" tabindex="-1"></a>    <span class="at">X =</span> X_it,</span>
+<span id="cb7-42"><a href="#cb7-42" aria-hidden="true" tabindex="-1"></a>    <span class="at">X_lag1 =</span> <span class="fu">c</span>(<span class="cn">NA</span>, X_it[<span class="sc">-</span>n_i]) <span class="co"># Lagged value of X, with NA for the first observation</span></span>
+<span id="cb7-43"><a href="#cb7-43" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb7-44"><a href="#cb7-44" aria-hidden="true" tabindex="-1"></a>  data_list[[i]] <span class="ot">&lt;-</span> subject_data</span>
+<span id="cb7-45"><a href="#cb7-45" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb7-46"><a href="#cb7-46" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb7-47"><a href="#cb7-47" aria-hidden="true" tabindex="-1"></a><span class="co"># Remove rows with missing X_lag1 values</span></span>
+<span id="cb7-48"><a href="#cb7-48" aria-hidden="true" tabindex="-1"></a>sim_data <span class="ot">&lt;-</span> <span class="fu">na.omit</span>(sim_data)</span>
+<span id="cb7-49"><a href="#cb7-49" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb7-50"><a href="#cb7-50" aria-hidden="true" tabindex="-1"></a><span class="co"># Fit GEE models with different working correlation structures</span></span>
+<span id="cb7-51"><a href="#cb7-51" aria-hidden="true" tabindex="-1"></a>gee_ind <span class="ot">&lt;-</span> <span class="fu">geeglm</span>(Y <span class="sc">~</span> X <span class="sc">+</span> X_lag1, <span class="at">id =</span> subject, <span class="at">data =</span> sim_data, <span class="at">corstr =</span> <span class="st">"independence"</span>)</span>
+<span id="cb7-52"><a href="#cb7-52" aria-hidden="true" tabindex="-1"></a>mlm_mle <span class="ot">&lt;-</span> <span class="fu">lmer</span>(Y <span class="sc">~</span> X <span class="sc">+</span> X_lag1 <span class="sc">+</span> (<span class="dv">1</span> <span class="sc">|</span> subject), <span class="at">data =</span> sim_data, <span class="at">REML =</span> <span class="cn">FALSE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Here are the results of the simulation. Note that compared to the cross-sectional model, in the full conditional model we add the lagged variable <code>X_lag1</code> in the model, whereby we do not obtain the marginal estimate of the fixed slope. Instead, we obtain the conditional estimate of the fixed slope, which is the effect of <code>X</code> on <code>Y</code> after accounting for the effect of <code>X_lag1</code>. In other words, we get the coefficients for <span class="math inline">\(\gamma_1\)</span> and <span class="math inline">\(\gamma_2\)</span> in the model <span class="math inline">\(Y_{it} = \gamma_0 + \gamma_1 X_{it} + \gamma_2 X_{it-1} + b_i + e_{it}\)</span> rather than the coefficient <span class="math inline">\(\beta_1\)</span> in the marginal model <span class="math inline">\(Y_{it} = \beta_0 + \beta_1 X_{it} + b_i + e_{it}\)</span>.</p>
 <div id="tbl-Diggle2002" class="cell tbl-parent quarto-layout-panel anchored">

@@ -52,9 +52,7 @@ library(pdftools)
 
 ## Introduction
 
-In dit document zal ik de data-genererende modellen gepresenteerd door Qian et al. (2020) opnieuw creëren, vergezeld door visuele weergaven van deze modellen.
-
-Laten we eerst enkele hoofdpunten van GEE samenvatten.
+In dit document zal ik de data-genererende modellen gepresenteerd door Qian et al. (2020) opnieuw creëren, vergezeld door visuele weergaven van deze modellen. Laten we eerst enkele hoofdpunten van GEE samenvatten.
 
 Parameters in marginale modellen (bijv. GEE) worden geïnterpreteerd als populatieniveau-effecten (en dus niet als individuele effecten!)
 
@@ -76,6 +74,8 @@ Merk op dat de lineaire structuur van de GEE impliciet aanneemt dat $Y_{it} \per
 
 Deze aanname geldt bij (a) tijdsinvariante covariaten en (b) deterministische/exogene tijdsafhankelijke covariaten, maar niet bij stochastische/endogene tijdsafhankelijke covariaten!
 
+> Een uitzondering op deze regel is wanneer we een "diagonale weight matrix" gebruiken in de GEE (i.e., working independence).
+
 Laten we zien hoe deze aanname geschonden kan worden:
 
 ![](images/clipboard-3131633457.png)
@@ -86,7 +86,7 @@ $$
 E[Y_{i2} \mid X_{i2}] \neq E[Y_{i2} \mid X_{i1},X_{i2}]
 $$
 
-probleem: het wordt moeilijk te bepalen hoeveel van het waargenomen effect een verborgen effect is van de uitkomst die de toekomstige covariaat beïnvloedt.
+<!-- probleem: het wordt moeilijk te bepalen hoeveel van het waargenomen effect een verborgen effect is van de uitkomst die de toekomstige covariaat beïnvloedt. -->
 
 Vanuit een causaal perspectief kunnen we ook zeggen dat—in de bovenstaande DAG—$Y1$ een confounder is in de relatie tussen $X2$ en $Y2$. Als we hiervoor niet controleren is het effect van $X2$ op $Y2$ een ander effect (door deze invloed van $Y1$) dan het effect van $X1$ op $Y1$, wat wel aan de FCCM aanname voldoet.
 
@@ -96,7 +96,7 @@ Vanuit een causaal perspectief kunnen we ook zeggen dat—in de bovenstaande DAG
 
 Beschouw als concreet voorbeeld het geval waarin elk individu op 2 tijdspunten wordt geobserveerd ($T_i = 2$), en de covariaat op het tweede tijdspunt de lag-1 uitkomst is: $X_{i2} = Y_{i2}$.
 
-> Door de uitkomst te laggen, hebben we in wezen drie tijdspunten: $X_{i1}$, $X_{i2} = Y_{i2}$, and $Y_{i3}$.
+> Door de uitkomst te laggen, hebben we in wezen drie tijdspunten: $X_{i1}$, $X_{i2} = Y_{i2}$, en $Y_{i3}$.
 
 Stel dat de variabelen worden gegenereerd volgens het volgende multilevel lineaire model (MLM) met een random intercept:
 
@@ -156,9 +156,9 @@ $$
 
 #### Visualizing the Model
 
-We are interested in the effect of $Z_{it} = Y_{it}$ on $Y_{i(t+1)}$.
+We zijn geinteresseerd in het effect van $Z_{it}$ ($= Y_{it}$) op $Y_{i(t+1)}$.
 
-We may now draw the DAG for this model (see @fig-DAG)
+Laten we eerst de DAG tekenen (see @fig-DAG). In dit specifieke geval wordt de endogene tijdsvariërende covariaat veroorzaakt door de vorige uitkomst en beïnvloedt het de toekomstige uitkomst.
 
 ```{r}
 #| label: fig-DAG
@@ -191,21 +191,34 @@ ggdag::ggdag_status(section2.2_DAG_randomeff) + ggdag::theme_dag()
 #   theme(legend.position='bottom')
 ```
 
-Note that there is an open biasing path from $Y_2$ to $Z_2$ in the DAG: the predictor/covariate $Z_2$ is *caused by* (in this case equivalent to) the previous outcome $Y_2$---and thus this time-varying covariate is *endogenous*. In addition, $u_0$ is a confounder in the relationship between $Y_2$ and $Y_3$ and thus also in the relationship between $Z_2$ and $Y_3$ since $Y_2 = Z_2$. Therefore the "full covariate conditional mean (FCCM)" assumption does not hold:
+Merk op dat er een open biasing path bestaat van $Y_2$ naar $Z_2$ in de DAG: de predictor/covariaat $Z_2$ wordt *veroorzaakt door* (in dit geval equivalent aan) de eerdere uitkomst $Y_2$—en is dus een tijdsvariërende, *endogene* covariaat. Daarom gaat de aanname van de "full covariate conditional mean (FCCM)" niet op:
 
 $$
-E[Y_{it+1} \mid Z_{it}] = E[Y_{it+1} \mid X_{i1}, \ldots, X_{iT}]
+E[Y_{it+1} \mid Z_{it}] = E[Y_{it+1} \mid Z_{i1}, \ldots, Z_{iT}]
 $$
 
-> Deze formule (equation 5 of Qian) zegt dat de uitkomst op $t+1$ conditioneel onafhankelijk is van uitleggende factoren/covariaten op alle andere tijdspunten (incl. toekomst en verleden) gegeven dat we de waarden weten van de uitleggen de factoren covariaten op het huidige tijdstip $t$.
+aangezien
 
-Accordingly, taking into account dependencies between observations through (a) working correlation matrices in GEE (except independence) or (b) through the random intercept of the multilevel linear model, results in conditional-on-the-random-effects estimates and NOT population averaged estimates. Conversely, the GEE with working independence and GLM simply estimate the model while assuming independence.
+$$
+E[Y_{i3} \mid Z_{i2}] \neq E[Y_{i3} \mid Z_{i1}, \ldots, Z_{i2}]
+$$
 
-Why is it specifically an issue with endogenous covariates?
+Oftewel, de verwachte waarde van $Y_i3$ gegeven $Z_{i2}$ is niet gelijk aan de verwachte waarde van $Y_{i3}$ gegeven $Z_{i1}$ en $Z_{i2}$. Anders gezegd, de uitkomst $Y_3$ is niet conditioneel onafhankelijk van de uitleggende factoren/covariaten op alle andere tijdspunten (i.e., $Z_1$), gegeven dat we de waarden kennen van de covariaat $Z_2$ op het huidige tijdstip $t=2$.
 
-In the MLM, the random intercept is estimated on basis of all available timepoints (history and future). Therefore, when estimating the fixed effect $\beta_1$ in the relationship between $Z_2$ and $Y_3$ we are biasing the marginal effect by using information of the relationship between $Z_1$ and $Y_2$.
+Het in rekening brengen van afhankelijkheden tussen observaties in de uitkomst (i.e., het gebruik van "non-diagonal covariance weighting", zie Diggle et al. (2002))---door middel van (a) working correlation matrices in GEE (behalve onafhankelijkheid) of (b) door de random intercept in het multilevel lineaire model---leid tot conditionele schattingen op basis van de random effecten, en niet tot schattingen op populatieniveau. Daarentegen schatten de GEE met working independence en GLM het model gewoon door onafhankelijkheid aan te nemen, waardoor de schattingen op populatieniveau wel valide zijn.
+<!-- Daarnaast is $u_0$ een confounder in de relatie tussen $Y_2$ en $Y_3$, en daarmee ook in de relatie tussen $Z_2$ en $Y_3$, aangezien $Y_2 = Z_2$.  -->
 
-In this specific case, the endogenous time-varying covariate is caused by the previous outcome and influences future outcome. As a result of this, controlling for the random intercept $u_0$
+Wat gebeurt hier precies?
+
+1.    In de schatting d.m.v. de MLM is $u_0$ een confounder in de relatie tussen $Y_2$ en $Y_3$, en daarmee ook in de relatie tussen $Z_2$ en $Y_3$ (aangezien $Y_2 = Z_2$). Dus de random intercept beinvloedt de covariate $Z_2$ en daarmee ook de uitkomst $Y_3$.
+
+> "$Z_{it}$ being endogenous means it may depend on previous outcomes, which in turn implies dependence on the random effect $u_{0i}$. Thus, $E(u_{0i} \mid Z_{it})$ is usually nonzero and the conditional model may no longer imply the marginal model" (Qian et al., 2020)
+
+<!-- In andere woorden, de random intercept wordt geschat op basis van alle beschikbare tijdspunten (geschiedenis en toekomst). Door het open biasing/backdoor pad van $Y_2$ naar $Z_2$ word, wanneer we het fixed effect $\beta_1$ schatten in de relatie tussen $Z_2$ en $Y_3$, de marginale schatting vertekend doordat informatie van de relatie tussen $Z_1$ en $Y_2$ wordt meegenomen. -->
+
+2.    In de GEE met working independence en GLM wordt de relatie tussen $Z_2$ en $Y_3$ geschat op basis van de aanname van onafhankelijkheid, en is er dus geen confounder $u_0$ in de relatie tussen $Z_2$ en $Y_3$.
+
+> Daardoor is $E(u_{0i} \mid Z_{it}) = 0$ en de marginale schatting van $\beta_1$ in de relatie tussen $Z_2$ en $Y_3$ is onvertekend.
 
 ```{r, engine = 'tikz'}
 #| label: fig-pathdiagram.section2.2
@@ -240,34 +253,35 @@ In this specific case, the endogenous time-varying covariate is caused by the pr
 \end{tikzpicture}
 ```
 
-In @fig-pathdiagram.section2.2 it becomes clear that the marginal relationship between $Z_1$ and $Y_2$ is quite simply
+In @fig-pathdiagram.section2.2 wordt duidelijk dat de marginale relatie tussen $Z_1$ en $Y_2$ eenvoudigweg is:
 
 $$
 E[Y_{i2} \mid Z_{i1}] = \gamma_{00} + \beta_1 Z_{i1}
 $$
 
-the relationship between $Z_2$ and $Y_3$ is more complex
+De relatie tussen $Z_2$ en $Y_3$ is complexer door de invloed van de random intercept $u_{0i}$
 
 $$
 E[Y_{i3} \mid Z_{i2}] = (1- \rho \zeta - \rho ) \gamma_{00} + [(1-\rho \zeta)  \beta_1 + \rho] Z_{i2}
 $$
 
-Specifieker gezegd, de interpretatie van de slope $\beta_1$ als population level effects is alleen valide voor het effect van $Z_1$ op $Y_2$. Daarom kunnen we wel zeggen dat
+Specifieker gezegd, de interpretatie van de slope $\beta_1$ als effect op populatieniveau is alleen valide voor het effect van $Z_1$ op $Y_2$. Daarom kunnen we wel zeggen dat
 
-> $\beta_1$ is the impact of variate $Z_1$ on average on $Y_2$, across the whole population (assuming other variates fixed)
+> $\beta_1$ het effect is van variabele $Z_1$ gemiddeld op $Y_2$, over de gehele populatie (onder voorwaarde van constante waarden van andere variabelen)
 
 maar ditzelfde kunnen we niet zeggen voor het effect van $Z_2$ op $Y_3$.
 
-The relationship between $Z_2$ and $Y_3$ is confounded by the unobserved random effect $u_{0i}$, which is also associated with $Y_2$.
+De relatie tussen $Z_2$ en $Y_3$ wordt verstoord door het niet-geobserveerde random effect $u_{0i}$, dat ook geassocieerd is met $Y_2$.
 
 #### Data Generation and Estimation
 
-Let's now generate the data according to this model and estimate the model using a multilevel linear model (MLM) and a generalized estimating equation (GEE) model. Here we are interested in estimating the effect $Z_{it}$ on $Y_{i(t+1)}$. Accordingly, to carry out the analysis in long format, a lagged variable was used for $Z_{it}$, so that, $Y_{i2}$ is regressed on $Z_{i1}$, and $Y_{i3}$ is regressed on $Z_{i2}$.
+Laten we nu de data genereren volgens dit model en het model schatten met een multilevel lineair model (MLM) en een generalized estimating equation (GEE)-model. Hier zijn we geïnteresseerd in het schatten van het effect van $Z_{it}$ op $Y_{i(t+1)}$. Voor deze analyse in long-format werd daarom een lagged variabele gebruikt voor $Z_{it}$, zodat $Y_{i2}$ wordt regressed op $Z_{i1}$ en $Y_{i3}$ op $Z_{i2}$.
 
 ```{r}
 #| label: Scenario2.2_DataGeneration
 #| cache: true
 #| eval: false
+#| echo: false
 
 # Create a function to generate the data
 generate_data <- function(n_i = 5000, sigma_u = 1, sigma_Z1 = 1, sigma_e = 1, beta_1 = 0.8, gamma_00 = 2) {
@@ -314,7 +328,7 @@ run_simulations <- function(n_sim, n_i, sigma_u, sigma_Z1, sigma_e, beta_1, gamm
     gee_ind <- gee(Y ~ Z_lag1, id = id, data = data_sim, family = gaussian, corstr = "independence")
     gee_ar1 <- gee(Y ~ Z_lag1, id = id, data = data_sim, family = gaussian, corstr = "AR-M", Mv = 1)
     glm <- glm(Y ~ Z_lag1, data = data_sim, family = gaussian)
-    gls_symm <- nlme::gls(Y ~ Z_lag1, data = data_sim, correlation = corSymm(form = ~ 1 | id), method = "ML")
+    # gls_symm <- nlme::gls(Y ~ Z_lag1, data = data_sim, correlation = corSymm(form = ~ 1 | id), method = "ML")
     
     # Extract the fixed effect estimates for each model
     estimates <- data.frame(
@@ -370,12 +384,54 @@ saveRDS(section2.2_summary_stats, "section2.2_summary_stats_1_100000.rds")
 # Test: If we run the code with n = 100.000 and u0 = 0, all models return the specified fixed effects.
 ```
 
+We gebruiken de volgende specificatie
+
+```{r}
+#| label: section2.2-spec
+#| echo: true
+#| eval: false
+
+# Set the parameters for the simulation
+n_sim <- 1  # Number of simulations
+n_i <- 100000   # Number of individuals per simulation
+sigma_u <- 1  # Variance of random intercept
+sigma_Z1 <- 1 # Variance of Z1
+sigma_e <- 1 # Residual variance
+beta_1 <- 0.8  # Slope
+gamma_00 <- 2  # Intercept
+
+# Simulate data for each individual
+for (i in 1:n_i) {
+  u_0i <- rnorm(1, 0, sigma_u)
+  Z_i2_lag <- Z_i1 <- rnorm(1, 0, sigma_Z1)
+  Y_i2 <- rnorm(1, gamma_00 + beta_1 * Z_i1 + u_0i, sigma_e)
+  Z_i3_lag <- Z_i2 <- Y_i2
+  Y_i3 <- rnorm(1, gamma_00 + beta_1 * Z_i2 + u_0i, sigma_e)
+  
+  # Store the data in a list
+  subject_data <- data.frame(
+    id = i,
+    time = 1:2,
+    Y = c(Y_i2, Y_i3),
+    Z_lag1 = c(Z_i2_lag, Z_i3_lag)
+  )
+  
+  data_list[[i]] <- subject_data
+}
+
+# Fit the models
+mlm_mle <- lmer(Y ~ Z_lag1 + (1 | id), data = data_sim, REML = FALSE)
+gee_exch <- gee(Y ~ Z_lag1, id = id, data = data_sim, family = gaussian, corstr = "exchangeable")
+```
+
+
 ```{r}
 #| label: tbl-section2.2output
+#| tbl-cap: "Fixed effects (N = 1.000.000, nsim = 1)"
 #| echo: false
 
 section2.2_summary_stats <- readRDS("section2.2_summary_stats_1_100000.rds")
-knitr::kable(section2.2_summary_stats, digits = 2, caption = "Fixed effects (N = 1.000.000, nsim = 1)")
+knitr::kable(section2.2_summary_stats, digits = 2)
 ```
 
 We can clearly see that the MLM and GEE models provide exactly the same estimates for the fixed intercept and fixed regression coefficient, with the exception of the GEE with independence working correlation structure.
@@ -408,50 +464,52 @@ Let's confirm this by calculating the true marginal effect
 # Restate the parameters
 sigma_u <- 1  # Variance of random intercept
 sigma_Z1 <- 1 # Variance of Z1
-sigma_e <- 0.5 # Residual variance
+sigma_e <- 1 # Residual variance
 beta_1 <- 0.8  # Slope
 gamma_00 <- 2  # Intercept
 
-# Compute rho and zeta
+# prepare variances (instead of SD)
 sigma2_u0 = sigma_u^2
 sigma2_e = sigma_e^2
-
-rho = sigma2_u0 / (sigma2_u0 + sigma2_e)
-
 sigma2_Z1 = sigma_Z1^2
+
+# Compute rho and zeta
+rho = sigma2_u0 / (sigma2_u0 + sigma2_e)
 zeta = (beta_1 * sigma2_Z1) / (beta_1 * sigma2_Z1 + sigma2_u0 + sigma2_e)
 
 # Now let's compute the marginal effects
-(marginal_intercept_Z1_Y2 <- gamma_00)
-(marginal_slope_Z1_Y2 <- beta_1)
-(marginal_intercept_Z2_Y3 <- (1 - rho * zeta - rho) * gamma_00)
-(marginal_slope_Z2_Y3 <- ((1 - rho * zeta) * beta_1 + rho))
+marginal_intercept_Z1_Y2 <- gamma_00
+marginal_slope_Z1_Y2 <- beta_1
+marginal_intercept_Z2_Y3 <- (1 - rho * zeta - rho) * gamma_00
+marginal_slope_Z2_Y3 <- ((1 - rho * zeta) * beta_1 + rho)
 
-marginal_intercept_Z1_Y2 + marginal_intercept_Z2_Y3
+(marginal_intercept_Z1_Y2 + marginal_intercept_Z2_Y3) / 2
 (marginal_slope_Z1_Y2 + marginal_slope_Z2_Y3) / 2
 ```
 
-> This is not correct, but how do we calculate the true marginal effects for intercept and slope?
+Als we deze waarde voor de marginale slope vergelijken met estimatie van de GLM vinden we erg vergelijkbare waardes. Hetzelfde is niet waar voor de marginale intercept.
 
-### Intermezzo: What are marginal effects/models?
+> Wat doen we fout? Hoe moet dit wel?
 
-Marginal models are a class of models that are used to estimate the population average effect of a covariate on an outcome. This may be useful, for instance, when prediction or indeed complete modelling of the data are not the main goal of an analysis (Pepe and Anderson, 1994).
+<!-- ### Intermezzo: What are marginal effects/models? -->
 
-> "Consider, for example, the future practice of screening for risk of respiratory disease, where one might simply ascertain Vitamin A deficiency, weight, height and other covariates at a single time point and make a determination of the child's risk based on these measurements." (Pepe and Anderson, 1994)
+<!-- Marginal models are a class of models that are used to estimate the population average effect of a covariate on an outcome. This may be useful, for instance, when prediction or indeed complete modelling of the data are not the main goal of an analysis (Pepe and Anderson, 1994). -->
 
-Here, the cross-sectional model is of primary interest for use in future screening practices and an in-depth model of longitudinal data is of secondary interest (Pepe and Anderson, 1994).
+<!-- > "Consider, for example, the future practice of screening for risk of respiratory disease, where one might simply ascertain Vitamin A deficiency, weight, height and other covariates at a single time point and make a determination of the child's risk based on these measurements." (Pepe and Anderson, 1994) -->
 
-This contrasts with psychological research, where the cross-sectional model is often deemed problematic in the context of longitudinal data analysis, because it conflates (rather than separates) within-subject and between-subject effects. Instead, we tend to be much more interested in (1) the model that best describes the data (i.e., has the best model fit) and (2) the "why" question: complete model of the effects (including within- and between-person effects). What differs here is the aim of the study.
+<!-- Here, the cross-sectional model is of primary interest for use in future screening practices and an in-depth model of longitudinal data is of secondary interest (Pepe and Anderson, 1994). -->
 
-In what situations may psychological researchers be primarily interested in marginal effects over finding the best description of the data?
+<!-- This contrasts with psychological research, where the cross-sectional model is often deemed problematic in the context of longitudinal data analysis, because it conflates (rather than separates) within-subject and between-subject effects. Instead, we tend to be much more interested in (1) the model that best describes the data (i.e., has the best model fit) and (2) the "why" question: complete model of the effects (including within- and between-person effects). What differs here is the aim of the study. -->
 
-1.  Clinical Psychology - Making a diagnosis based on measurements of covariates at a single time point, so that patients can be identified and helped who are at risk of developing a mental disorder.
+<!-- In what situations may psychological researchers be primarily interested in marginal effects over finding the best description of the data? -->
 
-2.  Educational Psychology - Making predictions of course performance based on covariates (e.g., hours studying on average) at a single time point, so that students can be identified and helped who are at risk of failing a course.
+<!-- 1.  Clinical Psychology - Making a diagnosis based on measurements of covariates at a single time point, so that patients can be identified and helped who are at risk of developing a mental disorder. -->
 
-Whether marginal or conditional models are preferred depends simply upon the research question and aim of the study:
+<!-- 2.  Educational Psychology - Making predictions of course performance based on covariates (e.g., hours studying on average) at a single time point, so that students can be identified and helped who are at risk of failing a course. -->
 
-> "We do not suggest that marginal models are preferable in general to conditional models. In Section 1 we provided one example where the marginal model is, in fact, preferable but in many cases it will not be. Indeed, which model should be used depends entirely on the questions to be addressed with the data. If a good description of the process generating the data is required then fully conditional or random effects models might be pursued." (Pepe and Anderson, 1994)
+<!-- Whether marginal or conditional models are preferred depends simply upon the research question and aim of the study: -->
+
+<!-- > "We do not suggest that marginal models are preferable in general to conditional models. In Section 1 we provided one example where the marginal model is, in fact, preferable but in many cases it will not be. Indeed, which model should be used depends entirely on the questions to be addressed with the data. If a good description of the process generating the data is required then fully conditional or random effects models might be pursued." (Pepe and Anderson, 1994) -->
 
 <!-- ### Intermezzo: What is the difference between REML and MLE? -->
 
@@ -465,7 +523,7 @@ Whether marginal or conditional models are preferred depends simply upon the res
 
 ### Example in Diggle et al. (2002)
 
-In "Longitudinal Data Analysis" by Diggle et al. (2002), there is another example:
+In "Longitudinal Data Analysis" by Diggle et al. (2002), there is another example, where there is a time-varying endogenous covariate $X_t$ which is not caused by previous outcomes $Y_{t-1}$, but instead is caused by previous values of covariate $X_{t-1}$, which simultaneously affects future outcomes $Y_{t+1}$.
 
 The following data generating mechanism was used:
 
@@ -511,7 +569,9 @@ ggdag::ggdag_status(Diggle2002_DAG) + theme_dag()
 #   theme(legend.position='bottom')
 ```
 
-In this DAG, we can see that $X_{t-1}$ is a confounder of the relationship between $Y_{t}$ and $X_{t}$. As a result, the linear model
+In this DAG, we can see that $X_{t-1}$ is a confounder of the relationship between $Y_{t}$ and $X_{t}$. However, of course, this variable will be controlled for by including a lagged version of $X$ in the model.
+
+
 
 Alternatively, we can also use a path diagram to illustrate more clearly the types of dependencies and relationships present in the data generating model.
 
@@ -582,7 +642,7 @@ We can estimate the marginal model and its parameter $\beta_1$ using GEE and MLM
 
 ```{r}
 #| label: Diggle2002_CSM
-#| echo: true
+#| echo: false
 #| cache: true
 #| eval: false
 
@@ -610,7 +670,6 @@ generate_data <- function(rho) {
   data_list <- list()
   
   for (i in 1:n_subjects) {
-    # n_i <- sample(2:max_time, 1) # Random number of observations (2 to 10)
     n_i <- 10 # or fixed number of observations
     X_it <- numeric(n_i)
     Y_it <- numeric(n_i)
@@ -686,11 +745,63 @@ results_complete <- cbind(results, beta1_true = true_marginal_b1$beta1) %>%
 saveRDS(results_complete, file = "Diggle2002_results_CSM_1_100000.rds")
 ```
 
+```{r}
+#| label: Diggle2002_CMS-spec
+#| echo: true
+#| eval: false
+
+# Simulation parameters
+set.seed(123)
+n_subjects <- 100000 # Number of subjects
+max_time <- 10    # Maximum number of observations per subject
+n_sim <- 1     # Number of simulations
+gamma_0 <- 0
+gamma_1 <- 1
+gamma_2 <- 1
+rho_values <- seq(0.9, 0.1, by = -0.2) # Range of autocorrelations
+
+for (i in 1:n_subjects) {
+    n_i <- 10 # or fixed number of observations
+    X_it <- numeric(n_i)
+    Y_it <- numeric(n_i)
+    b_i <- rnorm(1, 0, 1)        # Random intercept
+    e_it <- rnorm(n_i, 0, 1)
+    
+    # Generate covariate X_it with autoregressive structure
+    X_it[1] <- rnorm(1, 0, 1)    # Initial value for X_it
+    for (t in 2:n_i) {
+      X_it[t] <- rho * X_it[t-1] + rnorm(1, 0, sqrt(1 - rho^2))
+    }
+    
+    # Generate outcome Y_it based on current and lagged values of X_it
+    Y_it[1] <- gamma_0 + gamma_1 * X_it[1] + b_i + e_it[1]
+    if (n_i > 1) {
+      for (t in 2:n_i) {
+        Y_it[t] <- gamma_0 + gamma_1 * X_it[t] + gamma_2 * X_it[t-1] + b_i + e_it[t]
+      }
+    }
+    
+    # Store the data in a list
+    subject_data <- data.frame(
+      subject = i,
+      time = 1:n_i,
+      Y = Y_it,
+      X = X_it
+    )
+    data_list[[i]] <- subject_data
+}
+
+# Fit GEE models with different working correlation structures
+gee_ind <- geeglm(Y ~ X, id = subject, data = sim_data, corstr = "independence")
+mlm_mle <- lmer(Y ~ X + (1 | subject), data = sim_data, REML = FALSE)
+```
+
+
 Alternatively, we can include X_lag1 in the analysis/estimation and estimate the full conditional model:
 
 ```{r}
 #| label: Diggle2002_FCM
-#| echo: true
+#| echo: false
 #| cache: true
 #| eval: false
 
@@ -793,6 +904,66 @@ results_complete <- cbind(results, gamma1_true = true_cond_gamma1) %>%
   select(rho, gamma1_true, gamma1_ind, gamma1_exch, gamma1_ar1, gamma1_mlm)
 
 saveRDS(results_complete, file = "Diggle2002_results_FCM_1_100000.rds")
+```
+
+```{r}
+#| label: Diggle2002_FCM-spec
+#| echo: true
+#| cache: true
+#| eval: false
+
+# Load necessary libraries
+library(geepack)
+
+# Simulation parameters
+set.seed(123)
+n_subjects <- 100000 # Number of subjects
+max_time <- 1    # Maximum number of observations per subject
+n_sim <- 1     # Number of simulations
+gamma_0 <- 0
+gamma_1 <- 1
+gamma_2 <- 1
+rho_values <- seq(0.9, 0.1, by = -0.2) # Range of autocorrelations
+  
+for (i in 1:n_subjects) {
+  # n_i <- sample(2:max_time, 1) # Random number of observations (2 to 10)
+  n_i <- 10 # or fixed number of observations
+  X_it <- numeric(n_i)
+  Y_it <- numeric(n_i)
+  b_i <- rnorm(1, 0, 1)        # Random intercept
+  e_it <- rnorm(n_i, 0, 1)
+  
+  # Generate covariate X_it with autoregressive structure
+  X_it[1] <- rnorm(1, 0, 1)    # Initial value for X_it
+  for (t in 2:n_i) {
+    X_it[t] <- rho * X_it[t-1] + rnorm(1, 0, sqrt(1 - rho^2))
+  }
+  
+  # Generate outcome Y_it based on current and lagged values of X_it
+  Y_it[1] <- gamma_0 + gamma_1 * X_it[1] + b_i + e_it[1]
+  if (n_i > 1) {
+    for (t in 2:n_i) {
+      Y_it[t] <- gamma_0 + gamma_1 * X_it[t] + gamma_2 * X_it[t-1] + b_i + e_it[t]
+    }
+  }
+  
+  # Store the data in a list
+  subject_data <- data.frame(
+    subject = i,
+    time = 1:n_i,
+    Y = Y_it,
+    X = X_it,
+    X_lag1 = c(NA, X_it[-n_i]) # Lagged value of X, with NA for the first observation
+  )
+  data_list[[i]] <- subject_data
+}
+    
+# Remove rows with missing X_lag1 values
+sim_data <- na.omit(sim_data)
+    
+# Fit GEE models with different working correlation structures
+gee_ind <- geeglm(Y ~ X + X_lag1, id = subject, data = sim_data, corstr = "independence")
+mlm_mle <- lmer(Y ~ X + X_lag1 + (1 | subject), data = sim_data, REML = FALSE)
 ```
 
 Here are the results of the simulation. Note that compared to the cross-sectional model, in the full conditional model we add the lagged variable `X_lag1` in the model, whereby we do not obtain the marginal estimate of the fixed slope. Instead, we obtain the conditional estimate of the fixed slope, which is the effect of `X` on `Y` after accounting for the effect of `X_lag1`. In other words, we get the coefficients for $\gamma_1$ and $\gamma_2$ in the model $Y_{it} = \gamma_0 + \gamma_1 X_{it} + \gamma_2 X_{it-1} + b_i + e_{it}$ rather than the coefficient $\beta_1$ in the marginal model $Y_{it} = \beta_0 + \beta_1 X_{it} + b_i + e_{it}$.
