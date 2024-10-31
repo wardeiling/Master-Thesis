@@ -1,0 +1,757 @@
+---
+title: "Data Generating Models of Qian et al. (2020)"
+author: "Ward B. Eiling"
+date: "2024-10-24"
+date-modified: last-modified
+format: 
+  html:
+    # fig-pos: 'h'
+    toc: true
+    toc-location: left
+    toc-depth: 3
+    toc-expand: 3
+    number-sections: true
+    # embed-resources: false
+    # default-image-extension: svg
+  # pdf:
+  #   fig-pos: 'h'
+  #   toc: true
+  #   toc-depth: 5
+  #   number-sections: true
+  #   # embed-resources: true
+  #   # default-image-extension: svg
+execute:
+  message: false
+  warning: false
+fig-cap-location: top
+---
+
+```{r}
+#| label: Packages
+#| echo: false
+
+# for general data manipulation and plotting
+library(tidyverse)
+# for estimation
+library(lme4)
+library(gee)
+library(geex)
+library(geepack)
+library(nlme)
+# for presentation of results
+library(jtools)
+# for diagrams
+library(dagitty)
+library(ggdag)
+library(DiagrammeR)
+library(magick)
+library(pdftools)
+```
+
+\newpage
+
+## Situaties Zonder Behandeling
+
+### Example in Section 2.2 of Qian et al. (2020): AANGEPAST
+
+In plaats van het voorbeeld van Qian et al. (2020) waar we voor ieder individu 2 tijdspunten hebben ($T_i = 2$), zullen we het aantal tijdspunten toe laten nemen tot 4 ($T_i = 4$). Na de simulatie verwijderen we de eerste rij (dus $X_1$ en $Y_2$) voor ieder individu, zodat we de formule kunnen gebruiken die Qian et al. (2020) presenteerd voor het berekenen van het marginale effect van $X_2$ op $Y_3$.
+
+Stel dat de variabelen worden gegenereerd volgens het volgende multilevel lineaire model (MLM) met een random intercept:
+
+$$
+u_{0i} \sim N(0, \sigma_u^2),
+$$
+
+$$
+Z_{i1} \sim N(0, \sigma_{Z_1}^2) \text{ independently of } u_{0i},
+$$
+
+$$
+Y_{i2} \mid Z_{i1}, u_{0i} \sim N(\gamma_{00} + \beta_1 Z_{i1} + u_{0i}, \sigma_e^2),
+$$
+
+$$
+Z_{i2} = Y_{i2},
+$$
+
+$$
+Y_{i3} \mid Z_{i1}, Y_{i2}, Z_{i2}, u_{0i} \sim N(\gamma_{00} + \beta_1 Z_{i2} + u_{0i}, \sigma_e^2).
+$$
+
+#### Visualizing the Model
+
+We zijn geinteresseerd in het effect van $Z_{it}$ ($= Y_{it}$) op $Y_{i(t+1)}$.
+
+Laten we eerst de DAG tekenen (see @fig-DAG). In dit specifieke geval wordt de endogene tijdsvariërende covariaat veroorzaakt door de vorige uitkomst en beïnvloedt het de toekomstige uitkomst.
+
+```{r}
+#| label: fig-DAG
+#| cache: true
+#| fig-cap: "DAG of Model Without Treatment"
+#| echo: false
+
+# alternatively, we can include the random intercept
+section2.2_DAG_randomeff <- dagitty(
+  'dag {
+bb="0,0,1,1"
+Z_1 [exposure,pos="0.182,0.160"]
+Z_2 [exposure,pos="0.454,0.160"]
+Y_2 [outcome,pos="0.458,0.282"]
+Y_3 [outcome,pos="0.732,0.283"]
+u_0 [latent,pos="0.621,0.399"]
+Z_1 -> Y_2
+Z_2 -> Y_3
+Y_2 -> Z_2
+u_0 -> Y_2
+u_0 -> Y_3
+}
+')
+
+ggdag::ggdag_status(section2.2_DAG_randomeff) + ggdag::theme_dag()
+
+# ggdag::ggdag_adjustment_set(section2.2_DAG_randomeff, text_size = 5) +
+#   ggdag::theme_dag() +
+#   labs(title = 'Adjustment sets', col='Adjusted', shape='Adjusted') +
+#   theme(legend.position='bottom')
+```
+
+Merk op dat er een open biasing path bestaat van $Y_2$ naar $Z_2$ in de DAG: de predictor/covariaat $Z_2$ wordt *veroorzaakt door* (in dit geval equivalent aan) de eerdere uitkomst $Y_2$—en is dus een tijdsvariërende, *endogene* covariaat. Daarom gaat de aanname van de "full covariate conditional mean (FCCM)" niet op:
+
+$$
+E[Y_{it+1} \mid Z_{it}] = E[Y_{it+1} \mid Z_{i1}, \ldots, Z_{iT}]
+$$
+
+aangezien
+
+$$
+E[Y_{i3} \mid Z_{i2}] \neq E[Y_{i3} \mid Z_{i1}, \ldots, Z_{i2}]
+$$
+
+Oftewel, de verwachte waarde van $Y_i3$ gegeven $Z_{i2}$ is niet gelijk aan de verwachte waarde van $Y_{i3}$ gegeven $Z_{i1}$ en $Z_{i2}$. Anders gezegd, de uitkomst $Y_3$ is niet conditioneel onafhankelijk van de uitleggende factoren/covariaten op alle andere tijdspunten (i.e., $Z_1$), gegeven dat we de waarden kennen van de covariaat $Z_2$ op het huidige tijdstip $t=2$.
+
+Het in rekening brengen van afhankelijkheden tussen observaties in de uitkomst (i.e., het gebruik van "non-diagonal covariance weighting", zie Diggle et al. (2002))---door middel van (a) working correlation matrices in GEE (behalve onafhankelijkheid) of (b) door de random intercept in het multilevel lineaire model---leid tot conditionele schattingen op basis van de random effecten, en niet tot schattingen op populatieniveau. Daarentegen schatten de GEE met working independence en GLM het model gewoon door onafhankelijkheid aan te nemen, waardoor de schattingen op populatieniveau wel valide zijn.
+<!-- Daarnaast is $u_0$ een confounder in de relatie tussen $Y_2$ en $Y_3$, en daarmee ook in de relatie tussen $Z_2$ en $Y_3$, aangezien $Y_2 = Z_2$.  -->
+
+Wat gebeurt hier precies?
+
+1.    In de schatting d.m.v. de MLM is $u_0$ een confounder in de relatie tussen $Y_2$ en $Y_3$, en daarmee ook in de relatie tussen $Z_2$ en $Y_3$ (aangezien $Y_2 = Z_2$). Dus de random intercept beinvloedt de covariate $Z_2$ en daarmee ook de uitkomst $Y_3$.
+
+> "$Z_{it}$ being endogenous means it may depend on previous outcomes, which in turn implies dependence on the random effect $u_{0i}$. Thus, $E(u_{0i} \mid Z_{it})$ is usually nonzero and the conditional model may no longer imply the marginal model" (Qian et al., 2020)
+
+<!-- In andere woorden, de random intercept wordt geschat op basis van alle beschikbare tijdspunten (geschiedenis en toekomst). Door het open biasing/backdoor pad van $Y_2$ naar $Z_2$ word, wanneer we het fixed effect $\beta_1$ schatten in de relatie tussen $Z_2$ en $Y_3$, de marginale schatting vertekend doordat informatie van de relatie tussen $Z_1$ en $Y_2$ wordt meegenomen. -->
+
+2.    In de GEE met working independence en GLM wordt de relatie tussen $Z_2$ en $Y_3$ geschat op basis van de aanname van onafhankelijkheid, en is er dus geen confounder $u_0$ in de relatie tussen $Z_2$ en $Y_3$.
+
+> Daardoor is $E(u_{0i} \mid Z_{it}) = 0$ en de marginale schatting van $\beta_1$ in de relatie tussen $Z_2$ en $Y_3$ is onvertekend.
+
+Het wordt duidelijk dat de marginale relatie tussen $Z_1$ en $Y_2$ eenvoudigweg is:
+
+$$
+E[Y_{i2} \mid Z_{i1}] = \gamma_{00} + \beta_1 Z_{i1}
+$$
+
+De relatie tussen $Z_2$ en $Y_3$ is complexer door de invloed van de random intercept $u_{0i}$
+
+$$
+E[Y_{i3} \mid Z_{i2}] = (1- \rho \zeta - \rho ) \gamma_{00} + [(1-\rho \zeta)  \beta_1 + \rho] Z_{i2}
+$$
+
+Specifieker gezegd, de interpretatie van de slope $\beta_1$ als effect op populatieniveau is alleen valide voor het effect van $Z_1$ op $Y_2$. Daarom kunnen we wel zeggen dat
+
+> $\beta_1$ het effect is van variabele $Z_1$ gemiddeld op $Y_2$, over de gehele populatie (onder voorwaarde van constante waarden van andere variabelen)
+
+maar ditzelfde kunnen we niet zeggen voor het effect van $Z_2$ op $Y_3$.
+
+De relatie tussen $Z_2$ en $Y_3$ wordt verstoord door het niet-geobserveerde random effect $u_{0i}$, dat ook geassocieerd is met $Y_2$.
+
+#### Data Generation and Estimation
+
+Laten we nu de data genereren volgens dit model en het model schatten met een multilevel lineair model (MLM) en een generalized estimating equation (GEE)-model. Hier zijn we geïnteresseerd in het schatten van het effect van $Z_{it}$ op $Y_{i(t+1)}$. Voor deze analyse in long-format werd daarom een lagged variabele gebruikt voor $Z_{it}$, zodat $Y_{i2}$ wordt regressed op $Z_{i1}$ en $Y_{i3}$ op $Z_{i2}$.
+
+```{r}
+#| label: Scenario2.2_DataGeneration
+#| cache: true
+#| eval: false
+#| echo: false
+
+# Create a function to generate the data
+generate_data <- function(n_i = 5000, sigma_u = 1, sigma_Z1 = 1, sigma_e = 1, beta_1 = 0.8, gamma_00 = 2) {
+  data_list <- list()
+  
+  # Simulate data for each individual
+  for (i in 1:n_i) {
+    u_0i <- rnorm(1, 0, sigma_u)
+    Z_i2_lag <- Z_i1 <- rnorm(1, 0, sigma_Z1)
+    Y_i2 <- rnorm(1, gamma_00 + beta_1 * Z_i1 + u_0i, sigma_e)
+    Z_i3_lag <- Z_i2 <- Y_i2
+    Y_i3 <- rnorm(1, gamma_00 + beta_1 * Z_i2 + u_0i, sigma_e)
+    
+    # Store the data in a list
+    subject_data <- data.frame(
+      id = i,
+      Y = c(Y_i3),
+      Z_lag1 = c(Z_i3_lag)
+    )
+    
+    data_list[[i]] <- subject_data
+  }
+  
+  # Combine all subjects' data into a single data frame
+  data_long <- do.call(rbind, data_list)
+  return(data_long)
+}
+
+# Set the parameters for the simulation
+n_sim <- 1  # Number of simulations
+n_i <- 100000   # Number of individuals per simulation
+sigma_u <- 1  # Variance of random intercept
+sigma_Z1 <- 1 # Variance of Z1
+sigma_e <- 1 # Residual variance
+beta_1 <- 0.8  # Slope
+gamma_00 <- 2  # Intercept
+
+data_sim <- generate_data(n_i, sigma_u, sigma_Z1, sigma_e, beta_1, gamma_00)
+    
+# Fit the models
+lm_fit <- lm(Y ~ Z_lag1, data = data_sim)
+coef(lm_fit)
+lmer_fit <- lmer(Y ~ Z_lag1 + (1 | id), data = data_sim)
+```
+
+```{r}
+#| label: tbl-section2.2output
+#| tbl-cap: "Fixed effects (N = 1.000.000, nsim = 1)"
+#| echo: false
+
+section2.2_summary_stats <- readRDS("section2.2_summary_stats_1_100000.rds")
+knitr::kable(section2.2_summary_stats, digits = 2)
+```
+
+We can clearly see that the MLM and GEE models provide exactly the same estimates for the fixed intercept and fixed regression coefficient, with the exception of the GEE with independence working correlation structure.
+
+> According to Pepe and Anderson (1994), this is the only structure that can avoid bias in the estimation of the fixed effects (i.e., that has a valid marginal interpretation).
+
+As a reminder, the fixed effects were specified as $\gamma_{00} = 2$ and $\beta_1 = 0.8$. Thus, we can see that all models except the GEE with independence working correlation structure returns estimates that are very close to the true values---which represented the conditional mean of $Y$ given $Z$ and $u_{0i}$ (rather than the marginal mean of $Y$ given $Z$).
+
+To see why this makes sense, it is important to realize that the parameter estimates represent the parsimonious conditional relationship
+
+$$
+E[Y_{it+1} \mid Z_{it}, u_{0i}] = \gamma_{00} + \beta_1 Z_{it} + u_{0i}
+$$
+
+And not the marginal relationship, which according to Qian et al. (2020) is given by:
+
+$$
+E[Y_{i2} \mid Z_{i1}] = \gamma_{00} + \beta_1 Z_{i1}
+$$
+
+$$
+E[Y_{i3} \mid Z_{i2}] = (1- \rho \zeta - \rho ) \gamma_{00} + [(1-\rho \zeta)  \beta_1 + \rho] Z_{i2}
+$$
+
+Let's confirm this by calculating the true marginal effect
+
+```{r}
+#| label: Marginal Effects
+
+# Restate the parameters
+sigma_u <- 1  # Variance of random intercept
+sigma_Z1 <- 1 # Variance of Z1
+sigma_e <- 1 # Residual variance
+beta_1 <- 0.8  # Slope
+gamma_00 <- 2  # Intercept
+
+# prepare variances (instead of SD)
+sigma2_u0 = sigma_u^2
+sigma2_e = sigma_e^2
+sigma2_Z1 = sigma_Z1^2
+
+# Compute rho and zeta
+rho = sigma2_u0 / (sigma2_u0 + sigma2_e)
+zeta = (beta_1 * sigma2_Z1) / (beta_1 * sigma2_Z1 + sigma2_u0 + sigma2_e)
+
+# Now let's compute the marginal effects
+marginal_intercept_Z1_Y2 <- gamma_00
+marginal_slope_Z1_Y2 <- beta_1
+marginal_intercept_Z2_Y3 <- (1 - rho * zeta - rho) * gamma_00
+marginal_slope_Z2_Y3 <- ((1 - rho * zeta) * beta_1 + rho)
+
+(marginal_intercept_Z1_Y2 + marginal_intercept_Z2_Y3) / 2
+(marginal_slope_Z1_Y2 + marginal_slope_Z2_Y3) / 2
+```
+
+Als we deze waarde voor de marginale slope vergelijken met estimatie van de GLM vinden we erg vergelijkbare waardes. Hetzelfde is niet waar voor de marginale intercept.
+
+> Wat doen we fout? Hoe moet dit wel?
+
+## Main Simulation of Qian et al. (2020): With Treatment
+
+### Original Section: "4. Simulation"
+
+In the simulation, we considered three generative models (GMs), all of which have an endogenous covariate. In the first two GMs, the endogenous covariate $X_{it}$ equals the previous outcome $Y_{it}$ plus some random noise, so the conditional independence assumption (10) is valid. In GM 3, the endogenous covariate depends directly on $b_i$, violating assumption (10). The details of the generative models are described below.
+
+In GM1, we considered a simple case with only a random intercept and a random slope for $A_{it}$, so that $Z_{i(t_0)} = Z_{i(t_2)} = 1$ in model (7). The outcome is generated as:
+
+$$
+
+Y_{it+1} = \alpha_0 + \alpha_1 X_{it} + b_{i0} + A_{it} (\beta_0 + \beta_1 X_{it} + b_{i2}) + \epsilon_{it+1}.
+
+$$
+
+The random effects $b_{i0} \sim N(0, \sigma_{b0}^2)$ and $b_{i2} \sim N(0, \sigma_{b2}^2)$ are independent of each other. The covariate is generated as $X_{i1} \sim N(0, 1)$, and for $t \geq 2$,
+
+$$
+
+X_{it} = Y_{it} + N(0, 1).
+
+$$
+
+The randomization probability $p_t$ is constant at $1/2$. The exogenous noise is $\epsilon_{it+1} \sim N(0, \sigma_\epsilon^2)$.
+
+In GM2, we considered the case where $Z_{i(t_0)} = Z_{i(t_2)} = 1$, with time-varying randomization probability. The outcome is generated as:
+
+$$
+
+Y_{it+1} = \alpha_0 + \alpha_1 X_{it} + b_{i0} + b_{i1} X_{it} + A_{it} (\beta_0 + \beta_1 X_{it} + b_{i2} + b_{i3} X_{it}) + \epsilon_{it+1}.
+
+$$
+
+The random effects $b_{ij} \sim N(0, \sigma_{b_j}^2)$, for $0 \leq j \leq 3$, are independent of each other. The covariate is generated as $X_{i1} \sim N(0, 1)$, and for $t \geq 2$,
+
+$$
+
+X_{it} = Y_{it} + N(0, 1).
+
+$$
+
+The randomization probability depends on $X_{it}$:
+
+$$
+
+p_t = 0.7 \cdot 1(X_{it} > -1.27) + 0.3 \cdot 1(X_{it} \leq -1.27),
+
+$$
+
+where $1(\cdot)$ represents the indicator function, and the cutoff $-1.27$ was chosen so that $p_t$ equals 0.7 or 0.3 for about half of the time. The exogenous noise is $\epsilon_{it+1} \sim N(0, \sigma_\epsilon^2)$.
+
+GM3 is the same as GM 1, except that the covariate $X_{it}$ depends directly on $b_i$:
+
+$$
+
+X_{i1} \sim N(b_{i0}, 1), \quad X_{it} = Y_{it} + N(b_{i0}, 1) \text{ for } t \geq 2.
+
+$$ We chose the following parameter values:
+
+$$
+
+\alpha_0 = -2, \quad \alpha_1 = -0.3, \quad \beta_0 = 1, \quad \beta_1 = 0.3,
+
+$$
+
+$$
+
+\sigma_{b0}^2 = 4, \quad \sigma_{b1}^2 = \frac{1}{4}, \quad \sigma_{b2}^2 = 1, \quad \sigma_{b3}^2 = \frac{1}{4}, \quad \sigma_\epsilon^2 = 1.
+
+$$
+
+## Generative Model 1
+
+### Translation of Notation
+
+In the table below, we will provide the translation of original notation in Qian et al. (2020) to notation more common in psychological research
+
+| Parameter                                   | Original          | New           |
+
+|----------------------------|----------------------|----------------------|
+
+| Fixed intercept                             | $\alpha_0$        | $\gamma_{00}$ |
+
+| Fixed slope for $X_{it}$                    | $\alpha_1$        | $\gamma_{01}$ |
+
+| Random intercept                            | $b_{i0}$          | $u_{0i}$      |
+
+| Random slope for $A_{it}$                   | $b_{i2}$          | $u_{1i}$      |
+
+| Error term                                  | $\epsilon_{it+1}$ | $e_{it+1}$    |
+
+| Fixed effect of $A_{it}$                    | $\beta_0$         | $\gamma_{10}$ |
+
+| Interaction effect of $A_{it}$ and $X_{it}$ | $\beta_1$         | $\gamma_{11}$ |
+
+| Covariate                                   | $X_{it}$          | $Z_{it}$      |
+
+| Treatment                                   | $A_{it}$          | $X_{it}$      |
+
+Let's first state the original model:
+
+$$
+
+Y_{it+1} = \alpha_0 + \alpha_1 X_{it} + b_{i0} + A_{it} (\beta_0 + \beta_1 X_{it} + b_{i2}) + \epsilon_{it+1}.
+
+$$
+
+Using this new notation, we may thus rewrite GM1 as a within model:
+
+$$
+
+Y_{it+1} = \beta_{0i} + \beta_{1i} X_{it} + e_{it+1},
+
+$$
+
+where:
+
+$$
+
+\beta_{0i} = \gamma_{00} + \gamma_{01} Z_{it} + u_{0i} \quad \text{with} \quad u_{0i} \sim \mathcal{N}(0, \sigma^2_u),
+
+$$
+
+$$
+
+\beta_{1i} = \gamma_{10} + \gamma_{11} Z_{it} + u_{1i} \quad \text{with} \quad u_{1i} \sim \mathcal{N}(0, \sigma^2_u).
+
+$$
+
+Combining these two equations, the model can be expressed as:
+
+$$
+
+Y_{it+1} = \gamma_{00} + \gamma_{01} Z_{it} + u_{0i} + X_{it} (\gamma_{10} + \gamma_{11} Z_{it} + u_{1i}) + e_{it+1}.
+
+$$
+
+### Visualzing the Model
+
+As mentioned by Ellen in the last meeting (17-10):
+
+> "Conventional DAGs do not only represent main effects but rather the combination of main effects and interactions. Once you have drawn your DAG, you already assume that any variables pointing to the same outcome can modify the effect of the others pointing to the same outcome." ([stackexchange](https://stats.stackexchange.com/questions/157775/representing-interaction-effects-in-directed-acyclic-graphs))
+
+For $t = 1$, the DAG and path diagram are as follows:
+
+```{r}
+
+#| label: fig-GM1_visual
+
+#| cache: true
+
+#| fig-cap: "DAG and Path Diagram for Generative Model 1 at t = 1"
+
+#| fig-subcap:
+
+#|  - "DAG"
+
+#|  - "Path Diagam"
+
+#| layout-nrow: 2
+
+#| echo: false
+
+GM1_DAG <- dagitty('dag {
+
+bb="0,0,1,1"
+
+"Y_t+1" [outcome,pos="0.723,0.432"]
+
+X_t [exposure,pos="0.421,0.431"]
+
+Z_t [pos="0.424,0.602"]
+
+X_t -> "Y_t+1"
+
+Z_t -> "Y_t+1"
+
+}')
+
+ggdag::ggdag_status(GM1_DAG) + ggdag::theme_dag()
+
+GM1_Path <- dagitty('dag {
+
+bb="0,0,1,1"
+
+"Y_t+1" [outcome,pos="0.723,0.432"]
+
+. [pos="0.576,0.434"]
+
+X_t [exposure,pos="0.421,0.431"]
+
+Z_t [pos="0.576,0.556"]
+
+. -> "Y_t+1"
+
+X_t -> .
+
+Z_t -> .
+
+}')
+
+ggdag::ggdag_status(GM1_Path) + ggdag::theme_dag()
+
+```
+
+Note that the interaction between $X_{it}$ and $Z_{it}$ is not explicitly shown in the DAG, but is explicit in the path diagram. This is because the interaction is a model assumption, which is not explicitly represented in the non-parametric DAG.
+
+For $t \geq 2$, the DAG and path diagram are as follows:
+
+```{r}
+
+#| label: fig-GM1_visual2
+
+#| echo: false
+
+#| fig-cap: "DAG and Path Diagram for Generative Model 1 at t >= 2"
+
+#| fig-subcap:
+
+#|  - "DAG"
+
+#|  - "Path Diagam"
+
+#| cache: true
+
+GM1_DAG2 <- dagitty('dag {
+
+bb="0,0,1,1"
+
+"Y_t+1" [outcome,pos="0.780,0.566"]
+
+"Z_t+1" [pos="0.780,0.741"]
+
+X_t [exposure,pos="0.602,0.406"]
+
+Y_t [outcome,pos="0.605,0.554"]
+
+Z_t [pos="0.607,0.742"]
+
+"Y_t+1" -> "Z_t+1"
+
+X_t -> "Y_t+1"
+
+Y_t -> Z_t
+
+Z_t -> "Y_t+1"
+
+}
+
+')
+
+ggdag::ggdag_status(GM1_DAG2) + ggdag::theme_dag()
+
+GM1_Path2 <- dagitty('dag {
+
+bb="0,0,1,1"
+
+"Y_t+1" [outcome,pos="0.780,0.566"]
+
+"Z_t+1" [pos="0.780,0.741"]
+
+. [pos="0.693,0.565"]
+
+X_t [exposure,pos="0.606,0.402"]
+
+Y_t [outcome,pos="0.605,0.554"]
+
+Z_t [pos="0.607,0.742"]
+
+"Y_t+1" -> "Z_t+1"
+
+. -> "Y_t+1"
+
+X_t -> .
+
+Y_t -> Z_t
+
+Z_t -> .
+
+}')
+
+ggdag::ggdag_status(GM1_Path2) + ggdag::theme_dag()
+
+```
+
+So the DAG for the first two observations looks like
+
+```{r}
+
+#| label: fig-GM1_visual3
+
+#| fig-cap: "DAG for Generative Model 1 at t = 1 and t = 2."
+
+#| echo: false
+
+#| cache: true
+
+GM1_DAG3 <- dagitty('dag {
+
+bb="0,0,1,1"
+
+X_1 [exposure,pos="0.439,0.432"]
+
+X_2 [exposure,pos="0.605,0.428"]
+
+Y_2 [outcome,pos="0.608,0.565"]
+
+Y_3 [outcome,pos="0.742,0.571"]
+
+Z_1 [pos="0.441,0.688"]
+
+Z_2 [pos="0.610,0.694"]
+
+X_1 -> Y_2
+
+X_2 -> Y_3
+
+Y_2 -> Z_2
+
+Z_1 -> Y_2
+
+Z_2 -> Y_3
+
+}')
+
+ggdag::ggdag_status(GM1_DAG3) + ggdag::theme_dag()
+
+```
+
+The model is fitted as
+
+```{r}
+
+#| label: GM1_fit
+
+#| echo: true
+
+#| eval: false
+
+gm1_mlm <- lmer(Y ~ Z * X + (1 + X| id), data = data)
+
+```
+
+## Generative Model 2
+
+### Translation of Notation
+
+Now we need to translate more parameters:
+
+| Parameter                                            | Original          | New           |
+
+|------------------------------------|------------------|------------------|
+
+| Fixed intercept                                      | $\alpha_0$        | $\gamma_{00}$ |
+
+| Fixed slope for $X_{it}$                             | $\alpha_1$        | $\gamma_{10}$ |
+
+| Random intercept                                     | $b_{i0}$          | $u_{0i}$      |
+
+| Random slope for $X_{it}$                            | $b_{i1}$          | $u_{1i}$      |
+
+| Fixed effect of $A_{it}$                             | $\beta_0$         | $\gamma_{20}$ |
+
+| Interaction effect of $A_{it}$ and $X_{it}$          | $\beta_1$         | $\gamma_{30}$ |
+
+| Random slope for $A_{it}$                            | $b_{i2}$          | $u_{2i}$      |
+
+| Random interaction effect for $A_{it} \times X_{it}$ | $b_{i3}$          | $u_{3i}$      |
+
+| Error term                                           | $\epsilon_{it+1}$ | $e_{it+1}$    |
+
+| Covariate                                            | $X_{it}$          | $Z_{it}$      |
+
+| Treatment                                            | $A_{it}$          | $X_{it}$      |
+
+Let's first restate the original model:
+
+$$
+
+Y_{it+1} = \alpha_0 + \alpha_1 X_{it} + b_{i0} + b_{i1} X_{it} + A_{it} (\beta_0 + \beta_1 X_{it} + b_{i2} + b_{i3} X_{it}) + \epsilon_{it+1}.
+
+$$
+
+Using the psychological notation, we rewrite GM2 as a within-person model:
+
+$$
+
+Y_{it+1} = \beta_{0i} + \beta_{1i} Z_{it} + \beta_{2i} X_{it} + \beta_{3i} X_{it} Z_{it} + e_{it+1},
+
+$$
+
+with:
+
+$$
+
+\beta_{0i} = \gamma_{00} + u_{0i} \quad \text{where} \quad u_{0i} \sim \mathcal{N}(0, \sigma^2_u),
+
+$$
+
+$$
+
+\beta_{1i} = \gamma_{10} + u_{1i} \quad \text{where} \quad u_{1i} \sim \mathcal{N}(0, \sigma^2_u),
+
+$$
+
+$$
+
+\beta_{2i} = \gamma_{20} + u_{2i} \quad \text{where} \quad u_{2i} \sim \mathcal{N}(0, \sigma^2_u),
+
+$$
+
+$$
+
+\beta_{3i} = \gamma_{30} + u_{3i} \quad \text{where} \quad u_{3i} \sim \mathcal{N}(0, \sigma^2_u).
+
+$$
+
+Combining these, the full model becomes:
+
+$$
+
+Y_{it+1} = (\gamma_{00} + u_{0i}) + (\gamma_{10} + u_{1i}) Z_{it} + (\gamma_{20} + u_{2i}) X_{it} + (\gamma_{30} + u_{3i}) X_{it} Z_{it} + e_{it+1}.
+
+$$
+
+### Visualizing the Model
+
+```{r}
+
+# #| label: GM2_visual
+
+# #| cache: true
+
+# #| fig-subcap:
+
+# #| - "DAG"
+
+# #| - "Path Diagram"
+
+# #| layout-nrow: 2
+
+# #| echo: false
+
+#
+
+# # GM2_DAG <- dagitty('dag{
+
+```
+
+The model is fitted as
+
+```{r}
+
+#| label: GM2_fit
+
+#| echo: true
+
+#| eval: false
+
+gm2_mlm <- lmer(Y ~ Z * X + (Z * X | id), data = data)
+
+```
+
+## Generative Model 3
+
+### Translation of Notation
+
+...
+
+### Visualizing the Model
+
+...
