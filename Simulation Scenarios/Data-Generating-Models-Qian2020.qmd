@@ -1,11 +1,10 @@
 ---
-title: "Data Generating Models of Qian et al. (2020)"
+title: "DGMs of Qian et al. (2020) - Part 1: Without Treatment"
 author: "Ward B. Eiling"
 date: "2024-10-24"
 date-modified: last-modified
 format: 
   html:
-    # fig-pos: 'h'
     toc: true
     toc-location: left
     toc-depth: 3
