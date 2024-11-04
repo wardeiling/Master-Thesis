@@ -49,6 +49,18 @@ library(pdftools)
 
 \newpage
 
+## Explanation versus Prediction
+
+In het voorbeeld van Diggle et al. (2002) wat we vorige week hebben besproken, werd vermeld dat een cross-sectionele relatie tussen $X_{it}$ en $Y_{it}$ van interesse kan zijn met longitudinale data als voorspellen het doel is:
+
+> "In many applications the cross-sectional association between Xit and Yit is of substantive interest. For example, in assessing the predictive potential of biomarkers for the detection of cancer, the accuracy of a marker is typically characterized by the cross-sectional sensitivity and specificity. Although alternative predictive models may be developed using longitudinal marker series, these models would not apply to the common clinical setting where only a single measurement is available." (Diggle et al., 2002, p. 256)
+
+Daarentegen legt Qian et al. (2020) juist de nadruk op de voordelen van mixed linear models om tegelijkertijd ook individuele verschillen te kunnen voorspellen, waarbij de focus meer ligt op causaliteit:
+
+> "A particularly appealing feature of random effects models is the ability to predict person-specific random effects, which enables quantitative characterization of between person heterogeneity due to unobserved factors (Schwartz and Stone, 2007, Bolger and Laurenceau, 2013). Understanding such heterogeneity can bring forth new scientific hypotheses for further studies. In addition, the random effects provide a model for the within-person dependence in the time-varying outcome, which improves efficiency in parameter estimation." (Qian et al., 2020, p. 376)
+
+
+
 ## Main Simulation of Qian et al. (2020): With Treatment
 
 ### Original Section: "4. Simulation"
@@ -258,15 +270,128 @@ We can make a couple observations
 -   Contrary to the DAG, this path diagram shows the moderation effect (1) of $Z_{it}$ on the relationship between $X_{it}$ and $Y_{it+1}$ and (2) of $u_{2i}$ on the relationship between $Z_{it}$ and $Y_{it+1}$.
 -   Similar to the example without treatment in section 2.2, the covariate $Z_{it}$ is determined by the previous value of the outcome $Y_{it}$---which makes it an endogenous time-varying covariate.
 
-The model is fitted as
+### Data Generating and Estimation
+
+The data generating process for this model is given by
+
+$$
+Y_{it+1} = \gamma_{00} + \gamma_{01} Z_{it} + u_{0i} + X_{it} (\gamma_{10} + \gamma_{11} Z_{it} + u_{2i}) + e_{it+1}.
+$$
+
+More specifically, the process was generated as follows:
+
+-   the random effects $u_{0i} \sim \mathcal{N}(0, 4)$ and $u_{2i} \sim \mathcal{N}(0, 1)$ are independent of each other
+-   the covariate $Z_{i1} \sim \mathcal{N}(0, 1)$, and for $t \geq 2$, $Z_{it} = Y_{it} + \mathcal{N}(0, 1)$
+-   the randomization probability $p_t$ is constant at 0.5
+-   the exogenous noise $e_{it+1} \sim \mathcal{N}(0, 1)$
+-   the parameter values are $\gamma_{00} = -2$, $\gamma_{01} = -0.3$, $\gamma_{10} = 1$, $\gamma_{11} = 0.3$
+
+```{r}
+#| label: GM1_datageneration
+#| echo: true
+#| eval: false
+#| cache: true
+
+dgm1 <- function(sample_size, total_T) {
+    
+    # Parameters
+    gamma_00 <- -2   # Fixed intercept
+    gamma_01 <- -0.3 # Fixed slope for Z
+    gamma_10 <- 1    # Fixed effect of treatment (X)
+    gamma_11 <- 0.3  # Interaction effect between treatment (X) and covariate (Z)
+    sigma_u0 <- 2    # SD of random intercept (u_0i)
+    sigma_u2 <- 1    # SD of random slope for treatment (u_2i)
+    sigma_e <- 1     # SD of error term (e_{it+1})
+    prob_x <- 0.5    # Randomization probability for treatment (X)
+    
+    # Data frame setup
+    df_names <- c("userid", "day", "Z", "prob_X", "X", "Y", "u0", "u2", "e", "delta")
+    dta <- data.frame(matrix(NA, nrow = sample_size * total_T, ncol = length(df_names)))
+    names(dta) <- df_names
+
+    # Assign userid and day
+    dta$userid <- rep(1:sample_size, each = total_T)
+    dta$day <- rep(1:total_T, times = sample_size)
+
+    # Generate uncorrelated random effects
+    u_0i <- rnorm(sample_size, mean = 0, sd = sigma_u0)
+    u_2i <- rnorm(sample_size, mean = 0, sd = sigma_u2)
+
+    # Data generation for each time point
+    for (t in 1:total_T) {
+        # Row index for day t for every subject
+        row_index <- seq(from = t, by = total_T, length = sample_size)
+        
+        # Generate Z based on the process described
+        if (t == 1) {
+            dta$Z[row_index] <- rnorm(sample_size)
+        } else {
+            dta$Z[row_index] <- dta$Y[row_index_lag1] + rnorm(sample_size)
+        }
+        
+        # Set fixed probability for treatment assignment
+        dta$prob_X[row_index] <- rep(prob_x, sample_size)
+        
+        # Treatment assignment
+        dta$X[row_index] <- rbinom(sample_size, 1, dta$prob_X[row_index])
+        
+        # Error term
+        dta$e[row_index] <- rnorm(sample_size, mean = 0, sd = sigma_e)
+        
+        # Treatment effect (delta)
+        dta$delta[row_index] <- gamma_10 + gamma_11 * dta$Z[row_index] + u_2i
+        
+        # Outcome Y
+        dta$Y[row_index] <- gamma_00 + gamma_01 * dta$Z[row_index] + u_0i + 
+                            dta$X[row_index] * dta$delta[row_index] + dta$e[row_index]
+        
+        # Store random effects
+        dta$u0[row_index] <- u_0i
+        dta$u2[row_index] <- u_2i
+        
+        # Update row index for lagged Y
+        row_index_lag1 <- row_index
+    }
+    
+    return(dta)
+}
+
+# Run the data generation function
+set.seed(123987)
+data <- dgm1(sample_size = 100000, total_T = 10)
+saveRDS(data, "data/Qian_GM1_data.rds")
+```
 
 ```{r}
 #| label: GM1_fit
 #| echo: true
 #| eval: false
 
-gm1_mlm <- lmer(Y ~ Z * X + (1 + X| id), data = data)
+# load data
+data <- readRDS("data/Qian_GM1_data.rds")
+
+# Fit models
+gee_indep <- geeglm(Y ~ Z + X + Z:X, id = id, data = data, corstr = "independence")
+gee_exch <- geeglm(Y ~ Z + X + Z:X, id = id, data = data, corstr = "exchangeable")
+gee_ar1 <- geeglm(Y ~ Z + X + Z:X, id = id, data = data, corstr = "ar1")
+mlm_mle <- lmer(Y ~ Z + X + Z:X + (1 + X | id), data = data, REML = FALSE)
 ```
+
+```{r}
+#| label: GM1_results
+#| echo: false
+
+treatment_effect <- c(coef(gee_indep)[3], coef(gee_exch)[3], coef(gee_ar1)[3], fixef(mlm_mle)[3])
+
+df_treatment <- data.frame(row.names = c("GEE (Indep)", "GEE (Exch)", "GEE (AR1)", "MLM (MLE)"), treatment_effect = treatment_effect, true_effect = gamma_10)
+knitr::kable(df_treatment, digits = 3, caption = "Generating Model 1 - Treatment Effect Estimates")
+```
+
+```{r}
+```
+
+
+
 
 ## Generative Model 2
 
