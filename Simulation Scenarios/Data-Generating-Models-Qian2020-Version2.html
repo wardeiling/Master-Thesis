@@ -285,66 +285,30 @@ Y_{it+1} = \gamma_{00} + \gamma_{01} Z_{it} + u_{0i} + X_{it} (\gamma_{10} + \ga
 <blockquote class="blockquote">
 <p>“Conventional DAGs do not only represent main effects but rather the combination of main effects and interactions. Once you have drawn your DAG, you already assume that any variables pointing to the same outcome can modify the effect of the others pointing to the same outcome.” (<a href="https://stats.stackexchange.com/questions/157775/representing-interaction-effects-in-directed-acyclic-graphs">stackexchange</a>)</p>
 </blockquote>
-<p>For <span class="math inline">\(t = 1\)</span>, the DAG and path diagram are as follows:</p>
-<div id="fig-GM1_visual" class="cell quarto-layout-panel" data-hash="Data-Generating-Models-Qian2020-Version2_cache/html/fig-GM1_visual_59d9fedb59785a224d412711a41db8d8">
-<p></p><figcaption>Figure&nbsp;1: DAG and Path Diagram for Generative Model 1 at t = 1</figcaption><p></p>
+<p>So the DAG for the first couple observations, the DAG looks like</p>
+<div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<div class="quarto-layout-row quarto-layout-valign-top">
-<div class="cell-output-display quarto-layout-cell quarto-layout-cell-subref" style="flex-basis: 100.0%;justify-content: center;">
-<div id="fig-GM1_visual-1" class="quarto-figure quarto-figure-center anchored">
-<figure class="figure">
-<figcaption class="figure-caption">(a) DAG</figcaption>
-<p><img src="Data-Generating-Models-Qian2020-Version2_files/figure-html/fig-GM1_visual-1.png" class="img-fluid figure-img" data-ref-parent="fig-GM1_visual" width="672"></p>
+<figcaption class="figure-caption">DAG for Generative Model 1</figcaption>
+<p><img src="images/GM1_DAG.png" class="img-fluid figure-img"></p>
 </figure>
 </div>
-</div>
-</div>
-<div class="quarto-layout-row quarto-layout-valign-top">
-<div class="cell-output-display quarto-layout-cell quarto-layout-cell-subref" style="flex-basis: 100.0%;justify-content: center;">
-<div id="fig-GM1_visual-2" class="quarto-figure quarto-figure-center anchored">
-<figure class="figure">
-<figcaption class="figure-caption">(b) Path Diagam</figcaption>
-<p><img src="Data-Generating-Models-Qian2020-Version2_files/figure-html/fig-GM1_visual-2.png" class="img-fluid figure-img" data-ref-parent="fig-GM1_visual" width="672"></p>
-</figure>
-</div>
-</div>
-</div>
-</figure>
-</div>
-<p>Note that the interaction between <span class="math inline">\(X_{it}\)</span> and <span class="math inline">\(Z_{it}\)</span> is not explicitly shown in the DAG, but is explicit in the path diagram. This is because the interaction is a model assumption, which is not explicitly represented in the non-parametric DAG.</p>
-<p>For <span class="math inline">\(t \geq 2\)</span>, the DAG and path diagram are as follows:</p>
-<div id="fig-GM1_visual2" class="quarto-figure quarto-figure-center anchored">
-<figure class="figure">
-<figcaption class="figure-caption">Figure&nbsp;2: DAG and Path Diagram for Generative Model 1 at t &gt;= 2</figcaption>
+<p>The red arrows here show the biased paths after controlling for the covariate <span class="math inline">\(Z_{it}\)</span>.</p>
+<p>Or we can display it as a path diagram, where parameter values are displayed and moderation is shown by the dashed arrow.</p>
+<div class="cell" data-hash="Data-Generating-Models-Qian2020-Version2_cache/html/fig-GM1_path_380ee6b62f41328acc80254ce5602286">
 <div class="cell-output-display">
-<div id="fig-GM1_visual2-1" class="quarto-figure quarto-figure-center anchored">
+<div id="fig-GM1_path" class="quarto-figure quarto-figure-center anchored">
 <figure class="figure">
-<figcaption class="figure-caption">(a) DAG</figcaption>
-<p><img src="Data-Generating-Models-Qian2020-Version2_files/figure-html/fig-GM1_visual2-1.png" class="img-fluid figure-img" data-ref-parent="fig-GM1_visual2" width="672"></p>
-</figure>
-</div>
-</div>
-<div class="cell-output-display">
-<div id="fig-GM1_visual2-2" class="quarto-figure quarto-figure-center anchored">
-<figure class="figure">
-<figcaption class="figure-caption">(b) Path Diagam</figcaption>
-<p><img src="Data-Generating-Models-Qian2020-Version2_files/figure-html/fig-GM1_visual2-2.png" class="img-fluid figure-img" data-ref-parent="fig-GM1_visual2" width="672"></p>
-</figure>
-</div>
-</div>
-</figure>
-</div>
-<p>So the DAG for the first two observations looks like</p>
-<div class="cell" data-hash="Data-Generating-Models-Qian2020-Version2_cache/html/fig-GM1_visual3_f8f67e2d035d05ce0eec730a8dd4e419">
-<div class="cell-output-display">
-<div id="fig-GM1_visual3" class="quarto-figure quarto-figure-center anchored">
-<figure class="figure">
-<figcaption class="figure-caption">Figure&nbsp;3: DAG for Generative Model 1 at t = 1 and t = 2.</figcaption>
-<p><img src="Data-Generating-Models-Qian2020-Version2_files/figure-html/fig-GM1_visual3-1.png" class="img-fluid figure-img" width="672"></p>
+<figcaption class="figure-caption">Figure&nbsp;1: Path diagram for Generative Model 1</figcaption>
+<p><img src="Data-Generating-Models-Qian2020-Version2_files/figure-html/fig-GM1_path-1.png" class="img-fluid figure-img" width="672"></p>
 </figure>
 </div>
 </div>
 </div>
+<p>We can make a couple observations</p>
+<ul>
+<li>Contrary to the DAG, this path diagram shows the moderation effect (1) of <span class="math inline">\(Z_{it}\)</span> on the relationship between <span class="math inline">\(X_{it}\)</span> and <span class="math inline">\(Y_{it+1}\)</span> and (2) of <span class="math inline">\(u_{2i}\)</span> on the relationship between <span class="math inline">\(Z_{it}\)</span> and <span class="math inline">\(Y_{it+1}\)</span>.</li>
+<li>Similar to the example without treatment in section 2.2, the covariate <span class="math inline">\(Z_{it}\)</span> is determined by the previous value of the outcome <span class="math inline">\(Y_{it}\)</span>—which makes it an endogenous time-varying covariate.</li>
+</ul>
 <p>The model is fitted as</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>gm1_mlm <span class="ot">&lt;-</span> <span class="fu">lmer</span>(Y <span class="sc">~</span> Z <span class="sc">*</span> X <span class="sc">+</span> (<span class="dv">1</span> <span class="sc">+</span> X<span class="sc">|</span> id), <span class="at">data =</span> data)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -358,7 +322,7 @@ Y_{it+1} = \gamma_{00} + \gamma_{01} Z_{it} + u_{0i} + X_{it} (\gamma_{10} + \ga
 <p>Now we need to translate more parameters:</p>
 <table class="table">
 <colgroup>
-<col style="width: 50%">
+<col style="width: 48%">
 <col style="width: 25%">
 <col style="width: 25%">
 </colgroup>

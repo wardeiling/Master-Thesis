@@ -93,7 +93,7 @@ GM3 is the same as GM 1, except that the covariate $X_{it}$ depends directly on 
 
 $$
 X_{i1} \sim N(b_{i0}, 1), \quad X_{it} = Y_{it} + N(b_{i0}, 1) \text{ for } t \geq 2.
-$$ 
+$$
 
 We chose the following parameter values:
 
@@ -121,7 +121,7 @@ In the table below, we will provide the translation of original notation in Qian
 | Fixed effect of $A_{it}$                    | $\beta_0$         | $\gamma_{10}$ |
 | Interaction effect of $A_{it}$ and $X_{it}$ | $\beta_1$         | $\gamma_{11}$ |
 | Covariate                                   | $X_{it}$          | $Z_{it}$      |
-| Randomized Treatment                                   | $A_{it}$          | $X_{it}$      |
+| Randomized Treatment                        | $A_{it}$          | $X_{it}$      |
 
 Let's first state the original model:
 
@@ -165,115 +165,98 @@ As mentioned by Ellen in the last meeting (17-10):
 
 > "Conventional DAGs do not only represent main effects but rather the combination of main effects and interactions. Once you have drawn your DAG, you already assume that any variables pointing to the same outcome can modify the effect of the others pointing to the same outcome." ([stackexchange](https://stats.stackexchange.com/questions/157775/representing-interaction-effects-in-directed-acyclic-graphs))
 
-For $t = 1$, the DAG and path diagram are as follows:
-
-```{r}
-#| label: fig-GM1_visual
-#| cache: true
-#| fig-cap: "DAG and Path Diagram for Generative Model 1 at t = 1"
-#| fig-subcap:
-#|  - "DAG"
-#|  - "Path Diagam"
-#| layout-nrow: 2
-#| echo: false
-
-GM1_DAG <- dagitty('dag {
-bb="0,0,1,1"
-"Y_t+1" [outcome,pos="0.723,0.432"]
-X_t [exposure,pos="0.421,0.431"]
-Z_t [pos="0.424,0.602"]
-X_t -> "Y_t+1"
-Z_t -> "Y_t+1"
-}')
-
-ggdag::ggdag_status(GM1_DAG) + ggdag::theme_dag()
-
-GM1_Path <- dagitty('dag {
-bb="0,0,1,1"
-"Y_t+1" [outcome,pos="0.723,0.432"]
-. [pos="0.576,0.434"]
-X_t [exposure,pos="0.421,0.431"]
-Z_t [pos="0.576,0.556"]
-. -> "Y_t+1"
-X_t -> .
-Z_t -> .
-}')
-
-ggdag::ggdag_status(GM1_Path) + ggdag::theme_dag()
-```
-
-Note that the interaction between $X_{it}$ and $Z_{it}$ is not explicitly shown in the DAG, but is explicit in the path diagram. This is because the interaction is a model assumption, which is not explicitly represented in the non-parametric DAG.
-
-For $t \geq 2$, the DAG and path diagram are as follows:
-
-```{r}
-#| label: fig-GM1_visual2
-#| echo: false
-#| fig-cap: "DAG and Path Diagram for Generative Model 1 at t >= 2"
-#| fig-subcap:
-#|  - "DAG"
-#|  - "Path Diagam"
-#| cache: true
-
-GM1_DAG2 <- dagitty('dag {
-bb="0,0,1,1"
-"Y_t+1" [outcome,pos="0.780,0.566"]
-"Z_t+1" [pos="0.780,0.741"]
-X_t [exposure,pos="0.602,0.406"]
-Y_t [outcome,pos="0.605,0.554"]
-Z_t [pos="0.607,0.742"]
-"Y_t+1" -> "Z_t+1"
-X_t -> "Y_t+1"
-Y_t -> Z_t
-Z_t -> "Y_t+1"
-}
-')
-
-ggdag::ggdag_status(GM1_DAG2) + ggdag::theme_dag()
-
-GM1_Path2 <- dagitty('dag {
-bb="0,0,1,1"
-"Y_t+1" [outcome,pos="0.780,0.566"]
-"Z_t+1" [pos="0.780,0.741"]
-. [pos="0.693,0.565"]
-X_t [exposure,pos="0.606,0.402"]
-Y_t [outcome,pos="0.605,0.554"]
-Z_t [pos="0.607,0.742"]
-"Y_t+1" -> "Z_t+1"
-. -> "Y_t+1"
-X_t -> .
-Y_t -> Z_t
-Z_t -> .
-}')
-
-ggdag::ggdag_status(GM1_Path2) + ggdag::theme_dag()
-```
-
-So the DAG for the first two observations looks like
+So the DAG for the first couple observations, the DAG looks like
 
 ```{r}
 #| label: fig-GM1_visual3
-#| fig-cap: "DAG for Generative Model 1 at t = 1 and t = 2."
+#| fig-cap: "DAG for Generative Model 1"
 #| echo: false
-#| cache: true
+#| eval: false
 
 GM1_DAG3 <- dagitty('dag {
 bb="0,0,1,1"
-X_1 [exposure,pos="0.439,0.432"]
-X_2 [exposure,pos="0.605,0.428"]
-Y_2 [outcome,pos="0.608,0.565"]
-Y_3 [outcome,pos="0.742,0.571"]
-Z_1 [pos="0.441,0.688"]
-Z_2 [pos="0.610,0.694"]
+X_1 [exposure,pos="0.173,0.282"]
+X_2 [exposure,pos="0.426,0.283"]
+Y_2 [outcome,pos="0.422,0.431"]
+Y_3 [outcome,pos="0.723,0.432"]
+Z_1 [adjusted,pos="0.171,0.602"]
+Z_2 [adjusted,pos="0.424,0.602"]
+Z_3 [adjusted,pos="0.721,0.602"]
+u0 [pos="0.549,0.783"]
+u2 [pos="0.616,0.783"]
 X_1 -> Y_2
 X_2 -> Y_3
 Y_2 -> Z_2
+Y_3 -> Z_3
 Z_1 -> Y_2
 Z_2 -> Y_3
+u0 -> Y_2
+u0 -> Y_3
+u2 -> Y_2
+u2 -> Y_3
 }')
 
 ggdag::ggdag_status(GM1_DAG3) + ggdag::theme_dag()
 ```
+
+![DAG for Generative Model 1](images/GM1_DAG.png)
+
+The red arrows here show the biased paths after controlling for the covariate $Z_{it}$.
+
+Or we can display it as a path diagram, where parameter values are displayed and moderation is shown by the dashed arrow.
+
+```{r, engine = 'tikz'}
+#| label: fig-GM1_path
+#| echo: false
+#| cache: true
+#| fig-cap: "Path diagram for Generative Model 1"
+
+\begin{tikzpicture}
+  % Nodes for observed variables (squares)
+  \node[draw, rectangle] (Z1) at (0, -2) {$Z_{1i}$};
+  \node[draw, rectangle] (X1) at (0, 2) {$X_{1i}$};
+  \node[draw, rectangle] (Y2) at (3, 0) {$Y_{2i}$}; % Increased x-coordinate
+  \node[draw, rectangle] (Z2) at (3, -2) {$Z_{2i}$}; % Increased x-coordinate
+  \node[draw, rectangle] (X2) at (3, 2) {$X_{2i}$}; % Increased x-coordinate
+  \node[draw, rectangle] (Y3) at (6, 0) {$Y_{3i}$}; % Increased x-coordinate
+  \node[draw, rectangle] (Z3) at (6, -2) {$Z_{3i}$}; % Increased x-coordinate
+  
+  % Nodes for latent variables (circles)
+  \node[draw, circle] (u0) at (6, 4) {$u_{0i}$}; % Increased x-coordinate
+  \node[draw, circle] (u2) at (3, 4) {$u_{2i}$}; % Adjusted to align with middle row
+  
+  % Arrows with path coefficients
+  \draw [->] (u0) -- node[right] {$+$} (Y2);
+  \draw [->] (u0) -- node[right] {$+$} (Y3);
+  \draw [->] (X2) edge node[above] {$\gamma_{10}$} (Y3);
+  \draw [->] (Z2) edge node[below] {$\gamma_{01}$} (Y3);
+  \draw [->] (Y2) edge node[left] {$=$} (Z2);
+  \draw [->] (X1) edge node[left] {$\gamma_{10}$} (Y2);
+  \draw [->] (Z1) edge node[below] {$\gamma_{01}$} (Y2);
+  \draw [->] (Y3) edge node[right] {$=$} (Z3);
+
+  % Curved arrows for variances
+  \draw [->, out=-45, in=-135, looseness=2] (Z1) to node[below] {$\sigma^2_{Z}$} (Z1);
+  \draw [->, out=-45, in=-135, looseness=2] (Z2) to node[below] {$\sigma^2_{Z}$} (Z2);
+  \draw [->, out=-45, in=-135, looseness=2] (Z3) to node[below] {$\sigma^2_{Z}$} (Z3);
+  \draw [->, out=45, in=135, looseness=2] (u0) to node[above] {$\sigma^2_{u0}$} (u0);
+  \draw [->, out=45, in=135, looseness=2] (u2) to node[above] {$\sigma^2_{u2}$} (u2);
+  \draw [->, out=30, in=330, looseness=2] (Y2) to node[right] {$\sigma^2_{e}$} (Y2);
+  \draw [->, out=30, in=330, looseness=2] (Y3) to node[right] {$\sigma^2_{e}$} (Y3);
+
+  % Additional paths for Z and Y interaction effects
+  \draw[->, dashed] (u2) -- (1.5,1); % Adjusted x-coordinates
+  \draw[->, dashed] (u2) -- (4.5,1); % Adjusted x-coordinates
+  \draw[->, dashed] (Z1) -- node[right] {$\gamma_{11}$} (1.5,1);
+  \draw[->, dashed] (Z2) -- node[right] {$\gamma_{11}$} (4.5,1);
+
+\end{tikzpicture}
+```
+
+We can make a couple observations
+
+-   Contrary to the DAG, this path diagram shows the moderation effect (1) of $Z_{it}$ on the relationship between $X_{it}$ and $Y_{it+1}$ and (2) of $u_{2i}$ on the relationship between $Z_{it}$ and $Y_{it+1}$.
+-   Similar to the example without treatment in section 2.2, the covariate $Z_{it}$ is determined by the previous value of the outcome $Y_{it}$---which makes it an endogenous time-varying covariate.
 
 The model is fitted as
 
@@ -292,7 +275,7 @@ gm1_mlm <- lmer(Y ~ Z * X + (1 + X| id), data = data)
 Now we need to translate more parameters:
 
 | Parameter                                            | Original          | New           |
-|------------------------------------|------------------|------------------|
+|------------------------------------|-------------------|-------------------|
 | Fixed intercept                                      | $\alpha_0$        | $\gamma_{00}$ |
 | Fixed slope for $X_{it}$                             | $\alpha_1$        | $\gamma_{10}$ |
 | Random intercept                                     | $b_{i0}$          | $u_{0i}$      |
@@ -379,4 +362,3 @@ gm2_mlm <- lmer(Y ~ Z * X + (Z * X | id), data = data)
 ### Visualizing the Model
 
 ...
-
