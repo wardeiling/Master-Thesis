@@ -1,0 +1,263 @@
+---
+title: "DGMs of Qian et al. (2020) - Part 2: With Treatment"
+date: "2024-11-06"
+author: "Ward B. Eiling"
+format: 
+  revealjs: 
+    theme: default
+    slideNumber: true
+    progress: true
+    width: 1920
+    height: 1080
+    margin: 0.1
+    embed-resources: true
+    scrollable: true
+execute:
+  echo: true
+  warning: false
+  message: false
+---
+
+```{r}
+#| label: Packages
+#| echo: false
+
+# for general data manipulation and plotting
+library(tidyverse)
+# for estimation
+library(lme4)
+library(gee)
+library(geex)
+library(geepack)
+library(nlme)
+# for presentation of results
+library(jtools)
+# for diagrams
+library(dagitty)
+library(ggdag)
+library(DiagrammeR)
+library(magick)
+library(pdftools)
+```
+
+## Explanation versus Prediction (naar aanleiding van vorige week)
+
+In het voorbeeld van Diggle et al. (2002) lijkt prediction het doel te zijn:
+
+> "In many applications the cross-sectional association between Xit and Yit is of substantive interest. For example, in assessing the predictive potential of biomarkers for the detection of cancer, the accuracy of a marker is typically characterized by the cross-sectional sensitivity and specificity. Although alternative predictive models may be developed using longitudinal marker series, these models would not apply to the common clinical setting where only a single measurement is available." (Diggle et al., 2002, p. 256)
+
+Terwijl Qian et al. (2020) meer de nadruk legt op de mogelijkheid van mixed linear models om te helpen met vragen over explanation
+
+> "A particularly appealing feature of random effects models is the ability to predict person-specific random effects, which enables quantitative characterization of between person heterogeneity due to unobserved factors (Schwartz and Stone, 2007, Bolger and Laurenceau, 2013). Understanding such heterogeneity can bring forth new scientific hypotheses for further studies. In addition, the random effects provide a model for the within-person dependence in the time-varying outcome, which improves efficiency in parameter estimation." (Qian et al., 2020, p. 376)
+
+## Voorbeeld met Treatment
+
+-   Vorige week hadden Jeroen en ik voorbeelden zonder treatment besproken.
+-   Nu zullen we doorgaan naar Generating Model 1 van Qian et al. (2020), waar wel een randomized treatment is.
+
+## Generative Model 1 - Vertaling van Notatie
+
+| Parameter | Original | New |
+|----------------------------|----------------------|----------------------|
+| Fixed intercept | $\alpha_0$ | $\gamma_{00}$ |
+| Fixed slope for $X_{it}$ | $\alpha_1$ | $\gamma_{01}$ |
+| Random intercept | $b_{i0}$ | $u_{0i}$ |
+| Random slope for $A_{it}$ | $b_{i2}$ | $u_{2i}$ |
+| Error term | $\epsilon_{it+1}$ | $e_{it+1}$ |
+| Fixed effect of $A_{it}$ | $\beta_0$ | $\gamma_{10}$ |
+| Interaction effect of $A_{it}$ and $X_{it}$ | $\beta_1$ | $\gamma_{11}$ |
+| Covariate | $X_{it}$ | $Z_{it}$ |
+| Randomized Treatment | $A_{it}$ | $X_{it}$ |
+
+Let's first state the original model:
+
+$$
+Y_{it+1} = \alpha_0 + \alpha_1 X_{it} + b_{i0} + A_{it} (\beta_0 + \beta_1 X_{it} + b_{i2}) + \epsilon_{it+1}.
+$$
+
+Using this new notation, we may thus rewrite GM1 as a within model:
+
+$$
+Y_{it+1} = \beta_{0i} + \beta_{1i} X_{it} + e_{it+1},
+$$
+
+where:
+
+$$ 
+\beta_{0i} = \gamma_{00} + \gamma_{01} Z_{it} + u_{0i} \quad \text{with} \quad u_{0i} \sim \mathcal{N}(0, \sigma^2_{u0}),
+$$
+
+$$ 
+\beta_{1i} = \gamma_{10} + \gamma_{11} Z_{it} + u_{2i} \quad \text{with} \quad u_{2i} \sim \mathcal{N}(0, \sigma^2_{u2}).
+$$
+
+Combining these two equations, the model can be expressed as:
+
+$$
+Y_{it+1} = \gamma_{00} + \gamma_{01} Z_{it} + u_{0i} + X_{it} (\gamma_{10} + \gamma_{11} Z_{it} + u_{2i}) + e_{it+1}.
+$$
+
+More specifically, the process was generated as follows:
+
+-   the random effects $u_{0i} \sim \mathcal{N}(0, 4)$ and $u_{2i} \sim \mathcal{N}(0, 1)$ are independent of each other
+-   the covariate $Z_{i1} \sim \mathcal{N}(0, 1)$, and for $t \geq 2$, $Z_{it} = Y_{it} + \mathcal{N}(0, 1)$
+-   the randomization probability $p_t$ is constant at 0.5
+-   the exogenous noise $e_{it+1} \sim \mathcal{N}(0, 1)$
+-   the parameter values are $\gamma_{00} = -2$, $\gamma_{01} = -0.3$, $\gamma_{10} = 1$, $\gamma_{11} = 0.3$
+
+## Generative Model 1 - Visualisatie van het Model: DAG
+
+Voor de eerste paar observaties de DAG is als volgt:
+
+![DAG for Generative Model 1](images/GM1_DAG.png){width=1500 height=800}
+
+Observaties
+
+-   De *rode* pijlen geven de biased paden aan na controle voor de covariaat $Z_{it}$.
+-   Vergelijkbaar met het voorbeeld zonder treatment in sectie 2.2, wordt de covariaat $Z_{it}$ bepaald door de vorige waarde van de uitkomst $Y_{it}$---wat het een *endogene* tijdsafhankelijke covariaat maakt.
+    -   De random effects $u_{0i}$ en $u_{2i}$ bepalen (en zijn gecorreleerd met) de covariaat $Z_{it}$, wat leidt tot een *confounding* effect.
+    -   Als we deze stroom van effecten volgen, zien we dat dit effect steeds groter wordt naarmate de tijd vordert. Dit legt misschien uit waarom de suggestie van Jeroen vorige week m.b.t. handmatige berekening van het marginale effect niet werkte.
+
+## Generative Model 1 - Visualisatie van het Model: Pad diagram
+
+Als alternatief kunnen we het weergeven als een paddiagram, waarbij parameterlabels worden weergegeven en moderatie wordt getoond door de gestreepte pijl:
+
+![Path diagram for Generative Model 1](figure/fig-GM1_path-1.png){width=900 height=900}
+
+We kunnen een paar observaties maken uit dit paddiagram:
+
+- In tegenstelling tot de DAG, toont dit paddiagram het moderatie-effect (1) van $Z_{it}$ op de relatie tussen $X_{it}$ en $Y_{it+1}$, en (2) van $u_{2i}$ op de relatie tussen $Z_{it}$ en $Y_{it+1}$.
+
+
+## Generative Model 1 - Data Generatie
+
+De DGM is:
+
+$$
+Y_{it+1} = \gamma_{00} + \gamma_{01} Z_{it} + u_{0i} + X_{it} (\gamma_{10} + \gamma_{11} Z_{it} + u_{2i}) + e_{it+1}.
+$$
+
+Met de volgende waardes:
+
+$$
+u_{0i} \sim \mathcal{N}(0, 4), \quad u_{2i} \sim \mathcal{N}(0, 1), \quad Z_{i1} \sim \mathcal{N}(0, 1), \quad \text{and for } t \geq 2, Z_{it} = Y_{it} + \mathcal{N}(0, 1), \quad p_t = 0.5
+$$
+$$
+e_{it+1} \sim \mathcal{N}(0, 1), \quad \gamma_{00} = -2, \quad \gamma_{01} = -0.3, \quad \gamma_{10} = 1, \quad \gamma_{11} = 0.3.
+$$
+
+Let's generate data for 100.000 subjects with 10 time points each. The code is a stripped down version from the functions used by Qian et al. (2020).
+
+```{r}
+#| label: GM1_datageneration
+#| echo: true
+#| eval: false
+#| cache: true
+#| code-fold: true
+
+dgm1 <- function(sample_size, total_T) {
+    
+    # Parameters
+    gamma_00 <- -2   # Fixed intercept
+    gamma_01 <- -0.3 # Fixed slope for Z
+    gamma_10 <- 1    # Fixed effect of treatment (X)
+    gamma_11 <- 0.3  # Interaction effect between treatment (X) and covariate (Z)
+    sigma_u0 <- 2    # SD of random intercept (u_0i)
+    sigma_u2 <- 1    # SD of random slope for treatment (u_2i)
+    sigma_e <- 1     # SD of error term (e_{it+1})
+    prob_x <- 0.5    # Randomization probability for treatment (X)
+    
+    # Data frame setup
+    df_names <- c("userid", "day", "Z", "prob_X", "X", "Y", "u0", "u2", "e", "delta")
+    dta <- data.frame(matrix(NA, nrow = sample_size * total_T, ncol = length(df_names)))
+    names(dta) <- df_names
+
+    # Assign userid and day
+    dta$userid <- rep(1:sample_size, each = total_T)
+    dta$day <- rep(1:total_T, times = sample_size)
+
+    # Generate uncorrelated random effects
+    u_0i <- rnorm(sample_size, mean = 0, sd = sigma_u0)
+    u_2i <- rnorm(sample_size, mean = 0, sd = sigma_u2)
+
+    # Data generation for each time point
+    for (t in 1:total_T) {
+        # Row index for day t for every subject
+        row_index <- seq(from = t, by = total_T, length = sample_size)
+        
+        # Generate Z based on the process described
+        if (t == 1) {
+            dta$Z[row_index] <- rnorm(sample_size)
+        } else {
+            dta$Z[row_index] <- dta$Y[row_index_lag1] + rnorm(sample_size)
+        }
+        
+        # Set fixed probability for treatment assignment
+        dta$prob_X[row_index] <- rep(prob_x, sample_size)
+        
+        # Treatment assignment
+        dta$X[row_index] <- rbinom(sample_size, 1, dta$prob_X[row_index])
+        
+        # Error term
+        dta$e[row_index] <- rnorm(sample_size, mean = 0, sd = sigma_e)
+        
+        # Treatment effect (delta)
+        dta$delta[row_index] <- gamma_10 + gamma_11 * dta$Z[row_index] + u_2i
+        
+        # Outcome Y
+        dta$Y[row_index] <- gamma_00 + gamma_01 * dta$Z[row_index] + u_0i + 
+                            dta$X[row_index] * dta$delta[row_index] + dta$e[row_index]
+        
+        # Store random effects
+        dta$u0[row_index] <- u_0i
+        dta$u2[row_index] <- u_2i
+        
+        # Update row index for lagged Y
+        row_index_lag1 <- row_index
+    }
+    
+    return(dta)
+}
+
+# Run the data generation function
+set.seed(123987)
+data <- dgm1(sample_size = 100000, total_T = 10)
+saveRDS(data, "data/Qian_GM1_data.rds")
+```
+
+## Generative Model 1 - Schatting van het Model
+
+In the code of Qian et al. (2020), the models is estimated as `fit <- lmer(Y ~ X * A + (1 + A| userid), data = dta)`. Here the main effects are implicit.
+
+```{r}
+#| label: GM1_fit
+#| echo: true
+#| eval: false
+#| code-fold: true
+
+# load data
+data <- readRDS("data/Qian_GM1_data.rds")
+
+# Fit models
+gee_indep <- geeglm(Y ~ Z + X + Z*X, id = userid, data = data, family = gaussian, corstr = "independence")
+gee_exch <- geeglm(Y ~ Z + X + Z*X, id = userid, data = data, family = gaussian, corstr = "exchangeable")
+gee_ar1 <- geeglm(Y ~ Z + X + Z*X, id = userid, data = data, family = gaussian, corstr = "ar1")
+mlm_mle <- lmer(Y ~ Z + X + Z*X + (1 + X | userid), data = data)
+
+gamma_10 <- 1    # Fixed effect of treatment (X)
+est_treat_effect <- c(coef(gee_indep)[3], coef(gee_exch)[3], coef(gee_ar1)[3], fixef(mlm_mle)[3])
+df_treatment <- data.frame(row.names = c("GEE (Indep)", "GEE (Exch)", "GEE (AR1)", "MLM (MLE)"), treatment_effect = treatment_effect, true_effect = gamma_10)
+saveRDS(df_treatment, "data/Qian_GM1_results.rds")
+```
+
+Here we present the results
+
+```{r}
+#| label: GM1_results
+#| echo: false
+
+df_treatment <- readRDS("data/Qian_GM1_results.rds")
+knitr::kable(df_treatment, digits = 3, caption = "Generating Model 1 - Treatment Effect Estimates")
+```
+
+Strange... How can we explain this?
