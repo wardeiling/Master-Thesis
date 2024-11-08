@@ -10,6 +10,8 @@ format:
     number-sections: true
     # embed-resources: false
     default-image-extension: svg
+  pdf:
+    number-sections: true
 execute:
   message: false
   warning: false

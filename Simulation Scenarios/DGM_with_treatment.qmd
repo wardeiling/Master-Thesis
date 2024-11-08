@@ -11,9 +11,8 @@ format:
     toc-expand: 3
     number-sections: true
     # embed-resources: false
-    # default-image-extension: svg
-  # pdf:
-  #   fig-pos: 'h'
+  pdf:
+    fig-pos: 'h'
   #   toc: true
   #   toc-depth: 5
   #   number-sections: true
@@ -47,8 +46,6 @@ library(magick)
 library(pdftools)
 ```
 
-\newpage
-
 ## Explanation versus Prediction
 
 In het voorbeeld van Diggle et al. (2002) wat we vorige week hebben besproken, werd vermeld dat een cross-sectionele relatie tussen $X_{it}$ en $Y_{it}$ van interesse kan zijn met longitudinale data als voorspellen het doel is:
@@ -58,8 +55,6 @@ In het voorbeeld van Diggle et al. (2002) wat we vorige week hebben besproken, w
 Daarentegen legt Qian et al. (2020) juist de nadruk op de voordelen van mixed linear models om tegelijkertijd ook individuele verschillen te kunnen voorspellen, waarbij de focus meer ligt op causaliteit:
 
 > "A particularly appealing feature of random effects models is the ability to predict person-specific random effects, which enables quantitative characterization of between person heterogeneity due to unobserved factors (Schwartz and Stone, 2007, Bolger and Laurenceau, 2013). Understanding such heterogeneity can bring forth new scientific hypotheses for further studies. In addition, the random effects provide a model for the within-person dependence in the time-varying outcome, which improves efficiency in parameter estimation." (Qian et al., 2020, p. 376)
-
-
 
 ## Main Simulation of Qian et al. (2020): With Treatment
 
@@ -123,17 +118,17 @@ $$
 
 In the table below, we will provide the translation of original notation in Qian et al. (2020) to notation more common in psychological research
 
-| Parameter                                   | Original          | New           |
+| Parameter | Original | New |
 |----------------------------|----------------------|----------------------|
-| Fixed intercept                             | $\alpha_0$        | $\gamma_{00}$ |
-| Fixed slope for $X_{it}$                    | $\alpha_1$        | $\gamma_{01}$ |
-| Random intercept                            | $b_{i0}$          | $u_{0i}$      |
-| Random slope for $A_{it}$                   | $b_{i2}$          | $u_{2i}$      |
-| Error term                                  | $\epsilon_{it+1}$ | $e_{it+1}$    |
-| Fixed effect of $A_{it}$                    | $\beta_0$         | $\gamma_{10}$ |
-| Interaction effect of $A_{it}$ and $X_{it}$ | $\beta_1$         | $\gamma_{11}$ |
-| Covariate                                   | $X_{it}$          | $Z_{it}$      |
-| Randomized Treatment                        | $A_{it}$          | $X_{it}$      |
+| Fixed intercept | $\alpha_0$ | $\gamma_{00}$ |
+| Fixed slope for $X_{it}$ | $\alpha_1$ | $\gamma_{01}$ |
+| Random intercept | $b_{i0}$ | $u_{0i}$ |
+| Random slope for $A_{it}$ | $b_{i2}$ | $u_{2i}$ |
+| Error term | $\epsilon_{it+1}$ | $e_{it+1}$ |
+| Fixed effect of $A_{it}$ | $\beta_0$ | $\gamma_{10}$ |
+| Interaction effect of $A_{it}$ and $X_{it}$ | $\beta_1$ | $\gamma_{11}$ |
+| Covariate | $X_{it}$ | $Z_{it}$ |
+| Randomized Treatment | $A_{it}$ | $X_{it}$ |
 
 Let's first state the original model:
 
@@ -211,61 +206,62 @@ u2 -> Y_3
 ggdag::ggdag_status(GM1_DAG3) + ggdag::theme_dag()
 ```
 
-![DAG for Generative Model 1](images/GM1_DAG.png)
+![DAG for Generative Model 1](figure/GM1_DAG.png)
 
 The red arrows here show the biased paths after controlling for the covariate $Z_{it}$.
 
 Or we can display it as a path diagram, where parameter values are displayed and moderation is shown by the dashed arrow.
 
-<!-- ```{r, engine = 'tikz'} -->
-<!-- #| label: fig-GM1_path -->
-<!-- #| echo: false -->
-<!-- #| cache: true -->
-<!-- #| fig-cap: "Path diagram for Generative Model 1" -->
+```{r}
+#| label: fig-GM1_path
+#| engine: 'tikz'
+#| echo: false
+#| cache: true
+#| fig-cap: "Path diagram for Generative Model 1"
 
-<!-- \begin{tikzpicture} -->
-<!--   % Nodes for observed variables (squares) -->
-<!--   \node[draw, rectangle] (Z1) at (0, -2) {$Z_{1i}$}; -->
-<!--   \node[draw, rectangle] (X1) at (0, 2) {$X_{1i}$}; -->
-<!--   \node[draw, rectangle] (Y2) at (3, 0) {$Y_{2i}$}; % Increased x-coordinate -->
-<!--   \node[draw, rectangle] (Z2) at (3, -2) {$Z_{2i}$}; % Increased x-coordinate -->
-<!--   \node[draw, rectangle] (X2) at (3, 2) {$X_{2i}$}; % Increased x-coordinate -->
-<!--   \node[draw, rectangle] (Y3) at (6, 0) {$Y_{3i}$}; % Increased x-coordinate -->
-<!--   \node[draw, rectangle] (Z3) at (6, -2) {$Z_{3i}$}; % Increased x-coordinate -->
+\begin{tikzpicture}
+  % Nodes for observed variables (squares)
+  \node[draw, rectangle] (Z1) at (0, -2) {$Z_{1i}$};
+  \node[draw, rectangle] (X1) at (0, 2) {$X_{1i}$};
+  \node[draw, rectangle] (Y2) at (3, 0) {$Y_{2i}$}; % Increased x-coordinate
+  \node[draw, rectangle] (Z2) at (3, -2) {$Z_{2i}$}; % Increased x-coordinate
+  \node[draw, rectangle] (X2) at (3, 2) {$X_{2i}$}; % Increased x-coordinate
+  \node[draw, rectangle] (Y3) at (6, 0) {$Y_{3i}$}; % Increased x-coordinate
+  \node[draw, rectangle] (Z3) at (6, -2) {$Z_{3i}$}; % Increased x-coordinate
 
-<!--   % Nodes for latent variables (circles) -->
-<!--   \node[draw, circle] (u0) at (6, 4) {$u_{0i}$}; % Increased x-coordinate -->
-<!--   \node[draw, circle] (u2) at (3, 4) {$u_{2i}$}; % Adjusted to align with middle row -->
+  % Nodes for latent variables (circles)
+  \node[draw, circle] (u0) at (6, 4) {$u_{0i}$}; % Increased x-coordinate
+  \node[draw, circle] (u2) at (3, 4) {$u_{2i}$}; % Adjusted to align with middle row
 
-<!--   % Arrows with path coefficients -->
-<!--   \draw [->] (u0) -- node[right] {$+$} (Y2); -->
-<!--   \draw [->] (u0) -- node[right] {$+$} (Y3); -->
-<!--   \draw [->] (X2) edge node[above] {$\gamma_{10}$} (Y3); -->
-<!--   \draw [->] (Z2) edge node[below] {$\gamma_{01}$} (Y3); -->
-<!--   \draw [->] (Y2) edge node[left] {$=$} (Z2); -->
-<!--   \draw [->] (X1) edge node[left] {$\gamma_{10}$} (Y2); -->
-<!--   \draw [->] (Z1) edge node[below] {$\gamma_{01}$} (Y2); -->
-<!--   \draw [->] (Y3) edge node[right] {$=$} (Z3); -->
+  % Arrows with path coefficients
+  \draw [->] (u0) -- node[right] {$+$} (Y2);
+  \draw [->] (u0) -- node[right] {$+$} (Y3);
+  \draw [->] (X2) edge node[above] {$\gamma_{10}$} (Y3);
+  \draw [->] (Z2) edge node[below] {$\gamma_{01}$} (Y3);
+  \draw [->] (Y2) edge node[left] {$=$} (Z2);
+  \draw [->] (X1) edge node[left] {$\gamma_{10}$} (Y2);
+  \draw [->] (Z1) edge node[below] {$\gamma_{01}$} (Y2);
+  \draw [->] (Y3) edge node[right] {$=$} (Z3);
 
-<!--   % Curved arrows for variances -->
-<!--   \draw [->, out=-45, in=-135, looseness=2] (Z1) to node[below] {$\sigma^2_{Z}$} (Z1); -->
-<!--   \draw [->, out=-45, in=-135, looseness=2] (Z2) to node[below] {$\sigma^2_{Z}$} (Z2); -->
-<!--   \draw [->, out=-45, in=-135, looseness=2] (Z3) to node[below] {$\sigma^2_{Z}$} (Z3); -->
-<!--   \draw [->, out=45, in=135, looseness=2] (u0) to node[above] {$\sigma^2_{u0}$} (u0); -->
-<!--   \draw [->, out=45, in=135, looseness=2] (u2) to node[above] {$\sigma^2_{u2}$} (u2); -->
-<!--   \draw [->, out=30, in=330, looseness=2] (Y2) to node[right] {$\sigma^2_{e}$} (Y2); -->
-<!--   \draw [->, out=30, in=330, looseness=2] (Y3) to node[right] {$\sigma^2_{e}$} (Y3); -->
+  % Curved arrows for variances
+  \draw [->, out=-45, in=-135, looseness=2] (Z1) to node[below] {$\sigma^2_{Z}$} (Z1);
+  \draw [->, out=-45, in=-135, looseness=2] (Z2) to node[below] {$\sigma^2_{Z}$} (Z2);
+  \draw [->, out=-45, in=-135, looseness=2] (Z3) to node[below] {$\sigma^2_{Z}$} (Z3);
+  \draw [->, out=45, in=135, looseness=2] (u0) to node[above] {$\sigma^2_{u0}$} (u0);
+  \draw [->, out=45, in=135, looseness=2] (u2) to node[above] {$\sigma^2_{u2}$} (u2);
+  \draw [->, out=30, in=330, looseness=2] (Y2) to node[right] {$\sigma^2_{e}$} (Y2);
+  \draw [->, out=30, in=330, looseness=2] (Y3) to node[right] {$\sigma^2_{e}$} (Y3);
 
-<!--   % Additional paths for Z and Y interaction effects -->
-<!--   \draw[->, dashed] (u2) -- (1.5,1); % Adjusted x-coordinates -->
-<!--   \draw[->, dashed] (u2) -- (4.5,1); % Adjusted x-coordinates -->
-<!--   \draw[->, dashed] (Z1) -- node[right] {$\gamma_{11}$} (1.5,1); -->
-<!--   \draw[->, dashed] (Z2) -- node[right] {$\gamma_{11}$} (4.5,1); -->
+  % Additional paths for Z and Y interaction effects
+  \draw[->, dashed] (u2) -- (1.5,1); % Adjusted x-coordinates
+  \draw[->, dashed] (u2) -- (4.5,1); % Adjusted x-coordinates
+  \draw[->, dashed] (Z1) -- node[right] {$\gamma_{11}$} (1.5,1);
+  \draw[->, dashed] (Z2) -- node[right] {$\gamma_{11}$} (4.5,1);
 
-<!-- \end{tikzpicture} -->
-<!-- ``` -->
+\end{tikzpicture}
+```
 
-![Path diagram for Generative Model 1](fig-GM1_path-1.png)
+<!-- ![Path diagram for Generative Model 1](fig-GM1_path-1.png) -->
 
 We can make a couple observations from this path diagram:
 
@@ -366,7 +362,9 @@ saveRDS(data, "data/Qian_GM1_data.rds")
 
 ```{r}
 #| label: GM1_fit
+#| cache: true
 #| echo: true
+#| eval: false
 
 # load data
 data <- readRDS("data/Qian_GM1_data.rds")
@@ -376,16 +374,19 @@ gee_indep <- geeglm(Y ~ Z + X + Z*X, id = userid, data = data, corstr = "indepen
 gee_exch <- geeglm(Y ~ Z + X + Z*X, id = userid, data = data, corstr = "exchangeable")
 gee_ar1 <- geeglm(Y ~ Z + X + Z*X, id = userid, data = data, corstr = "ar1")
 mlm_mle <- lmer(Y ~ Z + X + Z*X + (1 + X | userid), data = data, REML = FALSE)
+
+gamma_10 <- 1    # Fixed effect of treatment (X)
+treatment_effect <- c(coef(gee_indep)[3], coef(gee_exch)[3], coef(gee_ar1)[3], fixef(mlm_mle)[3])
+
+df_treatment <- data.frame(row.names = c("GEE (Indep)", "GEE (Exch)", "GEE (AR1)", "MLM (MLE)"), treatment_effect = treatment_effect, true_effect = gamma_10)
+readRDS("data/Qian_GM1_results.rds")
 ```
 
 ```{r}
 #| label: GM1_results
 #| echo: false
 
-gamma_10 <- 1    # Fixed effect of treatment (X)
-treatment_effect <- c(coef(gee_indep)[3], coef(gee_exch)[3], coef(gee_ar1)[3], fixef(mlm_mle)[3])
-
-df_treatment <- data.frame(row.names = c("GEE (Indep)", "GEE (Exch)", "GEE (AR1)", "MLM (MLE)"), treatment_effect = treatment_effect, true_effect = gamma_10)
+df_treatment <- readRDS("data/Qian_GM1_results.rds")
 knitr::kable(df_treatment, digits = 3, caption = "Generating Model 1 - Treatment Effect Estimates")
 ```
 
@@ -396,53 +397,79 @@ knitr::kable(df_treatment, digits = 3, caption = "Generating Model 1 - Treatment
 <!-- Now we need to translate more parameters: -->
 
 <!-- | Parameter                                            | Original          | New           | -->
+
 <!-- |------------------------------------|-------------------|-------------------| -->
+
 <!-- | Fixed intercept                                      | $\alpha_0$        | $\gamma_{00}$ | -->
+
 <!-- | Fixed slope for $X_{it}$                             | $\alpha_1$        | $\gamma_{10}$ | -->
+
 <!-- | Random intercept                                     | $b_{i0}$          | $u_{0i}$      | -->
+
 <!-- | Random slope for $X_{it}$                            | $b_{i1}$          | $u_{1i}$      | -->
+
 <!-- | Fixed effect of $A_{it}$                             | $\beta_0$         | $\gamma_{20}$ | -->
+
 <!-- | Interaction effect of $A_{it}$ and $X_{it}$          | $\beta_1$         | $\gamma_{30}$ | -->
+
 <!-- | Random slope for $A_{it}$                            | $b_{i2}$          | $u_{2i}$      | -->
+
 <!-- | Random interaction effect for $A_{it} \times X_{it}$ | $b_{i3}$          | $u_{3i}$      | -->
+
 <!-- | Error term                                           | $\epsilon_{it+1}$ | $e_{it+1}$    | -->
+
 <!-- | Covariate                                            | $X_{it}$          | $Z_{it}$      | -->
+
 <!-- | Treatment                                            | $A_{it}$          | $X_{it}$      | -->
 
 <!-- Let's first restate the original model: -->
 
 <!-- $$ -->
+
 <!-- Y_{it+1} = \alpha_0 + \alpha_1 X_{it} + b_{i0} + b_{i1} X_{it} + A_{it} (\beta_0 + \beta_1 X_{it} + b_{i2} + b_{i3} X_{it}) + \epsilon_{it+1}. -->
+
 <!-- $$ -->
 
 <!-- Using the psychological notation, we rewrite GM2 as a within-person model: -->
 
 <!-- $$ -->
+
 <!-- Y_{it+1} = \beta_{0i} + \beta_{1i} Z_{it} + \beta_{2i} X_{it} + \beta_{3i} X_{it} Z_{it} + e_{it+1}, -->
+
 <!-- $$ -->
 
 <!-- with: -->
 
 <!-- $$ -->
+
 <!-- \beta_{0i} = \gamma_{00} + u_{0i} \quad \text{where} \quad u_{0i} \sim \mathcal{N}(0, \sigma^2_{u0}), -->
+
 <!-- $$ -->
 
 <!-- $$ -->
+
 <!-- \beta_{1i} = \gamma_{10} + u_{1i} \quad \text{where} \quad u_{1i} \sim \mathcal{N}(0, \sigma^2_{u1}), -->
+
 <!-- $$ -->
 
 <!-- $$ -->
+
 <!-- \beta_{2i} = \gamma_{20} + u_{2i} \quad \text{where} \quad u_{2i} \sim \mathcal{N}(0, \sigma^2_{u2}), -->
+
 <!-- $$ -->
 
 <!-- $$ -->
+
 <!-- \beta_{3i} = \gamma_{30} + u_{3i} \quad \text{where} \quad u_{3i} \sim \mathcal{N}(0, \sigma^2_{u3}). -->
+
 <!-- $$ -->
 
 <!-- Combining these, the full model becomes: -->
 
 <!-- $$ -->
+
 <!-- Y_{it+1} = (\gamma_{00} + u_{0i}) + (\gamma_{10} + u_{1i}) Z_{it} + (\gamma_{20} + u_{2i}) X_{it} + (\gamma_{30} + u_{3i}) X_{it} Z_{it} + e_{it+1}. -->
+
 <!-- $$ -->
 
 <!-- More specifically, the process was generated as follows: -->
@@ -452,14 +479,23 @@ knitr::kable(df_treatment, digits = 3, caption = "Generating Model 1 - Treatment
 <!-- ### Visualizing the Model -->
 
 <!-- ```{r} -->
+
 <!-- # #| label: GM2_visual -->
+
 <!-- # #| cache: true -->
+
 <!-- # #| fig-subcap: -->
+
 <!-- # #| - "DAG" -->
+
 <!-- # #| - "Path Diagram" -->
+
 <!-- # #| layout-nrow: 2 -->
+
 <!-- # #| echo: false -->
+
 <!-- #  -->
+
 <!-- # # GM2_DAG <- dagitty('dag{ -->
 
 <!-- ``` -->
@@ -467,11 +503,15 @@ knitr::kable(df_treatment, digits = 3, caption = "Generating Model 1 - Treatment
 <!-- The model is fitted as -->
 
 <!-- ```{r} -->
+
 <!-- #| label: GM2_fit -->
+
 <!-- #| echo: true -->
+
 <!-- #| eval: false -->
 
 <!-- gm2_mlm <- lmer(Y ~ Z * X + (Z * X | id), data = data) -->
+
 <!-- ``` -->
 
 <!-- ## Generative Model 3 -->

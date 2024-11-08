@@ -12,13 +12,13 @@ format:
     number-sections: true
     # embed-resources: false
     # default-image-extension: svg
-  # pdf:
-  #   fig-pos: 'h'
-  #   toc: true
-  #   toc-depth: 5
-  #   number-sections: true
-  #   # embed-resources: true
-  #   # default-image-extension: svg
+  pdf:
+    fig-pos: 'h'
+    # toc: true
+    # toc-depth: 5
+    # number-sections: true
+    # embed-resources: true
+    # default-image-extension: svg
 execute:
   message: false
   warning: false
@@ -46,8 +46,6 @@ library(DiagrammeR)
 library(magick)
 library(pdftools)
 ```
-
-\newpage
 
 ## Introduction
 
@@ -219,40 +217,41 @@ Wat gebeurt hier precies?
 
 > Daardoor is $E(u_{0i} \mid Z_{it}) = 0$ en de marginale schatting van $\beta_1$ in de relatie tussen $Z_2$ en $Y_3$ is onvertekend.
 
-<!-- ```{r, engine = 'tikz'} -->
-<!-- #| label: fig-pathdiagram.section2.2 -->
-<!-- #| cache: true -->
-<!-- #| echo: false -->
-<!-- #| fig-cap: "Path Diagram of Model Without Treatment" -->
+```{r}
+#| label: fig-pathdiagram.section2.2
+#| engine: 'tikz'
+#| cache: true
+#| echo: false
+#| fig-cap: "Path Diagram of Model Without Treatment"
 
-<!-- \begin{tikzpicture} -->
-<!--   % Nodes -->
-<!--   \node[draw] (Z1) at (1.5, 1.5) {$Z_1$}; -->
-<!--   \node[draw] (Z2) at (6.0, 1.5) {$Z_2$}; -->
-<!--   \node[draw] (Y2) at (6.0, 3.5) {$Y_2$}; -->
-<!--   \node[draw] (Y3) at (10.0, 3.5) {$Y_3$}; -->
-<!--   \node[draw, circle, fill=gray!20] (u0) at (8.0, 5.5) {$u_{0i}$}; -->
-<!--   \node[draw, circle, fill=gray!20] (eY2) at (7.5, 3.5) {$e_{i2}$}; -->
-<!--   \node[draw, circle, fill=gray!20] (eY3) at (11.5, 3.5) {$e_{i3}$}; -->
+\begin{tikzpicture}
+  % Nodes
+  \node[draw] (Z1) at (1.5, 1.5) {$Z_1$};
+  \node[draw] (Z2) at (6.0, 1.5) {$Z_2$};
+  \node[draw] (Y2) at (6.0, 3.5) {$Y_2$};
+  \node[draw] (Y3) at (10.0, 3.5) {$Y_3$};
+  \node[draw, circle, fill=gray!20] (u0) at (8.0, 5.5) {$u_{0i}$};
+  \node[draw, circle, fill=gray!20] (eY2) at (7.5, 3.5) {$e_{i2}$};
+  \node[draw, circle, fill=gray!20] (eY3) at (11.5, 3.5) {$e_{i3}$};
 
-<!--   % Edges with labels -->
-<!--   \draw[->] (Z1) -- (Y2) node[midway, below right] {$\beta_{1}$}; -->
-<!--   \draw[->] (Z2) -- (Y3) node[midway, below right] {$\beta_{1}$}; -->
-<!--   \draw[->] (Y2) -- (Z2) node[midway, left] {$=$}; -->
-<!--   \draw[->] (u0) -- (Y2) node[midway, left] {$+$}; -->
-<!--   \draw[->] (u0) -- (Y3) node[midway, left] {$+$}; -->
-<!--   \draw[->] (eY2) -- (Y2) ; -->
-<!--   \draw[->] (eY3) -- (Y3) ; -->
+  % Edges with labels
+  \draw[->] (Z1) -- (Y2) node[midway, below right] {$\beta_{1}$};
+  \draw[->] (Z2) -- (Y3) node[midway, below right] {$\beta_{1}$};
+  \draw[->] (Y2) -- (Z2) node[midway, left] {$=$};
+  \draw[->] (u0) -- (Y2) node[midway, left] {$+$};
+  \draw[->] (u0) -- (Y3) node[midway, left] {$+$};
+  \draw[->] (eY2) -- (Y2) ;
+  \draw[->] (eY3) -- (Y3) ;
 
-<!--   % Double-headed arrows for residual variances -->
-<!--   \draw[<->, out=120, in=60, looseness=1.5] (eY2) to node[above] {$\sigma_e^2$} (eY2); -->
-<!--   \draw[<->, out=120, in=60, looseness=1.5] (eY3) to node[above] {$\sigma_e^2$} (eY3); -->
-<!--   \draw[<->, out=120, in=60, looseness=1.5] (Z1) to node[above] {$\sigma_{Z_1}^2$} (Z1); -->
+  % Double-headed arrows for residual variances
+  \draw[<->, out=120, in=60, looseness=1.5] (eY2) to node[above] {$\sigma_e^2$} (eY2);
+  \draw[<->, out=120, in=60, looseness=1.5] (eY3) to node[above] {$\sigma_e^2$} (eY3);
+  \draw[<->, out=120, in=60, looseness=1.5] (Z1) to node[above] {$\sigma_{Z_1}^2$} (Z1);
 
-<!-- \end{tikzpicture} -->
-<!-- ``` -->
+\end{tikzpicture}
+```
 
-![Path Diagram of Model Without Treatment](figure/fig-pathdiagram.section2.2-1.png){#fig-pathdiagram.section2.2}
+<!-- ![Path Diagram of Model Without Treatment](figure/fig-pathdiagram.section2.2-1.png){#fig-pathdiagram.section2.2} -->
 
 In @fig-pathdiagram.section2.2 wordt duidelijk dat de marginale relatie tussen $Z_1$ en $Y_2$ eenvoudigweg is:
 
@@ -574,57 +573,58 @@ In this DAG, we can see that $X_{t-1}$ is a confounder of the relationship betwe
 
 Alternatively, we can also use a path diagram to illustrate more clearly the types of dependencies and relationships present in the data generating model.
 
-<!-- ```{r, engine = 'tikz'} -->
-<!-- #| label: fig-Diggle2002_PathDiagram -->
-<!-- #| echo: false -->
-<!-- #| cache: true -->
-<!-- #| fig-cap: "Path diagram for Diggle (2002)" -->
+```{r}
+#| label: fig-Diggle2002_PathDiagram
+#| engine: 'tikz'
+#| echo: false
+#| cache: true
+#| fig-cap: "Path diagram for Diggle (2002)"
 
-<!-- \begin{tikzpicture} -->
+\begin{tikzpicture}
 
-<!--   % Nodes -->
-<!--   \node[draw] (Xt_1) at (0, 1.5) {$X_{t-1}$}; -->
-<!--   \node[draw] (Xt) at (3, 1.5) {$X_t$}; -->
-<!--   \node[draw] (Xt1) at (7, 1.5) {$X_{t+1}$}; -->
-<!--   \node[draw] (Yt) at (3, 3.5) {$Y_t$}; -->
-<!--   \node[draw] (Yt1) at (7, 3.5) {$Y_{t+1}$}; -->
-<!--   \node[draw, circle, fill=gray!20] (b_i) at (5, 5.5) {$b_i$}; -->
+  % Nodes
+  \node[draw] (Xt_1) at (0, 1.5) {$X_{t-1}$};
+  \node[draw] (Xt) at (3, 1.5) {$X_t$};
+  \node[draw] (Xt1) at (7, 1.5) {$X_{t+1}$};
+  \node[draw] (Yt) at (3, 3.5) {$Y_t$};
+  \node[draw] (Yt1) at (7, 3.5) {$Y_{t+1}$};
+  \node[draw, circle, fill=gray!20] (b_i) at (5, 5.5) {$b_i$};
 
-<!--   % Residuals for Y and X -->
-<!--   \node[draw, circle, fill=gray!20] (eYt) at (5, 3.5) {$e_{it}$}; -->
-<!--   \node[draw, circle, fill=gray!20] (eYt1) at (9.5, 3.5) {$e_{it}$}; -->
-<!--   \node[draw, circle, fill=gray!20] (eXt) at (3, 0) {$\epsilon_{it}$}; -->
-<!--   \node[draw, circle, fill=gray!20] (eXt1) at (7, 0) {$\epsilon_{it}$}; -->
-<!--   \node[draw, circle, fill=gray!20] (eXt1_1) at (0, 0) {$\epsilon_{it}$}; -->
+  % Residuals for Y and X
+  \node[draw, circle, fill=gray!20] (eYt) at (5, 3.5) {$e_{it}$};
+  \node[draw, circle, fill=gray!20] (eYt1) at (9.5, 3.5) {$e_{it}$};
+  \node[draw, circle, fill=gray!20] (eXt) at (3, 0) {$\epsilon_{it}$};
+  \node[draw, circle, fill=gray!20] (eXt1) at (7, 0) {$\epsilon_{it}$};
+  \node[draw, circle, fill=gray!20] (eXt1_1) at (0, 0) {$\epsilon_{it}$};
 
-<!--   % Edges with labels -->
-<!--   \draw[->] (Xt_1) -- (Xt) node[midway, above] {$\rho$}; -->
-<!--   \draw[->] (Xt) -- (Xt1) node[midway, above] {$\rho$}; -->
-<!--   \draw[->] (Xt_1) -- (Yt) node[midway, above left] {$\gamma_2$}; -->
-<!--   \draw[->] (Xt) -- (Yt) node[midway, left] {$\gamma_1$}; -->
-<!--   \draw[->] (Xt) -- (Yt1) node[midway, above left] {$\gamma_2$}; -->
-<!--   \draw[->] (Xt1) -- (Yt1) node[midway, left] {$\gamma_1$}; -->
-<!--   \draw[->] (b_i) -- (Yt) node[midway, right] {$+$}; -->
-<!--   \draw[->] (b_i) -- (Yt1) node[midway, right] {$+$}; -->
+  % Edges with labels
+  \draw[->] (Xt_1) -- (Xt) node[midway, above] {$\rho$};
+  \draw[->] (Xt) -- (Xt1) node[midway, above] {$\rho$};
+  \draw[->] (Xt_1) -- (Yt) node[midway, above left] {$\gamma_2$};
+  \draw[->] (Xt) -- (Yt) node[midway, left] {$\gamma_1$};
+  \draw[->] (Xt) -- (Yt1) node[midway, above left] {$\gamma_2$};
+  \draw[->] (Xt1) -- (Yt1) node[midway, left] {$\gamma_1$};
+  \draw[->] (b_i) -- (Yt) node[midway, right] {$+$};
+  \draw[->] (b_i) -- (Yt1) node[midway, right] {$+$};
 
-<!--   % Residual arrows for Y -->
-<!--   \draw[<->, out=120, in=60, looseness=1.5] (eYt) to node[above] {$\sigma_e^2$} (eYt); -->
-<!--   \draw[<->, out=120, in=60, looseness=1.5] (eYt1) to node[above] {$\sigma_e^2$} (eYt1); -->
-<!--   \draw[<->, out=300, in=240, looseness=1.5] (eXt1) to node[below] {$\sigma_\epsilon^2$} (eXt1); -->
-<!--   \draw[<->, out=300, in=240, looseness=1.5] (eXt) to node[below] {$\sigma_\epsilon^2$} (eXt); -->
-<!--   \draw[<->, out=300, in=240, looseness=1.5] (eXt1_1) to node[below] {$\sigma_\epsilon^2$} (eXt1_1); -->
+  % Residual arrows for Y
+  \draw[<->, out=120, in=60, looseness=1.5] (eYt) to node[above] {$\sigma_e^2$} (eYt);
+  \draw[<->, out=120, in=60, looseness=1.5] (eYt1) to node[above] {$\sigma_e^2$} (eYt1);
+  \draw[<->, out=300, in=240, looseness=1.5] (eXt1) to node[below] {$\sigma_\epsilon^2$} (eXt1);
+  \draw[<->, out=300, in=240, looseness=1.5] (eXt) to node[below] {$\sigma_\epsilon^2$} (eXt);
+  \draw[<->, out=300, in=240, looseness=1.5] (eXt1_1) to node[below] {$\sigma_\epsilon^2$} (eXt1_1);
 
-<!--   % Residual arrows for X -->
-<!--   \draw[->] (eYt) -- (Yt); -->
-<!--   \draw[->] (eYt1) -- (Yt1); -->
-<!--   \draw[->] (eXt) -- (Xt); -->
-<!--   \draw[->] (eXt1) -- (Xt1); -->
-<!--   \draw[->] (eXt1_1) -- (Xt_1); -->
+  % Residual arrows for X
+  \draw[->] (eYt) -- (Yt);
+  \draw[->] (eYt1) -- (Yt1);
+  \draw[->] (eXt) -- (Xt);
+  \draw[->] (eXt1) -- (Xt1);
+  \draw[->] (eXt1_1) -- (Xt_1);
 
-<!-- \end{tikzpicture} -->
-<!-- ``` -->
+\end{tikzpicture}
+```
 
-![Path diagram for Diggle et al. (2002)](figure/fig-Diggle2002_PathDiagram-1.png){#fig-Diggle2002_PathDiagram}
+<!-- ![Path diagram for Diggle et al. (2002)](figure/fig-Diggle2002_PathDiagram-1.png){#fig-Diggle2002_PathDiagram} -->
 
 For a range of correlations ($\rho = 0.9–0.1$) they simulated 100 data sets each of which contained data on $m = 200$ subjects with up to 10 observations per subject. The number of observations for each subject, $n_i$, was generated as a uniform random variable between 2 and 10.
 
