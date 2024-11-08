@@ -39,7 +39,7 @@ library(jtools)
 ::: {.column width="60%"}
 McNeish et al. (2016) provides a nice summary of the differences
 
-![](images/clipboard-1208621128.png){width="1000"}
+![](images/McNeish2016_Table2.png){width="1000"}
 :::
 
 ::: {.column width="40%"}
@@ -58,7 +58,7 @@ Parameter interpretation
 
 ::: columns
 ::: {.column width="60%"}
-![](images/clipboard-2542938343.png){width="750"}
+![](images/McNeish2016_Figure1.png){width="750"}
 :::
 
 ::: {.column width="40%"}

@@ -1,0 +1,1410 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.5.57">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="Ward B. Eiling">
+<meta name="dcterms.date" content="2024-10-24">
+
+<title>DGMs of Qian et al.&nbsp;(2020) - Part 1: Without Treatment</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="DGM_no_treatment_files/libs/clipboard/clipboard.min.js"></script>
+<script src="DGM_no_treatment_files/libs/quarto-html/quarto.js"></script>
+<script src="DGM_no_treatment_files/libs/quarto-html/popper.min.js"></script>
+<script src="DGM_no_treatment_files/libs/quarto-html/tippy.umd.min.js"></script>
+<script src="DGM_no_treatment_files/libs/quarto-html/anchor.min.js"></script>
+<link href="DGM_no_treatment_files/libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="DGM_no_treatment_files/libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="DGM_no_treatment_files/libs/bootstrap/bootstrap.min.js"></script>
+<link href="DGM_no_treatment_files/libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="DGM_no_treatment_files/libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN") {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+</head>
+
+<body>
+
+<div id="quarto-content" class="page-columns page-rows-contents page-layout-article toc-left">
+<div id="quarto-sidebar-toc-left" class="sidebar toc-left">
+  <nav id="TOC" role="doc-toc" class="toc-active" data-toc-expanded="3">
+    <h2 id="toc-title">Table of contents</h2>
+   
+  <ul>
+  <li><a href="#introduction" id="toc-introduction" class="nav-link active" data-scroll-target="#introduction"><span class="header-section-number">1</span> Introduction</a></li>
+  <li><a href="#situations-without-treatment" id="toc-situations-without-treatment" class="nav-link" data-scroll-target="#situations-without-treatment"><span class="header-section-number">2</span> Situations Without Treatment</a>
+  <ul class="collapse">
+  <li><a href="#example-in-section-2.2-of-qian-et-al.-2020" id="toc-example-in-section-2.2-of-qian-et-al.-2020" class="nav-link" data-scroll-target="#example-in-section-2.2-of-qian-et-al.-2020"><span class="header-section-number">2.1</span> Example in Section 2.2 of Qian et al.&nbsp;(2020)</a></li>
+  <li><a href="#example-in-diggle-et-al.-2002" id="toc-example-in-diggle-et-al.-2002" class="nav-link" data-scroll-target="#example-in-diggle-et-al.-2002"><span class="header-section-number">2.2</span> Example in Diggle et al.&nbsp;(2002)</a></li>
+  </ul></li>
+  </ul>
+</nav>
+</div>
+<div id="quarto-margin-sidebar" class="sidebar margin-sidebar zindex-bottom">
+</div>
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">DGMs of Qian et al.&nbsp;(2020) - Part 1: Without Treatment</h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    <div>
+    <div class="quarto-title-meta-heading">Author</div>
+    <div class="quarto-title-meta-contents">
+             <p>Ward B. Eiling </p>
+          </div>
+  </div>
+    
+    <div>
+    <div class="quarto-title-meta-heading">Published</div>
+    <div class="quarto-title-meta-contents">
+      <p class="date">October 24, 2024</p>
+    </div>
+  </div>
+  
+    <div>
+    <div class="quarto-title-meta-heading">Modified</div>
+    <div class="quarto-title-meta-contents">
+      <p class="date-modified">November 8, 2024</p>
+    </div>
+  </div>
+    
+  </div>
+  
+
+
+</header>
+
+
+<div style="page-break-after: always;"></div>
+<section id="introduction" class="level2" data-number="1">
+<h2 data-number="1" class="anchored" data-anchor-id="introduction"><span class="header-section-number">1</span> Introduction</h2>
+<p>In dit document zal ik de data-genererende modellen gepresenteerd door Qian et al.&nbsp;(2020) opnieuw creëren, vergezeld door visuele weergaven van deze modellen. Laten we eerst enkele hoofdpunten van GEE samenvatten.</p>
+<p>Parameters in marginale modellen (bijv. GEE) worden geïnterpreteerd als populatieniveau-effecten (en dus niet als individuele effecten!)</p>
+<!-- > That is, $\beta_j$ is the impact of variate j on average, across the whole population (assuming other variates fixed: Winter 437) -->
+<ul>
+<li><p>Dat wil zeggen, <span class="math inline">\(\beta_j\)</span> is het effect van variant j gemiddeld over de hele populatie (ervan uitgaande dat andere varianten vastliggen: Winter 437).</p></li>
+<li><p>Voorbeeld: Hoe beïnvloedt veroudering de neiging om dementie te ontwikkelen in de gehele populatie?</p></li>
+</ul>
+<p>Merk op dat de lineaire structuur van de GEE impliciet aanneemt dat <span class="math inline">\(Y_{it} \perp X_{ik} \mid X_{it}\)</span>, voor alle <span class="math inline">\(t \neq k\)</span></p>
+<ul>
+<li><p>Dit bekent: De uitkomst op tijdstip <span class="math inline">\(t\)</span> is conditioneel onafhankelijk van verklarende factoren op alle andere tijdstippen <span class="math inline">\(k\)</span>, gegeven de verklarende factoren op het huidige tijdstip <span class="math inline">\(t\)</span></p></li>
+<li><p>Dit wordt de “full covariate conditional mean (FCCM)” aanname genoemd door Diggle et al.&nbsp;(2002) en Qian et al.&nbsp;(2020). Maar zij herschrijven dit net iets anders (equation 5):</p>
+<p><span class="math display">\[
+E[Y_{it+1} \mid X_{it}] = E[Y_{it+1} \mid X_{i1}, \ldots, X_{iT}]
+\]</span></p></li>
+</ul>
+<p>Deze aanname geldt bij (a) tijdsinvariante covariaten en (b) deterministische/exogene tijdsafhankelijke covariaten, maar niet bij stochastische/endogene tijdsafhankelijke covariaten!</p>
+<blockquote class="blockquote">
+<p>Een uitzondering op deze regel is wanneer we een “diagonale weight matrix” gebruiken in de GEE (i.e., working independence).</p>
+</blockquote>
+<p>Laten we zien hoe deze aanname geschonden kan worden:</p>
+<div id="fig-STAT437-example" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-fig" id="fig-STAT437-example-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;1: Example from STAT 437
+</figcaption>
+<div aria-describedby="fig-STAT437-example-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="figure/STAT437-example.png" class="img-fluid figure-img">
+</div>
+</figure>
+</div>
+<p>Zoals geïllustreerd door de rode pijl, is <span class="math inline">\(Y1\)</span> niet onafhankelijk van <span class="math inline">\(X2\)</span>, gegeven (dat we de waarde weten van) <span class="math inline">\(X1\)</span>. Als we dus geinteresserd zijn in het marginale effect van <span class="math inline">\(X2\)</span> op <span class="math inline">\(Y2\)</span>, dan is in dit geval de uitkomst biased door een schending van de FCCM aanname:</p>
+<p><span class="math display">\[
+E[Y_{i2} \mid X_{i2}] \neq E[Y_{i2} \mid X_{i1},X_{i2}]
+\]</span></p>
+<!-- probleem: het wordt moeilijk te bepalen hoeveel van het waargenomen effect een verborgen effect is van de uitkomst die de toekomstige covariaat beïnvloedt. -->
+<p>Vanuit een causaal perspectief kunnen we ook zeggen dat—in de bovenstaande DAG—<span class="math inline">\(Y1\)</span> een confounder is in de relatie tussen <span class="math inline">\(X2\)</span> en <span class="math inline">\(Y2\)</span>. Als we hiervoor niet controleren is het effect van <span class="math inline">\(X2\)</span> op <span class="math inline">\(Y2\)</span> een ander effect (door deze invloed van <span class="math inline">\(Y1\)</span>) dan het effect van <span class="math inline">\(X1\)</span> op <span class="math inline">\(Y1\)</span>, wat wel aan de FCCM aanname voldoet.</p>
+</section>
+<section id="situations-without-treatment" class="level2" data-number="2">
+<h2 data-number="2" class="anchored" data-anchor-id="situations-without-treatment"><span class="header-section-number">2</span> Situations Without Treatment</h2>
+<section id="example-in-section-2.2-of-qian-et-al.-2020" class="level3" data-number="2.1">
+<h3 data-number="2.1" class="anchored" data-anchor-id="example-in-section-2.2-of-qian-et-al.-2020"><span class="header-section-number">2.1</span> Example in Section 2.2 of Qian et al.&nbsp;(2020)</h3>
+<p>Beschouw als concreet voorbeeld het geval waarin elk individu op 2 tijdspunten wordt geobserveerd (<span class="math inline">\(T_i = 2\)</span>), en de covariaat op het tweede tijdspunt de lag-1 uitkomst is: <span class="math inline">\(X_{i2} = Y_{i2}\)</span>.</p>
+<blockquote class="blockquote">
+<p>Door de uitkomst te laggen, hebben we in wezen drie tijdspunten: <span class="math inline">\(X_{i1}\)</span>, <span class="math inline">\(X_{i2} = Y_{i2}\)</span>, en <span class="math inline">\(Y_{i3}\)</span>.</p>
+</blockquote>
+<p>Stel dat de variabelen worden gegenereerd volgens het volgende multilevel lineaire model (MLM) met een random intercept:</p>
+<p><span class="math display">\[
+b_i \sim N(0, \sigma_u^2),
+\]</span></p>
+<p><span class="math display">\[
+X_{i1} \sim N(0, \sigma_{X_1}^2) \text{ independently of } b_i,
+\]</span></p>
+<p><span class="math display">\[
+Y_{i2} \mid X_{i1}, b_i \sim N(\beta_0 + \beta_1 X_{i1} + b_i, \sigma_\epsilon^2),
+\]</span></p>
+<p><span class="math display">\[
+X_{i2} = Y_{i2},
+\]</span></p>
+<p><span class="math display">\[
+Y_{i3} \mid X_{i1}, Y_{i2}, X_{i2}, b_i \sim N(\beta_0 + \beta_1 X_{i2} + b_i, \sigma_\epsilon^2).
+\]</span></p>
+<section id="translating-the-notation" class="level4" data-number="2.1.1">
+<h4 data-number="2.1.1" class="anchored" data-anchor-id="translating-the-notation"><span class="header-section-number">2.1.1</span> Translating the notation</h4>
+<p>In de tabel hieronder geven we de vertaling van de originele notatie in Qian et al.&nbsp;(2020) naar notatie die gebruikelijker is in psychologisch onderzoek.</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 47%">
+<col style="width: 30%">
+<col style="width: 21%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Parameter</th>
+<th>Original</th>
+<th>New</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Fixed intercept</td>
+<td><span class="math inline">\(\alpha_0\)</span></td>
+<td><span class="math inline">\(\gamma_{00}\)</span></td>
+</tr>
+<tr class="even">
+<td>Fixed slope for <span class="math inline">\(X_{it}\)</span></td>
+<td><span class="math inline">\(\beta_1\)</span></td>
+<td><span class="math inline">\(\beta_1\)</span></td>
+</tr>
+<tr class="odd">
+<td>Random intercept</td>
+<td><span class="math inline">\(b_{i0}\)</span></td>
+<td><span class="math inline">\(u_{0i}\)</span></td>
+</tr>
+<tr class="even">
+<td>Residual variance of Error term</td>
+<td><span class="math inline">\(\sigma_\epsilon^2\)</span></td>
+<td><span class="math inline">\(\sigma_e^2\)</span></td>
+</tr>
+<tr class="odd">
+<td>Covariate</td>
+<td><span class="math inline">\(X_{it}\)</span></td>
+<td><span class="math inline">\(Z_{it}\)</span></td>
+</tr>
+</tbody>
+</table>
+<p>Laten we nu het model in deze notatie herschrijven:</p>
+<p><span class="math display">\[
+u_{0i} \sim N(0, \sigma_u^2),
+\]</span></p>
+<p><span class="math display">\[
+Z_{i1} \sim N(0, \sigma_{Z_1}^2) \text{ independently of } u_{0i},
+\]</span></p>
+<p><span class="math display">\[
+Y_{i2} \mid Z_{i1}, u_{0i} \sim N(\gamma_{00} + \beta_1 Z_{i1} + u_{0i}, \sigma_e^2),
+\]</span></p>
+<p><span class="math display">\[
+Z_{i2} = Y_{i2},
+\]</span></p>
+<p><span class="math display">\[
+Y_{i3} \mid Z_{i1}, Y_{i2}, Z_{i2}, u_{0i} \sim N(\gamma_{00} + \beta_1 Z_{i2} + u_{0i}, \sigma_e^2).
+\]</span></p>
+</section>
+<section id="visualizing-the-model" class="level4" data-number="2.1.2">
+<h4 data-number="2.1.2" class="anchored" data-anchor-id="visualizing-the-model"><span class="header-section-number">2.1.2</span> Visualizing the Model</h4>
+<p>We zijn geinteresseerd in het effect van <span class="math inline">\(Z_{it}\)</span> (<span class="math inline">\(= Y_{it}\)</span>) op <span class="math inline">\(Y_{i(t+1)}\)</span>.</p>
+<p>Laten we eerst de DAG tekenen (see <a href="#fig-DAG" class="quarto-xref">Figure&nbsp;2</a>). In dit specifieke geval wordt de endogene tijdsvariërende covariaat veroorzaakt door de vorige uitkomst en beïnvloedt het de toekomstige uitkomst.</p>
+<div class="cell">
+<div class="cell-output-display">
+<div id="fig-DAG" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-fig" id="fig-DAG-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;2: DAG of Model Without Treatment
+</figcaption>
+<div aria-describedby="fig-DAG-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="DGM_no_treatment_files/figure-html/fig-DAG-1.png" class="img-fluid figure-img" width="672">
+</div>
+</figure>
+</div>
+</div>
+</div>
+<p>Merk op dat er een open biasing path bestaat van <span class="math inline">\(Y_2\)</span> naar <span class="math inline">\(Z_2\)</span> in de DAG: de predictor/covariaat <span class="math inline">\(Z_2\)</span> wordt <em>veroorzaakt door</em> (in dit geval equivalent aan) de eerdere uitkomst <span class="math inline">\(Y_2\)</span>—en is dus een tijdsvariërende, <em>endogene</em> covariaat. Daarom gaat de aanname van de “full covariate conditional mean (FCCM)” niet op:</p>
+<p><span class="math display">\[
+E[Y_{it+1} \mid Z_{it}] = E[Y_{it+1} \mid Z_{i1}, \ldots, Z_{iT}]
+\]</span></p>
+<p>aangezien</p>
+<p><span class="math display">\[
+E[Y_{i3} \mid Z_{i2}] \neq E[Y_{i3} \mid Z_{i1}, \ldots, Z_{i2}]
+\]</span></p>
+<p>Oftewel, de verwachte waarde van <span class="math inline">\(Y_i3\)</span> gegeven <span class="math inline">\(Z_{i2}\)</span> is niet gelijk aan de verwachte waarde van <span class="math inline">\(Y_{i3}\)</span> gegeven <span class="math inline">\(Z_{i1}\)</span> en <span class="math inline">\(Z_{i2}\)</span>. Anders gezegd, de uitkomst <span class="math inline">\(Y_3\)</span> is niet conditioneel onafhankelijk van de uitleggende factoren/covariaten op alle andere tijdspunten (i.e., <span class="math inline">\(Z_1\)</span>), gegeven dat we de waarden kennen van de covariaat <span class="math inline">\(Z_2\)</span> op het huidige tijdstip <span class="math inline">\(t=2\)</span>.</p>
+<p>Het in rekening brengen van afhankelijkheden tussen observaties in de uitkomst (i.e., het gebruik van “non-diagonal covariance weighting”, zie Diggle et al.&nbsp;(2002))—door middel van (a) working correlation matrices in GEE (behalve onafhankelijkheid) of (b) door de random intercept in het multilevel lineaire model—leid tot conditionele schattingen op basis van de random effecten, en niet tot schattingen op populatieniveau. Daarentegen schatten de GEE met working independence en GLM het model gewoon door onafhankelijkheid aan te nemen, waardoor de schattingen op populatieniveau wel valide zijn. <!-- Daarnaast is $u_0$ een confounder in de relatie tussen $Y_2$ en $Y_3$, en daarmee ook in de relatie tussen $Z_2$ en $Y_3$, aangezien $Y_2 = Z_2$.  --></p>
+<p>Wat gebeurt hier precies?</p>
+<ol type="1">
+<li>In de schatting d.m.v. de MLM is <span class="math inline">\(u_0\)</span> een confounder in de relatie tussen <span class="math inline">\(Y_2\)</span> en <span class="math inline">\(Y_3\)</span>, en daarmee ook in de relatie tussen <span class="math inline">\(Z_2\)</span> en <span class="math inline">\(Y_3\)</span> (aangezien <span class="math inline">\(Y_2 = Z_2\)</span>). Dus de random intercept beinvloedt de covariate <span class="math inline">\(Z_2\)</span> en daarmee ook de uitkomst <span class="math inline">\(Y_3\)</span>.</li>
+</ol>
+<blockquote class="blockquote">
+<p>“<span class="math inline">\(Z_{it}\)</span> being endogenous means it may depend on previous outcomes, which in turn implies dependence on the random effect <span class="math inline">\(u_{0i}\)</span>. Thus, <span class="math inline">\(E(u_{0i} \mid Z_{it})\)</span> is usually nonzero and the conditional model may no longer imply the marginal model” (Qian et al., 2020)</p>
+</blockquote>
+<!-- In andere woorden, de random intercept wordt geschat op basis van alle beschikbare tijdspunten (geschiedenis en toekomst). Door het open biasing/backdoor pad van $Y_2$ naar $Z_2$ word, wanneer we het fixed effect $\beta_1$ schatten in de relatie tussen $Z_2$ en $Y_3$, de marginale schatting vertekend doordat informatie van de relatie tussen $Z_1$ en $Y_2$ wordt meegenomen. -->
+<ol start="2" type="1">
+<li>In de GEE met working independence en GLM wordt de relatie tussen <span class="math inline">\(Z_2\)</span> en <span class="math inline">\(Y_3\)</span> geschat op basis van de aanname van onafhankelijkheid, en is er dus geen confounder <span class="math inline">\(u_0\)</span> in de relatie tussen <span class="math inline">\(Z_2\)</span> en <span class="math inline">\(Y_3\)</span>.</li>
+</ol>
+<blockquote class="blockquote">
+<p>Daardoor is <span class="math inline">\(E(u_{0i} \mid Z_{it}) = 0\)</span> en de marginale schatting van <span class="math inline">\(\beta_1\)</span> in de relatie tussen <span class="math inline">\(Z_2\)</span> en <span class="math inline">\(Y_3\)</span> is onvertekend.</p>
+</blockquote>
+<!-- ```{r, engine = 'tikz'} -->
+<!-- #| label: fig-pathdiagram.section2.2 -->
+<!-- #| cache: true -->
+<!-- #| echo: false -->
+<!-- #| fig-cap: "Path Diagram of Model Without Treatment" -->
+<!-- \begin{tikzpicture} -->
+<!--   % Nodes -->
+<!--   \node[draw] (Z1) at (1.5, 1.5) {$Z_1$}; -->
+<!--   \node[draw] (Z2) at (6.0, 1.5) {$Z_2$}; -->
+<!--   \node[draw] (Y2) at (6.0, 3.5) {$Y_2$}; -->
+<!--   \node[draw] (Y3) at (10.0, 3.5) {$Y_3$}; -->
+<!--   \node[draw, circle, fill=gray!20] (u0) at (8.0, 5.5) {$u_{0i}$}; -->
+<!--   \node[draw, circle, fill=gray!20] (eY2) at (7.5, 3.5) {$e_{i2}$}; -->
+<!--   \node[draw, circle, fill=gray!20] (eY3) at (11.5, 3.5) {$e_{i3}$}; -->
+<!--   % Edges with labels -->
+<!--   \draw[->] (Z1) -- (Y2) node[midway, below right] {$\beta_{1}$}; -->
+<!--   \draw[->] (Z2) -- (Y3) node[midway, below right] {$\beta_{1}$}; -->
+<!--   \draw[->] (Y2) -- (Z2) node[midway, left] {$=$}; -->
+<!--   \draw[->] (u0) -- (Y2) node[midway, left] {$+$}; -->
+<!--   \draw[->] (u0) -- (Y3) node[midway, left] {$+$}; -->
+<!--   \draw[->] (eY2) -- (Y2) ; -->
+<!--   \draw[->] (eY3) -- (Y3) ; -->
+<!--   % Double-headed arrows for residual variances -->
+<!--   \draw[<->, out=120, in=60, looseness=1.5] (eY2) to node[above] {$\sigma_e^2$} (eY2); -->
+<!--   \draw[<->, out=120, in=60, looseness=1.5] (eY3) to node[above] {$\sigma_e^2$} (eY3); -->
+<!--   \draw[<->, out=120, in=60, looseness=1.5] (Z1) to node[above] {$\sigma_{Z_1}^2$} (Z1); -->
+<!-- \end{tikzpicture} -->
+<!-- ``` -->
+<div id="fig-pathdiagram.section2.2" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-fig" id="fig-pathdiagram.section2.2-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;3: Path Diagram of Model Without Treatment
+</figcaption>
+<div aria-describedby="fig-pathdiagram.section2.2-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="figure/fig-pathdiagram.section2.2-1.png" class="img-fluid figure-img">
+</div>
+</figure>
+</div>
+<p>In <a href="#fig-pathdiagram.section2.2" class="quarto-xref">Figure&nbsp;3</a> wordt duidelijk dat de marginale relatie tussen <span class="math inline">\(Z_1\)</span> en <span class="math inline">\(Y_2\)</span> eenvoudigweg is:</p>
+<p><span class="math display">\[
+E[Y_{i2} \mid Z_{i1}] = \gamma_{00} + \beta_1 Z_{i1}
+\]</span></p>
+<p>De relatie tussen <span class="math inline">\(Z_2\)</span> en <span class="math inline">\(Y_3\)</span> is complexer door de invloed van de random intercept <span class="math inline">\(u_{0i}\)</span></p>
+<p><span class="math display">\[
+E[Y_{i3} \mid Z_{i2}] = (1- \rho \zeta - \rho ) \gamma_{00} + [(1-\rho \zeta)  \beta_1 + \rho] Z_{i2}
+\]</span></p>
+<p>Specifieker gezegd, de interpretatie van de slope <span class="math inline">\(\beta_1\)</span> als effect op populatieniveau is alleen valide voor het effect van <span class="math inline">\(Z_1\)</span> op <span class="math inline">\(Y_2\)</span>. Daarom kunnen we wel zeggen dat</p>
+<blockquote class="blockquote">
+<p><span class="math inline">\(\beta_1\)</span> het effect is van variabele <span class="math inline">\(Z_1\)</span> gemiddeld op <span class="math inline">\(Y_2\)</span>, over de gehele populatie (onder voorwaarde van constante waarden van andere variabelen)</p>
+</blockquote>
+<p>maar ditzelfde kunnen we niet zeggen voor het effect van <span class="math inline">\(Z_2\)</span> op <span class="math inline">\(Y_3\)</span>.</p>
+<p>De relatie tussen <span class="math inline">\(Z_2\)</span> en <span class="math inline">\(Y_3\)</span> wordt verstoord door het niet-geobserveerde random effect <span class="math inline">\(u_{0i}\)</span>, dat ook geassocieerd is met <span class="math inline">\(Y_2\)</span>.</p>
+</section>
+<section id="data-generation-and-estimation" class="level4" data-number="2.1.3">
+<h4 data-number="2.1.3" class="anchored" data-anchor-id="data-generation-and-estimation"><span class="header-section-number">2.1.3</span> Data Generation and Estimation</h4>
+<p>Laten we nu de data genereren volgens dit model en het model schatten met een multilevel lineair model (MLM) en een generalized estimating equation (GEE)-model. Hier zijn we geïnteresseerd in het schatten van het effect van <span class="math inline">\(Z_{it}\)</span> op <span class="math inline">\(Y_{i(t+1)}\)</span>. Voor deze analyse in long-format werd daarom een lagged variabele gebruikt voor <span class="math inline">\(Z_{it}\)</span>, zodat <span class="math inline">\(Y_{i2}\)</span> wordt regressed op <span class="math inline">\(Z_{i1}\)</span> en <span class="math inline">\(Y_{i3}\)</span> op <span class="math inline">\(Z_{i2}\)</span>.</p>
+<p>We gebruiken de volgende specificatie</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Set the parameters for the simulation</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>n_sim <span class="ot">&lt;-</span> <span class="dv">1</span>  <span class="co"># Number of simulations</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>n_i <span class="ot">&lt;-</span> <span class="dv">100000</span>   <span class="co"># Number of individuals per simulation</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>sigma_u <span class="ot">&lt;-</span> <span class="dv">1</span>  <span class="co"># Variance of random intercept</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>sigma_Z1 <span class="ot">&lt;-</span> <span class="dv">1</span> <span class="co"># Variance of Z1</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>sigma_e <span class="ot">&lt;-</span> <span class="dv">1</span> <span class="co"># Residual variance</span></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>beta_1 <span class="ot">&lt;-</span> <span class="fl">0.8</span>  <span class="co"># Slope</span></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>gamma_00 <span class="ot">&lt;-</span> <span class="dv">2</span>  <span class="co"># Intercept</span></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a><span class="co"># Simulate data for each individual</span></span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>n_i) {</span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>  u_0i <span class="ot">&lt;-</span> <span class="fu">rnorm</span>(<span class="dv">1</span>, <span class="dv">0</span>, sigma_u)</span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>  Z_i2_lag <span class="ot">&lt;-</span> Z_i1 <span class="ot">&lt;-</span> <span class="fu">rnorm</span>(<span class="dv">1</span>, <span class="dv">0</span>, sigma_Z1)</span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>  Y_i2 <span class="ot">&lt;-</span> <span class="fu">rnorm</span>(<span class="dv">1</span>, gamma_00 <span class="sc">+</span> beta_1 <span class="sc">*</span> Z_i1 <span class="sc">+</span> u_0i, sigma_e)</span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>  Z_i3_lag <span class="ot">&lt;-</span> Z_i2 <span class="ot">&lt;-</span> Y_i2</span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>  Y_i3 <span class="ot">&lt;-</span> <span class="fu">rnorm</span>(<span class="dv">1</span>, gamma_00 <span class="sc">+</span> beta_1 <span class="sc">*</span> Z_i2 <span class="sc">+</span> u_0i, sigma_e)</span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Store the data in a list</span></span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a>  subject_data <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a>    <span class="at">id =</span> i,</span>
+<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a>    <span class="at">time =</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">2</span>,</span>
+<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a>    <span class="at">Y =</span> <span class="fu">c</span>(Y_i2, Y_i3),</span>
+<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a>    <span class="at">Z_lag1 =</span> <span class="fu">c</span>(Z_i2_lag, Z_i3_lag)</span>
+<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a>  data_list[[i]] <span class="ot">&lt;-</span> subject_data</span>
+<span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb1-28"><a href="#cb1-28" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-29"><a href="#cb1-29" aria-hidden="true" tabindex="-1"></a><span class="co"># Fit the models</span></span>
+<span id="cb1-30"><a href="#cb1-30" aria-hidden="true" tabindex="-1"></a>mlm_mle <span class="ot">&lt;-</span> <span class="fu">lmer</span>(Y <span class="sc">~</span> Z_lag1 <span class="sc">+</span> (<span class="dv">1</span> <span class="sc">|</span> id), <span class="at">data =</span> data_sim, <span class="at">REML =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb1-31"><a href="#cb1-31" aria-hidden="true" tabindex="-1"></a>gee_exch <span class="ot">&lt;-</span> <span class="fu">gee</span>(Y <span class="sc">~</span> Z_lag1, <span class="at">id =</span> id, <span class="at">data =</span> data_sim, <span class="at">family =</span> gaussian, <span class="at">corstr =</span> <span class="st">"exchangeable"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div id="tbl-section2.2output" class="cell quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-tbl figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-section2.2output-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Table&nbsp;1: Fixed effects (N = 1.000.000, nsim = 1)
+</figcaption>
+<div aria-describedby="tbl-section2.2output-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="cell-output-display">
+<table class="do-not-create-environment cell caption-top table table-sm table-striped small">
+<thead>
+<tr class="header">
+<th style="text-align: left;"></th>
+<th style="text-align: right;">MLM_mle</th>
+<th style="text-align: right;">GEE_exch</th>
+<th style="text-align: right;">GEE_ind</th>
+<th style="text-align: right;">GEE_ar1</th>
+<th style="text-align: right;">GLM</th>
+<th style="text-align: right;">GLS_symm</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Intercept</td>
+<td style="text-align: right;">2.0</td>
+<td style="text-align: right;">2.0</td>
+<td style="text-align: right;">1.82</td>
+<td style="text-align: right;">2.0</td>
+<td style="text-align: right;">1.82</td>
+<td style="text-align: right;">2.0</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Z_lag1</td>
+<td style="text-align: right;">0.8</td>
+<td style="text-align: right;">0.8</td>
+<td style="text-align: right;">0.98</td>
+<td style="text-align: right;">0.8</td>
+<td style="text-align: right;">0.98</td>
+<td style="text-align: right;">0.8</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</figure>
+</div>
+</div>
+<p>We can clearly see that the MLM and GEE models provide exactly the same estimates for the fixed intercept and fixed regression coefficient, with the exception of the GEE with independence working correlation structure.</p>
+<blockquote class="blockquote">
+<p>According to Pepe and Anderson (1994), this is the only structure that can avoid bias in the estimation of the fixed effects (i.e., that has a valid marginal interpretation).</p>
+</blockquote>
+<p>As a reminder, the fixed effects were specified as <span class="math inline">\(\gamma_{00} = 2\)</span> and <span class="math inline">\(\beta_1 = 0.8\)</span>. Thus, we can see that all models except the GEE with independence working correlation structure returns estimates that are very close to the true values—which represented the conditional mean of <span class="math inline">\(Y\)</span> given <span class="math inline">\(Z\)</span> and <span class="math inline">\(u_{0i}\)</span> (rather than the marginal mean of <span class="math inline">\(Y\)</span> given <span class="math inline">\(Z\)</span>).</p>
+<p>To see why this makes sense, it is important to realize that the parameter estimates represent the parsimonious conditional relationship</p>
+<p><span class="math display">\[
+E[Y_{it+1} \mid Z_{it}, u_{0i}] = \gamma_{00} + \beta_1 Z_{it} + u_{0i}
+\]</span></p>
+<p>And not the marginal relationship, which according to Qian et al.&nbsp;(2020) is given by:</p>
+<p><span class="math display">\[
+E[Y_{i2} \mid Z_{i1}] = \gamma_{00} + \beta_1 Z_{i1}
+\]</span></p>
+<p><span class="math display">\[
+E[Y_{i3} \mid Z_{i2}] = (1- \rho \zeta - \rho ) \gamma_{00} + [(1-\rho \zeta)  \beta_1 + \rho] Z_{i2}
+\]</span></p>
+<p>Let’s confirm this by calculating the true marginal effect</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Restate the parameters</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>sigma_u <span class="ot">&lt;-</span> <span class="dv">1</span>  <span class="co"># Variance of random intercept</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>sigma_Z1 <span class="ot">&lt;-</span> <span class="dv">1</span> <span class="co"># Variance of Z1</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>sigma_e <span class="ot">&lt;-</span> <span class="dv">1</span> <span class="co"># Residual variance</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>beta_1 <span class="ot">&lt;-</span> <span class="fl">0.8</span>  <span class="co"># Slope</span></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>gamma_00 <span class="ot">&lt;-</span> <span class="dv">2</span>  <span class="co"># Intercept</span></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a><span class="co"># prepare variances (instead of SD)</span></span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>sigma2_u0 <span class="ot">=</span> sigma_u<span class="sc">^</span><span class="dv">2</span></span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>sigma2_e <span class="ot">=</span> sigma_e<span class="sc">^</span><span class="dv">2</span></span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>sigma2_Z1 <span class="ot">=</span> sigma_Z1<span class="sc">^</span><span class="dv">2</span></span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a><span class="co"># Compute rho and zeta</span></span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>rho <span class="ot">=</span> sigma2_u0 <span class="sc">/</span> (sigma2_u0 <span class="sc">+</span> sigma2_e)</span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a>zeta <span class="ot">=</span> (beta_1 <span class="sc">*</span> sigma2_Z1) <span class="sc">/</span> (beta_1 <span class="sc">*</span> sigma2_Z1 <span class="sc">+</span> sigma2_u0 <span class="sc">+</span> sigma2_e)</span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a><span class="co"># Now let's compute the marginal effects</span></span>
+<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a>marginal_intercept_Z1_Y2 <span class="ot">&lt;-</span> gamma_00</span>
+<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a>marginal_slope_Z1_Y2 <span class="ot">&lt;-</span> beta_1</span>
+<span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a>marginal_intercept_Z2_Y3 <span class="ot">&lt;-</span> (<span class="dv">1</span> <span class="sc">-</span> rho <span class="sc">*</span> zeta <span class="sc">-</span> rho) <span class="sc">*</span> gamma_00</span>
+<span id="cb2-21"><a href="#cb2-21" aria-hidden="true" tabindex="-1"></a>marginal_slope_Z2_Y3 <span class="ot">&lt;-</span> ((<span class="dv">1</span> <span class="sc">-</span> rho <span class="sc">*</span> zeta) <span class="sc">*</span> beta_1 <span class="sc">+</span> rho)</span>
+<span id="cb2-22"><a href="#cb2-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-23"><a href="#cb2-23" aria-hidden="true" tabindex="-1"></a>(marginal_intercept_Z1_Y2 <span class="sc">+</span> marginal_intercept_Z2_Y3) <span class="sc">/</span> <span class="dv">2</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 1.357143</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>(marginal_slope_Z1_Y2 <span class="sc">+</span> marginal_slope_Z2_Y3) <span class="sc">/</span> <span class="dv">2</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 0.9928571</code></pre>
+</div>
+</div>
+<p>Als we deze waarde voor de marginale slope vergelijken met estimatie van de GLM vinden we erg vergelijkbare waardes. Hetzelfde is niet waar voor de marginale intercept.</p>
+<blockquote class="blockquote">
+<p>Wat doen we fout? Hoe moet dit wel?</p>
+</blockquote>
+<!-- ### Intermezzo: What are marginal effects/models? -->
+<!-- Marginal models are a class of models that are used to estimate the population average effect of a covariate on an outcome. This may be useful, for instance, when prediction or indeed complete modelling of the data are not the main goal of an analysis (Pepe and Anderson, 1994). -->
+<!-- > "Consider, for example, the future practice of screening for risk of respiratory disease, where one might simply ascertain Vitamin A deficiency, weight, height and other covariates at a single time point and make a determination of the child's risk based on these measurements." (Pepe and Anderson, 1994) -->
+<!-- Here, the cross-sectional model is of primary interest for use in future screening practices and an in-depth model of longitudinal data is of secondary interest (Pepe and Anderson, 1994). -->
+<!-- This contrasts with psychological research, where the cross-sectional model is often deemed problematic in the context of longitudinal data analysis, because it conflates (rather than separates) within-subject and between-subject effects. Instead, we tend to be much more interested in (1) the model that best describes the data (i.e., has the best model fit) and (2) the "why" question: complete model of the effects (including within- and between-person effects). What differs here is the aim of the study. -->
+<!-- In what situations may psychological researchers be primarily interested in marginal effects over finding the best description of the data? -->
+<!-- 1.  Clinical Psychology - Making a diagnosis based on measurements of covariates at a single time point, so that patients can be identified and helped who are at risk of developing a mental disorder. -->
+<!-- 2.  Educational Psychology - Making predictions of course performance based on covariates (e.g., hours studying on average) at a single time point, so that students can be identified and helped who are at risk of failing a course. -->
+<!-- Whether marginal or conditional models are preferred depends simply upon the research question and aim of the study: -->
+<!-- > "We do not suggest that marginal models are preferable in general to conditional models. In Section 1 we provided one example where the marginal model is, in fact, preferable but in many cases it will not be. Indeed, which model should be used depends entirely on the questions to be addressed with the data. If a good description of the process generating the data is required then fully conditional or random effects models might be pursued." (Pepe and Anderson, 1994) -->
+<!-- ### Intermezzo: What is the difference between REML and MLE? -->
+<!-- When fitting a multilevel linear model (MLM) we can choose between restricted maximum likelihood (REML) and maximum likelihood estimation (MLE). In REML, $\sigma^2$ and $\rho$ (intra class correlation) are essentially considered nuisance parameters, which makes sure that small sample bias is reduced. However, since we do not obtain the complete log likelihood, we cannot compare models using the likelihood ratio test. When sample sizes are sufficiently large, the two methods are asymptotically equivalent. -->
+<!-- the variance components $\sigma^2_u$ are estimated by maximizing the likelihood of the residuals, conditional on the fixed effects. In MLE, the residual variance $\sigma^2$ and the variance components $\sigma^2_u$ are estimated by maximizing the likelihood of the residuals, conditional on the fixed effects and the random effects. -->
+<!-- The difference between the two methods lies in the way they estimate the variance components of the model. -->
+<!-- source: [STAT 437: 007. Linear Marginal Models: Likelihood, Inference, and Asymptotics (Theory)](https://www.youtube.com/watch?v=ZjQo0H_FFwI&list=PL0Y1Z_F8RtX7jIbexsd3lizDXMET_WGX0&index=7) -->
+</section>
+</section>
+<section id="example-in-diggle-et-al.-2002" class="level3" data-number="2.2">
+<h3 data-number="2.2" class="anchored" data-anchor-id="example-in-diggle-et-al.-2002"><span class="header-section-number">2.2</span> Example in Diggle et al.&nbsp;(2002)</h3>
+<p>In “Longitudinal Data Analysis” by Diggle et al.&nbsp;(2002), there is another example, where there is a time-varying endogenous covariate <span class="math inline">\(X_t\)</span> which is not caused by previous outcomes <span class="math inline">\(Y_{t-1}\)</span>, but instead is caused by previous values of covariate <span class="math inline">\(X_{t-1}\)</span>, which simultaneously affects future outcomes <span class="math inline">\(Y_{t+1}\)</span>.</p>
+<p>The following data generating mechanism was used:</p>
+<p><span class="math display">\[Y_{it} = \gamma_0 + \gamma_1 X_{it} + \gamma_2 X_{it-1} + b_i + e_{it} \quad \text{where} \quad b_i \sim N(0,1), \quad e_{it} \sim N(0,1),\]</span></p>
+<p><span class="math display">\[
+X_{it} = \rho X_{it-1} + \epsilon_{it} \quad \text{where} \quad \epsilon_{it} \sim N(0,1).
+\]</span></p>
+<p>where <span class="math inline">\(b_i\)</span>, <span class="math inline">\(e_{it}\)</span>, and <span class="math inline">\(\epsilon_{it}\)</span> are mutually independent.</p>
+<p>This data generating mechanism has the following DAG</p>
+<div class="cell">
+<div class="cell-output-display">
+<div id="fig-Diggle2002_DAG" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-fig" id="fig-Diggle2002_DAG-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;4: DAG for Diggle (2002)
+</figcaption>
+<div aria-describedby="fig-Diggle2002_DAG-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="DGM_no_treatment_files/figure-html/fig-Diggle2002_DAG-1.png" class="img-fluid figure-img" width="672">
+</div>
+</figure>
+</div>
+</div>
+</div>
+<p>In this DAG, we can see that <span class="math inline">\(X_{t-1}\)</span> is a confounder of the relationship between <span class="math inline">\(Y_{t}\)</span> and <span class="math inline">\(X_{t}\)</span>. However, of course, this variable will be controlled for by including a lagged version of <span class="math inline">\(X\)</span> in the model.</p>
+<p>Alternatively, we can also use a path diagram to illustrate more clearly the types of dependencies and relationships present in the data generating model.</p>
+<!-- ```{r, engine = 'tikz'} -->
+<!-- #| label: fig-Diggle2002_PathDiagram -->
+<!-- #| echo: false -->
+<!-- #| cache: true -->
+<!-- #| fig-cap: "Path diagram for Diggle (2002)" -->
+<!-- \begin{tikzpicture} -->
+<!--   % Nodes -->
+<!--   \node[draw] (Xt_1) at (0, 1.5) {$X_{t-1}$}; -->
+<!--   \node[draw] (Xt) at (3, 1.5) {$X_t$}; -->
+<!--   \node[draw] (Xt1) at (7, 1.5) {$X_{t+1}$}; -->
+<!--   \node[draw] (Yt) at (3, 3.5) {$Y_t$}; -->
+<!--   \node[draw] (Yt1) at (7, 3.5) {$Y_{t+1}$}; -->
+<!--   \node[draw, circle, fill=gray!20] (b_i) at (5, 5.5) {$b_i$}; -->
+<!--   % Residuals for Y and X -->
+<!--   \node[draw, circle, fill=gray!20] (eYt) at (5, 3.5) {$e_{it}$}; -->
+<!--   \node[draw, circle, fill=gray!20] (eYt1) at (9.5, 3.5) {$e_{it}$}; -->
+<!--   \node[draw, circle, fill=gray!20] (eXt) at (3, 0) {$\epsilon_{it}$}; -->
+<!--   \node[draw, circle, fill=gray!20] (eXt1) at (7, 0) {$\epsilon_{it}$}; -->
+<!--   \node[draw, circle, fill=gray!20] (eXt1_1) at (0, 0) {$\epsilon_{it}$}; -->
+<!--   % Edges with labels -->
+<!--   \draw[->] (Xt_1) -- (Xt) node[midway, above] {$\rho$}; -->
+<!--   \draw[->] (Xt) -- (Xt1) node[midway, above] {$\rho$}; -->
+<!--   \draw[->] (Xt_1) -- (Yt) node[midway, above left] {$\gamma_2$}; -->
+<!--   \draw[->] (Xt) -- (Yt) node[midway, left] {$\gamma_1$}; -->
+<!--   \draw[->] (Xt) -- (Yt1) node[midway, above left] {$\gamma_2$}; -->
+<!--   \draw[->] (Xt1) -- (Yt1) node[midway, left] {$\gamma_1$}; -->
+<!--   \draw[->] (b_i) -- (Yt) node[midway, right] {$+$}; -->
+<!--   \draw[->] (b_i) -- (Yt1) node[midway, right] {$+$}; -->
+<!--   % Residual arrows for Y -->
+<!--   \draw[<->, out=120, in=60, looseness=1.5] (eYt) to node[above] {$\sigma_e^2$} (eYt); -->
+<!--   \draw[<->, out=120, in=60, looseness=1.5] (eYt1) to node[above] {$\sigma_e^2$} (eYt1); -->
+<!--   \draw[<->, out=300, in=240, looseness=1.5] (eXt1) to node[below] {$\sigma_\epsilon^2$} (eXt1); -->
+<!--   \draw[<->, out=300, in=240, looseness=1.5] (eXt) to node[below] {$\sigma_\epsilon^2$} (eXt); -->
+<!--   \draw[<->, out=300, in=240, looseness=1.5] (eXt1_1) to node[below] {$\sigma_\epsilon^2$} (eXt1_1); -->
+<!--   % Residual arrows for X -->
+<!--   \draw[->] (eYt) -- (Yt); -->
+<!--   \draw[->] (eYt1) -- (Yt1); -->
+<!--   \draw[->] (eXt) -- (Xt); -->
+<!--   \draw[->] (eXt1) -- (Xt1); -->
+<!--   \draw[->] (eXt1_1) -- (Xt_1); -->
+<!-- \end{tikzpicture} -->
+<!-- ``` -->
+<div id="fig-Diggle2002_PathDiagram" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-fig" id="fig-Diggle2002_PathDiagram-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;5: Path diagram for Diggle et al.&nbsp;(2002)
+</figcaption>
+<div aria-describedby="fig-Diggle2002_PathDiagram-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="figure/fig-Diggle2002_PathDiagram-1.png" class="img-fluid figure-img">
+</div>
+</figure>
+</div>
+<p>For a range of correlations (<span class="math inline">\(\rho = 0.9–0.1\)</span>) they simulated 100 data sets each of which contained data on <span class="math inline">\(m = 200\)</span> subjects with up to 10 observations per subject. The number of observations for each subject, <span class="math inline">\(n_i\)</span>, was generated as a uniform random variable between 2 and 10.</p>
+<blockquote class="blockquote">
+<p>Because missing data did not help estimation, I changed this to 10 observations for each subject.</p>
+</blockquote>
+<p>In this case, the true marginal relationship of the fixed slope between <span class="math inline">\(X_{it}\)</span> and <span class="math inline">\(Y_{it}\)</span> is given by</p>
+<p><span class="math display">\[\beta_1 = \gamma_1 + \rho \cdot \gamma_2\]</span></p>
+<p>We can do estimation in two ways:</p>
+<ol type="1">
+<li>Using a <em>cross-sectional mean model</em> (i.e., marginal model): estimating the linear model <span class="math inline">\(Y_{it} = \beta_0 + \beta_1 X_{it}\)</span></li>
+<li>Using a <em>full conditional model</em>: estimating the linear model <span class="math inline">\(Y_{it} = \gamma_0 + \gamma_1 X_{it} + \gamma_2 X_{it-1}\)</span></li>
+</ol>
+<p>We can estimate the marginal model and its parameter <span class="math inline">\(\beta_1\)</span> using GEE and MLM. In this case, however, the marginal model is biased under all conditions except the GEE with working independence correlation structure.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Load necessary libraries</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(geepack)</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Simulation parameters</span></span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">123</span>)</span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>n_subjects <span class="ot">&lt;-</span> <span class="dv">100000</span> <span class="co"># Number of subjects</span></span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>max_time <span class="ot">&lt;-</span> <span class="dv">10</span>    <span class="co"># Maximum number of observations per subject</span></span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>n_sim <span class="ot">&lt;-</span> <span class="dv">1</span>     <span class="co"># Number of simulations</span></span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>gamma_0 <span class="ot">&lt;-</span> <span class="dv">0</span></span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a>gamma_1 <span class="ot">&lt;-</span> <span class="dv">1</span></span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a>gamma_2 <span class="ot">&lt;-</span> <span class="dv">1</span></span>
+<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a>rho_values <span class="ot">&lt;-</span> <span class="fu">seq</span>(<span class="fl">0.9</span>, <span class="fl">0.1</span>, <span class="at">by =</span> <span class="sc">-</span><span class="fl">0.2</span>) <span class="co"># Range of autocorrelations</span></span>
+<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a><span class="co"># Compute true marginal means for the fixed slope</span></span>
+<span id="cb6-15"><a href="#cb6-15" aria-hidden="true" tabindex="-1"></a>true_marginal_b1 <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
+<span id="cb6-16"><a href="#cb6-16" aria-hidden="true" tabindex="-1"></a>  <span class="at">rho =</span> rho_values,</span>
+<span id="cb6-17"><a href="#cb6-17" aria-hidden="true" tabindex="-1"></a>  <span class="at">beta1 =</span> gamma_1 <span class="sc">+</span> rho_values <span class="sc">*</span> gamma_2</span>
+<span id="cb6-18"><a href="#cb6-18" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb6-19"><a href="#cb6-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-20"><a href="#cb6-20" aria-hidden="true" tabindex="-1"></a><span class="co"># Function to generate data for a single simulation</span></span>
+<span id="cb6-21"><a href="#cb6-21" aria-hidden="true" tabindex="-1"></a>generate_data <span class="ot">&lt;-</span> <span class="cf">function</span>(rho) {</span>
+<span id="cb6-22"><a href="#cb6-22" aria-hidden="true" tabindex="-1"></a>  data_list <span class="ot">&lt;-</span> <span class="fu">list</span>()</span>
+<span id="cb6-23"><a href="#cb6-23" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb6-24"><a href="#cb6-24" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>n_subjects) {</span>
+<span id="cb6-25"><a href="#cb6-25" aria-hidden="true" tabindex="-1"></a>    n_i <span class="ot">&lt;-</span> <span class="dv">10</span> <span class="co"># or fixed number of observations</span></span>
+<span id="cb6-26"><a href="#cb6-26" aria-hidden="true" tabindex="-1"></a>    X_it <span class="ot">&lt;-</span> <span class="fu">numeric</span>(n_i)</span>
+<span id="cb6-27"><a href="#cb6-27" aria-hidden="true" tabindex="-1"></a>    Y_it <span class="ot">&lt;-</span> <span class="fu">numeric</span>(n_i)</span>
+<span id="cb6-28"><a href="#cb6-28" aria-hidden="true" tabindex="-1"></a>    b_i <span class="ot">&lt;-</span> <span class="fu">rnorm</span>(<span class="dv">1</span>, <span class="dv">0</span>, <span class="dv">1</span>)        <span class="co"># Random intercept</span></span>
+<span id="cb6-29"><a href="#cb6-29" aria-hidden="true" tabindex="-1"></a>    e_it <span class="ot">&lt;-</span> <span class="fu">rnorm</span>(n_i, <span class="dv">0</span>, <span class="dv">1</span>)</span>
+<span id="cb6-30"><a href="#cb6-30" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb6-31"><a href="#cb6-31" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Generate covariate X_it with autoregressive structure</span></span>
+<span id="cb6-32"><a href="#cb6-32" aria-hidden="true" tabindex="-1"></a>    X_it[<span class="dv">1</span>] <span class="ot">&lt;-</span> <span class="fu">rnorm</span>(<span class="dv">1</span>, <span class="dv">0</span>, <span class="dv">1</span>)    <span class="co"># Initial value for X_it</span></span>
+<span id="cb6-33"><a href="#cb6-33" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> (t <span class="cf">in</span> <span class="dv">2</span><span class="sc">:</span>n_i) {</span>
+<span id="cb6-34"><a href="#cb6-34" aria-hidden="true" tabindex="-1"></a>      X_it[t] <span class="ot">&lt;-</span> rho <span class="sc">*</span> X_it[t<span class="dv">-1</span>] <span class="sc">+</span> <span class="fu">rnorm</span>(<span class="dv">1</span>, <span class="dv">0</span>, <span class="fu">sqrt</span>(<span class="dv">1</span> <span class="sc">-</span> rho<span class="sc">^</span><span class="dv">2</span>))</span>
+<span id="cb6-35"><a href="#cb6-35" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb6-36"><a href="#cb6-36" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb6-37"><a href="#cb6-37" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Generate outcome Y_it based on current and lagged values of X_it</span></span>
+<span id="cb6-38"><a href="#cb6-38" aria-hidden="true" tabindex="-1"></a>    Y_it[<span class="dv">1</span>] <span class="ot">&lt;-</span> gamma_0 <span class="sc">+</span> gamma_1 <span class="sc">*</span> X_it[<span class="dv">1</span>] <span class="sc">+</span> b_i <span class="sc">+</span> e_it[<span class="dv">1</span>]</span>
+<span id="cb6-39"><a href="#cb6-39" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> (n_i <span class="sc">&gt;</span> <span class="dv">1</span>) {</span>
+<span id="cb6-40"><a href="#cb6-40" aria-hidden="true" tabindex="-1"></a>      <span class="cf">for</span> (t <span class="cf">in</span> <span class="dv">2</span><span class="sc">:</span>n_i) {</span>
+<span id="cb6-41"><a href="#cb6-41" aria-hidden="true" tabindex="-1"></a>        Y_it[t] <span class="ot">&lt;-</span> gamma_0 <span class="sc">+</span> gamma_1 <span class="sc">*</span> X_it[t] <span class="sc">+</span> gamma_2 <span class="sc">*</span> X_it[t<span class="dv">-1</span>] <span class="sc">+</span> b_i <span class="sc">+</span> e_it[t]</span>
+<span id="cb6-42"><a href="#cb6-42" aria-hidden="true" tabindex="-1"></a>      }</span>
+<span id="cb6-43"><a href="#cb6-43" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb6-44"><a href="#cb6-44" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb6-45"><a href="#cb6-45" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Store the data in a list</span></span>
+<span id="cb6-46"><a href="#cb6-46" aria-hidden="true" tabindex="-1"></a>    subject_data <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
+<span id="cb6-47"><a href="#cb6-47" aria-hidden="true" tabindex="-1"></a>      <span class="at">subject =</span> i,</span>
+<span id="cb6-48"><a href="#cb6-48" aria-hidden="true" tabindex="-1"></a>      <span class="at">time =</span> <span class="dv">1</span><span class="sc">:</span>n_i,</span>
+<span id="cb6-49"><a href="#cb6-49" aria-hidden="true" tabindex="-1"></a>      <span class="at">Y =</span> Y_it,</span>
+<span id="cb6-50"><a href="#cb6-50" aria-hidden="true" tabindex="-1"></a>      <span class="at">X =</span> X_it</span>
+<span id="cb6-51"><a href="#cb6-51" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb6-52"><a href="#cb6-52" aria-hidden="true" tabindex="-1"></a>    data_list[[i]] <span class="ot">&lt;-</span> subject_data</span>
+<span id="cb6-53"><a href="#cb6-53" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb6-54"><a href="#cb6-54" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb6-55"><a href="#cb6-55" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Combine all subjects' data into a single data frame</span></span>
+<span id="cb6-56"><a href="#cb6-56" aria-hidden="true" tabindex="-1"></a>  data <span class="ot">&lt;-</span> <span class="fu">do.call</span>(rbind, data_list)</span>
+<span id="cb6-57"><a href="#cb6-57" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(data)</span>
+<span id="cb6-58"><a href="#cb6-58" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb6-59"><a href="#cb6-59" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-60"><a href="#cb6-60" aria-hidden="true" tabindex="-1"></a><span class="co"># Simulation loop</span></span>
+<span id="cb6-61"><a href="#cb6-61" aria-hidden="true" tabindex="-1"></a>results <span class="ot">&lt;-</span> <span class="fu">data.frame</span>()</span>
+<span id="cb6-62"><a href="#cb6-62" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (rho <span class="cf">in</span> rho_values) {</span>
+<span id="cb6-63"><a href="#cb6-63" aria-hidden="true" tabindex="-1"></a>  beta1_estimates <span class="ot">&lt;-</span> <span class="fu">matrix</span>(<span class="cn">NA</span>, n_sim, <span class="dv">4</span>) <span class="co"># Store beta1 estimates for each correlation structure</span></span>
+<span id="cb6-64"><a href="#cb6-64" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb6-65"><a href="#cb6-65" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span> (sim <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>n_sim) {</span>
+<span id="cb6-66"><a href="#cb6-66" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Generate data for this simulation</span></span>
+<span id="cb6-67"><a href="#cb6-67" aria-hidden="true" tabindex="-1"></a>    sim_data <span class="ot">&lt;-</span> <span class="fu">generate_data</span>(rho)</span>
+<span id="cb6-68"><a href="#cb6-68" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb6-69"><a href="#cb6-69" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Fit GEE models with different working correlation structures</span></span>
+<span id="cb6-70"><a href="#cb6-70" aria-hidden="true" tabindex="-1"></a>    gee_ind <span class="ot">&lt;-</span> <span class="fu">geeglm</span>(Y <span class="sc">~</span> X, <span class="at">id =</span> subject, <span class="at">data =</span> sim_data, <span class="at">corstr =</span> <span class="st">"independence"</span>)</span>
+<span id="cb6-71"><a href="#cb6-71" aria-hidden="true" tabindex="-1"></a>    gee_exch <span class="ot">&lt;-</span> <span class="fu">geeglm</span>(Y <span class="sc">~</span> X, <span class="at">id =</span> subject, <span class="at">data =</span> sim_data, <span class="at">corstr =</span> <span class="st">"exchangeable"</span>)</span>
+<span id="cb6-72"><a href="#cb6-72" aria-hidden="true" tabindex="-1"></a>    gee_ar1 <span class="ot">&lt;-</span> <span class="fu">geeglm</span>(Y <span class="sc">~</span> X, <span class="at">id =</span> subject, <span class="at">data =</span> sim_data, <span class="at">corstr =</span> <span class="st">"ar1"</span>)</span>
+<span id="cb6-73"><a href="#cb6-73" aria-hidden="true" tabindex="-1"></a>    mlm_mle <span class="ot">&lt;-</span> <span class="fu">lmer</span>(Y <span class="sc">~</span> X <span class="sc">+</span> (<span class="dv">1</span> <span class="sc">|</span> subject), <span class="at">data =</span> sim_data, <span class="at">REML =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb6-74"><a href="#cb6-74" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb6-75"><a href="#cb6-75" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Store the estimated beta1 for each model</span></span>
+<span id="cb6-76"><a href="#cb6-76" aria-hidden="true" tabindex="-1"></a>    beta1_estimates[sim, <span class="dv">1</span>] <span class="ot">&lt;-</span> <span class="fu">coef</span>(gee_ind)[<span class="st">"X"</span>]</span>
+<span id="cb6-77"><a href="#cb6-77" aria-hidden="true" tabindex="-1"></a>    beta1_estimates[sim, <span class="dv">2</span>] <span class="ot">&lt;-</span> <span class="fu">coef</span>(gee_exch)[<span class="st">"X"</span>]</span>
+<span id="cb6-78"><a href="#cb6-78" aria-hidden="true" tabindex="-1"></a>    beta1_estimates[sim, <span class="dv">3</span>] <span class="ot">&lt;-</span> <span class="fu">coef</span>(gee_ar1)[<span class="st">"X"</span>]</span>
+<span id="cb6-79"><a href="#cb6-79" aria-hidden="true" tabindex="-1"></a>    beta1_estimates[sim, <span class="dv">4</span>] <span class="ot">&lt;-</span> <span class="fu">fixef</span>(mlm_mle)[<span class="st">"X"</span>]</span>
+<span id="cb6-80"><a href="#cb6-80" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb6-81"><a href="#cb6-81" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb6-82"><a href="#cb6-82" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Calculate average estimates of beta1 for each correlation structure</span></span>
+<span id="cb6-83"><a href="#cb6-83" aria-hidden="true" tabindex="-1"></a>  mean_estimates <span class="ot">&lt;-</span> <span class="fu">colMeans</span>(beta1_estimates, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb6-84"><a href="#cb6-84" aria-hidden="true" tabindex="-1"></a>  results <span class="ot">&lt;-</span> <span class="fu">rbind</span>(results, <span class="fu">data.frame</span>(</span>
+<span id="cb6-85"><a href="#cb6-85" aria-hidden="true" tabindex="-1"></a>    <span class="at">rho =</span> rho,</span>
+<span id="cb6-86"><a href="#cb6-86" aria-hidden="true" tabindex="-1"></a>    <span class="at">beta1_ind =</span> mean_estimates[<span class="dv">1</span>],</span>
+<span id="cb6-87"><a href="#cb6-87" aria-hidden="true" tabindex="-1"></a>    <span class="at">beta1_exch =</span> mean_estimates[<span class="dv">2</span>],</span>
+<span id="cb6-88"><a href="#cb6-88" aria-hidden="true" tabindex="-1"></a>    <span class="at">beta1_ar1 =</span> mean_estimates[<span class="dv">3</span>],</span>
+<span id="cb6-89"><a href="#cb6-89" aria-hidden="true" tabindex="-1"></a>    <span class="at">beta1_mlm =</span> mean_estimates[<span class="dv">4</span>]</span>
+<span id="cb6-90"><a href="#cb6-90" aria-hidden="true" tabindex="-1"></a>  ))</span>
+<span id="cb6-91"><a href="#cb6-91" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb6-92"><a href="#cb6-92" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-93"><a href="#cb6-93" aria-hidden="true" tabindex="-1"></a><span class="co"># format and save results</span></span>
+<span id="cb6-94"><a href="#cb6-94" aria-hidden="true" tabindex="-1"></a>results_complete <span class="ot">&lt;-</span> <span class="fu">cbind</span>(results, <span class="at">beta1_true =</span> true_marginal_b1<span class="sc">$</span>beta1) <span class="sc">%&gt;%</span></span>
+<span id="cb6-95"><a href="#cb6-95" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(rho, beta1_true, beta1_ind, beta1_exch, beta1_ar1, beta1_mlm)</span>
+<span id="cb6-96"><a href="#cb6-96" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-97"><a href="#cb6-97" aria-hidden="true" tabindex="-1"></a><span class="fu">saveRDS</span>(results_complete, <span class="at">file =</span> <span class="st">"output/Diggle2002_results_CSM_1_100000.rds"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Alternatively, we can include X_lag1 in the analysis/estimation and estimate the full conditional model:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Load necessary libraries</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(geepack)</span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Simulation parameters</span></span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">123</span>)</span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>n_subjects <span class="ot">&lt;-</span> <span class="dv">100000</span> <span class="co"># Number of subjects</span></span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>max_time <span class="ot">&lt;-</span> <span class="dv">1</span>    <span class="co"># Maximum number of observations per subject</span></span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>n_sim <span class="ot">&lt;-</span> <span class="dv">1</span>     <span class="co"># Number of simulations</span></span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>gamma_0 <span class="ot">&lt;-</span> <span class="dv">0</span></span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a>gamma_1 <span class="ot">&lt;-</span> <span class="dv">1</span></span>
+<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a>gamma_2 <span class="ot">&lt;-</span> <span class="dv">1</span></span>
+<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a>rho_values <span class="ot">&lt;-</span> <span class="fu">seq</span>(<span class="fl">0.9</span>, <span class="fl">0.1</span>, <span class="at">by =</span> <span class="sc">-</span><span class="fl">0.2</span>) <span class="co"># Range of autocorrelations</span></span>
+<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a><span class="co"># State true marginal conditional means for the fixed slope</span></span>
+<span id="cb7-15"><a href="#cb7-15" aria-hidden="true" tabindex="-1"></a>true_cond_gamma1 <span class="ot">&lt;-</span> <span class="fu">rep</span>(gamma_1, <span class="fu">length</span>(rho_values))</span>
+<span id="cb7-16"><a href="#cb7-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-17"><a href="#cb7-17" aria-hidden="true" tabindex="-1"></a><span class="co"># Function to generate data for a single simulation</span></span>
+<span id="cb7-18"><a href="#cb7-18" aria-hidden="true" tabindex="-1"></a>generate_data <span class="ot">&lt;-</span> <span class="cf">function</span>(rho) {</span>
+<span id="cb7-19"><a href="#cb7-19" aria-hidden="true" tabindex="-1"></a>  data_list <span class="ot">&lt;-</span> <span class="fu">list</span>()</span>
+<span id="cb7-20"><a href="#cb7-20" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb7-21"><a href="#cb7-21" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>n_subjects) {</span>
+<span id="cb7-22"><a href="#cb7-22" aria-hidden="true" tabindex="-1"></a>    <span class="co"># n_i &lt;- sample(2:max_time, 1) # Random number of observations (2 to 10)</span></span>
+<span id="cb7-23"><a href="#cb7-23" aria-hidden="true" tabindex="-1"></a>    n_i <span class="ot">&lt;-</span> <span class="dv">10</span> <span class="co"># or fixed number of observations</span></span>
+<span id="cb7-24"><a href="#cb7-24" aria-hidden="true" tabindex="-1"></a>    X_it <span class="ot">&lt;-</span> <span class="fu">numeric</span>(n_i)</span>
+<span id="cb7-25"><a href="#cb7-25" aria-hidden="true" tabindex="-1"></a>    Y_it <span class="ot">&lt;-</span> <span class="fu">numeric</span>(n_i)</span>
+<span id="cb7-26"><a href="#cb7-26" aria-hidden="true" tabindex="-1"></a>    b_i <span class="ot">&lt;-</span> <span class="fu">rnorm</span>(<span class="dv">1</span>, <span class="dv">0</span>, <span class="dv">1</span>)        <span class="co"># Random intercept</span></span>
+<span id="cb7-27"><a href="#cb7-27" aria-hidden="true" tabindex="-1"></a>    e_it <span class="ot">&lt;-</span> <span class="fu">rnorm</span>(n_i, <span class="dv">0</span>, <span class="dv">1</span>)</span>
+<span id="cb7-28"><a href="#cb7-28" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb7-29"><a href="#cb7-29" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Generate covariate X_it with autoregressive structure</span></span>
+<span id="cb7-30"><a href="#cb7-30" aria-hidden="true" tabindex="-1"></a>    X_it[<span class="dv">1</span>] <span class="ot">&lt;-</span> <span class="fu">rnorm</span>(<span class="dv">1</span>, <span class="dv">0</span>, <span class="dv">1</span>)    <span class="co"># Initial value for X_it</span></span>
+<span id="cb7-31"><a href="#cb7-31" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> (t <span class="cf">in</span> <span class="dv">2</span><span class="sc">:</span>n_i) {</span>
+<span id="cb7-32"><a href="#cb7-32" aria-hidden="true" tabindex="-1"></a>      X_it[t] <span class="ot">&lt;-</span> rho <span class="sc">*</span> X_it[t<span class="dv">-1</span>] <span class="sc">+</span> <span class="fu">rnorm</span>(<span class="dv">1</span>, <span class="dv">0</span>, <span class="fu">sqrt</span>(<span class="dv">1</span> <span class="sc">-</span> rho<span class="sc">^</span><span class="dv">2</span>))</span>
+<span id="cb7-33"><a href="#cb7-33" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb7-34"><a href="#cb7-34" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb7-35"><a href="#cb7-35" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Generate outcome Y_it based on current and lagged values of X_it</span></span>
+<span id="cb7-36"><a href="#cb7-36" aria-hidden="true" tabindex="-1"></a>    Y_it[<span class="dv">1</span>] <span class="ot">&lt;-</span> gamma_0 <span class="sc">+</span> gamma_1 <span class="sc">*</span> X_it[<span class="dv">1</span>] <span class="sc">+</span> b_i <span class="sc">+</span> e_it[<span class="dv">1</span>]</span>
+<span id="cb7-37"><a href="#cb7-37" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> (n_i <span class="sc">&gt;</span> <span class="dv">1</span>) {</span>
+<span id="cb7-38"><a href="#cb7-38" aria-hidden="true" tabindex="-1"></a>      <span class="cf">for</span> (t <span class="cf">in</span> <span class="dv">2</span><span class="sc">:</span>n_i) {</span>
+<span id="cb7-39"><a href="#cb7-39" aria-hidden="true" tabindex="-1"></a>        Y_it[t] <span class="ot">&lt;-</span> gamma_0 <span class="sc">+</span> gamma_1 <span class="sc">*</span> X_it[t] <span class="sc">+</span> gamma_2 <span class="sc">*</span> X_it[t<span class="dv">-1</span>] <span class="sc">+</span> b_i <span class="sc">+</span> e_it[t]</span>
+<span id="cb7-40"><a href="#cb7-40" aria-hidden="true" tabindex="-1"></a>      }</span>
+<span id="cb7-41"><a href="#cb7-41" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb7-42"><a href="#cb7-42" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb7-43"><a href="#cb7-43" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Store the data in a list</span></span>
+<span id="cb7-44"><a href="#cb7-44" aria-hidden="true" tabindex="-1"></a>    subject_data <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
+<span id="cb7-45"><a href="#cb7-45" aria-hidden="true" tabindex="-1"></a>      <span class="at">subject =</span> i,</span>
+<span id="cb7-46"><a href="#cb7-46" aria-hidden="true" tabindex="-1"></a>      <span class="at">time =</span> <span class="dv">1</span><span class="sc">:</span>n_i,</span>
+<span id="cb7-47"><a href="#cb7-47" aria-hidden="true" tabindex="-1"></a>      <span class="at">Y =</span> Y_it,</span>
+<span id="cb7-48"><a href="#cb7-48" aria-hidden="true" tabindex="-1"></a>      <span class="at">X =</span> X_it,</span>
+<span id="cb7-49"><a href="#cb7-49" aria-hidden="true" tabindex="-1"></a>      <span class="at">X_lag1 =</span> <span class="fu">c</span>(<span class="cn">NA</span>, X_it[<span class="sc">-</span>n_i]) <span class="co"># Lagged value of X, with NA for the first observation</span></span>
+<span id="cb7-50"><a href="#cb7-50" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb7-51"><a href="#cb7-51" aria-hidden="true" tabindex="-1"></a>    data_list[[i]] <span class="ot">&lt;-</span> subject_data</span>
+<span id="cb7-52"><a href="#cb7-52" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb7-53"><a href="#cb7-53" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb7-54"><a href="#cb7-54" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Combine all subjects' data into a single data frame</span></span>
+<span id="cb7-55"><a href="#cb7-55" aria-hidden="true" tabindex="-1"></a>  data <span class="ot">&lt;-</span> <span class="fu">do.call</span>(rbind, data_list)</span>
+<span id="cb7-56"><a href="#cb7-56" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(data)</span>
+<span id="cb7-57"><a href="#cb7-57" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb7-58"><a href="#cb7-58" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-59"><a href="#cb7-59" aria-hidden="true" tabindex="-1"></a><span class="co"># Simulation loop</span></span>
+<span id="cb7-60"><a href="#cb7-60" aria-hidden="true" tabindex="-1"></a>results <span class="ot">&lt;-</span> <span class="fu">data.frame</span>()</span>
+<span id="cb7-61"><a href="#cb7-61" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (rho <span class="cf">in</span> rho_values) {</span>
+<span id="cb7-62"><a href="#cb7-62" aria-hidden="true" tabindex="-1"></a>  gamma1_estimates <span class="ot">&lt;-</span> <span class="fu">matrix</span>(<span class="cn">NA</span>, n_sim, <span class="dv">4</span>) <span class="co"># Store beta1 estimates for each correlation structure</span></span>
+<span id="cb7-63"><a href="#cb7-63" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb7-64"><a href="#cb7-64" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span> (sim <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>n_sim) {</span>
+<span id="cb7-65"><a href="#cb7-65" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Generate data for this simulation</span></span>
+<span id="cb7-66"><a href="#cb7-66" aria-hidden="true" tabindex="-1"></a>    sim_data <span class="ot">&lt;-</span> <span class="fu">generate_data</span>(rho)</span>
+<span id="cb7-67"><a href="#cb7-67" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb7-68"><a href="#cb7-68" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Remove rows with missing X_lag1 values</span></span>
+<span id="cb7-69"><a href="#cb7-69" aria-hidden="true" tabindex="-1"></a>    sim_data <span class="ot">&lt;-</span> <span class="fu">na.omit</span>(sim_data)</span>
+<span id="cb7-70"><a href="#cb7-70" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb7-71"><a href="#cb7-71" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Fit GEE models with different working correlation structures</span></span>
+<span id="cb7-72"><a href="#cb7-72" aria-hidden="true" tabindex="-1"></a>    gee_ind <span class="ot">&lt;-</span> <span class="fu">geeglm</span>(Y <span class="sc">~</span> X <span class="sc">+</span> X_lag1, <span class="at">id =</span> subject, <span class="at">data =</span> sim_data, <span class="at">corstr =</span> <span class="st">"independence"</span>)</span>
+<span id="cb7-73"><a href="#cb7-73" aria-hidden="true" tabindex="-1"></a>    gee_exch <span class="ot">&lt;-</span> <span class="fu">geeglm</span>(Y <span class="sc">~</span> X <span class="sc">+</span> X_lag1, <span class="at">id =</span> subject, <span class="at">data =</span> sim_data, <span class="at">corstr =</span> <span class="st">"exchangeable"</span>)</span>
+<span id="cb7-74"><a href="#cb7-74" aria-hidden="true" tabindex="-1"></a>    gee_ar1 <span class="ot">&lt;-</span> <span class="fu">geeglm</span>(Y <span class="sc">~</span> X <span class="sc">+</span> X_lag1, <span class="at">id =</span> subject, <span class="at">data =</span> sim_data, <span class="at">corstr =</span> <span class="st">"ar1"</span>)</span>
+<span id="cb7-75"><a href="#cb7-75" aria-hidden="true" tabindex="-1"></a>    mlm_mle <span class="ot">&lt;-</span> <span class="fu">lmer</span>(Y <span class="sc">~</span> X <span class="sc">+</span> X_lag1 <span class="sc">+</span> (<span class="dv">1</span> <span class="sc">|</span> subject), <span class="at">data =</span> sim_data, <span class="at">REML =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb7-76"><a href="#cb7-76" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb7-77"><a href="#cb7-77" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Store the estimated beta1 for each model</span></span>
+<span id="cb7-78"><a href="#cb7-78" aria-hidden="true" tabindex="-1"></a>    gamma1_estimates[sim, <span class="dv">1</span>] <span class="ot">&lt;-</span> <span class="fu">coef</span>(gee_ind)[<span class="st">"X"</span>]</span>
+<span id="cb7-79"><a href="#cb7-79" aria-hidden="true" tabindex="-1"></a>    gamma1_estimates[sim, <span class="dv">2</span>] <span class="ot">&lt;-</span> <span class="fu">coef</span>(gee_exch)[<span class="st">"X"</span>]</span>
+<span id="cb7-80"><a href="#cb7-80" aria-hidden="true" tabindex="-1"></a>    gamma1_estimates[sim, <span class="dv">3</span>] <span class="ot">&lt;-</span> <span class="fu">coef</span>(gee_ar1)[<span class="st">"X"</span>]</span>
+<span id="cb7-81"><a href="#cb7-81" aria-hidden="true" tabindex="-1"></a>    gamma1_estimates[sim, <span class="dv">4</span>] <span class="ot">&lt;-</span> <span class="fu">fixef</span>(mlm_mle)[<span class="st">"X"</span>]</span>
+<span id="cb7-82"><a href="#cb7-82" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb7-83"><a href="#cb7-83" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb7-84"><a href="#cb7-84" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Calculate average estimates of beta1 for each correlation structure</span></span>
+<span id="cb7-85"><a href="#cb7-85" aria-hidden="true" tabindex="-1"></a>  mean_estimates <span class="ot">&lt;-</span> <span class="fu">colMeans</span>(beta1_estimates, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb7-86"><a href="#cb7-86" aria-hidden="true" tabindex="-1"></a>  results <span class="ot">&lt;-</span> <span class="fu">rbind</span>(results, <span class="fu">data.frame</span>(</span>
+<span id="cb7-87"><a href="#cb7-87" aria-hidden="true" tabindex="-1"></a>    <span class="at">rho =</span> rho,</span>
+<span id="cb7-88"><a href="#cb7-88" aria-hidden="true" tabindex="-1"></a>    <span class="at">gamma1_ind =</span> mean_estimates[<span class="dv">1</span>],</span>
+<span id="cb7-89"><a href="#cb7-89" aria-hidden="true" tabindex="-1"></a>    <span class="at">gamma1_exch =</span> mean_estimates[<span class="dv">2</span>],</span>
+<span id="cb7-90"><a href="#cb7-90" aria-hidden="true" tabindex="-1"></a>    <span class="at">gamma1_ar1 =</span> mean_estimates[<span class="dv">3</span>],</span>
+<span id="cb7-91"><a href="#cb7-91" aria-hidden="true" tabindex="-1"></a>    <span class="at">gamma1_mlm =</span> mean_estimates[<span class="dv">4</span>]</span>
+<span id="cb7-92"><a href="#cb7-92" aria-hidden="true" tabindex="-1"></a>  ))</span>
+<span id="cb7-93"><a href="#cb7-93" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb7-94"><a href="#cb7-94" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-95"><a href="#cb7-95" aria-hidden="true" tabindex="-1"></a><span class="co"># format and save results</span></span>
+<span id="cb7-96"><a href="#cb7-96" aria-hidden="true" tabindex="-1"></a>results_complete <span class="ot">&lt;-</span> <span class="fu">cbind</span>(results, <span class="at">gamma1_true =</span> true_cond_gamma1) <span class="sc">%&gt;%</span></span>
+<span id="cb7-97"><a href="#cb7-97" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(rho, gamma1_true, gamma1_ind, gamma1_exch, gamma1_ar1, gamma1_mlm)</span>
+<span id="cb7-98"><a href="#cb7-98" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-99"><a href="#cb7-99" aria-hidden="true" tabindex="-1"></a><span class="fu">saveRDS</span>(results_complete, <span class="at">file =</span> <span class="st">"output/Diggle2002_results_FCM_1_100000.rds"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Here are the results of the simulation. Note that compared to the cross-sectional model, in the full conditional model we add the lagged variable <code>X_lag1</code> in the model, whereby we do not obtain the marginal estimate of the fixed slope. Instead, we obtain the conditional estimate of the fixed slope, which is the effect of <code>X</code> on <code>Y</code> after accounting for the effect of <code>X_lag1</code>. In other words, we get the coefficients for <span class="math inline">\(\gamma_1\)</span> and <span class="math inline">\(\gamma_2\)</span> in the model <span class="math inline">\(Y_{it} = \gamma_0 + \gamma_1 X_{it} + \gamma_2 X_{it-1} + b_i + e_{it}\)</span> rather than the coefficient <span class="math inline">\(\beta_1\)</span> in the marginal model <span class="math inline">\(Y_{it} = \beta_0 + \beta_1 X_{it} + b_i + e_{it}\)</span>.</p>
+<div class="cell">
+<div id="tbl-Diggle2002" class="cell quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-tbl figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-Diggle2002-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Table&nbsp;2: Average Estimates for Different Correlation Structures
+</figcaption>
+<div aria-describedby="tbl-Diggle2002-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="cell-output-display">
+<table class="do-not-create-environment cell caption-top table table-sm table-striped small">
+<caption>Cross-Sectional MeanModel. Average Estimates of Beta1 for Different Correlation Structures</caption>
+<thead>
+<tr class="header">
+<th style="text-align: right;">rho</th>
+<th style="text-align: right;">beta1_true</th>
+<th style="text-align: right;">beta1_ind</th>
+<th style="text-align: right;">beta1_exch</th>
+<th style="text-align: right;">beta1_ar1</th>
+<th style="text-align: right;">beta1_mlm</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: right;">0.9</td>
+<td style="text-align: right;">1.9</td>
+<td style="text-align: right;">1.808</td>
+<td style="text-align: right;">1.623</td>
+<td style="text-align: right;">1.085</td>
+<td style="text-align: right;">1.623</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">0.7</td>
+<td style="text-align: right;">1.7</td>
+<td style="text-align: right;">1.629</td>
+<td style="text-align: right;">1.466</td>
+<td style="text-align: right;">0.924</td>
+<td style="text-align: right;">1.466</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">0.5</td>
+<td style="text-align: right;">1.5</td>
+<td style="text-align: right;">1.450</td>
+<td style="text-align: right;">1.314</td>
+<td style="text-align: right;">0.813</td>
+<td style="text-align: right;">1.314</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">0.3</td>
+<td style="text-align: right;">1.3</td>
+<td style="text-align: right;">1.270</td>
+<td style="text-align: right;">1.157</td>
+<td style="text-align: right;">0.707</td>
+<td style="text-align: right;">1.157</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">0.1</td>
+<td style="text-align: right;">1.1</td>
+<td style="text-align: right;">1.090</td>
+<td style="text-align: right;">0.998</td>
+<td style="text-align: right;">0.604</td>
+<td style="text-align: right;">0.998</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="cell-output-display">
+<table class="do-not-create-environment cell caption-top table table-sm table-striped small">
+<caption>Full Conditional Model. Average Estimates of gamma1 for Different Correlation Structures</caption>
+<thead>
+<tr class="header">
+<th style="text-align: right;">rho</th>
+<th style="text-align: right;">gamma1_true</th>
+<th style="text-align: right;">gamma1_ind</th>
+<th style="text-align: right;">gamma1_exch</th>
+<th style="text-align: right;">gamma1_ar1</th>
+<th style="text-align: right;">gamma1_mlm</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: right;">0.9</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">1.09</td>
+<td style="text-align: right;">0.998</td>
+<td style="text-align: right;">0.604</td>
+<td style="text-align: right;">0.998</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">0.7</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">1.09</td>
+<td style="text-align: right;">0.998</td>
+<td style="text-align: right;">0.604</td>
+<td style="text-align: right;">0.998</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">0.5</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">1.09</td>
+<td style="text-align: right;">0.998</td>
+<td style="text-align: right;">0.604</td>
+<td style="text-align: right;">0.998</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">0.3</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">1.09</td>
+<td style="text-align: right;">0.998</td>
+<td style="text-align: right;">0.604</td>
+<td style="text-align: right;">0.998</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">0.1</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">1.09</td>
+<td style="text-align: right;">0.998</td>
+<td style="text-align: right;">0.604</td>
+<td style="text-align: right;">0.998</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</figure>
+</div>
+</div>
+<p>In <a href="#fig-Diggle2002" class="quarto-xref">Figure&nbsp;6</a>, we plot the average estimates of <span class="math inline">\(\beta_1\)</span> for different correlation structures in the cross-sectional model.</p>
+<div class="cell">
+<div class="cell-output-display">
+<div id="fig-Diggle2002" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-fig" id="fig-Diggle2002-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;6: Cross-Sectional Mean Model. Average Estimates of Beta1 for Different Correlation Structures
+</figcaption>
+<div aria-describedby="fig-Diggle2002-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="DGM_no_treatment_files/figure-html/fig-Diggle2002-1.png" class="img-fluid figure-img" width="672">
+</div>
+</figure>
+</div>
+</div>
+</div>
+<p>These findings are somewhat similar to the original simulation results found by Diggle et al.&nbsp;(2002).</p>
+<div id="tbl-Diggle2002" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-tbl figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-Diggle2002-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Table&nbsp;3: Simulation Results of Diggle et al.&nbsp;(2002)
+</figcaption>
+<div aria-describedby="tbl-Diggle2002-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="figure/Diggle2002_Table12.3.png" class="img-fluid figure-img">
+</div>
+</figure>
+</div>
+<p>The discrepancy may be due to a slight difference/mistake in its implementation. Nevertheless, like Diggle et al.&nbsp;(2002), we can see that the GEE with working independence is the least biased in terms of marginal effects, followed by the exchangeable and AR(1) working correlation structures.</p>
+</section>
+</section>
+
+</main>
+<!-- /main column -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const onCopySuccess = function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  }
+  const getTextToCopy = function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+    text: getTextToCopy
+  });
+  clipboard.on('success', onCopySuccess);
+  if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+    // For code content inside modals, clipBoardJS needs to be initialized with a container option
+    // TODO: Check when it could be a function (https://github.com/zenorocha/clipboard.js/issues/860)
+    const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+      text: getTextToCopy,
+      container: window.document.getElementById('quarto-embedded-source-code-modal')
+    });
+    clipboardModal.on('success', onCopySuccess);
+  }
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+    var mailtoRegex = new RegExp(/^mailto:/);
+      var filterRegex = new RegExp('/' + window.location.host + '/');
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+    }
+    // Inspect non-navigation links and adorn them if external
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+        // undo the damage that might have been done by quarto-nav.js in the case of
+        // links that we want to consider external
+        if (link.dataset.originalHref !== undefined) {
+          link.href = link.dataset.originalHref;
+        }
+      }
+    }
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+    const config = {
+      allowHTML: true,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start',
+    };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      if (note) {
+        return note.innerHTML;
+      } else {
+        return "";
+      }
+    });
+  }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
+        return container.innerHTML
+      } else {
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      // TODO in 1.5, we should make sure this works without a callout special case
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
+      }
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
+      }
+    }, function(instance) {
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            div.style.left = 0;
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+
+</body></html>
