@@ -118,17 +118,17 @@ $$
 
 In the table below, we will provide the translation of original notation in Qian et al. (2020) to notation more common in psychological research
 
-| Parameter | Original | New |
+| Parameter                                     | Qian et al. (2020) | Raudenbusch and Bryk (2002) |
 |----------------------------|----------------------|----------------------|
-| Fixed intercept | $\alpha_0$ | $\gamma_{00}$ |
-| Fixed slope for $X_{it}$ | $\alpha_1$ | $\gamma_{01}$ |
-| Random intercept | $b_{i0}$ | $u_{0i}$ |
-| Random slope for $A_{it}$ | $b_{i2}$ | $u_{2i}$ |
-| Error term | $\epsilon_{it+1}$ | $e_{it+1}$ |
-| Fixed effect of $A_{it}$ | $\beta_0$ | $\gamma_{10}$ |
-| Interaction effect of $A_{it}$ and $X_{it}$ | $\beta_1$ | $\gamma_{11}$ |
-| Covariate | $X_{it}$ | $Z_{it}$ |
-| Randomized Treatment | $A_{it}$ | $X_{it}$ |
+| Covariate                                     | $X_{it}$           | $Z_{it}$                    |
+| Randomized Treatment                          | $A_{it}$           | $X_{it}$                    |
+| Fixed intercept                               | $\alpha_0$         | $\gamma_{00}$               |
+| Fixed slope for covariate                     | $\alpha_1$         | $\beta_{2}$                 |
+| Random intercept                              | $b_{i0}$           | $u_{0i}$                    |
+| Fixed effect of treatment                     | $\beta_0$          | $\gamma_{10}$               |
+| Interaction effect of covariate and treatment | $\beta_1$          | $\beta_3$                   |
+| Random slope for treatment                    | $b_{i2}$           | $u_{1i}$                    |
+| Error term                                    | $\epsilon_{it+1}$  | $e_{it+1}$                  |
 
 Let's first state the original model:
 
@@ -136,35 +136,35 @@ $$
 Y_{it+1} = \alpha_0 + \alpha_1 X_{it} + b_{i0} + A_{it} (\beta_0 + \beta_1 X_{it} + b_{i2}) + \epsilon_{it+1}.
 $$
 
-Using this new notation, we may thus rewrite GM1 as a within model:
+Using this new notation, we may thus rewrite GM1 as a within-person (level 2) model:
 
 $$
-Y_{it+1} = \beta_{0i} + \beta_{1i} X_{it} + e_{it+1},
+Y_{it+1} = \beta_{0i} + \beta_{1i} X_{it} + \beta_2 Z_{it} + \beta_3 Z_{it} X_{it} + e_{it+1},
 $$
 
-where:
+with the between-person (level 1) equations
 
 $$ 
-\beta_{0i} = \gamma_{00} + \gamma_{01} Z_{it} + u_{0i} \quad \text{with} \quad u_{0i} \sim \mathcal{N}(0, \sigma^2_{u0}),
+\beta_{0i} = \gamma_{00} + u_{0i} \quad \text{with} \quad u_{0i} \sim \mathcal{N}(0, \sigma^2_{u0}),
 $$
 
 $$ 
-\beta_{1i} = \gamma_{10} + \gamma_{11} Z_{it} + u_{2i} \quad \text{with} \quad u_{2i} \sim \mathcal{N}(0, \sigma^2_{u2}).
+\beta_{1i} = \gamma_{10} + u_{1i} \quad \text{with} \quad u_{1i} \sim \mathcal{N}(0, \sigma^2_{u2}).
 $$
 
 Combining these two equations, the model can be expressed as:
 
 $$
-Y_{it+1} = \gamma_{00} + \gamma_{01} Z_{it} + u_{0i} + X_{it} (\gamma_{10} + \gamma_{11} Z_{it} + u_{2i}) + e_{it+1}.
+Y_{it+1} = \beta_{0i} + \beta_{1i} X_{it} + \beta_2 Z_{it} + \beta_3 Z_{it} X_{it} + e_{it+1} \\ = \gamma_{00} + u_{0i} + X_{it} (\gamma_{10} + u_{1i}) + \beta_2 Z_{it} + \beta_3 Z_{it} X_{it} + e_{it+1} \\ = \gamma_{00} + \beta_2 Z_{it} + u_{0i} + X_{it} (\gamma_{10} + \beta_3 Z_{it} + u_{1i}) + e_{it+1}
 $$
 
 More specifically, the process was generated as follows:
 
--   the random effects $u_{0i} \sim \mathcal{N}(0, 4)$ and $u_{2i} \sim \mathcal{N}(0, 1)$ are independent of each other
+-   the random effects $u_{0i} \sim \mathcal{N}(0, 4)$ and $u_{1i} \sim \mathcal{N}(0, 1)$ are independent of each other
 -   the covariate $Z_{i1} \sim \mathcal{N}(0, 1)$, and for $t \geq 2$, $Z_{it} = Y_{it} + \mathcal{N}(0, 1)$
--   the randomization probability $p_t$ is constant at 0.5
+-   the randomization probability $p_i = P(A_{it} = 1 \mid H_{it}) = 0.5$ and $A_{it} \sim \mathcal{Binomial}(n_{i}, p_{i} = 0.5)$
 -   the exogenous noise $e_{it+1} \sim \mathcal{N}(0, 1)$
--   the parameter values are $\gamma_{00} = -2$, $\gamma_{01} = -0.3$, $\gamma_{10} = 1$, $\gamma_{11} = 0.3$
+-   the parameter values are $\gamma_{00} = -2$, $\beta_{2} = -0.3$, $\gamma_{10} = 1$, $\beta_{3} = 0.3$
 
 ### Visualzing the Model
 
@@ -273,16 +273,16 @@ We can make a couple observations from this path diagram:
 The data generating process for this model is given by
 
 $$
-Y_{it+1} = \gamma_{00} + \gamma_{01} Z_{it} + u_{0i} + X_{it} (\gamma_{10} + \gamma_{11} Z_{it} + u_{2i}) + e_{it+1}.
+Y_{it+1} = \gamma_{00} + u_{0i} + X_{it} (\gamma_{10} + u_{1i}) + \beta_2 Z_{it} + \beta_3 Z_{it} X_{it} + e_{it+1}
 $$
 
 More specifically, the process was generated as follows:
 
--   the random effects $u_{0i} \sim \mathcal{N}(0, 4)$ and $u_{2i} \sim \mathcal{N}(0, 1)$ are independent of each other
--   the covariate $Z_{i1} \sim \mathcal{N}(0, 1)$, and for $t \geq 2$, $Z_{it} = Y_{it} + \mathcal{N}(0, 1)$
--   the randomization probability $p_t$ is constant at 0.5
--   the exogenous noise $e_{it+1} \sim \mathcal{N}(0, 1)$
--   the parameter values are $\gamma_{00} = -2$, $\gamma_{01} = -0.3$, $\gamma_{10} = 1$, $\gamma_{11} = 0.3$
+-   $u_{0i} \sim \mathcal{N}(0, 4)$ and $u_{1i} \sim \mathcal{N}(0, 1)$ are independent of each other
+-   $Z_{i1} \sim \mathcal{N}(0, 1)$, and for $t \geq 2$, $Z_{it} = Y_{it} + \mathcal{N}(0, 1)$
+-   $p_i = P(A_{it} = 1 \mid H_{it}) = 0.5$ and $A_{it} \sim \mathcal{Binomial}(n_{i}, p_{i} = 0.5)$
+-   $e_{it+1} \sim \mathcal{N}(0, 1)$
+-   $\gamma_{00} = -2$, $\beta_{2} = -0.3$, $\gamma_{10} = 1$, $\beta_{3} = 0.3$
 
 ```{r}
 #| label: GM1_datageneration
@@ -294,11 +294,11 @@ dgm1 <- function(sample_size, total_T) {
     
     # Parameters
     gamma_00 <- -2   # Fixed intercept
-    gamma_01 <- -0.3 # Fixed slope for Z
+    beta_2 <- -0.3 # Fixed slope for Z
     gamma_10 <- 1    # Fixed effect of treatment (X)
-    gamma_11 <- 0.3  # Interaction effect between treatment (X) and covariate (Z)
+    beta_3 <- 0.3  # Interaction effect between treatment (X) and covariate (Z)
     sigma_u0 <- 2    # SD of random intercept (u_0i)
-    sigma_u2 <- 1    # SD of random slope for treatment (u_2i)
+    sigma_u2 <- 1    # SD of random slope for treatment (u_1i)
     sigma_e <- 1     # SD of error term (e_{it+1})
     prob_x <- 0.5    # Randomization probability for treatment (X)
     
@@ -313,7 +313,7 @@ dgm1 <- function(sample_size, total_T) {
 
     # Generate uncorrelated random effects
     u_0i <- rnorm(sample_size, mean = 0, sd = sigma_u0)
-    u_2i <- rnorm(sample_size, mean = 0, sd = sigma_u2)
+    u_1i <- rnorm(sample_size, mean = 0, sd = sigma_u2)
 
     # Data generation for each time point
     for (t in 1:total_T) {
@@ -322,9 +322,9 @@ dgm1 <- function(sample_size, total_T) {
         
         # Generate Z based on the process described
         if (t == 1) {
-            dta$Z[row_index] <- rnorm(sample_size)
+            dta$Z[row_index] <- rnorm(sample_size, mean = 0, sd = 1)
         } else {
-            dta$Z[row_index] <- dta$Y[row_index_lag1] + rnorm(sample_size)
+            dta$Z[row_index] <- dta$Y[row_index_lag1] + rnorm(sample_size, mean = 0, sd = 1)
         }
         
         # Set fixed probability for treatment assignment
@@ -337,15 +337,15 @@ dgm1 <- function(sample_size, total_T) {
         dta$e[row_index] <- rnorm(sample_size, mean = 0, sd = sigma_e)
         
         # Treatment effect (delta)
-        dta$delta[row_index] <- gamma_10 + gamma_11 * dta$Z[row_index] + u_2i
+        dta$delta[row_index] <- gamma_10 + beta_3 * dta$Z[row_index] + u_1i
         
         # Outcome Y
-        dta$Y[row_index] <- gamma_00 + gamma_01 * dta$Z[row_index] + u_0i + 
+        dta$Y[row_index] <- gamma_00 + beta_2 * dta$Z[row_index] + u_0i + 
                             dta$X[row_index] * dta$delta[row_index] + dta$e[row_index]
         
         # Store random effects
         dta$u0[row_index] <- u_0i
-        dta$u2[row_index] <- u_2i
+        dta$u2[row_index] <- u_1i
         
         # Update row index for lagged Y
         row_index_lag1 <- row_index
@@ -359,6 +359,20 @@ set.seed(123987)
 data <- dgm1(sample_size = 100000, total_T = 10)
 saveRDS(data, "data/Qian_GM1_data.rds")
 ```
+
+The analytical model for the mixed linear model is equivalent to the data generating model:
+
+$$
+Y_{it+1} = \gamma_{00} + u_{0i} + X_{it} (\gamma_{10} + u_{1i}) + \beta_2 Z_{it} + \beta_3 Z_{it} X_{it} + e_{it+1}
+$$
+
+However, for GEE, the analytical model does not include random coefficients, so reduces to:
+
+$$
+Y_{it+1} = \gamma_{00} + X_{it} \gamma_{10} + \beta_2 Z_{it} + \beta_3 Z_{it} X_{it} + e_{it+1}
+$$
+
+Considering this difference and the nonzero specification of the random effects, we expect that the fixed treatment effect, denoted by $gamma_10$, is not equal across the mixed linear model and its GEE counterparts.
 
 ```{r}
 #| label: GM1_fit
@@ -375,20 +389,24 @@ gee_exch <- geeglm(Y ~ Z + X + Z*X, id = userid, data = data, corstr = "exchange
 gee_ar1 <- geeglm(Y ~ Z + X + Z*X, id = userid, data = data, corstr = "ar1")
 mlm_mle <- lmer(Y ~ Z + X + Z*X + (1 + X | userid), data = data, REML = FALSE)
 
-gamma_10 <- 1    # Fixed effect of treatment (X)
-treatment_effect <- c(coef(gee_indep)[3], coef(gee_exch)[3], coef(gee_ar1)[3], fixef(mlm_mle)[3])
+treatment_effect <- c(coef(gee_indep)["X"], coef(gee_exch)["X"], coef(gee_ar1)["X"], fixef(mlm_mle)["X"])
+true_treatment_effect <- gamma_10 <- 1
+interaction_effect <- c(coef(gee_indep)["Z:X"], coef(gee_exch)["Z:X"], coef(gee_ar1)["Z:X"], fixef(mlm_mle)["Z:X"])
+true_interaction_effect <- beta_3 <- 0.3
 
-df_treatment <- data.frame(row.names = c("GEE (Indep)", "GEE (Exch)", "GEE (AR1)", "MLM (MLE)"), treatment_effect = treatment_effect, true_effect = gamma_10)
-readRDS("data/Qian_GM1_results.rds")
+df_results <- data.frame(row.names = c("GEE (Indep)", "GEE (Exch)", "GEE (AR1)", "MLM (MLE)"), treatment_estimate = treatment_effect, treatment_true = gamma_10, interaction_estimate = interaction_effect, interaction_true = true_interaction_effect)
+saveRDS(df_results, "data/Qian_GM1_results.rds")
 ```
 
 ```{r}
 #| label: GM1_results
 #| echo: false
 
-df_treatment <- readRDS("data/Qian_GM1_results.rds")
-knitr::kable(df_treatment, digits = 3, caption = "Generating Model 1 - Treatment Effect Estimates")
+df_results <- readRDS("data/Qian_GM1_results.rds")
+knitr::kable(df_results, digits = 3, caption = "Generating Model 1 - Treatment Effect Estimates")
 ```
+
+
 
 <!-- ## Generative Model 2 -->
 
