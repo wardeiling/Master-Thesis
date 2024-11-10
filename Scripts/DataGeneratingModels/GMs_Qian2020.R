@@ -1,7 +1,7 @@
-# 2018.10.22 Tianchen Qian
-
 # generative model:
 # Y_t+1 = alpha_0 + alpha_1 X_t + b_0i + b_1i X_t + A_t (beta_0 + beta_1 X_t + b_2i + b_3i X_t) + epsilon_it
+
+# Data generating models
 
 dgm_with_treatment <- function(sample_size, total_T, dgm_type) {
     
@@ -94,24 +94,4 @@ dgm_with_treatment <- function(sample_size, total_T, dgm_type) {
     }
     
     return(dta)
-}
-
-
-##### example: use of lmer() #####
-if( 0 ){
-    sample_size <- 1000
-    total_T <- 20
-    
-    dta <- dgm_with_treatment(sample_size, total_T, dgm_type = 1)
-    summary(dta)
-    # dta$A <- dta$A - dta$prob_A # action centering doesn't matter when prob_A is constant
-    
-    fit <- lmer(Y ~ X * A + (1 + A | userid), data = dta)
-    
-    fit <- lmer(Y ~ X * A + (X * A | userid), data = dta)
-    fit
-    
-    summary(fit)$coefficients
-    
-    attr(summary(fit)$varcor$userid, "stddev") # estimated standard deviation of random effect
 }

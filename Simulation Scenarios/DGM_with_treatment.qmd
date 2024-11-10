@@ -295,7 +295,7 @@ dgm1 <- function(sample_size, total_T) {
     # Parameters
     gamma_00 <- -2   # Fixed intercept
     beta_2 <- -0.3 # Fixed slope for Z
-    gamma_10 <- 1    # Fixed effect of treatment (X)
+    gamma_10 <- 0.5    # Fixed effect of treatment (X)
     beta_3 <- 0.3  # Interaction effect between treatment (X) and covariate (Z)
     sigma_u0 <- 2    # SD of random intercept (u_0i)
     sigma_u2 <- 1    # SD of random slope for treatment (u_1i)
@@ -336,7 +336,7 @@ dgm1 <- function(sample_size, total_T) {
         # Error term
         dta$e[row_index] <- rnorm(sample_size, mean = 0, sd = sigma_e)
         
-        # Treatment effect (delta)
+        # compute part of the equation
         dta$delta[row_index] <- gamma_10 + beta_3 * dta$Z[row_index] + u_1i
         
         # Outcome Y
@@ -357,7 +357,28 @@ dgm1 <- function(sample_size, total_T) {
 # Run the data generation function
 set.seed(123987)
 data <- dgm1(sample_size = 100000, total_T = 10)
-saveRDS(data, "data/Qian_GM1_data.rds")
+saveRDS(data, "Simulation Scenarios/data/Qian_GM1_data.rds")
+```
+
+```{r}
+#| label: GM1_datageneration_qian
+
+source("Scripts/Qian2020 Code/generative_model.R")
+source("Scripts/DataGeneratingModels/GM1.R")
+
+# Run the data generation function
+set.seed(123987)
+data <- dgm1(sample_size = 100000, total_T = 10)
+data2 <- dgm_with_treatment(sample_size = 100000, total_T = 10, dgm_type = 1)
+data3 <- GM1(sample_size = 100000, total_T = 10)
+
+fit <- lmer(Y ~ Z * X + (1 + X | userid), data = data)
+fit2 <- lmer(Y ~ X * A + (1 + A | userid), data = data2)
+fit3 <- lmer(Y ~ X * A + (1 + A | userid), data = data3)
+
+fixef(fit)
+fixef(fit2)
+fixef(fit3)
 ```
 
 The analytical model for the mixed linear model is equivalent to the data generating model:
@@ -376,12 +397,12 @@ Considering this difference and the nonzero specification of the random effects,
 
 ```{r}
 #| label: GM1_fit
-#| cache: true
+#| cache: false
 #| echo: true
 #| eval: false
 
 # load data
-data <- readRDS("data/Qian_GM1_data.rds")
+data <- readRDS("Simulation Scenarios/data/Qian_GM1_data.rds")
 
 # Fit models
 gee_indep <- geeglm(Y ~ Z + X + Z*X, id = userid, data = data, corstr = "independence")
@@ -395,18 +416,16 @@ interaction_effect <- c(coef(gee_indep)["Z:X"], coef(gee_exch)["Z:X"], coef(gee_
 true_interaction_effect <- beta_3 <- 0.3
 
 df_results <- data.frame(row.names = c("GEE (Indep)", "GEE (Exch)", "GEE (AR1)", "MLM (MLE)"), treatment_estimate = treatment_effect, treatment_true = gamma_10, interaction_estimate = interaction_effect, interaction_true = true_interaction_effect)
-saveRDS(df_results, "data/Qian_GM1_results.rds")
+saveRDS(df_results, "Simulation Scenarios/data/Qian_GM1_results.rds")
 ```
 
 ```{r}
 #| label: GM1_results
 #| echo: false
 
-df_results <- readRDS("data/Qian_GM1_results.rds")
+df_results <- readRDS("Simulation Scenarios/data/Qian_GM1_results.rds")
 knitr::kable(df_results, digits = 3, caption = "Generating Model 1 - Treatment Effect Estimates")
 ```
-
-
 
 <!-- ## Generative Model 2 -->
 
