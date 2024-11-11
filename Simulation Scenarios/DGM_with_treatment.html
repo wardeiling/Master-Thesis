@@ -22,40 +22,6 @@ ul.task-list li input[type="checkbox"] {
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
 }
-/* CSS for syntax highlighting */
-pre > code.sourceCode { white-space: pre; position: relative; }
-pre > code.sourceCode > span { line-height: 1.25; }
-pre > code.sourceCode > span:empty { height: 1.2em; }
-.sourceCode { overflow: visible; }
-code.sourceCode > span { color: inherit; text-decoration: inherit; }
-div.sourceCode { margin: 1em 0; }
-pre.sourceCode { margin: 0; }
-@media screen {
-div.sourceCode { overflow: auto; }
-}
-@media print {
-pre > code.sourceCode { white-space: pre-wrap; }
-pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
-}
-pre.numberSource code
-  { counter-reset: source-line 0; }
-pre.numberSource code > span
-  { position: relative; left: -4em; counter-increment: source-line; }
-pre.numberSource code > span > a:first-child::before
-  { content: counter(source-line);
-    position: relative; left: -1em; text-align: right; vertical-align: baseline;
-    border: none; display: inline-block;
-    -webkit-touch-callout: none; -webkit-user-select: none;
-    -khtml-user-select: none; -moz-user-select: none;
-    -ms-user-select: none; user-select: none;
-    padding: 0 4px; width: 4em;
-  }
-pre.numberSource { margin-left: 3em;  padding-left: 4px; }
-div.sourceCode
-  {   }
-@media screen {
-pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
-}
 </style>
 
 
@@ -115,11 +81,12 @@ window.Quarto = {
   <ul class="collapse">
   <li><a href="#original-section-4.-simulation" id="toc-original-section-4.-simulation" class="nav-link" data-scroll-target="#original-section-4.-simulation"><span class="header-section-number">2.1</span> Original Section: “4. Simulation”</a></li>
   </ul></li>
-  <li><a href="#generative-model-1" id="toc-generative-model-1" class="nav-link" data-scroll-target="#generative-model-1"><span class="header-section-number">3</span> Generative Model 1</a>
+  <li><a href="#translation-of-notation" id="toc-translation-of-notation" class="nav-link" data-scroll-target="#translation-of-notation"><span class="header-section-number">3</span> Translation of Notation</a></li>
+  <li><a href="#generative-model-1-1" id="toc-generative-model-1-1" class="nav-link" data-scroll-target="#generative-model-1-1"><span class="header-section-number">4</span> Generative Model 1</a>
   <ul class="collapse">
-  <li><a href="#translation-of-notation" id="toc-translation-of-notation" class="nav-link" data-scroll-target="#translation-of-notation"><span class="header-section-number">3.1</span> Translation of Notation</a></li>
-  <li><a href="#visualzing-the-model" id="toc-visualzing-the-model" class="nav-link" data-scroll-target="#visualzing-the-model"><span class="header-section-number">3.2</span> Visualzing the Model</a></li>
-  <li><a href="#data-generating-and-estimation" id="toc-data-generating-and-estimation" class="nav-link" data-scroll-target="#data-generating-and-estimation"><span class="header-section-number">3.3</span> Data Generating and Estimation</a></li>
+  <li><a href="#translation-of-notation-1" id="toc-translation-of-notation-1" class="nav-link" data-scroll-target="#translation-of-notation-1"><span class="header-section-number">4.1</span> Translation of Notation</a></li>
+  <li><a href="#visualzing-the-model" id="toc-visualzing-the-model" class="nav-link" data-scroll-target="#visualzing-the-model"><span class="header-section-number">4.2</span> Visualzing the Model</a></li>
+  <li><a href="#data-generating-and-estimation" id="toc-data-generating-and-estimation" class="nav-link" data-scroll-target="#data-generating-and-estimation"><span class="header-section-number">4.3</span> Data Generating and Estimation</a></li>
   </ul></li>
   </ul>
 <div class="quarto-alternate-formats"><h2>Other Formats</h2><ul><li><a href="DGM_with_treatment.pdf"><i class="bi bi-file-pdf"></i>PDF</a></li></ul></div></nav>
@@ -154,7 +121,7 @@ window.Quarto = {
     <div>
     <div class="quarto-title-meta-heading">Modified</div>
     <div class="quarto-title-meta-contents">
-      <p class="date-modified">November 8, 2024</p>
+      <p class="date-modified">November 11, 2024</p>
     </div>
   </div>
     
@@ -216,11 +183,9 @@ X_{i1} \sim N(b_{i0}, 1), \quad X_{it} = Y_{it} + N(b_{i0}, 1) \text{ for } t \g
 \]</span></p>
 </section>
 </section>
-<section id="generative-model-1" class="level2" data-number="3">
-<h2 data-number="3" class="anchored" data-anchor-id="generative-model-1"><span class="header-section-number">3</span> Generative Model 1</h2>
-<section id="translation-of-notation" class="level3" data-number="3.1">
-<h3 data-number="3.1" class="anchored" data-anchor-id="translation-of-notation"><span class="header-section-number">3.1</span> Translation of Notation</h3>
-<p>In the table below, we will provide the translation of original notation in Qian et al.&nbsp;(2020) to notation more common in psychological research</p>
+<section id="translation-of-notation" class="level2" data-number="3">
+<h2 data-number="3" class="anchored" data-anchor-id="translation-of-notation"><span class="header-section-number">3</span> Translation of Notation</h2>
+<p>In the table below, we will provide the translation of original notation in Qian et al.&nbsp;(2020) to the notation by Schoot et al.&nbsp;(2017). This notation in turn, is very similar to and likely based on the notation by Raudenbush and Bryk (2002). However, rather than representing the random effects with an <span class="math inline">\(r\)</span>, the notation by Schoot et al.&nbsp;(2017) uses <span class="math inline">\(u\)</span>.</p>
 <table class="caption-top table">
 <colgroup>
 <col style="width: 38%">
@@ -229,21 +194,31 @@ X_{i1} \sim N(b_{i0}, 1), \quad X_{it} = Y_{it} + N(b_{i0}, 1) \text{ for } t \g
 </colgroup>
 <thead>
 <tr class="header">
-<th>Parameter</th>
-<th>Original</th>
-<th>New</th>
+<th>Parameter/variable</th>
+<th>Qian et al.&nbsp;(2020)</th>
+<th>Schoot et al.&nbsp;(2017)</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td>Fixed intercept</td>
-<td><span class="math inline">\(\alpha_0\)</span></td>
-<td><span class="math inline">\(\gamma_{00}\)</span></td>
+<td>Covariate</td>
+<td><span class="math inline">\(X_{it}\)</span></td>
+<td><span class="math inline">\(Z_{ti}\)</span></td>
 </tr>
 <tr class="even">
-<td>Fixed slope for <span class="math inline">\(X_{it}\)</span></td>
-<td><span class="math inline">\(\alpha_1\)</span></td>
-<td><span class="math inline">\(\gamma_{01}\)</span></td>
+<td>Randomized Treatment</td>
+<td><span class="math inline">\(A_{it}\)</span></td>
+<td><span class="math inline">\(X_{ti}\)</span></td>
+</tr>
+<tr class="odd">
+<td>Outcome</td>
+<td><span class="math inline">\(Y_{it+1}\)</span></td>
+<td><span class="math inline">\(Y_{(t+1)i}\)</span></td>
+</tr>
+<tr class="even">
+<td>Fixed intercept</td>
+<td><span class="math inline">\(\alpha_0\)</span></td>
+<td><span class="math inline">\(\beta_{00}\)</span></td>
 </tr>
 <tr class="odd">
 <td>Random intercept</td>
@@ -251,67 +226,225 @@ X_{i1} \sim N(b_{i0}, 1), \quad X_{it} = Y_{it} + N(b_{i0}, 1) \text{ for } t \g
 <td><span class="math inline">\(u_{0i}\)</span></td>
 </tr>
 <tr class="even">
-<td>Random slope for <span class="math inline">\(A_{it}\)</span></td>
+<td>Fixed slope for covariate</td>
+<td><span class="math inline">\(\alpha_1\)</span></td>
+<td><span class="math inline">\(\beta_{10}\)</span></td>
+</tr>
+<tr class="odd">
+<td>Random slope for covariate</td>
+<td><span class="math inline">\(b_{i1}\)</span></td>
+<td><span class="math inline">\(u_{1i}\)</span></td>
+</tr>
+<tr class="even">
+<td>Fixed slope of treatment</td>
+<td><span class="math inline">\(\beta_0\)</span></td>
+<td><span class="math inline">\(\beta_{20}\)</span></td>
+</tr>
+<tr class="odd">
+<td>Random slope for treatment</td>
 <td><span class="math inline">\(b_{i2}\)</span></td>
 <td><span class="math inline">\(u_{2i}\)</span></td>
 </tr>
-<tr class="odd">
-<td>Error term</td>
-<td><span class="math inline">\(\epsilon_{it+1}\)</span></td>
-<td><span class="math inline">\(e_{it+1}\)</span></td>
-</tr>
 <tr class="even">
-<td>Fixed effect of <span class="math inline">\(A_{it}\)</span></td>
-<td><span class="math inline">\(\beta_0\)</span></td>
-<td><span class="math inline">\(\gamma_{10}\)</span></td>
-</tr>
-<tr class="odd">
-<td>Interaction effect of <span class="math inline">\(A_{it}\)</span> and <span class="math inline">\(X_{it}\)</span></td>
+<td>fixed interaction effect of covariate and treatment</td>
 <td><span class="math inline">\(\beta_1\)</span></td>
-<td><span class="math inline">\(\gamma_{11}\)</span></td>
+<td><span class="math inline">\(\beta_{30}\)</span></td>
+</tr>
+<tr class="odd">
+<td>Random interaction effect of covariate and treatment</td>
+<td><span class="math inline">\(b_{i3}\)</span></td>
+<td><span class="math inline">\(u_{3i}\)</span></td>
 </tr>
 <tr class="even">
+<td>Error term (exogenous noise)</td>
+<td><span class="math inline">\(\epsilon_{it+1}\)</span></td>
+<td><span class="math inline">\(e_{(t+1)i}\)</span></td>
+</tr>
+<tr class="odd">
+<td>Randomization probability</td>
+<td><span class="math inline">\(p_t\)</span></td>
+<td><span class="math inline">\(p_t\)</span></td>
+</tr>
+</tbody>
+</table>
+<p>Here is the rewritten text using the translation table you provided:</p>
+<hr>
+<p>In the simulation, we considered three generative models (GMs), all of which have an endogenous covariate. In the first two GMs, the endogenous covariate <span class="math inline">\(Z_{ti}\)</span> equals the previous outcome <span class="math inline">\(Y_{ti}\)</span> plus some random noise, so the conditional independence assumption (10) is valid. In GM 3, the endogenous covariate depends directly on <span class="math inline">\(u_{0i}\)</span>, violating assumption (10). The details of the generative models are described below.</p>
+<section id="generative-model-1" class="level4" data-number="3.0.1">
+<h4 data-number="3.0.1" class="anchored" data-anchor-id="generative-model-1"><span class="header-section-number">3.0.1</span> Generative Model 1</h4>
+<p>In GM1, we considered a simple case with only a random intercept and a random slope for <span class="math inline">\(X_{ti}\)</span>, so that <span class="math inline">\(g_0(H_{ti}) = g_1(H_{ti}) = 1\)</span>. The outcome is generated as:</p>
+<p><span class="math display">\[
+Y_{(t+1)i} = \beta_{00} + \beta_{10} Z_{ti} + u_{0i} + X_{ti} \left( \beta_{20} + \beta_{30} Z_{ti} + u_{2i} \right) + e_{(t+1)i}.
+\]</span></p>
+<p>The random effects <span class="math inline">\(u_{0i} \sim N(0, \sigma_{u0}^2)\)</span> and <span class="math inline">\(u_{2i} \sim N(0, \sigma_{u2}^2)\)</span> are independent of each other. The covariate is generated as <span class="math inline">\(Z_{i1} \sim N(0, 1)\)</span>, and for <span class="math inline">\(t \geq 2\)</span>,</p>
+<p><span class="math display">\[
+Z_{ti} = Y_{ti} + N(0, 1).
+\]</span></p>
+<p>The randomization probability <span class="math inline">\(p_t\)</span> is constant at <span class="math inline">\(1/2\)</span>. Thus, <span class="math inline">\(X_{ti} \sim \text{Bernoulli}(0.5) \quad \text{for} \quad i = 1, \ldots, N \quad \text{and} \quad t = 1, \ldots, T\)</span>. In other words, each individual has an independent 50% chance of receiving the treatment at each time point. The exogenous noise is <span class="math inline">\(e_{(t+1)i} \sim N(0, \sigma_e^2)\)</span>.</p>
+</section>
+<section id="generative-model-2" class="level4" data-number="3.0.2">
+<h4 data-number="3.0.2" class="anchored" data-anchor-id="generative-model-2"><span class="header-section-number">3.0.2</span> Generative Model 2</h4>
+<p>In GM2, we considered the case where <span class="math inline">\(g_0(H_{ti}) = g_1(H_{ti}) = (1, Z_{ti})\)</span> and the randomization probability is time-varying. The outcome is generated as:</p>
+<p><span class="math display">\[
+Y_{(t+1)i} = \beta_{00} + \beta_{10} Z_{ti} + u_{0i} + u_{1i} Z_{ti} + X_{ti} \left( \beta_{20} + \beta_{30} Z_{ti} + u_{2i} + u_{3i} Z_{ti} \right) + e_{(t+1)i}.
+\]</span></p>
+<p>The random effects <span class="math inline">\(u_{ji} \sim N(0, \sigma_{u_j}^2)\)</span>, for <span class="math inline">\(0 \leq j \leq 3\)</span>, are independent of each other. The covariate is generated as <span class="math inline">\(Z_{i1} \sim N(0, 1)\)</span>, and for <span class="math inline">\(t \geq 2\)</span>,</p>
+<p><span class="math display">\[
+Z_{ti} = Y_{ti} + N(0, 1).
+\]</span></p>
+<p>The randomization probability depends on <span class="math inline">\(Z_{ti}\)</span>:</p>
+<p><span class="math display">\[
+p_t = P(X_{ti} = 1 \mid H_{it}) = 0.7 \cdot IF(Z_{ti} &gt; -1.27) + 0.3 \cdot IF(Z_{ti} \leq -1.27),
+\]</span></p>
+<p>where <span class="math inline">\(IF(\cdot)\)</span> represents the indicator function, and the cutoff <span class="math inline">\(-1.27\)</span> was chosen so that <span class="math inline">\(P(X_{ti} = 1 \mid H_{it})\)</span> equals 0.7 or 0.3 for about half of the time. The exogenous noise is <span class="math inline">\(e_{(t+1)i} \sim N(0, \sigma_e^2)\)</span>.</p>
+</section>
+<section id="generative-model-3" class="level4" data-number="3.0.3">
+<h4 data-number="3.0.3" class="anchored" data-anchor-id="generative-model-3"><span class="header-section-number">3.0.3</span> Generative Model 3</h4>
+<p>GM3 is the same as GM1, except that the covariate <span class="math inline">\(Z_{ti}\)</span> depends directly on <span class="math inline">\(u_{0i}\)</span>:</p>
+<p><span class="math display">\[
+Z_{i1} \sim N(u_{0i}, 1), \quad Z_{ti} = Y_{ti} + N(u_{0i}, 1) \text{ for } t \geq 2.
+\]</span></p>
+<p>We chose the following parameter values:</p>
+<p><span class="math display">\[
+\beta_{00} = -2, \quad \beta_{10} = -0.3, \quad \beta_{20} = 1, \quad \beta_{30} = 0.3,
+\]</span></p>
+<p><span class="math display">\[
+\sigma_{u0}^2 = 4, \quad \sigma_{u1}^2 = \frac{1}{4}, \quad \sigma_{u2}^2 = 1, \quad \sigma_{u3}^2 = \frac{1}{4}, \quad \sigma_e^2 = 1.
+\]</span></p>
+</section>
+</section>
+<section id="generative-model-1-1" class="level2" data-number="4">
+<h2 data-number="4" class="anchored" data-anchor-id="generative-model-1-1"><span class="header-section-number">4</span> Generative Model 1</h2>
+<section id="translation-of-notation-1" class="level3" data-number="4.1">
+<h3 data-number="4.1" class="anchored" data-anchor-id="translation-of-notation-1"><span class="header-section-number">4.1</span> Translation of Notation</h3>
+<p>In the table below, we will provide the translation of original notation in Qian et al.&nbsp;(2020) to the notation by Schoot et al.&nbsp;(2017). This notation in turn, is very similar to and likely based on the notation by Raudenbush and Bryk (2002). However, rather than representing the random effects with an <span class="math inline">\(r\)</span>, the notation by Schoot et al.&nbsp;(2017) uses <span class="math inline">\(u\)</span>.</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 38%">
+<col style="width: 30%">
+<col style="width: 30%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Parameter/variable</th>
+<th>Qian et al.&nbsp;(2020)</th>
+<th>Schoot et al.&nbsp;(2017)</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
 <td>Covariate</td>
 <td><span class="math inline">\(X_{it}\)</span></td>
-<td><span class="math inline">\(Z_{it}\)</span></td>
+<td><span class="math inline">\(Z_{ti}\)</span></td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td>Randomized Treatment</td>
 <td><span class="math inline">\(A_{it}\)</span></td>
-<td><span class="math inline">\(X_{it}\)</span></td>
+<td><span class="math inline">\(X_{ti}\)</span></td>
+</tr>
+<tr class="odd">
+<td>Outcome</td>
+<td><span class="math inline">\(Y_{it+1}\)</span></td>
+<td><span class="math inline">\(Y_{(t+1)i}\)</span></td>
+</tr>
+<tr class="even">
+<td>Fixed intercept</td>
+<td><span class="math inline">\(\alpha_0\)</span></td>
+<td><span class="math inline">\(\beta_{00}\)</span></td>
+</tr>
+<tr class="odd">
+<td>Fixed slope for covariate</td>
+<td><span class="math inline">\(\alpha_1\)</span></td>
+<td><span class="math inline">\(\beta_{10}\)</span></td>
+</tr>
+<tr class="even">
+<td>Random intercept</td>
+<td><span class="math inline">\(b_{i0}\)</span></td>
+<td><span class="math inline">\(u_{0i}\)</span></td>
+</tr>
+<tr class="odd">
+<td>Fixed effect of treatment</td>
+<td><span class="math inline">\(\beta_0\)</span></td>
+<td><span class="math inline">\(\beta_{20}\)</span></td>
+</tr>
+<tr class="even">
+<td>Interaction effect of covariate and treatment</td>
+<td><span class="math inline">\(\beta_1\)</span></td>
+<td><span class="math inline">\(\beta_{30}\)</span></td>
+</tr>
+<tr class="odd">
+<td>Random slope for treatment</td>
+<td><span class="math inline">\(b_{i2}\)</span></td>
+<td><span class="math inline">\(u_{2i}\)</span></td>
+</tr>
+<tr class="even">
+<td>Error term</td>
+<td><span class="math inline">\(\epsilon_{it+1}\)</span></td>
+<td><span class="math inline">\(e_{(t+1)i}\)</span></td>
+</tr>
+<tr class="odd">
+<td>residual variance</td>
+<td><span class="math inline">\(\sigma^2_{\epsilon}\)</span></td>
+<td><span class="math inline">\(\sigma^2_{e}\)</span></td>
+</tr>
+<tr class="even">
+<td>Random intercept variance</td>
+<td><span class="math inline">\(\sigma^2_{b0}\)</span></td>
+<td><span class="math inline">\(\sigma^2_{u0}\)</span></td>
+</tr>
+<tr class="odd">
+<td>random slope variance for covariate</td>
+<td><span class="math inline">\(\sigma^2_{b1}\)</span></td>
+<td><span class="math inline">\(\sigma^2_{u1}\)</span></td>
+</tr>
+<tr class="even">
+<td>Random slope variance for treatment</td>
+<td><span class="math inline">\(\sigma^2_{b2}\)</span></td>
+<td><span class="math inline">\(\sigma^2_{u2}\)</span></td>
+</tr>
+<tr class="odd">
+<td>Random slope variance for interaction</td>
+<td><span class="math inline">\(\sigma^2_{b3}\)</span></td>
+<td><span class="math inline">\(\sigma^2_{u3}\)</span></td>
 </tr>
 </tbody>
 </table>
 <p>Let’s first state the original model:</p>
 <p><span class="math display">\[
-Y_{it+1} = \alpha_0 + \alpha_1 X_{it} + b_{i0} + A_{it} (\beta_0 + \beta_1 X_{it} + b_{i2}) + \epsilon_{it+1}.
+Y_{it+1} = \alpha_0 + \alpha_1 X_{it} + b_{i0} + A_{it} (\beta_0 + \beta_1 X_{it} + b_{i2}) + \epsilon_{it+1} \\
+=  \alpha_0 + \alpha_1 X_{it} + b_{i0} + A_{it} \beta_0 + A_{it} \beta_1 X_{it} + A_{it} b_{i2} + \epsilon_{it+1}
 \]</span></p>
-<p>Using this new notation, we may thus rewrite GM1 as a within model:</p>
+<p>Using this new notation, we may thus rewrite GM1 as a repeated-observations or within-person model (level 1)</p>
 <p><span class="math display">\[
-Y_{it+1} = \beta_{0i} + \beta_{1i} X_{it} + e_{it+1},
+Y_{(t+1)i} = \pi_{0i} + \pi_{1i} Z_{ti} + \pi_{2i} X_{ti} + \pi_{3i} X_{ti} Z_{ti} + e_{(t+1)i}
 \]</span></p>
-<p>where:</p>
+<p>with the person-level or between-person model (level 2)</p>
 <p><span class="math display">\[
-\beta_{0i} = \gamma_{00} + \gamma_{01} Z_{it} + u_{0i} \quad \text{with} \quad u_{0i} \sim \mathcal{N}(0, \sigma^2_{u0}),
+\pi_{0i} = \beta_{00} + u_{0i} \quad \text{with} \quad u_{0i} \sim \mathcal{N}(0, \sigma^2_{u_0})
 \]</span></p>
 <p><span class="math display">\[
-\beta_{1i} = \gamma_{10} + \gamma_{11} Z_{it} + u_{2i} \quad \text{with} \quad u_{2i} \sim \mathcal{N}(0, \sigma^2_{u2}).
+\pi_{1i} = \beta_{10}
 \]</span></p>
-<p>Combining these two equations, the model can be expressed as:</p>
 <p><span class="math display">\[
-Y_{it+1} = \gamma_{00} + \gamma_{01} Z_{it} + u_{0i} + X_{it} (\gamma_{10} + \gamma_{11} Z_{it} + u_{2i}) + e_{it+1}.
+\pi_{2i} = \beta_{20} + u_{2i} \quad \text{with} \quad u_{2i} \sim \mathcal{N}(0, \sigma^2_{u_2})
 \]</span></p>
-<p>More specifically, the process was generated as follows:</p>
+<p><span class="math display">\[
+\pi_{3i} = \beta_{30}
+\]</span></p>
+<p>By substitution, we get the single equation model:</p>
+<p><span class="math display">\[
+Y_{(t+1)i} = \pi_{0i} + \pi_{1i} Z_{ti} + \pi_{2i} X_{ti} + \pi_{3i} X_{ti} Z_{ti} + e_{(t+1)i} \\ = (\beta_{00} + u_{0i}) + \beta_{10} Z_{ti} + X_{ti} (\beta_{20} + u_{2i}) + \beta_{30} X_{ti} Z_{ti} + e_{(t+1)i} \\ = \beta_{00} + \beta_{10} Z_{ti} + u_{0i} + X_{ti} (\beta_{20} + \beta_{30} Z_{ti} + u_{2i}) + e_{(t+1)i}
+\]</span> More specifically, the process was generated as follows:</p>
 <ul>
 <li>the random effects <span class="math inline">\(u_{0i} \sim \mathcal{N}(0, 4)\)</span> and <span class="math inline">\(u_{2i} \sim \mathcal{N}(0, 1)\)</span> are independent of each other</li>
-<li>the covariate <span class="math inline">\(Z_{i1} \sim \mathcal{N}(0, 1)\)</span>, and for <span class="math inline">\(t \geq 2\)</span>, <span class="math inline">\(Z_{it} = Y_{it} + \mathcal{N}(0, 1)\)</span></li>
-<li>the randomization probability <span class="math inline">\(p_t\)</span> is constant at 0.5</li>
-<li>the exogenous noise <span class="math inline">\(e_{it+1} \sim \mathcal{N}(0, 1)\)</span></li>
-<li>the parameter values are <span class="math inline">\(\gamma_{00} = -2\)</span>, <span class="math inline">\(\gamma_{01} = -0.3\)</span>, <span class="math inline">\(\gamma_{10} = 1\)</span>, <span class="math inline">\(\gamma_{11} = 0.3\)</span></li>
+<li>the covariate <span class="math inline">\(Z_{1i} \sim \mathcal{N}(0, 1)\)</span>, and for <span class="math inline">\(t \geq 2\)</span>, <span class="math inline">\(Z_{ti} = Y_{ti} + \mathcal{N}(0, 1)\)</span></li>
+<li>the randomization probability <span class="math inline">\(p_i = P(X_{ti} = 1 \mid H_{it}) = 0.5\)</span> and <span class="math inline">\(X_{ti} \sim \text{Bernoulli}(0.5) \quad \text{for} \quad i = 1, \ldots, N \quad \text{and} \quad t = 1, \ldots, T\)</span>. In other words, each individual has an independent 50% chance of receiving the treatment at each time point.</li>
+<li>the exogenous noise <span class="math inline">\(e_{(t+1)i} \sim \mathcal{N}(0, 1)\)</span></li>
+<li>the parameter values are <span class="math inline">\(\beta_{00} = -2\)</span>, <span class="math inline">\(\beta_{10} = -0.3\)</span>, <span class="math inline">\(\gamma_{20} = 1\)</span>, <span class="math inline">\(\beta_{30} = 0.3\)</span></li>
 </ul>
 </section>
-<section id="visualzing-the-model" class="level3" data-number="3.2">
-<h3 data-number="3.2" class="anchored" data-anchor-id="visualzing-the-model"><span class="header-section-number">3.2</span> Visualzing the Model</h3>
+<section id="visualzing-the-model" class="level3" data-number="4.2">
+<h3 data-number="4.2" class="anchored" data-anchor-id="visualzing-the-model"><span class="header-section-number">4.2</span> Visualzing the Model</h3>
 <p>As mentioned by Ellen in the last meeting (17-10):</p>
 <blockquote class="blockquote">
 <p>“Conventional DAGs do not only represent main effects but rather the combination of main effects and interactions. Once you have drawn your DAG, you already assume that any variables pointing to the same outcome can modify the effect of the others pointing to the same outcome.” (<a href="https://stats.stackexchange.com/questions/157775/representing-interaction-effects-in-directed-acyclic-graphs">stackexchange</a>)</p>
@@ -342,146 +475,128 @@ Figure&nbsp;1: Path diagram for Generative Model 1
 <!-- ![Path diagram for Generative Model 1](fig-GM1_path-1.png) -->
 <p>We can make a couple observations from this path diagram:</p>
 <ul>
-<li>Contrary to the DAG, this path diagram shows the moderation effect (1) of <span class="math inline">\(Z_{it}\)</span> on the relationship between <span class="math inline">\(X_{it}\)</span> and <span class="math inline">\(Y_{it+1}\)</span> and (2) of <span class="math inline">\(u_{2i}\)</span> on the relationship between <span class="math inline">\(Z_{it}\)</span> and <span class="math inline">\(Y_{it+1}\)</span>.</li>
+<li>Contrary to the DAG, this path diagram shows the moderation effect (1) of <span class="math inline">\(Z_{it}\)</span> on the relationship between <span class="math inline">\(X_{it}\)</span> and <span class="math inline">\(Y_{ti+1}\)</span> and (2) of <span class="math inline">\(u_{2i}\)</span> on the relationship between <span class="math inline">\(Z_{ti}\)</span> and <span class="math inline">\(Y_{(t+1)}\)</span>.</li>
 <li>Similar to the example without treatment in section 2.2, the covariate <span class="math inline">\(Z_{it}\)</span> is determined by the previous value of the outcome <span class="math inline">\(Y_{it}\)</span>—which makes it an endogenous time-varying covariate.</li>
 </ul>
 </section>
-<section id="data-generating-and-estimation" class="level3" data-number="3.3">
-<h3 data-number="3.3" class="anchored" data-anchor-id="data-generating-and-estimation"><span class="header-section-number">3.3</span> Data Generating and Estimation</h3>
+<section id="data-generating-and-estimation" class="level3" data-number="4.3">
+<h3 data-number="4.3" class="anchored" data-anchor-id="data-generating-and-estimation"><span class="header-section-number">4.3</span> Data Generating and Estimation</h3>
 <p>The data generating process for this model is given by</p>
 <p><span class="math display">\[
-Y_{it+1} = \gamma_{00} + \gamma_{01} Z_{it} + u_{0i} + X_{it} (\gamma_{10} + \gamma_{11} Z_{it} + u_{2i}) + e_{it+1}.
+Y_{(t+1)i} = (\beta_{00} + u_{0i}) + \beta_{10} Z_{ti} + X_{ti} (\beta_{20} + u_{2i}) + \beta_{30} X_{ti} Z_{ti} + e_{(t+1)i}
 \]</span></p>
-<p>More specifically, the process was generated as follows:</p>
-<ul>
-<li>the random effects <span class="math inline">\(u_{0i} \sim \mathcal{N}(0, 4)\)</span> and <span class="math inline">\(u_{2i} \sim \mathcal{N}(0, 1)\)</span> are independent of each other</li>
-<li>the covariate <span class="math inline">\(Z_{i1} \sim \mathcal{N}(0, 1)\)</span>, and for <span class="math inline">\(t \geq 2\)</span>, <span class="math inline">\(Z_{it} = Y_{it} + \mathcal{N}(0, 1)\)</span></li>
-<li>the randomization probability <span class="math inline">\(p_t\)</span> is constant at 0.5</li>
-<li>the exogenous noise <span class="math inline">\(e_{it+1} \sim \mathcal{N}(0, 1)\)</span></li>
-<li>the parameter values are <span class="math inline">\(\gamma_{00} = -2\)</span>, <span class="math inline">\(\gamma_{01} = -0.3\)</span>, <span class="math inline">\(\gamma_{10} = 1\)</span>, <span class="math inline">\(\gamma_{11} = 0.3\)</span></li>
-</ul>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>dgm1 <span class="ot">&lt;-</span> <span class="cf">function</span>(sample_size, total_T) {</span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Parameters</span></span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>    gamma_00 <span class="ot">&lt;-</span> <span class="sc">-</span><span class="dv">2</span>   <span class="co"># Fixed intercept</span></span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>    gamma_01 <span class="ot">&lt;-</span> <span class="sc">-</span><span class="fl">0.3</span> <span class="co"># Fixed slope for Z</span></span>
-<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>    gamma_10 <span class="ot">&lt;-</span> <span class="dv">1</span>    <span class="co"># Fixed effect of treatment (X)</span></span>
-<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>    gamma_11 <span class="ot">&lt;-</span> <span class="fl">0.3</span>  <span class="co"># Interaction effect between treatment (X) and covariate (Z)</span></span>
-<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>    sigma_u0 <span class="ot">&lt;-</span> <span class="dv">2</span>    <span class="co"># SD of random intercept (u_0i)</span></span>
-<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>    sigma_u2 <span class="ot">&lt;-</span> <span class="dv">1</span>    <span class="co"># SD of random slope for treatment (u_2i)</span></span>
-<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>    sigma_e <span class="ot">&lt;-</span> <span class="dv">1</span>     <span class="co"># SD of error term (e_{it+1})</span></span>
-<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>    prob_x <span class="ot">&lt;-</span> <span class="fl">0.5</span>    <span class="co"># Randomization probability for treatment (X)</span></span>
-<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Data frame setup</span></span>
-<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>    df_names <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"userid"</span>, <span class="st">"day"</span>, <span class="st">"Z"</span>, <span class="st">"prob_X"</span>, <span class="st">"X"</span>, <span class="st">"Y"</span>, <span class="st">"u0"</span>, <span class="st">"u2"</span>, <span class="st">"e"</span>, <span class="st">"delta"</span>)</span>
-<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>    dta <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="fu">matrix</span>(<span class="cn">NA</span>, <span class="at">nrow =</span> sample_size <span class="sc">*</span> total_T, <span class="at">ncol =</span> <span class="fu">length</span>(df_names)))</span>
-<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>    <span class="fu">names</span>(dta) <span class="ot">&lt;-</span> df_names</span>
-<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Assign userid and day</span></span>
-<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a>    dta<span class="sc">$</span>userid <span class="ot">&lt;-</span> <span class="fu">rep</span>(<span class="dv">1</span><span class="sc">:</span>sample_size, <span class="at">each =</span> total_T)</span>
-<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a>    dta<span class="sc">$</span>day <span class="ot">&lt;-</span> <span class="fu">rep</span>(<span class="dv">1</span><span class="sc">:</span>total_T, <span class="at">times =</span> sample_size)</span>
-<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Generate uncorrelated random effects</span></span>
-<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a>    u_0i <span class="ot">&lt;-</span> <span class="fu">rnorm</span>(sample_size, <span class="at">mean =</span> <span class="dv">0</span>, <span class="at">sd =</span> sigma_u0)</span>
-<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a>    u_2i <span class="ot">&lt;-</span> <span class="fu">rnorm</span>(sample_size, <span class="at">mean =</span> <span class="dv">0</span>, <span class="at">sd =</span> sigma_u2)</span>
-<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Data generation for each time point</span></span>
-<span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> (t <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>total_T) {</span>
-<span id="cb1-28"><a href="#cb1-28" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Row index for day t for every subject</span></span>
-<span id="cb1-29"><a href="#cb1-29" aria-hidden="true" tabindex="-1"></a>        row_index <span class="ot">&lt;-</span> <span class="fu">seq</span>(<span class="at">from =</span> t, <span class="at">by =</span> total_T, <span class="at">length =</span> sample_size)</span>
-<span id="cb1-30"><a href="#cb1-30" aria-hidden="true" tabindex="-1"></a>        </span>
-<span id="cb1-31"><a href="#cb1-31" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Generate Z based on the process described</span></span>
-<span id="cb1-32"><a href="#cb1-32" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> (t <span class="sc">==</span> <span class="dv">1</span>) {</span>
-<span id="cb1-33"><a href="#cb1-33" aria-hidden="true" tabindex="-1"></a>            dta<span class="sc">$</span>Z[row_index] <span class="ot">&lt;-</span> <span class="fu">rnorm</span>(sample_size)</span>
-<span id="cb1-34"><a href="#cb1-34" aria-hidden="true" tabindex="-1"></a>        } <span class="cf">else</span> {</span>
-<span id="cb1-35"><a href="#cb1-35" aria-hidden="true" tabindex="-1"></a>            dta<span class="sc">$</span>Z[row_index] <span class="ot">&lt;-</span> dta<span class="sc">$</span>Y[row_index_lag1] <span class="sc">+</span> <span class="fu">rnorm</span>(sample_size)</span>
-<span id="cb1-36"><a href="#cb1-36" aria-hidden="true" tabindex="-1"></a>        }</span>
-<span id="cb1-37"><a href="#cb1-37" aria-hidden="true" tabindex="-1"></a>        </span>
-<span id="cb1-38"><a href="#cb1-38" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Set fixed probability for treatment assignment</span></span>
-<span id="cb1-39"><a href="#cb1-39" aria-hidden="true" tabindex="-1"></a>        dta<span class="sc">$</span>prob_X[row_index] <span class="ot">&lt;-</span> <span class="fu">rep</span>(prob_x, sample_size)</span>
-<span id="cb1-40"><a href="#cb1-40" aria-hidden="true" tabindex="-1"></a>        </span>
-<span id="cb1-41"><a href="#cb1-41" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Treatment assignment</span></span>
-<span id="cb1-42"><a href="#cb1-42" aria-hidden="true" tabindex="-1"></a>        dta<span class="sc">$</span>X[row_index] <span class="ot">&lt;-</span> <span class="fu">rbinom</span>(sample_size, <span class="dv">1</span>, dta<span class="sc">$</span>prob_X[row_index])</span>
-<span id="cb1-43"><a href="#cb1-43" aria-hidden="true" tabindex="-1"></a>        </span>
-<span id="cb1-44"><a href="#cb1-44" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Error term</span></span>
-<span id="cb1-45"><a href="#cb1-45" aria-hidden="true" tabindex="-1"></a>        dta<span class="sc">$</span>e[row_index] <span class="ot">&lt;-</span> <span class="fu">rnorm</span>(sample_size, <span class="at">mean =</span> <span class="dv">0</span>, <span class="at">sd =</span> sigma_e)</span>
-<span id="cb1-46"><a href="#cb1-46" aria-hidden="true" tabindex="-1"></a>        </span>
-<span id="cb1-47"><a href="#cb1-47" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Treatment effect (delta)</span></span>
-<span id="cb1-48"><a href="#cb1-48" aria-hidden="true" tabindex="-1"></a>        dta<span class="sc">$</span>delta[row_index] <span class="ot">&lt;-</span> gamma_10 <span class="sc">+</span> gamma_11 <span class="sc">*</span> dta<span class="sc">$</span>Z[row_index] <span class="sc">+</span> u_2i</span>
-<span id="cb1-49"><a href="#cb1-49" aria-hidden="true" tabindex="-1"></a>        </span>
-<span id="cb1-50"><a href="#cb1-50" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Outcome Y</span></span>
-<span id="cb1-51"><a href="#cb1-51" aria-hidden="true" tabindex="-1"></a>        dta<span class="sc">$</span>Y[row_index] <span class="ot">&lt;-</span> gamma_00 <span class="sc">+</span> gamma_01 <span class="sc">*</span> dta<span class="sc">$</span>Z[row_index] <span class="sc">+</span> u_0i <span class="sc">+</span> </span>
-<span id="cb1-52"><a href="#cb1-52" aria-hidden="true" tabindex="-1"></a>                            dta<span class="sc">$</span>X[row_index] <span class="sc">*</span> dta<span class="sc">$</span>delta[row_index] <span class="sc">+</span> dta<span class="sc">$</span>e[row_index]</span>
-<span id="cb1-53"><a href="#cb1-53" aria-hidden="true" tabindex="-1"></a>        </span>
-<span id="cb1-54"><a href="#cb1-54" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Store random effects</span></span>
-<span id="cb1-55"><a href="#cb1-55" aria-hidden="true" tabindex="-1"></a>        dta<span class="sc">$</span>u0[row_index] <span class="ot">&lt;-</span> u_0i</span>
-<span id="cb1-56"><a href="#cb1-56" aria-hidden="true" tabindex="-1"></a>        dta<span class="sc">$</span>u2[row_index] <span class="ot">&lt;-</span> u_2i</span>
-<span id="cb1-57"><a href="#cb1-57" aria-hidden="true" tabindex="-1"></a>        </span>
-<span id="cb1-58"><a href="#cb1-58" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Update row index for lagged Y</span></span>
-<span id="cb1-59"><a href="#cb1-59" aria-hidden="true" tabindex="-1"></a>        row_index_lag1 <span class="ot">&lt;-</span> row_index</span>
-<span id="cb1-60"><a href="#cb1-60" aria-hidden="true" tabindex="-1"></a>    }</span>
-<span id="cb1-61"><a href="#cb1-61" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb1-62"><a href="#cb1-62" aria-hidden="true" tabindex="-1"></a>    <span class="fu">return</span>(dta)</span>
-<span id="cb1-63"><a href="#cb1-63" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb1-64"><a href="#cb1-64" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-65"><a href="#cb1-65" aria-hidden="true" tabindex="-1"></a><span class="co"># Run the data generation function</span></span>
-<span id="cb1-66"><a href="#cb1-66" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">123987</span>)</span>
-<span id="cb1-67"><a href="#cb1-67" aria-hidden="true" tabindex="-1"></a>data <span class="ot">&lt;-</span> <span class="fu">dgm1</span>(<span class="at">sample_size =</span> <span class="dv">100000</span>, <span class="at">total_T =</span> <span class="dv">10</span>)</span>
-<span id="cb1-68"><a href="#cb1-68" aria-hidden="true" tabindex="-1"></a><span class="fu">saveRDS</span>(data, <span class="st">"data/Qian_GM1_data.rds"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</div>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># load data</span></span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>data <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="st">"data/Qian_GM1_data.rds"</span>)</span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Fit models</span></span>
-<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>gee_indep <span class="ot">&lt;-</span> <span class="fu">geeglm</span>(Y <span class="sc">~</span> Z <span class="sc">+</span> X <span class="sc">+</span> Z<span class="sc">*</span>X, <span class="at">id =</span> userid, <span class="at">data =</span> data, <span class="at">corstr =</span> <span class="st">"independence"</span>)</span>
-<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>gee_exch <span class="ot">&lt;-</span> <span class="fu">geeglm</span>(Y <span class="sc">~</span> Z <span class="sc">+</span> X <span class="sc">+</span> Z<span class="sc">*</span>X, <span class="at">id =</span> userid, <span class="at">data =</span> data, <span class="at">corstr =</span> <span class="st">"exchangeable"</span>)</span>
-<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>gee_ar1 <span class="ot">&lt;-</span> <span class="fu">geeglm</span>(Y <span class="sc">~</span> Z <span class="sc">+</span> X <span class="sc">+</span> Z<span class="sc">*</span>X, <span class="at">id =</span> userid, <span class="at">data =</span> data, <span class="at">corstr =</span> <span class="st">"ar1"</span>)</span>
-<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>mlm_mle <span class="ot">&lt;-</span> <span class="fu">lmer</span>(Y <span class="sc">~</span> Z <span class="sc">+</span> X <span class="sc">+</span> Z<span class="sc">*</span>X <span class="sc">+</span> (<span class="dv">1</span> <span class="sc">+</span> X <span class="sc">|</span> userid), <span class="at">data =</span> data, <span class="at">REML =</span> <span class="cn">FALSE</span>)</span>
-<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>gamma_10 <span class="ot">&lt;-</span> <span class="dv">1</span>    <span class="co"># Fixed effect of treatment (X)</span></span>
-<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>treatment_effect <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="fu">coef</span>(gee_indep)[<span class="dv">3</span>], <span class="fu">coef</span>(gee_exch)[<span class="dv">3</span>], <span class="fu">coef</span>(gee_ar1)[<span class="dv">3</span>], <span class="fu">fixef</span>(mlm_mle)[<span class="dv">3</span>])</span>
-<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>df_treatment <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">row.names =</span> <span class="fu">c</span>(<span class="st">"GEE (Indep)"</span>, <span class="st">"GEE (Exch)"</span>, <span class="st">"GEE (AR1)"</span>, <span class="st">"MLM (MLE)"</span>), <span class="at">treatment_effect =</span> treatment_effect, <span class="at">true_effect =</span> gamma_10)</span>
-<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a><span class="fu">readRDS</span>(<span class="st">"data/Qian_GM1_results.rds"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</div>
-<div class="cell">
-<div class="cell-output-display">
-<table class="caption-top table table-sm table-striped small">
-<caption>Generating Model 1 - Treatment Effect Estimates</caption>
-<thead>
-<tr class="header">
-<th style="text-align: left;"></th>
-<th style="text-align: right;">treatment_effect</th>
-<th style="text-align: right;">true_effect</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td style="text-align: left;">GEE (Indep)</td>
-<td style="text-align: right;">1.093</td>
-<td style="text-align: right;">1</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">GEE (Exch)</td>
-<td style="text-align: right;">1.089</td>
-<td style="text-align: right;">1</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">GEE (AR1)</td>
-<td style="text-align: right;">0.993</td>
-<td style="text-align: right;">1</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">MLM (MLE)</td>
-<td style="text-align: right;">1.006</td>
-<td style="text-align: right;">1</td>
-</tr>
-</tbody>
-</table>
-</div>
-</div>
+<!-- ```{r} -->
+<!-- #| label: GM1_datageneration -->
+<!-- #| echo: true -->
+<!-- #| eval: false -->
+<!-- #| cache: true -->
+<!-- dgm1 <- function(sample_size, total_T) { -->
+<!--     # Parameters -->
+<!--     gamma_00 <- -2   # Fixed intercept -->
+<!--     beta_2 <- -0.3 # Fixed slope for Z -->
+<!--     gamma_10 <- 0.5    # Fixed effect of treatment (X) -->
+<!--     beta_3 <- 0.3  # Interaction effect between treatment (X) and covariate (Z) -->
+<!--     sigma_u0 <- 2    # SD of random intercept (u_0i) -->
+<!--     sigma_u2 <- 1    # SD of random slope for treatment (u_1i) -->
+<!--     sigma_e <- 1     # SD of error term (e_{it+1}) -->
+<!--     prob_x <- 0.5    # Randomization probability for treatment (X) -->
+<!--     # Data frame setup -->
+<!--     df_names <- c("userid", "day", "Z", "prob_X", "X", "Y", "u0", "u2", "e", "delta") -->
+<!--     dta <- data.frame(matrix(NA, nrow = sample_size * total_T, ncol = length(df_names))) -->
+<!--     names(dta) <- df_names -->
+<!--     # Assign userid and day -->
+<!--     dta$userid <- rep(1:sample_size, each = total_T) -->
+<!--     dta$day <- rep(1:total_T, times = sample_size) -->
+<!--     # Generate uncorrelated random effects -->
+<!--     u_0i <- rnorm(sample_size, mean = 0, sd = sigma_u0) -->
+<!--     u_1i <- rnorm(sample_size, mean = 0, sd = sigma_u2) -->
+<!--     # Data generation for each time point -->
+<!--     for (t in 1:total_T) { -->
+<!--         # Row index for day t for every subject -->
+<!--         row_index <- seq(from = t, by = total_T, length = sample_size) -->
+<!--         # Generate Z based on the process described -->
+<!--         if (t == 1) { -->
+<!--             dta$Z[row_index] <- rnorm(sample_size, mean = 0, sd = 1) -->
+<!--         } else { -->
+<!--             dta$Z[row_index] <- dta$Y[row_index_lag1] + rnorm(sample_size, mean = 0, sd = 1) -->
+<!--         } -->
+<!--         # Set fixed probability for treatment assignment -->
+<!--         dta$prob_X[row_index] <- rep(prob_x, sample_size) -->
+<!--         # Treatment assignment -->
+<!--         dta$X[row_index] <- rbinom(sample_size, 1, dta$prob_X[row_index]) -->
+<!--         # Error term -->
+<!--         dta$e[row_index] <- rnorm(sample_size, mean = 0, sd = sigma_e) -->
+<!--         # compute part of the equation -->
+<!--         dta$delta[row_index] <- gamma_10 + beta_3 * dta$Z[row_index] + u_1i -->
+<!--         # Outcome Y -->
+<!--         dta$Y[row_index] <- gamma_00 + beta_2 * dta$Z[row_index] + u_0i +  -->
+<!--                             dta$X[row_index] * dta$delta[row_index] + dta$e[row_index] -->
+<!--         # Store random effects -->
+<!--         dta$u0[row_index] <- u_0i -->
+<!--         dta$u2[row_index] <- u_1i -->
+<!--         # Update row index for lagged Y -->
+<!--         row_index_lag1 <- row_index -->
+<!--     } -->
+<!--     return(dta) -->
+<!-- } -->
+<!-- # Run the data generation function -->
+<!-- set.seed(123987) -->
+<!-- data <- dgm1(sample_size = 100000, total_T = 10) -->
+<!-- saveRDS(data, "Simulation Scenarios/data/Qian_GM1_data.rds") -->
+<!-- ``` -->
+<!-- ```{r} -->
+<!-- #| label: GM1_datageneration_qian -->
+<!-- # source("Scripts/Qian2020 Code/generative_model.R") -->
+<!-- # source("Scripts/DataGeneratingModels/GM1.R") -->
+<!-- #  -->
+<!-- # # Run the data generation function -->
+<!-- # set.seed(123987) -->
+<!-- # data <- dgm1(sample_size = 100000, total_T = 10) -->
+<!-- # data2 <- dgm_with_treatment(sample_size = 100000, total_T = 10, dgm_type = 1) -->
+<!-- # data3 <- GM1(sample_size = 100000, total_T = 10) -->
+<!-- #  -->
+<!-- # fit <- lmer(Y ~ Z * X + (1 + X | userid), data = data) -->
+<!-- # fit2 <- lmer(Y ~ X * A + (1 + A | userid), data = data2) -->
+<!-- # fit3 <- lmer(Y ~ X * A + (1 + A | userid), data = data3) -->
+<!-- #  -->
+<!-- # fixef(fit) -->
+<!-- # fixef(fit2) -->
+<!-- # fixef(fit3) -->
+<!-- ``` -->
+<!-- The analytical model for the mixed linear model is equivalent to the data generating model: -->
+<!-- $$ -->
+<!-- Y_{(t+1)i} = (\beta_{00} + u_{0i}) + \beta_{10} Z_{ti} + X_{ti} (\beta_{20} + u_{2i}) + \beta_{30} X_{ti} Z_{ti} + e_{(t+1)i} -->
+<!-- $$ -->
+<!-- However, for GEE, the analytical model does not include random coefficients, so reduces to: -->
+<!-- $$ -->
+<!-- Y_{(t+1)i} = \beta_{00} + \beta_{10} Z_{ti} + X_{ti} \beta_{20} + \beta_{30} X_{ti} Z_{ti} + e_{(t+1)i} -->
+<!-- $$ -->
+<!-- Considering this difference and the nonzero specification of the random effects, we expect that the fixed treatment effect, denoted by $gamma_10$, is not equal across the mixed linear model and its GEE counterparts. -->
+<!-- ```{r} -->
+<!-- #| label: GM1_fit -->
+<!-- #| cache: false -->
+<!-- #| echo: true -->
+<!-- #| eval: false -->
+<!-- # load data -->
+<!-- data <- readRDS("Simulation Scenarios/data/Qian_GM1_data.rds") -->
+<!-- # Fit models -->
+<!-- gee_indep <- geeglm(Y ~ Z + X + Z*X, id = userid, data = data, corstr = "independence") -->
+<!-- gee_exch <- geeglm(Y ~ Z + X + Z*X, id = userid, data = data, corstr = "exchangeable") -->
+<!-- gee_ar1 <- geeglm(Y ~ Z + X + Z*X, id = userid, data = data, corstr = "ar1") -->
+<!-- mlm_mle <- lmer(Y ~ Z + X + Z*X + (1 + X | userid), data = data, REML = FALSE) -->
+<!-- treatment_effect <- c(coef(gee_indep)["X"], coef(gee_exch)["X"], coef(gee_ar1)["X"], fixef(mlm_mle)["X"]) -->
+<!-- true_treatment_effect <- gamma_10 <- 1 -->
+<!-- interaction_effect <- c(coef(gee_indep)["Z:X"], coef(gee_exch)["Z:X"], coef(gee_ar1)["Z:X"], fixef(mlm_mle)["Z:X"]) -->
+<!-- true_interaction_effect <- beta_3 <- 0.3 -->
+<!-- df_results <- data.frame(row.names = c("GEE (Indep)", "GEE (Exch)", "GEE (AR1)", "MLM (MLE)"), treatment_estimate = treatment_effect, treatment_true = gamma_10, interaction_estimate = interaction_effect, interaction_true = true_interaction_effect) -->
+<!-- saveRDS(df_results, "Simulation Scenarios/data/Qian_GM1_results.rds") -->
+<!-- ``` -->
+<!-- ```{r} -->
+<!-- #| label: GM1_results -->
+<!-- #| echo: false -->
+<!-- # df_results <- readRDS("Simulation Scenarios/data/Qian_GM1_results.rds") -->
+<!-- # knitr::kable(df_results, digits = 3, caption = "Generating Model 1 - Treatment Effect Estimates") -->
+<!-- ``` -->
 <!-- ## Generative Model 2 -->
 <!-- ### Translation of Notation -->
 <!-- Now we need to translate more parameters: -->

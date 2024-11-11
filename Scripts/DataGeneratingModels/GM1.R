@@ -1,9 +1,8 @@
 # generative model:
-# Y_t+1 = alpha_0 + alpha_1 X_t + b_0i + A_t (beta_0 + beta_1 X_t + b_2i) + epsilon_it
-# Y_{it+1} = \gamma_{00} + \beta_2 Z_{it} + u_{0i} + X_{it} (\gamma_{10} + \beta_3 Z_{it} + u_{1i}) + e_{it+1}
+# Qian2020:       Y_t+1 = alpha_0 + alpha_1 X_t + b_0i + A_t (beta_0 + beta_1 X_t + b_2i) + epsilon_it
+# New notation:   Y_{(t+1)i} = \beta_{00} + \beta_{10} Z_{ti} + u_{0i} + X_{ti} (\beta_{20} + \beta_{30} Z_{ti} + u_{2i}) + e_{(t+1)i}
 
-# Data generating models
-
+# Data generating model 1
 GM1 <- function(sample_size, total_T) {
     
     # dgm_type = 1 or 3
