@@ -15,7 +15,7 @@ dgm_with_treatment_translated <- function(sample_size, total_T, dgm_type) {
   # Replacing parameters with equivalent Schoot et al. (2017) values
   beta_00 <- - 1
   beta_10 <- - 0.3
-  beta_20 <- 0.5
+  beta_20 <- 1 # note: Qian script uses 0.5, but paper uses 1
   beta_30 <- 0.1
   sigma_u0 <- 2
   sigma_u1 <- 0

@@ -46,186 +46,15 @@ library(magick)
 library(pdftools)
 ```
 
-## Explanation versus Prediction
+# Main Simulation of Qian et al. (2020): With Treatment and with Translated Notation
 
-In het voorbeeld van Diggle et al. (2002) wat we vorige week hebben besproken, werd vermeld dat een cross-sectionele relatie tussen $X_{it}$ en $Y_{it}$ van interesse kan zijn met longitudinale data als voorspellen het doel is:
-
-> "In many applications the cross-sectional association between Xit and Yit is of substantive interest. For example, in assessing the predictive potential of biomarkers for the detection of cancer, the accuracy of a marker is typically characterized by the cross-sectional sensitivity and specificity. Although alternative predictive models may be developed using longitudinal marker series, these models would not apply to the common clinical setting where only a single measurement is available." (Diggle et al., 2002, p. 256)
-
-Daarentegen legt Qian et al. (2020) juist de nadruk op de voordelen van mixed linear models om tegelijkertijd ook individuele verschillen te kunnen voorspellen, waarbij de focus meer ligt op causaliteit:
-
-> "A particularly appealing feature of random effects models is the ability to predict person-specific random effects, which enables quantitative characterization of between person heterogeneity due to unobserved factors (Schwartz and Stone, 2007, Bolger and Laurenceau, 2013). Understanding such heterogeneity can bring forth new scientific hypotheses for further studies. In addition, the random effects provide a model for the within-person dependence in the time-varying outcome, which improves efficiency in parameter estimation." (Qian et al., 2020, p. 376)
-
-## Main Simulation of Qian et al. (2020): With Treatment
-
-### Original Section: "4. Simulation"
-
-In the simulation, we considered three generative models (GMs), all of which have an endogenous covariate. In the first two GMs, the endogenous covariate $X_{it}$ equals the previous outcome $Y_{it}$ plus some random noise, so the conditional independence assumption (10) is valid. In GM 3, the endogenous covariate depends directly on $b_i$, violating assumption (10). The details of the generative models are described below.
-
-In GM1, we considered a simple case with only a random intercept and a random slope for $A_{it}$, so that $Z_{i(t_0)} = Z_{i(t_2)} = 1$ in model (7). The outcome is generated as:
-
-$$
-Y_{it+1} = \alpha_0 + \alpha_1 X_{it} + b_{i0} + A_{it} (\beta_0 + \beta_1 X_{it} + b_{i2}) + \epsilon_{it+1}.
-$$
-
-The random effects $b_{i0} \sim N(0, \sigma_{b0}^2)$ and $b_{i2} \sim N(0, \sigma_{b2}^2)$ are independent of each other. The covariate is generated as $X_{i1} \sim N(0, 1)$, and for $t \geq 2$,
-
-$$
-X_{it} = Y_{it} + N(0, 1).
-$$
-
-The randomization probability $p_t$ is constant at $1/2$. The exogenous noise is $\epsilon_{it+1} \sim N(0, \sigma_\epsilon^2)$.
-
-In GM2, we considered the case where $Z_{i(t_0)} = Z_{i(t_2)} = 1$, with time-varying randomization probability. The outcome is generated as:
-
-$$
-Y_{it+1} = \alpha_0 + \alpha_1 X_{it} + b_{i0} + b_{i1} X_{it} + A_{it} (\beta_0 + \beta_1 X_{it} + b_{i2} + b_{i3} X_{it}) + \epsilon_{it+1}.
-$$
-
-The random effects $b_{ij} \sim N(0, \sigma_{b_j}^2)$, for $0 \leq j \leq 3$, are independent of each other. The covariate is generated as $X_{i1} \sim N(0, 1)$, and for $t \geq 2$,
-
-$$
-X_{it} = Y_{it} + N(0, 1).
-$$
-
-The randomization probability depends on $X_{it}$:
-
-$$
-p_t = 0.7 \cdot 1(X_{it} > -1.27) + 0.3 \cdot 1(X_{it} \leq -1.27),
-$$
-
-where $1(\cdot)$ represents the indicator function, and the cutoff $-1.27$ was chosen so that $p_t$ equals 0.7 or 0.3 for about half of the time. The exogenous noise is $\epsilon_{it+1} \sim N(0, \sigma_\epsilon^2)$.
-
-GM3 is the same as GM 1, except that the covariate $X_{it}$ depends directly on $b_i$:
-
-$$
-X_{i1} \sim N(b_{i0}, 1), \quad X_{it} = Y_{it} + N(b_{i0}, 1) \text{ for } t \geq 2.
-$$
-
-We chose the following parameter values:
-
-$$
-\alpha_0 = -2, \quad \alpha_1 = -0.3, \quad \beta_0 = 1, \quad \beta_1 = 0.3,
-$$
-
-$$
-\sigma_{b0}^2 = 4, \quad \sigma_{b1}^2 = \frac{1}{4}, \quad \sigma_{b2}^2 = 1, \quad \sigma_{b3}^2 = \frac{1}{4}, \quad \sigma_\epsilon^2 = 1.
-$$
-
-## Translation of Notation
-
-In the table below, we will provide the translation of original notation in Qian et al. (2020) to the notation by Schoot et al. (2017). This notation in turn, is very similar to and likely based on the notation by Raudenbush and Bryk (2002). However, rather than representing the random effects with an $r$, the notation by Schoot et al. (2017) uses $u$.
-
-| Parameter/variable                                    | Qian et al. (2020) | Schoot et al. (2017) |
-|----------------------------|----------------------|----------------------|
-| Covariate                                     | $X_{it}$           | $Z_{ti}$                    |
-| Randomized Treatment                          | $A_{it}$           | $X_{ti}$                    |
-| Outcome                              | $Y_{it+1}$           | $Y_{(t+1)i}$                    |
-| Fixed intercept                               | $\alpha_0$         | $\beta_{00}$               |
-| Random intercept                              | $b_{i0}$           | $u_{0i}$                    |
-| Fixed slope for covariate                     | $\alpha_1$         | $\beta_{10}$                 |
-| Random slope for covariate                     | $b_{i1}$         | $u_{1i}$                |
-| Fixed slope of treatment                     | $\beta_0$          | $\beta_{20}$               |
-| Random slope for treatment                    | $b_{i2}$           | $u_{2i}$                    |
-| fixed interaction effect of covariate and treatment | $\beta_1$          | $\beta_{30}$                   |
-| Random interaction effect of covariate and treatment | $b_{i3}$          | $u_{3i}$
-| Error term (exogenous noise)                                  | $\epsilon_{it+1}$  | $e_{(t+1)i}$                  |
-| Randomization probability                     | $p_t$              | $p_t$                        |
-
-Here is the rewritten text using the translation table you provided:
-
----
+## Simulations
 
 In the simulation, we considered three generative models (GMs), all of which have an endogenous covariate. In the first two GMs, the endogenous covariate $Z_{ti}$ equals the previous outcome $Y_{ti}$ plus some random noise, so the conditional independence assumption (10) is valid. In GM 3, the endogenous covariate depends directly on $u_{0i}$, violating assumption (10). The details of the generative models are described below.
 
-#### Generative Model 1
+### Generative Model 1
 
-In GM1, we considered a simple case with only a random intercept and a random slope for $X_{ti}$, so that $g_0(H_{ti}) = g_1(H_{ti}) = 1$. The outcome is generated as:
-
-$$
-Y_{(t+1)i} = \beta_{00} + \beta_{10} Z_{ti} + u_{0i} + X_{ti} \left( \beta_{20} + \beta_{30} Z_{ti} + u_{2i} \right) + e_{(t+1)i}.
-$$
-
-The random effects $u_{0i} \sim N(0, \sigma_{u0}^2)$ and $u_{2i} \sim N(0, \sigma_{u2}^2)$ are independent of each other. The covariate is generated as $Z_{i1} \sim N(0, 1)$, and for $t \geq 2$,
-
-$$
-Z_{ti} = Y_{ti} + N(0, 1).
-$$
-
-The randomization probability $p_t$ is constant at $1/2$. Thus, $X_{ti} \sim \text{Bernoulli}(0.5) \quad \text{for} \quad i = 1, \ldots, N \quad \text{and} \quad t = 1, \ldots, T$. In other words, each individual has an independent 50% chance of receiving the treatment at each time point. The exogenous noise is $e_{(t+1)i} \sim N(0, \sigma_e^2)$.
-
-#### Generative Model 2
-
-In GM2, we considered the case where $g_0(H_{ti}) = g_1(H_{ti}) = (1, Z_{ti})$ and the randomization probability is time-varying. The outcome is generated as:
-
-$$
-Y_{(t+1)i} = \beta_{00} + \beta_{10} Z_{ti} + u_{0i} + u_{1i} Z_{ti} + X_{ti} \left( \beta_{20} + \beta_{30} Z_{ti} + u_{2i} + u_{3i} Z_{ti} \right) + e_{(t+1)i}.
-$$
-
-The random effects $u_{ji} \sim N(0, \sigma_{u_j}^2)$, for $0 \leq j \leq 3$, are independent of each other. The covariate is generated as $Z_{i1} \sim N(0, 1)$, and for $t \geq 2$,
-
-$$
-Z_{ti} = Y_{ti} + N(0, 1).
-$$
-
-The randomization probability depends on $Z_{ti}$:
-
-$$
-p_t = P(X_{ti} = 1 \mid H_{it}) = 0.7 \cdot IF(Z_{ti} > -1.27) + 0.3 \cdot IF(Z_{ti} \leq -1.27),
-$$
-
-where $IF(\cdot)$ represents the indicator function, and the cutoff $-1.27$ was chosen so that $P(X_{ti} = 1 \mid H_{it})$ equals 0.7 or 0.3 for about half of the time. The exogenous noise is $e_{(t+1)i} \sim N(0, \sigma_e^2)$.
-
-#### Generative Model 3
-
-GM3 is the same as GM1, except that the covariate $Z_{ti}$ depends directly on $u_{0i}$:
-
-$$
-Z_{i1} \sim N(u_{0i}, 1), \quad Z_{ti} = Y_{ti} + N(u_{0i}, 1) \text{ for } t \geq 2.
-$$
-
-We chose the following parameter values:
-
-$$
-\beta_{00} = -2, \quad \beta_{10} = -0.3, \quad \beta_{20} = 1, \quad \beta_{30} = 0.3,
-$$
-
-$$
-\sigma_{u0}^2 = 4, \quad \sigma_{u1}^2 = \frac{1}{4}, \quad \sigma_{u2}^2 = 1, \quad \sigma_{u3}^2 = \frac{1}{4}, \quad \sigma_e^2 = 1.
-$$
-
-## Generative Model 1
-
-### Translation of Notation
-
-In the table below, we will provide the translation of original notation in Qian et al. (2020) to the notation by Schoot et al. (2017). This notation in turn, is very similar to and likely based on the notation by Raudenbush and Bryk (2002). However, rather than representing the random effects with an $r$, the notation by Schoot et al. (2017) uses $u$.
-
-| Parameter/variable                                    | Qian et al. (2020) | Schoot et al. (2017) |
-|----------------------------|----------------------|----------------------|
-| Covariate                                     | $X_{it}$           | $Z_{ti}$                    |
-| Randomized Treatment                          | $A_{it}$           | $X_{ti}$                    |
-| Outcome                              | $Y_{it+1}$           | $Y_{(t+1)i}$                    |
-| Fixed intercept                               | $\alpha_0$         | $\beta_{00}$               |
-| Fixed slope for covariate                     | $\alpha_1$         | $\beta_{10}$                 |
-| Random intercept                              | $b_{i0}$           | $u_{0i}$                    |
-| Fixed effect of treatment                     | $\beta_0$          | $\beta_{20}$               |
-| Interaction effect of covariate and treatment | $\beta_1$          | $\beta_{30}$                   |
-| Random slope for treatment                    | $b_{i2}$           | $u_{2i}$                    |
-| Error term                                    | $\epsilon_{it+1}$  | $e_{(t+1)i}$                  |
-| residual variance                             | $\sigma^2_{\epsilon}$ | $\sigma^2_{e}$              |
-| Random intercept variance                     | $\sigma^2_{b0}$    | $\sigma^2_{u0}$              |
-| random slope variance for covariate          | $\sigma^2_{b1}$    | $\sigma^2_{u1}$              |
-| Random slope variance for treatment           | $\sigma^2_{b2}$    | $\sigma^2_{u2}$              |
-| Random slope variance for interaction         | $\sigma^2_{b3}$    | $\sigma^2_{u3}$              |
-
-Let's first state the original model:
-
-$$
-Y_{it+1} = \alpha_0 + \alpha_1 X_{it} + b_{i0} + A_{it} (\beta_0 + \beta_1 X_{it} + b_{i2}) + \epsilon_{it+1} \\
-=  \alpha_0 + \alpha_1 X_{it} + b_{i0} + A_{it} \beta_0 + A_{it} \beta_1 X_{it} + A_{it} b_{i2} + \epsilon_{it+1}
-$$
-
-Using this new notation, we may thus rewrite GM1 as a repeated-observations or within-person model (level 1)
+In GM1, we considered a simple case with only a random intercept and a random slope for $X_{ti}$, so that $g_0(H_{ti}) = g_1(H_{ti}) = 1$. **WHAT DOES THIS IMPLY?** The outcome is generated according to the following repeated-observations or within-person model (level 1)
 
 $$
 Y_{(t+1)i} = \pi_{0i} + \pi_{1i} Z_{ti} + \pi_{2i} X_{ti} + \pi_{3i} X_{ti} Z_{ti} + e_{(t+1)i}
@@ -254,21 +83,76 @@ By substitution, we get the single equation model:
 $$
 Y_{(t+1)i} = \pi_{0i} + \pi_{1i} Z_{ti} + \pi_{2i} X_{ti} + \pi_{3i} X_{ti} Z_{ti} + e_{(t+1)i} \\ = (\beta_{00} + u_{0i}) + \beta_{10} Z_{ti} + X_{ti} (\beta_{20} + u_{2i}) + \beta_{30} X_{ti} Z_{ti} + e_{(t+1)i} \\ = \beta_{00} + \beta_{10} Z_{ti} + u_{0i} + X_{ti} (\beta_{20} + \beta_{30} Z_{ti} + u_{2i}) + e_{(t+1)i}
 $$
-More specifically, the process was generated as follows:
 
--   the random effects $u_{0i} \sim \mathcal{N}(0, 4)$ and $u_{2i} \sim \mathcal{N}(0, 1)$ are independent of each other
--   the covariate $Z_{1i} \sim \mathcal{N}(0, 1)$, and for $t \geq 2$, $Z_{ti} = Y_{ti} + \mathcal{N}(0, 1)$
--   the randomization probability $p_i = P(X_{ti} = 1 \mid H_{it}) = 0.5$ and $X_{ti} \sim \text{Bernoulli}(0.5) \quad \text{for} \quad i = 1, \ldots, N \quad \text{and} \quad t = 1, \ldots, T$. In other words, each individual has an independent 50% chance of receiving the treatment at each time point.
--   the exogenous noise $e_{(t+1)i} \sim \mathcal{N}(0, 1)$
--   the parameter values are $\beta_{00} = -2$, $\beta_{10} = -0.3$, $\gamma_{20} = 1$, $\beta_{30} = 0.3$
+The random effects $u_{0i} \sim N(0, \sigma_{u0}^2)$ and $u_{2i} \sim N(0, \sigma_{u2}^2)$ are independent of each other. The covariate is generated as $Z_{i1} \sim N(0, 1)$, and for $t \geq 2$,
 
-### Visualzing the Model
+$$
+Z_{ti} = Y_{ti} + N(0, 1).
+$$
 
-As mentioned by Ellen in the last meeting (17-10):
+The randomization probability $p_t$ is constant at $1/2$. Thus, $X_{ti} \sim \text{Bernoulli}(0.5) \quad \text{for} \quad i = 1, \ldots, N \quad \text{and} \quad t = 1, \ldots, T$. In other words, each individual has an independent 50% chance of receiving the treatment at each time point. The exogenous noise is $e_{(t+1)i} \sim N(0, \sigma_e^2)$.
 
-> "Conventional DAGs do not only represent main effects but rather the combination of main effects and interactions. Once you have drawn your DAG, you already assume that any variables pointing to the same outcome can modify the effect of the others pointing to the same outcome." ([stackexchange](https://stats.stackexchange.com/questions/157775/representing-interaction-effects-in-directed-acyclic-graphs))
+### Generative Model 2
 
-So the DAG for the first couple observations, the DAG looks like
+In GM2, we considered the case where $g_0(H_{ti}) = g_1(H_{ti}) = (1, Z_{ti})$, **which implies that the random effects $u_{0i}$ and $u_{1i}$ are modeled as depending only on a baseline level and the current covariate $Z_{ti}$. CHECK IF THIS IS TRUE**. In addition, the randomization probability is time-varying. The outcome is generated according to the same repeated-observations model presented in GM1. However, the person-level model is different:
+
+$$ 
+\pi_{0i} = \beta_{00} + u_{0i} \quad \text{with} \quad u_{0i} \sim \mathcal{N}(0, \sigma^2_{u_0})
+$$
+
+$$
+\pi_{1i} = \beta_{10} + u_{1i} \quad \text{with} \quad u_{1i} \sim \mathcal{N}(0, \sigma^2_{u_1})
+$$
+
+$$
+\pi_{2i} = \beta_{20} + u_{2i} \quad \text{with} \quad u_{2i} \sim \mathcal{N}(0, \sigma^2_{u_2})
+$$
+
+$$
+\pi_{3i} = \beta_{30} + u_{3i} \quad \text{with} \quad u_{3i} \sim \mathcal{N}(0, \sigma^2_{u_3})
+$$
+
+By substitution, we get the single equation model:
+
+$$
+Y_{(t+1)i} = \beta_{00} + \beta_{10} Z_{ti} + u_{0i} + u_{1i} Z_{ti} + X_{ti} \left( \beta_{20} + \beta_{30} Z_{ti} + u_{2i} + u_{3i} Z_{ti} \right) + e_{(t+1)i}.
+$$
+
+The random effects $u_{ji} \sim N(0, \sigma_{u_j}^2)$, for $0 \leq j \leq 3$, are independent of each other. The covariate is generated as $Z_{i1} \sim N(0, 1)$, and for $t \geq 2$,
+
+$$
+Z_{ti} = Y_{ti} + N(0, 1).
+$$
+
+The randomization probability depends on $Z_{ti}$:
+
+$$
+p_t = P(X_{ti} = 1 \mid H_{it}) = 0.7 \cdot IF(Z_{ti} > -1.27) + 0.3 \cdot IF(Z_{ti} \leq -1.27),
+$$
+
+where $IF(\cdot)$ represents the indicator function, and the cutoff $-1.27$ was chosen so that $p_t = P(X_{ti} = 1 \mid H_{it})$ equals 0.7 or 0.3 for about half of the time. In other words, if the value for the covariate for any given person and timepoint is above the cutoff, the probability of receiving the treatment $p_t$ is 0.7; otherwise, it is 0.3. Accordingly, $X_{ti} \sim \text{Bernoulli}(p_t) \quad \text{for} \quad i = 1, \ldots, N \quad \text{and} \quad t = 1, \ldots, T$. The exogenous noise is $e_{(t+1)i} \sim N(0, \sigma_e^2)$.
+
+### Generative Model 3
+
+GM3 is the same as GM1, except that the covariate $Z_{ti}$ depends directly on $u_{0i}$:
+
+$$
+Z_{i1} \sim N(u_{0i}, 1), \quad Z_{ti} = Y_{ti} + N(u_{0i}, 1) \text{ for } t \geq 2.
+$$
+
+We chose the following parameter values:
+
+$$
+\beta_{00} = -2, \quad \beta_{10} = -0.3, \quad \beta_{20} = 1, \quad \beta_{30} = 0.3,
+$$
+
+$$
+\sigma_{u0}^2 = 4, \quad \sigma_{u1}^2 = \frac{1}{4}, \quad \sigma_{u2}^2 = 1, \quad \sigma_{u3}^2 = \frac{1}{4}, \quad \sigma_e^2 = 1.
+$$
+
+### Graphical representations of Data Generating Models
+
+So the DAG for the first couple observations of GM1 looks like
 
 ```{r}
 #| label: fig-GM1_visual3
@@ -276,7 +160,7 @@ So the DAG for the first couple observations, the DAG looks like
 #| echo: false
 #| eval: false
 
-GM1_DAG3 <- dagitty('dag {
+GM1_DAG <- dagitty('dag {
 bb="0,0,1,1"
 X_1 [exposure,pos="0.173,0.282"]
 X_2 [exposure,pos="0.426,0.283"]
@@ -285,18 +169,64 @@ Y_3 [outcome,pos="0.723,0.432"]
 Z_1 [adjusted,pos="0.171,0.602"]
 Z_2 [adjusted,pos="0.424,0.602"]
 Z_3 [adjusted,pos="0.721,0.602"]
-u0 [pos="0.577,0.775"]
+U [pos="0.577,0.775"]
 X_1 -> Y_2
 X_2 -> Y_3
 Y_2 -> Z_2
 Y_3 -> Z_3
 Z_1 -> Y_2
 Z_2 -> Y_3
-u0 -> Y_2
-u0 -> Y_3
+U -> Y_2
+U -> Y_3
 }')
 
-ggdag::ggdag_status(GM1_DAG3) + ggdag::theme_dag()
+GM2_DAG <- dagitty('dag {
+bb="0,0,1,1"
+X_1 [exposure,pos="0.173,0.282"]
+X_2 [exposure,pos="0.426,0.283"]
+Y_2 [outcome,pos="0.422,0.431"]
+Y_3 [outcome,pos="0.723,0.432"]
+Z_1 [adjusted,pos="0.171,0.602"]
+Z_2 [adjusted,pos="0.424,0.602"]
+Z_3 [adjusted,pos="0.721,0.602"]
+U [pos="0.577,0.775"]
+X_1 -> Y_2
+X_2 -> Y_3
+Y_2 -> Z_2
+Y_3 -> Z_3
+Z_1 -> Y_2
+Z_2 -> Y_3
+U -> Y_2
+U -> Y_3
+}')
+
+GM3_DAG <- dagitty('dag {
+bb="0,0,1,1"
+U [pos="0.577,0.775"]
+X_1 [exposure,pos="0.173,0.282"]
+X_2 [exposure,pos="0.426,0.283"]
+Y_2 [outcome,pos="0.422,0.431"]
+Y_3 [outcome,pos="0.723,0.432"]
+Z_1 [adjusted,pos="0.171,0.602"]
+Z_2 [adjusted,pos="0.424,0.602"]
+Z_3 [adjusted,pos="0.721,0.602"]
+U -> Y_2
+U -> Y_3
+U -> Z_1
+U -> Z_2
+U -> Z_3
+X_1 -> Y_2
+X_2 -> Y_3
+Y_2 -> Z_2
+Y_3 -> Z_3
+Z_1 -> Y_2
+Z_2 -> Y_3
+}')
+
+
+ggdag::ggdag_status(GM1_DAG) + ggdag::theme_dag()
+ggdag::ggdag_status(GM2_DAG) + ggdag::theme_dag()
+ggdag::ggdag_status(GM3_DAG) + ggdag::theme_dag()
 ```
 
 ![DAG for Generative Model 1](figure/GM1_DAG.png)
@@ -341,13 +271,13 @@ Or we can display it as a path diagram, where parameter values are displayed and
   \draw [->] (X2Z2) edge node[above] {$\beta_{30}$} (Y3);
 
   % Curved arrows for variances
-  \draw [->, out=-45, in=-135, looseness=2] (Z1) to node[below] {$\sigma^2_{Z}$} (Z1);
-  \draw [->, out=-45, in=-135, looseness=2] (Z2) to node[below] {$\sigma^2_{Z}$} (Z2);
-  \draw [->, out=-45, in=-135, looseness=2] (Z3) to node[below] {$\sigma^2_{Z}$} (Z3);
-  \draw [->, out=45, in=135, looseness=2] (u0) to node[above] {$\sigma^2_{u0}$} (u0);
-  \draw [->, out=45, in=135, looseness=2] (u2) to node[above] {$\sigma^2_{u2}$} (u2);
-  \draw [->, out=30, in=330, looseness=2] (Y2) to node[right] {$\sigma^2_{e}$} (Y2);
-  \draw [->, out=30, in=330, looseness=2] (Y3) to node[right] {$\sigma^2_{e}$} (Y3);
+  \draw [<->, out=-45, in=-135, looseness=2] (Z1) to node[below] {$\sigma^2_{Z}$} (Z1);
+  \draw [<->, out=-45, in=-135, looseness=2] (Z2) to node[below] {$\sigma^2_{Z}$} (Z2);
+  \draw [<->, out=-45, in=-135, looseness=2] (Z3) to node[below] {$\sigma^2_{Z}$} (Z3);
+  \draw [<->, out=45, in=135, looseness=2] (u0) to node[above] {$\sigma^2_{u0}$} (u0);
+  \draw [<->, out=45, in=135, looseness=2] (u2) to node[above] {$\sigma^2_{u2}$} (u2);
+  \draw [<->, out=30, in=330, looseness=2] (Y2) to node[right] {$\sigma^2_{e}$} (Y2);
+  \draw [<->, out=30, in=330, looseness=2] (Y3) to node[right] {$\sigma^2_{e}$} (Y3);
 
   % Additional paths for Z and Y interaction effects
   \draw[->, dashed] (u2) -- (1.5,1); % Adjusted x-coordinates
@@ -516,136 +446,99 @@ $$
 <!-- # knitr::kable(df_results, digits = 3, caption = "Generating Model 1 - Treatment Effect Estimates") -->
 <!-- ``` -->
 
-<!-- ## Generative Model 2 -->
+# Appendix
 
-<!-- ### Translation of Notation -->
+## Original Section from Qian et al. (2020): "4. Simulation"
 
-<!-- Now we need to translate more parameters: -->
+In the simulation, we considered three generative models (GMs), all of which have an endogenous covariate. In the first two GMs, the endogenous covariate $X_{it}$ equals the previous outcome $Y_{it}$ plus some random noise, so the conditional independence assumption (10) is valid. In GM 3, the endogenous covariate depends directly on $b_i$, violating assumption (10). The details of the generative models are described below.
 
-<!-- | Parameter                                            | Original          | New           | -->
+In GM1, we considered a simple case with only a random intercept and a random slope for $A_{it}$, so that $Z_{i(t_0)} = Z_{i(t_2)} = 1$ in model (7). The outcome is generated as:
 
-<!-- |------------------------------------|-------------------|-------------------| -->
+$$
+Y_{it+1} = \alpha_0 + \alpha_1 X_{it} + b_{i0} + A_{it} (\beta_0 + \beta_1 X_{it} + b_{i2}) + \epsilon_{it+1}.
+$$
 
-<!-- | Fixed intercept                                      | $\alpha_0$        | $\gamma_{00}$ | -->
+The random effects $b_{i0} \sim N(0, \sigma_{b0}^2)$ and $b_{i2} \sim N(0, \sigma_{b2}^2)$ are independent of each other. The covariate is generated as $X_{i1} \sim N(0, 1)$, and for $t \geq 2$,
 
-<!-- | Fixed slope for $X_{it}$                             | $\alpha_1$        | $\gamma_{10}$ | -->
+$$
+X_{it} = Y_{it} + N(0, 1).
+$$
 
-<!-- | Random intercept                                     | $b_{i0}$          | $u_{0i}$      | -->
+The randomization probability $p_t$ is constant at $1/2$. The exogenous noise is $\epsilon_{it+1} \sim N(0, \sigma_\epsilon^2)$.
 
-<!-- | Random slope for $X_{it}$                            | $b_{i1}$          | $u_{1i}$      | -->
+In GM2, we considered the case where $Z_{i(t_0)} = Z_{i(t_2)} = 1$, with time-varying randomization probability. The outcome is generated as:
 
-<!-- | Fixed effect of $A_{it}$                             | $\beta_0$         | $\gamma_{20}$ | -->
+$$
+Y_{it+1} = \alpha_0 + \alpha_1 X_{it} + b_{i0} + b_{i1} X_{it} + A_{it} (\beta_0 + \beta_1 X_{it} + b_{i2} + b_{i3} X_{it}) + \epsilon_{it+1}.
+$$
 
-<!-- | Interaction effect of $A_{it}$ and $X_{it}$          | $\beta_1$         | $\gamma_{30}$ | -->
+The random effects $b_{ij} \sim N(0, \sigma_{b_j}^2)$, for $0 \leq j \leq 3$, are independent of each other. The covariate is generated as $X_{i1} \sim N(0, 1)$, and for $t \geq 2$,
 
-<!-- | Random slope for $A_{it}$                            | $b_{i2}$          | $u_{2i}$      | -->
+$$
+X_{it} = Y_{it} + N(0, 1).
+$$
 
-<!-- | Random interaction effect for $A_{it} \times X_{it}$ | $b_{i3}$          | $u_{3i}$      | -->
+The randomization probability depends on $X_{it}$:
 
-<!-- | Error term                                           | $\epsilon_{it+1}$ | $e_{it+1}$    | -->
+$$
+p_t = 0.7 \cdot 1(X_{it} > -1.27) + 0.3 \cdot 1(X_{it} \leq -1.27),
+$$
 
-<!-- | Covariate                                            | $X_{it}$          | $Z_{it}$      | -->
+where $1(\cdot)$ represents the indicator function, and the cutoff $-1.27$ was chosen so that $p_t$ equals 0.7 or 0.3 for about half of the time. The exogenous noise is $\epsilon_{it+1} \sim N(0, \sigma_\epsilon^2)$.
 
-<!-- | Treatment                                            | $A_{it}$          | $X_{it}$      | -->
+GM3 is the same as GM 1, except that the covariate $X_{it}$ depends directly on $b_i$:
 
-<!-- Let's first restate the original model: -->
+$$
+X_{i1} \sim N(b_{i0}, 1), \quad X_{it} = Y_{it} + N(b_{i0}, 1) \text{ for } t \geq 2.
+$$
 
-<!-- $$ -->
+We chose the following parameter values:
 
-<!-- Y_{it+1} = \alpha_0 + \alpha_1 X_{it} + b_{i0} + b_{i1} X_{it} + A_{it} (\beta_0 + \beta_1 X_{it} + b_{i2} + b_{i3} X_{it}) + \epsilon_{it+1}. -->
+$$
+\alpha_0 = -2, \quad \alpha_1 = -0.3, \quad \beta_0 = 1, \quad \beta_1 = 0.3,
+$$
 
-<!-- $$ -->
+$$
+\sigma_{b0}^2 = 4, \quad \sigma_{b1}^2 = \frac{1}{4}, \quad \sigma_{b2}^2 = 1, \quad \sigma_{b3}^2 = \frac{1}{4}, \quad \sigma_\epsilon^2 = 1.
+$$
 
-<!-- Using the psychological notation, we rewrite GM2 as a within-person model: -->
+## Translation of Notation
 
-<!-- $$ -->
+In the table below, we will provide the translation of original notation in Qian et al. (2020) to the notation by Schoot et al. (2017). This notation in turn, is very similar to and likely based on the notation by Raudenbush and Bryk (2002). However, rather than representing the random effects with an $r$, the notation by Schoot et al. (2017) uses $u$.
 
-<!-- Y_{it+1} = \beta_{0i} + \beta_{1i} Z_{it} + \beta_{2i} X_{it} + \beta_{3i} X_{it} Z_{it} + e_{it+1}, -->
+| Parameter/variable                                    | Qian et al. (2020) | Schoot et al. (2017) |
+|----------------------------|----------------------|----------------------|
+| Covariate                                     | $X_{it}$           | $Z_{ti}$                    |
+| Randomized Treatment                          | $A_{it}$           | $X_{ti}$                    |
+| Outcome                              | $Y_{it+1}$           | $Y_{(t+1)i}$                    |
+| Fixed intercept                               | $\alpha_0$         | $\beta_{00}$               |
+| Random intercept                              | $b_{i0}$           | $u_{0i}$                    |
+| Fixed slope for covariate                     | $\alpha_1$         | $\beta_{10}$                 |
+| Random slope for covariate                     | $b_{i1}$         | $u_{1i}$                |
+| Fixed slope of treatment                     | $\beta_0$          | $\beta_{20}$               |
+| Random slope for treatment                    | $b_{i2}$           | $u_{2i}$                    |
+| fixed interaction effect of covariate and treatment | $\beta_1$          | $\beta_{30}$                   |
+| Random interaction effect of covariate and treatment | $b_{i3}$          | $u_{3i}$
+| Error term (exogenous noise)                                  | $\epsilon_{it+1}$  | $e_{(t+1)i}$                  |
+| Randomization probability                     | $p_t$              | $p_t$                        |
+| Residual variance                             | $\sigma^2_{\epsilon}$ | $\sigma^2_{e}$              |
+| Random intercept variance                     | $\sigma^2_{b0}$    | $\sigma^2_{u0}$              |
+| random slope variance for covariate          | $\sigma^2_{b1}$    | $\sigma^2_{u1}$              |
+| Random slope variance for treatment           | $\sigma^2_{b2}$    | $\sigma^2_{u2}$              |
+| Random slope variance for interaction         | $\sigma^2_{b3}$    | $\sigma^2_{u3}$              |
 
-<!-- $$ -->
+## Explanation versus Prediction
 
-<!-- with: -->
+In het voorbeeld van Diggle et al. (2002) wat we vorige week hebben besproken, werd vermeld dat een cross-sectionele relatie tussen $X_{it}$ en $Y_{it}$ van interesse kan zijn met longitudinale data als voorspellen het doel is:
 
-<!-- $$ -->
+> "In many applications the cross-sectional association between Xit and Yit is of substantive interest. For example, in assessing the predictive potential of biomarkers for the detection of cancer, the accuracy of a marker is typically characterized by the cross-sectional sensitivity and specificity. Although alternative predictive models may be developed using longitudinal marker series, these models would not apply to the common clinical setting where only a single measurement is available." (Diggle et al., 2002, p. 256)
 
-<!-- \beta_{0i} = \gamma_{00} + u_{0i} \quad \text{where} \quad u_{0i} \sim \mathcal{N}(0, \sigma^2_{u0}), -->
+Daarentegen legt Qian et al. (2020) juist de nadruk op de voordelen van mixed linear models om tegelijkertijd ook individuele verschillen te kunnen voorspellen, waarbij de focus meer ligt op causaliteit:
 
-<!-- $$ -->
+> "A particularly appealing feature of random effects models is the ability to predict person-specific random effects, which enables quantitative characterization of between person heterogeneity due to unobserved factors (Schwartz and Stone, 2007, Bolger and Laurenceau, 2013). Understanding such heterogeneity can bring forth new scientific hypotheses for further studies. In addition, the random effects provide a model for the within-person dependence in the time-varying outcome, which improves efficiency in parameter estimation." (Qian et al., 2020, p. 376)
 
-<!-- $$ -->
+## Differences: DAGs and Path Diagrams
 
-<!-- \beta_{1i} = \gamma_{10} + u_{1i} \quad \text{where} \quad u_{1i} \sim \mathcal{N}(0, \sigma^2_{u1}), -->
+As mentioned by Ellen in the last meeting (17-10):
 
-<!-- $$ -->
-
-<!-- $$ -->
-
-<!-- \beta_{2i} = \gamma_{20} + u_{2i} \quad \text{where} \quad u_{2i} \sim \mathcal{N}(0, \sigma^2_{u2}), -->
-
-<!-- $$ -->
-
-<!-- $$ -->
-
-<!-- \beta_{3i} = \gamma_{30} + u_{3i} \quad \text{where} \quad u_{3i} \sim \mathcal{N}(0, \sigma^2_{u3}). -->
-
-<!-- $$ -->
-
-<!-- Combining these, the full model becomes: -->
-
-<!-- $$ -->
-
-<!-- Y_{it+1} = (\gamma_{00} + u_{0i}) + (\gamma_{10} + u_{1i}) Z_{it} + (\gamma_{20} + u_{2i}) X_{it} + (\gamma_{30} + u_{3i}) X_{it} Z_{it} + e_{it+1}. -->
-
-<!-- $$ -->
-
-<!-- More specifically, the process was generated as follows: -->
-
-<!-- -    -->
-
-<!-- ### Visualizing the Model -->
-
-<!-- ```{r} -->
-
-<!-- # #| label: GM2_visual -->
-
-<!-- # #| cache: true -->
-
-<!-- # #| fig-subcap: -->
-
-<!-- # #| - "DAG" -->
-
-<!-- # #| - "Path Diagram" -->
-
-<!-- # #| layout-nrow: 2 -->
-
-<!-- # #| echo: false -->
-
-<!-- #  -->
-
-<!-- # # GM2_DAG <- dagitty('dag{ -->
-
-<!-- ``` -->
-
-<!-- The model is fitted as -->
-
-<!-- ```{r} -->
-
-<!-- #| label: GM2_fit -->
-
-<!-- #| echo: true -->
-
-<!-- #| eval: false -->
-
-<!-- gm2_mlm <- lmer(Y ~ Z * X + (Z * X | id), data = data) -->
-
-<!-- ``` -->
-
-<!-- ## Generative Model 3 -->
-
-<!-- ### Translation of Notation -->
-
-<!-- ... -->
-
-<!-- ### Visualizing the Model -->
-
-<!-- ... -->
+> "Conventional DAGs do not only represent main effects but rather the combination of main effects and interactions. Once you have drawn your DAG, you already assume that any variables pointing to the same outcome can modify the effect of the others pointing to the same outcome." ([stackexchange](https://stats.stackexchange.com/questions/157775/representing-interaction-effects-in-directed-acyclic-graphs))

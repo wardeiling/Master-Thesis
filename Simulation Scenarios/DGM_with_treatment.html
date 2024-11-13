@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.5.57">
+<meta name="generator" content="quarto-1.4.553">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
@@ -36,7 +36,7 @@ ul.task-list li input[type="checkbox"] {
 <link href="DGM_with_treatment_files/libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
 <link href="DGM_with_treatment_files/libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
 
-  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
   <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
 
 <script type="text/javascript">
@@ -76,22 +76,28 @@ window.Quarto = {
     <h2 id="toc-title">Table of contents</h2>
    
   <ul>
-  <li><a href="#explanation-versus-prediction" id="toc-explanation-versus-prediction" class="nav-link active" data-scroll-target="#explanation-versus-prediction"><span class="header-section-number">1</span> Explanation versus Prediction</a></li>
-  <li><a href="#main-simulation-of-qian-et-al.-2020-with-treatment" id="toc-main-simulation-of-qian-et-al.-2020-with-treatment" class="nav-link" data-scroll-target="#main-simulation-of-qian-et-al.-2020-with-treatment"><span class="header-section-number">2</span> Main Simulation of Qian et al.&nbsp;(2020): With Treatment</a>
+  <li><a href="#main-simulation-of-qian-et-al.-2020-with-treatment-and-with-translated-notation" id="toc-main-simulation-of-qian-et-al.-2020-with-treatment-and-with-translated-notation" class="nav-link active" data-scroll-target="#main-simulation-of-qian-et-al.-2020-with-treatment-and-with-translated-notation"><span class="header-section-number">1</span> Main Simulation of Qian et al.&nbsp;(2020): With Treatment and with Translated Notation</a>
   <ul class="collapse">
-  <li><a href="#original-section-4.-simulation" id="toc-original-section-4.-simulation" class="nav-link" data-scroll-target="#original-section-4.-simulation"><span class="header-section-number">2.1</span> Original Section: “4. Simulation”</a></li>
+  <li><a href="#simulations" id="toc-simulations" class="nav-link" data-scroll-target="#simulations"><span class="header-section-number">1.1</span> Simulations</a>
+  <ul class="collapse">
+  <li><a href="#generative-model-1" id="toc-generative-model-1" class="nav-link" data-scroll-target="#generative-model-1"><span class="header-section-number">1.1.1</span> Generative Model 1</a></li>
+  <li><a href="#generative-model-2" id="toc-generative-model-2" class="nav-link" data-scroll-target="#generative-model-2"><span class="header-section-number">1.1.2</span> Generative Model 2</a></li>
+  <li><a href="#generative-model-3" id="toc-generative-model-3" class="nav-link" data-scroll-target="#generative-model-3"><span class="header-section-number">1.1.3</span> Generative Model 3</a></li>
+  <li><a href="#graphical-representations-of-data-generating-models" id="toc-graphical-representations-of-data-generating-models" class="nav-link" data-scroll-target="#graphical-representations-of-data-generating-models"><span class="header-section-number">1.1.4</span> Graphical representations of Data Generating Models</a></li>
+  <li><a href="#data-generating-and-estimation" id="toc-data-generating-and-estimation" class="nav-link" data-scroll-target="#data-generating-and-estimation"><span class="header-section-number">1.1.5</span> Data Generating and Estimation</a></li>
   </ul></li>
-  <li><a href="#translation-of-notation" id="toc-translation-of-notation" class="nav-link" data-scroll-target="#translation-of-notation"><span class="header-section-number">3</span> Translation of Notation</a></li>
-  <li><a href="#generative-model-1-1" id="toc-generative-model-1-1" class="nav-link" data-scroll-target="#generative-model-1-1"><span class="header-section-number">4</span> Generative Model 1</a>
+  </ul></li>
+  <li><a href="#appendix" id="toc-appendix" class="nav-link" data-scroll-target="#appendix"><span class="header-section-number">2</span> Appendix</a>
   <ul class="collapse">
-  <li><a href="#translation-of-notation-1" id="toc-translation-of-notation-1" class="nav-link" data-scroll-target="#translation-of-notation-1"><span class="header-section-number">4.1</span> Translation of Notation</a></li>
-  <li><a href="#visualzing-the-model" id="toc-visualzing-the-model" class="nav-link" data-scroll-target="#visualzing-the-model"><span class="header-section-number">4.2</span> Visualzing the Model</a></li>
-  <li><a href="#data-generating-and-estimation" id="toc-data-generating-and-estimation" class="nav-link" data-scroll-target="#data-generating-and-estimation"><span class="header-section-number">4.3</span> Data Generating and Estimation</a></li>
+  <li><a href="#original-section-from-qian-et-al.-2020-4.-simulation" id="toc-original-section-from-qian-et-al.-2020-4.-simulation" class="nav-link" data-scroll-target="#original-section-from-qian-et-al.-2020-4.-simulation"><span class="header-section-number">2.1</span> Original Section from Qian et al.&nbsp;(2020): “4. Simulation”</a></li>
+  <li><a href="#translation-of-notation" id="toc-translation-of-notation" class="nav-link" data-scroll-target="#translation-of-notation"><span class="header-section-number">2.2</span> Translation of Notation</a></li>
+  <li><a href="#explanation-versus-prediction" id="toc-explanation-versus-prediction" class="nav-link" data-scroll-target="#explanation-versus-prediction"><span class="header-section-number">2.3</span> Explanation versus Prediction</a></li>
+  <li><a href="#differences-dags-and-path-diagrams" id="toc-differences-dags-and-path-diagrams" class="nav-link" data-scroll-target="#differences-dags-and-path-diagrams"><span class="header-section-number">2.4</span> Differences: DAGs and Path Diagrams</a></li>
   </ul></li>
   </ul>
 <div class="quarto-alternate-formats"><h2>Other Formats</h2><ul><li><a href="DGM_with_treatment.pdf"><i class="bi bi-file-pdf"></i>PDF</a></li></ul></div></nav>
 </div>
-<div id="quarto-margin-sidebar" class="sidebar margin-sidebar zindex-bottom">
+<div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
 </div>
 <main class="content" id="quarto-document-content">
 
@@ -121,7 +127,7 @@ window.Quarto = {
     <div>
     <div class="quarto-title-meta-heading">Modified</div>
     <div class="quarto-title-meta-contents">
-      <p class="date-modified">November 11, 2024</p>
+      <p class="date-modified">November 13, 2024</p>
     </div>
   </div>
     
@@ -132,289 +138,14 @@ window.Quarto = {
 </header>
 
 
-<section id="explanation-versus-prediction" class="level2" data-number="1">
-<h2 data-number="1" class="anchored" data-anchor-id="explanation-versus-prediction"><span class="header-section-number">1</span> Explanation versus Prediction</h2>
-<p>In het voorbeeld van Diggle et al.&nbsp;(2002) wat we vorige week hebben besproken, werd vermeld dat een cross-sectionele relatie tussen <span class="math inline">\(X_{it}\)</span> en <span class="math inline">\(Y_{it}\)</span> van interesse kan zijn met longitudinale data als voorspellen het doel is:</p>
-<blockquote class="blockquote">
-<p>“In many applications the cross-sectional association between Xit and Yit is of substantive interest. For example, in assessing the predictive potential of biomarkers for the detection of cancer, the accuracy of a marker is typically characterized by the cross-sectional sensitivity and specificity. Although alternative predictive models may be developed using longitudinal marker series, these models would not apply to the common clinical setting where only a single measurement is available.” (Diggle et al., 2002, p.&nbsp;256)</p>
-</blockquote>
-<p>Daarentegen legt Qian et al.&nbsp;(2020) juist de nadruk op de voordelen van mixed linear models om tegelijkertijd ook individuele verschillen te kunnen voorspellen, waarbij de focus meer ligt op causaliteit:</p>
-<blockquote class="blockquote">
-<p>“A particularly appealing feature of random effects models is the ability to predict person-specific random effects, which enables quantitative characterization of between person heterogeneity due to unobserved factors (Schwartz and Stone, 2007, Bolger and Laurenceau, 2013). Understanding such heterogeneity can bring forth new scientific hypotheses for further studies. In addition, the random effects provide a model for the within-person dependence in the time-varying outcome, which improves efficiency in parameter estimation.” (Qian et al., 2020, p.&nbsp;376)</p>
-</blockquote>
-</section>
-<section id="main-simulation-of-qian-et-al.-2020-with-treatment" class="level2" data-number="2">
-<h2 data-number="2" class="anchored" data-anchor-id="main-simulation-of-qian-et-al.-2020-with-treatment"><span class="header-section-number">2</span> Main Simulation of Qian et al.&nbsp;(2020): With Treatment</h2>
-<section id="original-section-4.-simulation" class="level3" data-number="2.1">
-<h3 data-number="2.1" class="anchored" data-anchor-id="original-section-4.-simulation"><span class="header-section-number">2.1</span> Original Section: “4. Simulation”</h3>
-<p>In the simulation, we considered three generative models (GMs), all of which have an endogenous covariate. In the first two GMs, the endogenous covariate <span class="math inline">\(X_{it}\)</span> equals the previous outcome <span class="math inline">\(Y_{it}\)</span> plus some random noise, so the conditional independence assumption (10) is valid. In GM 3, the endogenous covariate depends directly on <span class="math inline">\(b_i\)</span>, violating assumption (10). The details of the generative models are described below.</p>
-<p>In GM1, we considered a simple case with only a random intercept and a random slope for <span class="math inline">\(A_{it}\)</span>, so that <span class="math inline">\(Z_{i(t_0)} = Z_{i(t_2)} = 1\)</span> in model (7). The outcome is generated as:</p>
-<p><span class="math display">\[
-Y_{it+1} = \alpha_0 + \alpha_1 X_{it} + b_{i0} + A_{it} (\beta_0 + \beta_1 X_{it} + b_{i2}) + \epsilon_{it+1}.
-\]</span></p>
-<p>The random effects <span class="math inline">\(b_{i0} \sim N(0, \sigma_{b0}^2)\)</span> and <span class="math inline">\(b_{i2} \sim N(0, \sigma_{b2}^2)\)</span> are independent of each other. The covariate is generated as <span class="math inline">\(X_{i1} \sim N(0, 1)\)</span>, and for <span class="math inline">\(t \geq 2\)</span>,</p>
-<p><span class="math display">\[
-X_{it} = Y_{it} + N(0, 1).
-\]</span></p>
-<p>The randomization probability <span class="math inline">\(p_t\)</span> is constant at <span class="math inline">\(1/2\)</span>. The exogenous noise is <span class="math inline">\(\epsilon_{it+1} \sim N(0, \sigma_\epsilon^2)\)</span>.</p>
-<p>In GM2, we considered the case where <span class="math inline">\(Z_{i(t_0)} = Z_{i(t_2)} = 1\)</span>, with time-varying randomization probability. The outcome is generated as:</p>
-<p><span class="math display">\[
-Y_{it+1} = \alpha_0 + \alpha_1 X_{it} + b_{i0} + b_{i1} X_{it} + A_{it} (\beta_0 + \beta_1 X_{it} + b_{i2} + b_{i3} X_{it}) + \epsilon_{it+1}.
-\]</span></p>
-<p>The random effects <span class="math inline">\(b_{ij} \sim N(0, \sigma_{b_j}^2)\)</span>, for <span class="math inline">\(0 \leq j \leq 3\)</span>, are independent of each other. The covariate is generated as <span class="math inline">\(X_{i1} \sim N(0, 1)\)</span>, and for <span class="math inline">\(t \geq 2\)</span>,</p>
-<p><span class="math display">\[
-X_{it} = Y_{it} + N(0, 1).
-\]</span></p>
-<p>The randomization probability depends on <span class="math inline">\(X_{it}\)</span>:</p>
-<p><span class="math display">\[
-p_t = 0.7 \cdot 1(X_{it} &gt; -1.27) + 0.3 \cdot 1(X_{it} \leq -1.27),
-\]</span></p>
-<p>where <span class="math inline">\(1(\cdot)\)</span> represents the indicator function, and the cutoff <span class="math inline">\(-1.27\)</span> was chosen so that <span class="math inline">\(p_t\)</span> equals 0.7 or 0.3 for about half of the time. The exogenous noise is <span class="math inline">\(\epsilon_{it+1} \sim N(0, \sigma_\epsilon^2)\)</span>.</p>
-<p>GM3 is the same as GM 1, except that the covariate <span class="math inline">\(X_{it}\)</span> depends directly on <span class="math inline">\(b_i\)</span>:</p>
-<p><span class="math display">\[
-X_{i1} \sim N(b_{i0}, 1), \quad X_{it} = Y_{it} + N(b_{i0}, 1) \text{ for } t \geq 2.
-\]</span></p>
-<p>We chose the following parameter values:</p>
-<p><span class="math display">\[
-\alpha_0 = -2, \quad \alpha_1 = -0.3, \quad \beta_0 = 1, \quad \beta_1 = 0.3,
-\]</span></p>
-<p><span class="math display">\[
-\sigma_{b0}^2 = 4, \quad \sigma_{b1}^2 = \frac{1}{4}, \quad \sigma_{b2}^2 = 1, \quad \sigma_{b3}^2 = \frac{1}{4}, \quad \sigma_\epsilon^2 = 1.
-\]</span></p>
-</section>
-</section>
-<section id="translation-of-notation" class="level2" data-number="3">
-<h2 data-number="3" class="anchored" data-anchor-id="translation-of-notation"><span class="header-section-number">3</span> Translation of Notation</h2>
-<p>In the table below, we will provide the translation of original notation in Qian et al.&nbsp;(2020) to the notation by Schoot et al.&nbsp;(2017). This notation in turn, is very similar to and likely based on the notation by Raudenbush and Bryk (2002). However, rather than representing the random effects with an <span class="math inline">\(r\)</span>, the notation by Schoot et al.&nbsp;(2017) uses <span class="math inline">\(u\)</span>.</p>
-<table class="caption-top table">
-<colgroup>
-<col style="width: 38%">
-<col style="width: 30%">
-<col style="width: 30%">
-</colgroup>
-<thead>
-<tr class="header">
-<th>Parameter/variable</th>
-<th>Qian et al.&nbsp;(2020)</th>
-<th>Schoot et al.&nbsp;(2017)</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td>Covariate</td>
-<td><span class="math inline">\(X_{it}\)</span></td>
-<td><span class="math inline">\(Z_{ti}\)</span></td>
-</tr>
-<tr class="even">
-<td>Randomized Treatment</td>
-<td><span class="math inline">\(A_{it}\)</span></td>
-<td><span class="math inline">\(X_{ti}\)</span></td>
-</tr>
-<tr class="odd">
-<td>Outcome</td>
-<td><span class="math inline">\(Y_{it+1}\)</span></td>
-<td><span class="math inline">\(Y_{(t+1)i}\)</span></td>
-</tr>
-<tr class="even">
-<td>Fixed intercept</td>
-<td><span class="math inline">\(\alpha_0\)</span></td>
-<td><span class="math inline">\(\beta_{00}\)</span></td>
-</tr>
-<tr class="odd">
-<td>Random intercept</td>
-<td><span class="math inline">\(b_{i0}\)</span></td>
-<td><span class="math inline">\(u_{0i}\)</span></td>
-</tr>
-<tr class="even">
-<td>Fixed slope for covariate</td>
-<td><span class="math inline">\(\alpha_1\)</span></td>
-<td><span class="math inline">\(\beta_{10}\)</span></td>
-</tr>
-<tr class="odd">
-<td>Random slope for covariate</td>
-<td><span class="math inline">\(b_{i1}\)</span></td>
-<td><span class="math inline">\(u_{1i}\)</span></td>
-</tr>
-<tr class="even">
-<td>Fixed slope of treatment</td>
-<td><span class="math inline">\(\beta_0\)</span></td>
-<td><span class="math inline">\(\beta_{20}\)</span></td>
-</tr>
-<tr class="odd">
-<td>Random slope for treatment</td>
-<td><span class="math inline">\(b_{i2}\)</span></td>
-<td><span class="math inline">\(u_{2i}\)</span></td>
-</tr>
-<tr class="even">
-<td>fixed interaction effect of covariate and treatment</td>
-<td><span class="math inline">\(\beta_1\)</span></td>
-<td><span class="math inline">\(\beta_{30}\)</span></td>
-</tr>
-<tr class="odd">
-<td>Random interaction effect of covariate and treatment</td>
-<td><span class="math inline">\(b_{i3}\)</span></td>
-<td><span class="math inline">\(u_{3i}\)</span></td>
-</tr>
-<tr class="even">
-<td>Error term (exogenous noise)</td>
-<td><span class="math inline">\(\epsilon_{it+1}\)</span></td>
-<td><span class="math inline">\(e_{(t+1)i}\)</span></td>
-</tr>
-<tr class="odd">
-<td>Randomization probability</td>
-<td><span class="math inline">\(p_t\)</span></td>
-<td><span class="math inline">\(p_t\)</span></td>
-</tr>
-</tbody>
-</table>
-<p>Here is the rewritten text using the translation table you provided:</p>
-<hr>
+<section id="main-simulation-of-qian-et-al.-2020-with-treatment-and-with-translated-notation" class="level1" data-number="1">
+<h1 data-number="1"><span class="header-section-number">1</span> Main Simulation of Qian et al.&nbsp;(2020): With Treatment and with Translated Notation</h1>
+<section id="simulations" class="level2" data-number="1.1">
+<h2 data-number="1.1" class="anchored" data-anchor-id="simulations"><span class="header-section-number">1.1</span> Simulations</h2>
 <p>In the simulation, we considered three generative models (GMs), all of which have an endogenous covariate. In the first two GMs, the endogenous covariate <span class="math inline">\(Z_{ti}\)</span> equals the previous outcome <span class="math inline">\(Y_{ti}\)</span> plus some random noise, so the conditional independence assumption (10) is valid. In GM 3, the endogenous covariate depends directly on <span class="math inline">\(u_{0i}\)</span>, violating assumption (10). The details of the generative models are described below.</p>
-<section id="generative-model-1" class="level4" data-number="3.0.1">
-<h4 data-number="3.0.1" class="anchored" data-anchor-id="generative-model-1"><span class="header-section-number">3.0.1</span> Generative Model 1</h4>
-<p>In GM1, we considered a simple case with only a random intercept and a random slope for <span class="math inline">\(X_{ti}\)</span>, so that <span class="math inline">\(g_0(H_{ti}) = g_1(H_{ti}) = 1\)</span>. The outcome is generated as:</p>
-<p><span class="math display">\[
-Y_{(t+1)i} = \beta_{00} + \beta_{10} Z_{ti} + u_{0i} + X_{ti} \left( \beta_{20} + \beta_{30} Z_{ti} + u_{2i} \right) + e_{(t+1)i}.
-\]</span></p>
-<p>The random effects <span class="math inline">\(u_{0i} \sim N(0, \sigma_{u0}^2)\)</span> and <span class="math inline">\(u_{2i} \sim N(0, \sigma_{u2}^2)\)</span> are independent of each other. The covariate is generated as <span class="math inline">\(Z_{i1} \sim N(0, 1)\)</span>, and for <span class="math inline">\(t \geq 2\)</span>,</p>
-<p><span class="math display">\[
-Z_{ti} = Y_{ti} + N(0, 1).
-\]</span></p>
-<p>The randomization probability <span class="math inline">\(p_t\)</span> is constant at <span class="math inline">\(1/2\)</span>. Thus, <span class="math inline">\(X_{ti} \sim \text{Bernoulli}(0.5) \quad \text{for} \quad i = 1, \ldots, N \quad \text{and} \quad t = 1, \ldots, T\)</span>. In other words, each individual has an independent 50% chance of receiving the treatment at each time point. The exogenous noise is <span class="math inline">\(e_{(t+1)i} \sim N(0, \sigma_e^2)\)</span>.</p>
-</section>
-<section id="generative-model-2" class="level4" data-number="3.0.2">
-<h4 data-number="3.0.2" class="anchored" data-anchor-id="generative-model-2"><span class="header-section-number">3.0.2</span> Generative Model 2</h4>
-<p>In GM2, we considered the case where <span class="math inline">\(g_0(H_{ti}) = g_1(H_{ti}) = (1, Z_{ti})\)</span> and the randomization probability is time-varying. The outcome is generated as:</p>
-<p><span class="math display">\[
-Y_{(t+1)i} = \beta_{00} + \beta_{10} Z_{ti} + u_{0i} + u_{1i} Z_{ti} + X_{ti} \left( \beta_{20} + \beta_{30} Z_{ti} + u_{2i} + u_{3i} Z_{ti} \right) + e_{(t+1)i}.
-\]</span></p>
-<p>The random effects <span class="math inline">\(u_{ji} \sim N(0, \sigma_{u_j}^2)\)</span>, for <span class="math inline">\(0 \leq j \leq 3\)</span>, are independent of each other. The covariate is generated as <span class="math inline">\(Z_{i1} \sim N(0, 1)\)</span>, and for <span class="math inline">\(t \geq 2\)</span>,</p>
-<p><span class="math display">\[
-Z_{ti} = Y_{ti} + N(0, 1).
-\]</span></p>
-<p>The randomization probability depends on <span class="math inline">\(Z_{ti}\)</span>:</p>
-<p><span class="math display">\[
-p_t = P(X_{ti} = 1 \mid H_{it}) = 0.7 \cdot IF(Z_{ti} &gt; -1.27) + 0.3 \cdot IF(Z_{ti} \leq -1.27),
-\]</span></p>
-<p>where <span class="math inline">\(IF(\cdot)\)</span> represents the indicator function, and the cutoff <span class="math inline">\(-1.27\)</span> was chosen so that <span class="math inline">\(P(X_{ti} = 1 \mid H_{it})\)</span> equals 0.7 or 0.3 for about half of the time. The exogenous noise is <span class="math inline">\(e_{(t+1)i} \sim N(0, \sigma_e^2)\)</span>.</p>
-</section>
-<section id="generative-model-3" class="level4" data-number="3.0.3">
-<h4 data-number="3.0.3" class="anchored" data-anchor-id="generative-model-3"><span class="header-section-number">3.0.3</span> Generative Model 3</h4>
-<p>GM3 is the same as GM1, except that the covariate <span class="math inline">\(Z_{ti}\)</span> depends directly on <span class="math inline">\(u_{0i}\)</span>:</p>
-<p><span class="math display">\[
-Z_{i1} \sim N(u_{0i}, 1), \quad Z_{ti} = Y_{ti} + N(u_{0i}, 1) \text{ for } t \geq 2.
-\]</span></p>
-<p>We chose the following parameter values:</p>
-<p><span class="math display">\[
-\beta_{00} = -2, \quad \beta_{10} = -0.3, \quad \beta_{20} = 1, \quad \beta_{30} = 0.3,
-\]</span></p>
-<p><span class="math display">\[
-\sigma_{u0}^2 = 4, \quad \sigma_{u1}^2 = \frac{1}{4}, \quad \sigma_{u2}^2 = 1, \quad \sigma_{u3}^2 = \frac{1}{4}, \quad \sigma_e^2 = 1.
-\]</span></p>
-</section>
-</section>
-<section id="generative-model-1-1" class="level2" data-number="4">
-<h2 data-number="4" class="anchored" data-anchor-id="generative-model-1-1"><span class="header-section-number">4</span> Generative Model 1</h2>
-<section id="translation-of-notation-1" class="level3" data-number="4.1">
-<h3 data-number="4.1" class="anchored" data-anchor-id="translation-of-notation-1"><span class="header-section-number">4.1</span> Translation of Notation</h3>
-<p>In the table below, we will provide the translation of original notation in Qian et al.&nbsp;(2020) to the notation by Schoot et al.&nbsp;(2017). This notation in turn, is very similar to and likely based on the notation by Raudenbush and Bryk (2002). However, rather than representing the random effects with an <span class="math inline">\(r\)</span>, the notation by Schoot et al.&nbsp;(2017) uses <span class="math inline">\(u\)</span>.</p>
-<table class="caption-top table">
-<colgroup>
-<col style="width: 38%">
-<col style="width: 30%">
-<col style="width: 30%">
-</colgroup>
-<thead>
-<tr class="header">
-<th>Parameter/variable</th>
-<th>Qian et al.&nbsp;(2020)</th>
-<th>Schoot et al.&nbsp;(2017)</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td>Covariate</td>
-<td><span class="math inline">\(X_{it}\)</span></td>
-<td><span class="math inline">\(Z_{ti}\)</span></td>
-</tr>
-<tr class="even">
-<td>Randomized Treatment</td>
-<td><span class="math inline">\(A_{it}\)</span></td>
-<td><span class="math inline">\(X_{ti}\)</span></td>
-</tr>
-<tr class="odd">
-<td>Outcome</td>
-<td><span class="math inline">\(Y_{it+1}\)</span></td>
-<td><span class="math inline">\(Y_{(t+1)i}\)</span></td>
-</tr>
-<tr class="even">
-<td>Fixed intercept</td>
-<td><span class="math inline">\(\alpha_0\)</span></td>
-<td><span class="math inline">\(\beta_{00}\)</span></td>
-</tr>
-<tr class="odd">
-<td>Fixed slope for covariate</td>
-<td><span class="math inline">\(\alpha_1\)</span></td>
-<td><span class="math inline">\(\beta_{10}\)</span></td>
-</tr>
-<tr class="even">
-<td>Random intercept</td>
-<td><span class="math inline">\(b_{i0}\)</span></td>
-<td><span class="math inline">\(u_{0i}\)</span></td>
-</tr>
-<tr class="odd">
-<td>Fixed effect of treatment</td>
-<td><span class="math inline">\(\beta_0\)</span></td>
-<td><span class="math inline">\(\beta_{20}\)</span></td>
-</tr>
-<tr class="even">
-<td>Interaction effect of covariate and treatment</td>
-<td><span class="math inline">\(\beta_1\)</span></td>
-<td><span class="math inline">\(\beta_{30}\)</span></td>
-</tr>
-<tr class="odd">
-<td>Random slope for treatment</td>
-<td><span class="math inline">\(b_{i2}\)</span></td>
-<td><span class="math inline">\(u_{2i}\)</span></td>
-</tr>
-<tr class="even">
-<td>Error term</td>
-<td><span class="math inline">\(\epsilon_{it+1}\)</span></td>
-<td><span class="math inline">\(e_{(t+1)i}\)</span></td>
-</tr>
-<tr class="odd">
-<td>residual variance</td>
-<td><span class="math inline">\(\sigma^2_{\epsilon}\)</span></td>
-<td><span class="math inline">\(\sigma^2_{e}\)</span></td>
-</tr>
-<tr class="even">
-<td>Random intercept variance</td>
-<td><span class="math inline">\(\sigma^2_{b0}\)</span></td>
-<td><span class="math inline">\(\sigma^2_{u0}\)</span></td>
-</tr>
-<tr class="odd">
-<td>random slope variance for covariate</td>
-<td><span class="math inline">\(\sigma^2_{b1}\)</span></td>
-<td><span class="math inline">\(\sigma^2_{u1}\)</span></td>
-</tr>
-<tr class="even">
-<td>Random slope variance for treatment</td>
-<td><span class="math inline">\(\sigma^2_{b2}\)</span></td>
-<td><span class="math inline">\(\sigma^2_{u2}\)</span></td>
-</tr>
-<tr class="odd">
-<td>Random slope variance for interaction</td>
-<td><span class="math inline">\(\sigma^2_{b3}\)</span></td>
-<td><span class="math inline">\(\sigma^2_{u3}\)</span></td>
-</tr>
-</tbody>
-</table>
-<p>Let’s first state the original model:</p>
-<p><span class="math display">\[
-Y_{it+1} = \alpha_0 + \alpha_1 X_{it} + b_{i0} + A_{it} (\beta_0 + \beta_1 X_{it} + b_{i2}) + \epsilon_{it+1} \\
-=  \alpha_0 + \alpha_1 X_{it} + b_{i0} + A_{it} \beta_0 + A_{it} \beta_1 X_{it} + A_{it} b_{i2} + \epsilon_{it+1}
-\]</span></p>
-<p>Using this new notation, we may thus rewrite GM1 as a repeated-observations or within-person model (level 1)</p>
+<section id="generative-model-1" class="level3" data-number="1.1.1">
+<h3 data-number="1.1.1" class="anchored" data-anchor-id="generative-model-1"><span class="header-section-number">1.1.1</span> Generative Model 1</h3>
+<p>In GM1, we considered a simple case with only a random intercept and a random slope for <span class="math inline">\(X_{ti}\)</span>, so that <span class="math inline">\(g_0(H_{ti}) = g_1(H_{ti}) = 1\)</span>. <strong>WHAT DOES THIS IMPLY?</strong> The outcome is generated according to the following repeated-observations or within-person model (level 1)</p>
 <p><span class="math display">\[
 Y_{(t+1)i} = \pi_{0i} + \pi_{1i} Z_{ti} + \pi_{2i} X_{ti} + \pi_{3i} X_{ti} Z_{ti} + e_{(t+1)i}
 \]</span></p>
@@ -434,22 +165,59 @@ Y_{(t+1)i} = \pi_{0i} + \pi_{1i} Z_{ti} + \pi_{2i} X_{ti} + \pi_{3i} X_{ti} Z_{t
 <p>By substitution, we get the single equation model:</p>
 <p><span class="math display">\[
 Y_{(t+1)i} = \pi_{0i} + \pi_{1i} Z_{ti} + \pi_{2i} X_{ti} + \pi_{3i} X_{ti} Z_{ti} + e_{(t+1)i} \\ = (\beta_{00} + u_{0i}) + \beta_{10} Z_{ti} + X_{ti} (\beta_{20} + u_{2i}) + \beta_{30} X_{ti} Z_{ti} + e_{(t+1)i} \\ = \beta_{00} + \beta_{10} Z_{ti} + u_{0i} + X_{ti} (\beta_{20} + \beta_{30} Z_{ti} + u_{2i}) + e_{(t+1)i}
-\]</span> More specifically, the process was generated as follows:</p>
-<ul>
-<li>the random effects <span class="math inline">\(u_{0i} \sim \mathcal{N}(0, 4)\)</span> and <span class="math inline">\(u_{2i} \sim \mathcal{N}(0, 1)\)</span> are independent of each other</li>
-<li>the covariate <span class="math inline">\(Z_{1i} \sim \mathcal{N}(0, 1)\)</span>, and for <span class="math inline">\(t \geq 2\)</span>, <span class="math inline">\(Z_{ti} = Y_{ti} + \mathcal{N}(0, 1)\)</span></li>
-<li>the randomization probability <span class="math inline">\(p_i = P(X_{ti} = 1 \mid H_{it}) = 0.5\)</span> and <span class="math inline">\(X_{ti} \sim \text{Bernoulli}(0.5) \quad \text{for} \quad i = 1, \ldots, N \quad \text{and} \quad t = 1, \ldots, T\)</span>. In other words, each individual has an independent 50% chance of receiving the treatment at each time point.</li>
-<li>the exogenous noise <span class="math inline">\(e_{(t+1)i} \sim \mathcal{N}(0, 1)\)</span></li>
-<li>the parameter values are <span class="math inline">\(\beta_{00} = -2\)</span>, <span class="math inline">\(\beta_{10} = -0.3\)</span>, <span class="math inline">\(\gamma_{20} = 1\)</span>, <span class="math inline">\(\beta_{30} = 0.3\)</span></li>
-</ul>
+\]</span></p>
+<p>The random effects <span class="math inline">\(u_{0i} \sim N(0, \sigma_{u0}^2)\)</span> and <span class="math inline">\(u_{2i} \sim N(0, \sigma_{u2}^2)\)</span> are independent of each other. The covariate is generated as <span class="math inline">\(Z_{i1} \sim N(0, 1)\)</span>, and for <span class="math inline">\(t \geq 2\)</span>,</p>
+<p><span class="math display">\[
+Z_{ti} = Y_{ti} + N(0, 1).
+\]</span></p>
+<p>The randomization probability <span class="math inline">\(p_t\)</span> is constant at <span class="math inline">\(1/2\)</span>. Thus, <span class="math inline">\(X_{ti} \sim \text{Bernoulli}(0.5) \quad \text{for} \quad i = 1, \ldots, N \quad \text{and} \quad t = 1, \ldots, T\)</span>. In other words, each individual has an independent 50% chance of receiving the treatment at each time point. The exogenous noise is <span class="math inline">\(e_{(t+1)i} \sim N(0, \sigma_e^2)\)</span>.</p>
 </section>
-<section id="visualzing-the-model" class="level3" data-number="4.2">
-<h3 data-number="4.2" class="anchored" data-anchor-id="visualzing-the-model"><span class="header-section-number">4.2</span> Visualzing the Model</h3>
-<p>As mentioned by Ellen in the last meeting (17-10):</p>
-<blockquote class="blockquote">
-<p>“Conventional DAGs do not only represent main effects but rather the combination of main effects and interactions. Once you have drawn your DAG, you already assume that any variables pointing to the same outcome can modify the effect of the others pointing to the same outcome.” (<a href="https://stats.stackexchange.com/questions/157775/representing-interaction-effects-in-directed-acyclic-graphs">stackexchange</a>)</p>
-</blockquote>
-<p>So the DAG for the first couple observations, the DAG looks like</p>
+<section id="generative-model-2" class="level3" data-number="1.1.2">
+<h3 data-number="1.1.2" class="anchored" data-anchor-id="generative-model-2"><span class="header-section-number">1.1.2</span> Generative Model 2</h3>
+<p>In GM2, we considered the case where <span class="math inline">\(g_0(H_{ti}) = g_1(H_{ti}) = (1, Z_{ti})\)</span>, <strong>which implies that the random effects <span class="math inline">\(u_{0i}\)</span> and <span class="math inline">\(u_{1i}\)</span> are modeled as depending only on a baseline level and the current covariate <span class="math inline">\(Z_{ti}\)</span>. CHECK IF THIS IS TRUE</strong>. In addition, the randomization probability is time-varying. The outcome is generated according to the same repeated-observations model presented in GM1. However, the person-level model is different:</p>
+<p><span class="math display">\[
+\pi_{0i} = \beta_{00} + u_{0i} \quad \text{with} \quad u_{0i} \sim \mathcal{N}(0, \sigma^2_{u_0})
+\]</span></p>
+<p><span class="math display">\[
+\pi_{1i} = \beta_{10} + u_{1i} \quad \text{with} \quad u_{1i} \sim \mathcal{N}(0, \sigma^2_{u_1})
+\]</span></p>
+<p><span class="math display">\[
+\pi_{2i} = \beta_{20} + u_{2i} \quad \text{with} \quad u_{2i} \sim \mathcal{N}(0, \sigma^2_{u_2})
+\]</span></p>
+<p><span class="math display">\[
+\pi_{3i} = \beta_{30} + u_{3i} \quad \text{with} \quad u_{3i} \sim \mathcal{N}(0, \sigma^2_{u_3})
+\]</span></p>
+<p>By substitution, we get the single equation model:</p>
+<p><span class="math display">\[
+Y_{(t+1)i} = \beta_{00} + \beta_{10} Z_{ti} + u_{0i} + u_{1i} Z_{ti} + X_{ti} \left( \beta_{20} + \beta_{30} Z_{ti} + u_{2i} + u_{3i} Z_{ti} \right) + e_{(t+1)i}.
+\]</span></p>
+<p>The random effects <span class="math inline">\(u_{ji} \sim N(0, \sigma_{u_j}^2)\)</span>, for <span class="math inline">\(0 \leq j \leq 3\)</span>, are independent of each other. The covariate is generated as <span class="math inline">\(Z_{i1} \sim N(0, 1)\)</span>, and for <span class="math inline">\(t \geq 2\)</span>,</p>
+<p><span class="math display">\[
+Z_{ti} = Y_{ti} + N(0, 1).
+\]</span></p>
+<p>The randomization probability depends on <span class="math inline">\(Z_{ti}\)</span>:</p>
+<p><span class="math display">\[
+p_t = P(X_{ti} = 1 \mid H_{it}) = 0.7 \cdot IF(Z_{ti} &gt; -1.27) + 0.3 \cdot IF(Z_{ti} \leq -1.27),
+\]</span></p>
+<p>where <span class="math inline">\(IF(\cdot)\)</span> represents the indicator function, and the cutoff <span class="math inline">\(-1.27\)</span> was chosen so that <span class="math inline">\(p_t = P(X_{ti} = 1 \mid H_{it})\)</span> equals 0.7 or 0.3 for about half of the time. In other words, if the value for the covariate for any given person and timepoint is above the cutoff, the probability of receiving the treatment <span class="math inline">\(p_t\)</span> is 0.7; otherwise, it is 0.3. Accordingly, <span class="math inline">\(X_{ti} \sim \text{Bernoulli}(p_t) \quad \text{for} \quad i = 1, \ldots, N \quad \text{and} \quad t = 1, \ldots, T\)</span>. The exogenous noise is <span class="math inline">\(e_{(t+1)i} \sim N(0, \sigma_e^2)\)</span>.</p>
+</section>
+<section id="generative-model-3" class="level3" data-number="1.1.3">
+<h3 data-number="1.1.3" class="anchored" data-anchor-id="generative-model-3"><span class="header-section-number">1.1.3</span> Generative Model 3</h3>
+<p>GM3 is the same as GM1, except that the covariate <span class="math inline">\(Z_{ti}\)</span> depends directly on <span class="math inline">\(u_{0i}\)</span>:</p>
+<p><span class="math display">\[
+Z_{i1} \sim N(u_{0i}, 1), \quad Z_{ti} = Y_{ti} + N(u_{0i}, 1) \text{ for } t \geq 2.
+\]</span></p>
+<p>We chose the following parameter values:</p>
+<p><span class="math display">\[
+\beta_{00} = -2, \quad \beta_{10} = -0.3, \quad \beta_{20} = 1, \quad \beta_{30} = 0.3,
+\]</span></p>
+<p><span class="math display">\[
+\sigma_{u0}^2 = 4, \quad \sigma_{u1}^2 = \frac{1}{4}, \quad \sigma_{u2}^2 = 1, \quad \sigma_{u3}^2 = \frac{1}{4}, \quad \sigma_e^2 = 1.
+\]</span></p>
+</section>
+<section id="graphical-representations-of-data-generating-models" class="level3" data-number="1.1.4">
+<h3 data-number="1.1.4" class="anchored" data-anchor-id="graphical-representations-of-data-generating-models"><span class="header-section-number">1.1.4</span> Graphical representations of Data Generating Models</h3>
+<p>So the DAG for the first couple observations of GM1 looks like</p>
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
 <figcaption>DAG for Generative Model 1</figcaption>
@@ -460,7 +228,7 @@ Y_{(t+1)i} = \pi_{0i} + \pi_{1i} Z_{ti} + \pi_{2i} X_{ti} + \pi_{3i} X_{ti} Z_{t
 <p>Or we can display it as a path diagram, where parameter values are displayed and moderation is shown by the dashed arrow.</p>
 <div class="cell">
 <div class="cell-output-display">
-<div id="fig-GM1_path" class="quarto-float quarto-figure quarto-figure-center anchored">
+<div id="fig-GM1_path" class="quarto-figure quarto-figure-center quarto-float anchored">
 <figure class="quarto-float quarto-float-fig figure">
 <figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-fig" id="fig-GM1_path-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 Figure&nbsp;1: Path diagram for Generative Model 1
@@ -479,8 +247,8 @@ Figure&nbsp;1: Path diagram for Generative Model 1
 <li>Similar to the example without treatment in section 2.2, the covariate <span class="math inline">\(Z_{it}\)</span> is determined by the previous value of the outcome <span class="math inline">\(Y_{it}\)</span>—which makes it an endogenous time-varying covariate.</li>
 </ul>
 </section>
-<section id="data-generating-and-estimation" class="level3" data-number="4.3">
-<h3 data-number="4.3" class="anchored" data-anchor-id="data-generating-and-estimation"><span class="header-section-number">4.3</span> Data Generating and Estimation</h3>
+<section id="data-generating-and-estimation" class="level3" data-number="1.1.5">
+<h3 data-number="1.1.5" class="anchored" data-anchor-id="data-generating-and-estimation"><span class="header-section-number">1.1.5</span> Data Generating and Estimation</h3>
 <p>The data generating process for this model is given by</p>
 <p><span class="math display">\[
 Y_{(t+1)i} = (\beta_{00} + u_{0i}) + \beta_{10} Z_{ti} + X_{ti} (\beta_{20} + u_{2i}) + \beta_{30} X_{ti} Z_{ti} + e_{(t+1)i}
@@ -597,73 +365,175 @@ Y_{(t+1)i} = (\beta_{00} + u_{0i}) + \beta_{10} Z_{ti} + X_{ti} (\beta_{20} + u_
 <!-- # df_results <- readRDS("Simulation Scenarios/data/Qian_GM1_results.rds") -->
 <!-- # knitr::kable(df_results, digits = 3, caption = "Generating Model 1 - Treatment Effect Estimates") -->
 <!-- ``` -->
-<!-- ## Generative Model 2 -->
-<!-- ### Translation of Notation -->
-<!-- Now we need to translate more parameters: -->
-<!-- | Parameter                                            | Original          | New           | -->
-<!-- |------------------------------------|-------------------|-------------------| -->
-<!-- | Fixed intercept                                      | $\alpha_0$        | $\gamma_{00}$ | -->
-<!-- | Fixed slope for $X_{it}$                             | $\alpha_1$        | $\gamma_{10}$ | -->
-<!-- | Random intercept                                     | $b_{i0}$          | $u_{0i}$      | -->
-<!-- | Random slope for $X_{it}$                            | $b_{i1}$          | $u_{1i}$      | -->
-<!-- | Fixed effect of $A_{it}$                             | $\beta_0$         | $\gamma_{20}$ | -->
-<!-- | Interaction effect of $A_{it}$ and $X_{it}$          | $\beta_1$         | $\gamma_{30}$ | -->
-<!-- | Random slope for $A_{it}$                            | $b_{i2}$          | $u_{2i}$      | -->
-<!-- | Random interaction effect for $A_{it} \times X_{it}$ | $b_{i3}$          | $u_{3i}$      | -->
-<!-- | Error term                                           | $\epsilon_{it+1}$ | $e_{it+1}$    | -->
-<!-- | Covariate                                            | $X_{it}$          | $Z_{it}$      | -->
-<!-- | Treatment                                            | $A_{it}$          | $X_{it}$      | -->
-<!-- Let's first restate the original model: -->
-<!-- $$ -->
-<!-- Y_{it+1} = \alpha_0 + \alpha_1 X_{it} + b_{i0} + b_{i1} X_{it} + A_{it} (\beta_0 + \beta_1 X_{it} + b_{i2} + b_{i3} X_{it}) + \epsilon_{it+1}. -->
-<!-- $$ -->
-<!-- Using the psychological notation, we rewrite GM2 as a within-person model: -->
-<!-- $$ -->
-<!-- Y_{it+1} = \beta_{0i} + \beta_{1i} Z_{it} + \beta_{2i} X_{it} + \beta_{3i} X_{it} Z_{it} + e_{it+1}, -->
-<!-- $$ -->
-<!-- with: -->
-<!-- $$ -->
-<!-- \beta_{0i} = \gamma_{00} + u_{0i} \quad \text{where} \quad u_{0i} \sim \mathcal{N}(0, \sigma^2_{u0}), -->
-<!-- $$ -->
-<!-- $$ -->
-<!-- \beta_{1i} = \gamma_{10} + u_{1i} \quad \text{where} \quad u_{1i} \sim \mathcal{N}(0, \sigma^2_{u1}), -->
-<!-- $$ -->
-<!-- $$ -->
-<!-- \beta_{2i} = \gamma_{20} + u_{2i} \quad \text{where} \quad u_{2i} \sim \mathcal{N}(0, \sigma^2_{u2}), -->
-<!-- $$ -->
-<!-- $$ -->
-<!-- \beta_{3i} = \gamma_{30} + u_{3i} \quad \text{where} \quad u_{3i} \sim \mathcal{N}(0, \sigma^2_{u3}). -->
-<!-- $$ -->
-<!-- Combining these, the full model becomes: -->
-<!-- $$ -->
-<!-- Y_{it+1} = (\gamma_{00} + u_{0i}) + (\gamma_{10} + u_{1i}) Z_{it} + (\gamma_{20} + u_{2i}) X_{it} + (\gamma_{30} + u_{3i}) X_{it} Z_{it} + e_{it+1}. -->
-<!-- $$ -->
-<!-- More specifically, the process was generated as follows: -->
-<!-- -    -->
-<!-- ### Visualizing the Model -->
-<!-- ```{r} -->
-<!-- # #| label: GM2_visual -->
-<!-- # #| cache: true -->
-<!-- # #| fig-subcap: -->
-<!-- # #| - "DAG" -->
-<!-- # #| - "Path Diagram" -->
-<!-- # #| layout-nrow: 2 -->
-<!-- # #| echo: false -->
-<!-- #  -->
-<!-- # # GM2_DAG <- dagitty('dag{ -->
-<!-- ``` -->
-<!-- The model is fitted as -->
-<!-- ```{r} -->
-<!-- #| label: GM2_fit -->
-<!-- #| echo: true -->
-<!-- #| eval: false -->
-<!-- gm2_mlm <- lmer(Y ~ Z * X + (Z * X | id), data = data) -->
-<!-- ``` -->
-<!-- ## Generative Model 3 -->
-<!-- ### Translation of Notation -->
-<!-- ... -->
-<!-- ### Visualizing the Model -->
-<!-- ... -->
+</section>
+</section>
+</section>
+<section id="appendix" class="level1" data-number="2">
+<h1 data-number="2"><span class="header-section-number">2</span> Appendix</h1>
+<section id="original-section-from-qian-et-al.-2020-4.-simulation" class="level2" data-number="2.1">
+<h2 data-number="2.1" class="anchored" data-anchor-id="original-section-from-qian-et-al.-2020-4.-simulation"><span class="header-section-number">2.1</span> Original Section from Qian et al.&nbsp;(2020): “4. Simulation”</h2>
+<p>In the simulation, we considered three generative models (GMs), all of which have an endogenous covariate. In the first two GMs, the endogenous covariate <span class="math inline">\(X_{it}\)</span> equals the previous outcome <span class="math inline">\(Y_{it}\)</span> plus some random noise, so the conditional independence assumption (10) is valid. In GM 3, the endogenous covariate depends directly on <span class="math inline">\(b_i\)</span>, violating assumption (10). The details of the generative models are described below.</p>
+<p>In GM1, we considered a simple case with only a random intercept and a random slope for <span class="math inline">\(A_{it}\)</span>, so that <span class="math inline">\(Z_{i(t_0)} = Z_{i(t_2)} = 1\)</span> in model (7). The outcome is generated as:</p>
+<p><span class="math display">\[
+Y_{it+1} = \alpha_0 + \alpha_1 X_{it} + b_{i0} + A_{it} (\beta_0 + \beta_1 X_{it} + b_{i2}) + \epsilon_{it+1}.
+\]</span></p>
+<p>The random effects <span class="math inline">\(b_{i0} \sim N(0, \sigma_{b0}^2)\)</span> and <span class="math inline">\(b_{i2} \sim N(0, \sigma_{b2}^2)\)</span> are independent of each other. The covariate is generated as <span class="math inline">\(X_{i1} \sim N(0, 1)\)</span>, and for <span class="math inline">\(t \geq 2\)</span>,</p>
+<p><span class="math display">\[
+X_{it} = Y_{it} + N(0, 1).
+\]</span></p>
+<p>The randomization probability <span class="math inline">\(p_t\)</span> is constant at <span class="math inline">\(1/2\)</span>. The exogenous noise is <span class="math inline">\(\epsilon_{it+1} \sim N(0, \sigma_\epsilon^2)\)</span>.</p>
+<p>In GM2, we considered the case where <span class="math inline">\(Z_{i(t_0)} = Z_{i(t_2)} = 1\)</span>, with time-varying randomization probability. The outcome is generated as:</p>
+<p><span class="math display">\[
+Y_{it+1} = \alpha_0 + \alpha_1 X_{it} + b_{i0} + b_{i1} X_{it} + A_{it} (\beta_0 + \beta_1 X_{it} + b_{i2} + b_{i3} X_{it}) + \epsilon_{it+1}.
+\]</span></p>
+<p>The random effects <span class="math inline">\(b_{ij} \sim N(0, \sigma_{b_j}^2)\)</span>, for <span class="math inline">\(0 \leq j \leq 3\)</span>, are independent of each other. The covariate is generated as <span class="math inline">\(X_{i1} \sim N(0, 1)\)</span>, and for <span class="math inline">\(t \geq 2\)</span>,</p>
+<p><span class="math display">\[
+X_{it} = Y_{it} + N(0, 1).
+\]</span></p>
+<p>The randomization probability depends on <span class="math inline">\(X_{it}\)</span>:</p>
+<p><span class="math display">\[
+p_t = 0.7 \cdot 1(X_{it} &gt; -1.27) + 0.3 \cdot 1(X_{it} \leq -1.27),
+\]</span></p>
+<p>where <span class="math inline">\(1(\cdot)\)</span> represents the indicator function, and the cutoff <span class="math inline">\(-1.27\)</span> was chosen so that <span class="math inline">\(p_t\)</span> equals 0.7 or 0.3 for about half of the time. The exogenous noise is <span class="math inline">\(\epsilon_{it+1} \sim N(0, \sigma_\epsilon^2)\)</span>.</p>
+<p>GM3 is the same as GM 1, except that the covariate <span class="math inline">\(X_{it}\)</span> depends directly on <span class="math inline">\(b_i\)</span>:</p>
+<p><span class="math display">\[
+X_{i1} \sim N(b_{i0}, 1), \quad X_{it} = Y_{it} + N(b_{i0}, 1) \text{ for } t \geq 2.
+\]</span></p>
+<p>We chose the following parameter values:</p>
+<p><span class="math display">\[
+\alpha_0 = -2, \quad \alpha_1 = -0.3, \quad \beta_0 = 1, \quad \beta_1 = 0.3,
+\]</span></p>
+<p><span class="math display">\[
+\sigma_{b0}^2 = 4, \quad \sigma_{b1}^2 = \frac{1}{4}, \quad \sigma_{b2}^2 = 1, \quad \sigma_{b3}^2 = \frac{1}{4}, \quad \sigma_\epsilon^2 = 1.
+\]</span></p>
+</section>
+<section id="translation-of-notation" class="level2" data-number="2.2">
+<h2 data-number="2.2" class="anchored" data-anchor-id="translation-of-notation"><span class="header-section-number">2.2</span> Translation of Notation</h2>
+<p>In the table below, we will provide the translation of original notation in Qian et al.&nbsp;(2020) to the notation by Schoot et al.&nbsp;(2017). This notation in turn, is very similar to and likely based on the notation by Raudenbush and Bryk (2002). However, rather than representing the random effects with an <span class="math inline">\(r\)</span>, the notation by Schoot et al.&nbsp;(2017) uses <span class="math inline">\(u\)</span>.</p>
+<table class="table">
+<colgroup>
+<col style="width: 38%">
+<col style="width: 30%">
+<col style="width: 30%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Parameter/variable</th>
+<th>Qian et al.&nbsp;(2020)</th>
+<th>Schoot et al.&nbsp;(2017)</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Covariate</td>
+<td><span class="math inline">\(X_{it}\)</span></td>
+<td><span class="math inline">\(Z_{ti}\)</span></td>
+</tr>
+<tr class="even">
+<td>Randomized Treatment</td>
+<td><span class="math inline">\(A_{it}\)</span></td>
+<td><span class="math inline">\(X_{ti}\)</span></td>
+</tr>
+<tr class="odd">
+<td>Outcome</td>
+<td><span class="math inline">\(Y_{it+1}\)</span></td>
+<td><span class="math inline">\(Y_{(t+1)i}\)</span></td>
+</tr>
+<tr class="even">
+<td>Fixed intercept</td>
+<td><span class="math inline">\(\alpha_0\)</span></td>
+<td><span class="math inline">\(\beta_{00}\)</span></td>
+</tr>
+<tr class="odd">
+<td>Random intercept</td>
+<td><span class="math inline">\(b_{i0}\)</span></td>
+<td><span class="math inline">\(u_{0i}\)</span></td>
+</tr>
+<tr class="even">
+<td>Fixed slope for covariate</td>
+<td><span class="math inline">\(\alpha_1\)</span></td>
+<td><span class="math inline">\(\beta_{10}\)</span></td>
+</tr>
+<tr class="odd">
+<td>Random slope for covariate</td>
+<td><span class="math inline">\(b_{i1}\)</span></td>
+<td><span class="math inline">\(u_{1i}\)</span></td>
+</tr>
+<tr class="even">
+<td>Fixed slope of treatment</td>
+<td><span class="math inline">\(\beta_0\)</span></td>
+<td><span class="math inline">\(\beta_{20}\)</span></td>
+</tr>
+<tr class="odd">
+<td>Random slope for treatment</td>
+<td><span class="math inline">\(b_{i2}\)</span></td>
+<td><span class="math inline">\(u_{2i}\)</span></td>
+</tr>
+<tr class="even">
+<td>fixed interaction effect of covariate and treatment</td>
+<td><span class="math inline">\(\beta_1\)</span></td>
+<td><span class="math inline">\(\beta_{30}\)</span></td>
+</tr>
+<tr class="odd">
+<td>Random interaction effect of covariate and treatment</td>
+<td><span class="math inline">\(b_{i3}\)</span></td>
+<td><span class="math inline">\(u_{3i}\)</span></td>
+</tr>
+<tr class="even">
+<td>Error term (exogenous noise)</td>
+<td><span class="math inline">\(\epsilon_{it+1}\)</span></td>
+<td><span class="math inline">\(e_{(t+1)i}\)</span></td>
+</tr>
+<tr class="odd">
+<td>Randomization probability</td>
+<td><span class="math inline">\(p_t\)</span></td>
+<td><span class="math inline">\(p_t\)</span></td>
+</tr>
+<tr class="even">
+<td>Residual variance</td>
+<td><span class="math inline">\(\sigma^2_{\epsilon}\)</span></td>
+<td><span class="math inline">\(\sigma^2_{e}\)</span></td>
+</tr>
+<tr class="odd">
+<td>Random intercept variance</td>
+<td><span class="math inline">\(\sigma^2_{b0}\)</span></td>
+<td><span class="math inline">\(\sigma^2_{u0}\)</span></td>
+</tr>
+<tr class="even">
+<td>random slope variance for covariate</td>
+<td><span class="math inline">\(\sigma^2_{b1}\)</span></td>
+<td><span class="math inline">\(\sigma^2_{u1}\)</span></td>
+</tr>
+<tr class="odd">
+<td>Random slope variance for treatment</td>
+<td><span class="math inline">\(\sigma^2_{b2}\)</span></td>
+<td><span class="math inline">\(\sigma^2_{u2}\)</span></td>
+</tr>
+<tr class="even">
+<td>Random slope variance for interaction</td>
+<td><span class="math inline">\(\sigma^2_{b3}\)</span></td>
+<td><span class="math inline">\(\sigma^2_{u3}\)</span></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="explanation-versus-prediction" class="level2" data-number="2.3">
+<h2 data-number="2.3" class="anchored" data-anchor-id="explanation-versus-prediction"><span class="header-section-number">2.3</span> Explanation versus Prediction</h2>
+<p>In het voorbeeld van Diggle et al.&nbsp;(2002) wat we vorige week hebben besproken, werd vermeld dat een cross-sectionele relatie tussen <span class="math inline">\(X_{it}\)</span> en <span class="math inline">\(Y_{it}\)</span> van interesse kan zijn met longitudinale data als voorspellen het doel is:</p>
+<blockquote class="blockquote">
+<p>“In many applications the cross-sectional association between Xit and Yit is of substantive interest. For example, in assessing the predictive potential of biomarkers for the detection of cancer, the accuracy of a marker is typically characterized by the cross-sectional sensitivity and specificity. Although alternative predictive models may be developed using longitudinal marker series, these models would not apply to the common clinical setting where only a single measurement is available.” (Diggle et al., 2002, p.&nbsp;256)</p>
+</blockquote>
+<p>Daarentegen legt Qian et al.&nbsp;(2020) juist de nadruk op de voordelen van mixed linear models om tegelijkertijd ook individuele verschillen te kunnen voorspellen, waarbij de focus meer ligt op causaliteit:</p>
+<blockquote class="blockquote">
+<p>“A particularly appealing feature of random effects models is the ability to predict person-specific random effects, which enables quantitative characterization of between person heterogeneity due to unobserved factors (Schwartz and Stone, 2007, Bolger and Laurenceau, 2013). Understanding such heterogeneity can bring forth new scientific hypotheses for further studies. In addition, the random effects provide a model for the within-person dependence in the time-varying outcome, which improves efficiency in parameter estimation.” (Qian et al., 2020, p.&nbsp;376)</p>
+</blockquote>
+</section>
+<section id="differences-dags-and-path-diagrams" class="level2" data-number="2.4">
+<h2 data-number="2.4" class="anchored" data-anchor-id="differences-dags-and-path-diagrams"><span class="header-section-number">2.4</span> Differences: DAGs and Path Diagrams</h2>
+<p>As mentioned by Ellen in the last meeting (17-10):</p>
+<blockquote class="blockquote">
+<p>“Conventional DAGs do not only represent main effects but rather the combination of main effects and interactions. Once you have drawn your DAG, you already assume that any variables pointing to the same outcome can modify the effect of the others pointing to the same outcome.” (<a href="https://stats.stackexchange.com/questions/157775/representing-interaction-effects-in-directed-acyclic-graphs">stackexchange</a>)</p>
+</blockquote>
 </section>
 </section>
 
@@ -704,7 +574,18 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     }
     return false;
   }
-  const onCopySuccess = function(e) {
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    text: function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+  });
+  clipboard.on('success', function(e) {
     // button target
     const button = e.trigger;
     // don't keep focus
@@ -736,29 +617,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     }, 1000);
     // clear code selection
     e.clearSelection();
-  }
-  const getTextToCopy = function(trigger) {
-      const codeEl = trigger.previousElementSibling.cloneNode(true);
-      for (const childEl of codeEl.children) {
-        if (isCodeAnnotation(childEl)) {
-          childEl.remove();
-        }
-      }
-      return codeEl.innerText;
-  }
-  const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
-    text: getTextToCopy
   });
-  clipboard.on('success', onCopySuccess);
-  if (window.document.getElementById('quarto-embedded-source-code-modal')) {
-    // For code content inside modals, clipBoardJS needs to be initialized with a container option
-    // TODO: Check when it could be a function (https://github.com/zenorocha/clipboard.js/issues/860)
-    const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
-      text: getTextToCopy,
-      container: window.document.getElementById('quarto-embedded-source-code-modal')
-    });
-    clipboardModal.on('success', onCopySuccess);
-  }
     var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
     var mailtoRegex = new RegExp(/^mailto:/);
       var filterRegex = new RegExp('/' + window.location.host + '/');
@@ -766,7 +625,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
         return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
     }
     // Inspect non-navigation links and adorn them if external
- 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool)');
     for (var i=0; i<links.length; i++) {
       const link = links[i];
       if (!isInternal(link.href)) {
