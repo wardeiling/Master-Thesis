@@ -159,57 +159,58 @@ So the DAG for the first couple observations of GM1 looks like
 #| fig-cap: "DAG for Generative Model 1"
 #| echo: false
 #| eval: false
+#| cache: true
 
 GM1_DAG <- dagitty('dag {
 bb="0,0,1,1"
-X_1 [exposure,pos="0.173,0.282"]
-X_2 [exposure,pos="0.426,0.283"]
-Y_2 [outcome,pos="0.422,0.431"]
-Y_3 [outcome,pos="0.723,0.432"]
-Z_1 [adjusted,pos="0.171,0.602"]
-Z_2 [adjusted,pos="0.424,0.602"]
-Z_3 [adjusted,pos="0.721,0.602"]
-U [pos="0.577,0.775"]
+U [latent,pos="0.500,0.200"]
+X_1 [exposure,pos="0.200,0.600"]
+X_2 [exposure,pos="0.400,0.600"]
+Y_2 [outcome,pos="0.400,0.450"]
+Y_3 [outcome,pos="0.600,0.450"]
+Z_1 [adjusted,pos="0.200,0.300"]
+Z_2 [adjusted,pos="0.400,0.300"]
+Z_3 [adjusted,pos="0.600,0.300"]
+U -> Y_2
+U -> Y_3
 X_1 -> Y_2
 X_2 -> Y_3
 Y_2 -> Z_2
 Y_3 -> Z_3
 Z_1 -> Y_2
 Z_2 -> Y_3
-U -> Y_2
-U -> Y_3
 }')
 
 GM2_DAG <- dagitty('dag {
 bb="0,0,1,1"
-X_1 [exposure,pos="0.173,0.282"]
-X_2 [exposure,pos="0.426,0.283"]
-Y_2 [outcome,pos="0.422,0.431"]
-Y_3 [outcome,pos="0.723,0.432"]
-Z_1 [adjusted,pos="0.171,0.602"]
-Z_2 [adjusted,pos="0.424,0.602"]
-Z_3 [adjusted,pos="0.721,0.602"]
-U [pos="0.577,0.775"]
+U [latent,pos="0.500,0.200"]
+X_1 [exposure,pos="0.200,0.600"]
+X_2 [exposure,pos="0.400,0.600"]
+Y_2 [outcome,pos="0.400,0.450"]
+Y_3 [outcome,pos="0.600,0.450"]
+Z_1 [adjusted,pos="0.200,0.300"]
+Z_2 [adjusted,pos="0.400,0.300"]
+Z_3 [adjusted,pos="0.600,0.300"]
+U -> Y_2
+U -> Y_3
 X_1 -> Y_2
 X_2 -> Y_3
 Y_2 -> Z_2
 Y_3 -> Z_3
 Z_1 -> Y_2
 Z_2 -> Y_3
-U -> Y_2
-U -> Y_3
 }')
 
 GM3_DAG <- dagitty('dag {
 bb="0,0,1,1"
-U [pos="0.577,0.775"]
-X_1 [exposure,pos="0.173,0.282"]
-X_2 [exposure,pos="0.426,0.283"]
-Y_2 [outcome,pos="0.422,0.431"]
-Y_3 [outcome,pos="0.723,0.432"]
-Z_1 [adjusted,pos="0.171,0.602"]
-Z_2 [adjusted,pos="0.424,0.602"]
-Z_3 [adjusted,pos="0.721,0.602"]
+U [latent,pos="0.500,0.200"]
+X_1 [exposure,pos="0.200,0.600"]
+X_2 [exposure,pos="0.400,0.600"]
+Y_2 [outcome,pos="0.400,0.450"]
+Y_3 [outcome,pos="0.600,0.450"]
+Z_1 [adjusted,pos="0.200,0.300"]
+Z_2 [adjusted,pos="0.400,0.300"]
+Z_3 [adjusted,pos="0.600,0.300"]
 U -> Y_2
 U -> Y_3
 U -> Z_1
@@ -229,7 +230,17 @@ ggdag::ggdag_status(GM2_DAG) + ggdag::theme_dag()
 ggdag::ggdag_status(GM3_DAG) + ggdag::theme_dag()
 ```
 
-![DAG for Generative Model 1](figure/GM1_DAG.png)
+::: {#fig-DAGs layout-ncol=3}
+
+![Generative Model 1](figure/GM1_DAG_cropped.png){#fig-GM1_DAG}
+
+![Generative Model 2](figure/GM1_DAG_cropped.png){#fig-GM2_DAG}
+
+![Generative Model 3](figure/GM3_DAG_cropped.png){#fig-GM3_DAG}
+
+Directed Acylcic Graphs (DAGs) for the three Generative Models
+
+:::
 
 The red arrows here show the biased paths after controlling for the covariate $Z_{it}$.
 
@@ -297,11 +308,19 @@ We can make a couple observations from this path diagram:
 
 ### Data Generating and Estimation
 
+The analytical model for the different data generating models align with the data generating model. However, for GEE, the analytical model does not include random effects.
+
 The data generating process for this model is given by
 
 $$
 Y_{(t+1)i} = (\beta_{00} + u_{0i}) + \beta_{10} Z_{ti} + X_{ti} (\beta_{20} + u_{2i}) + \beta_{30} X_{ti} Z_{ti} + e_{(t+1)i}
 $$
+
+
+```{r}
+#| label: GM_datageneration
+#| echo: true
+```
 
 <!-- ```{r} -->
 <!-- #| label: GM1_datageneration -->

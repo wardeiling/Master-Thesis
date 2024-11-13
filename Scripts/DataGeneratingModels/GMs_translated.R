@@ -7,7 +7,7 @@
 #               + u_{2i} + u_{3i} Z_{ti}) + e_{(t+1)i}        
 
 # generative model in Schoot et al. (2017) notation:
-dgm_with_treatment_translated <- function(sample_size, total_T, dgm_type) {
+dgm_with_treatment <- function(sample_size, total_T, dgm_type) {
   
   # dgm_type is in c(1,2,3,4)
   stopifnot(dgm_type %in% c(1,2,3,4))
@@ -98,7 +98,7 @@ set.seed(321)
 sample_size <- 100000
 total_T <- 10
 
-dta <- dgm_with_treatment_translated(sample_size, total_T, dgm_type = 1)
+dta <- dgm_with_treatment(sample_size, total_T, dgm_type = 1)
 summary(dta)
 # dta$X <- dta$X - dta$prob_X # action centering doesn't matter when prob_A is constant
 
