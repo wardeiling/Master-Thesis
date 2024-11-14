@@ -48,7 +48,7 @@ library(pdftools)
 
 # Main Simulation of Qian et al. (2020): With Treatment and with Translated Notation
 
-## Simulations
+## Simulation Conditions
 
 In the simulation, we considered three generative models (GMs), all of which have an endogenous covariate. In the first two GMs, the endogenous covariate $Z_{ti}$ equals the previous outcome $Y_{ti}$ plus some random noise, so the conditional independence assumption (10) is valid. In GM 3, the endogenous covariate depends directly on $u_{0i}$, violating assumption (10). The details of the generative models are described below. We follow the notation of Schoot et al. (2017), which is largely based on that of Raudenbusch and Bryk (2002).
 
@@ -81,7 +81,7 @@ $$
 By substitution, we get the single equation model:
 
 $$
-Y_{(t+1)i} = \pi_{0i} + \pi_{1i} Z_{ti} + \pi_{2i} X_{ti} + \pi_{3i} X_{ti} Z_{ti} + e_{(t+1)i} \\ = (\beta_{00} + u_{0i}) + \beta_{10} Z_{ti} + X_{ti} (\beta_{20} + u_{2i}) + \beta_{30} X_{ti} Z_{ti} + e_{(t+1)i} \\ = \beta_{00} + \beta_{10} Z_{ti} + u_{0i} + X_{ti} (\beta_{20} + \beta_{30} Z_{ti} + u_{2i}) + e_{(t+1)i}
+Y_{(t+1)i} = \pi_{0i} + \pi_{1i} Z_{ti} + \pi_{2i} X_{ti} + \pi_{3i} X_{ti} Z_{ti} + e_{(t+1)i} \\ = (\beta_{00} + u_{0i}) + \beta_{10} Z_{ti} +  (\beta_{20} + u_{2i}) X_{ti} + \beta_{30} X_{ti} Z_{ti} + e_{(t+1)i} \\ = \beta_{00} + \beta_{10} Z_{ti} + u_{0i} + X_{ti} (\beta_{20} + \beta_{30} Z_{ti} + u_{2i}) + e_{(t+1)i}
 $$
 
 The random effects $u_{0i} \sim N(0, \sigma_{u0}^2)$ and $u_{2i} \sim N(0, \sigma_{u2}^2)$ are independent of each other. The covariate is generated as $Z_{i1} \sim N(0, 1)$, and for $t \geq 2$,
@@ -115,7 +115,7 @@ $$
 By substitution, we get the single equation model:
 
 $$
-Y_{(t+1)i} = \beta_{00} + \beta_{10} Z_{ti} + u_{0i} + u_{1i} Z_{ti} + X_{ti} \left( \beta_{20} + \beta_{30} Z_{ti} + u_{2i} + u_{3i} Z_{ti} \right) + e_{(t+1)i}.
+Y_{(t+1)i} = \pi_{0i} + \pi_{1i} Z_{ti} + \pi_{2i} X_{ti} + \pi_{3i} X_{ti} Z_{ti} + e_{(t+1)i} \\ = (\beta_{00} + u_{0i}) + (\beta_{10} + u_{1i}) Z_{ti} + (\beta_{20} + u_{2i}) X_{ti} + (\beta_{30} + u_{3i}) X_{ti} Z_{ti} + e_{(t+1)i} \\ = \beta_{00} + \beta_{10} Z_{ti} + u_{0i} + u_{1i} Z_{ti} + X_{ti} \left( \beta_{20} + \beta_{30} Z_{ti} + u_{2i} + u_{3i} Z_{ti} \right) + e_{(t+1)i}
 $$
 
 The random effects $u_{ji} \sim N(0, \sigma_{u_j}^2)$, for $0 \leq j \leq 3$, are independent of each other. The covariate is generated as $Z_{i1} \sim N(0, 1)$, and for $t \geq 2$,
@@ -150,7 +150,7 @@ $$
 \sigma_{u0}^2 = 4, \quad \sigma_{u1}^2 = \frac{1}{4}, \quad \sigma_{u2}^2 = 1, \quad \sigma_{u3}^2 = \frac{1}{4}, \quad \sigma_e^2 = 1.
 $$
 
-### Graphical representations of Data Generating Models
+## Graphical representations of Data Generating Models
 
 So the DAG for the first couple observations of GM1 looks like
 
@@ -306,21 +306,25 @@ We can make a couple observations from this path diagram:
 -   Contrary to the DAG, this path diagram shows the moderation effect (1) of $Z_{it}$ on the relationship between $X_{it}$ and $Y_{ti+1}$ and (2) of $u_{2i}$ on the relationship between $Z_{ti}$ and $Y_{(t+1)}$.
 -   Similar to the example without treatment in section 2.2, the covariate $Z_{it}$ is determined by the previous value of the outcome $Y_{it}$---which makes it an endogenous time-varying covariate.
 
-### Data Generating and Estimation
+## Data Generating and Estimation
 
-The analytical model for the different data generating models align with the data generating model. However, for GEE, the analytical model does not include random effects.
-
-The data generating process for this model is given by
+For the multilevel linear model, the analytical models are equivalent to each of the respective data generating models. As a reminder, the analytical multilevel model for GM1 and GM3 is given by
 
 $$
-Y_{(t+1)i} = (\beta_{00} + u_{0i}) + \beta_{10} Z_{ti} + X_{ti} (\beta_{20} + u_{2i}) + \beta_{30} X_{ti} Z_{ti} + e_{(t+1)i}
+Y_{(t+1)i} = (\beta_{00} + u_{0i}) + \beta_{10} Z_{ti} +  (\beta_{20} + u_{2i}) X_{ti} + \beta_{30} X_{ti} Z_{ti} + e_{(t+1)i}
 $$
 
+and the analytical multilevel model for GM2 is given by
 
-```{r}
-#| label: GM_datageneration
-#| echo: true
-```
+$$
+Y_{(t+1)i} = (\beta_{00} + u_{0i}) + (\beta_{10} + u_{1i}) Z_{ti} + (\beta_{20} + u_{2i}) X_{ti} + (\beta_{30} + u_{3i}) X_{ti} Z_{ti} + e_{(t+1)i}
+$$
+
+However, for GEE, the analytical model is different, as they do not explictly model random effects. As the main effects modeled in GM1 through GM3 are the same (the only differences pertains to modelling of random effects), the *analytical GEE models* are identical for these different conditions. The analytical GEE model is given by
+
+$$
+Y_{(t+1)i} = \beta_{0} + \beta_{1} Z_{ti} + \beta_{2} X_{ti}  + \beta_{3} X_{ti} Z_{ti} + e_{(t+1)i}
+$$
 
 <!-- ```{r} -->
 <!-- #| label: GM1_datageneration -->
