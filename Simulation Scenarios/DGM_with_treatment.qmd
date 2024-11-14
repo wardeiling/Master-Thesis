@@ -54,7 +54,7 @@ In the simulation, we considered three generative models (GMs), all of which hav
 
 ### Generative Model 1
 
-In GM1, we considered a simple case with only a random intercept and a random slope for $X_{ti}$, so that $g_0(H_{ti}) = g_1(H_{ti}) = 1$. **WHAT DOES THIS IMPLY?** The outcome is generated according to the following repeated-observations or within-person model (level 1)
+In GM1, we considered a simple case with only a random intercept and a random slope for $X_{ti}$. The outcome is generated according to the following repeated-observations or within-person model (level 1)
 
 $$
 Y_{(t+1)i} = \pi_{0i} + \pi_{1i} Z_{ti} + \pi_{2i} X_{ti} + \pi_{3i} X_{ti} Z_{ti} + e_{(t+1)i}
@@ -90,11 +90,11 @@ $$
 Z_{ti} = Y_{ti} + N(0, 1).
 $$
 
-The randomization probability $p_t$ is constant at $1/2$. Thus, $X_{ti} \sim \text{Bernoulli}(0.5) \quad \text{for} \quad i = 1, \ldots, N \quad \text{and} \quad t = 1, \ldots, T$. In other words, each individual has an independent 50% chance of receiving the treatment at each time point. The exogenous noise is $e_{(t+1)i} \sim N(0, \sigma_e^2)$.
+The randomization probability $p_t = P(X_{ti} = 1 \mid H_{it})$ is constant at $1/2$. Thus, $X_{ti} \sim \text{Bernoulli}(0.5) \quad \text{for} \quad i = 1, \ldots, N \quad \text{and} \quad t = 1, \ldots, T$. In other words, each individual has an independent $50\%$ chance of receiving the treatment at each time point. The exogenous noise is $e_{(t+1)i} \sim N(0, \sigma_e^2)$.
 
 ### Generative Model 2
 
-In GM2, we considered the case where $g_0(H_{ti}) = g_1(H_{ti}) = (1, Z_{ti})$, **which implies that the random effects $u_{0i}$ and $u_{1i}$ are modeled as depending only on a baseline level and the current covariate $Z_{ti}$. CHECK IF THIS IS TRUE**. In addition, the randomization probability is time-varying. The outcome is generated according to the same repeated-observations model presented in GM1. However, the person-level model is different:
+In GM2, we considered the case with a random intercept and a random slope for $X_{ti}$, a random slope for $Z_{ti}$, and a random slope for the interaction between $X_{ti}$ and $Z_{ti}$; and with a time-varying randomization probability. In addition, the randomization probability is time-varying. The outcome is generated according to the same repeated-observations model presented in GM1. However, the person-level model is different:
 
 $$ 
 \pi_{0i} = \beta_{00} + u_{0i} \quad \text{with} \quad u_{0i} \sim \mathcal{N}(0, \sigma^2_{u_0})
@@ -127,10 +127,14 @@ $$
 The randomization probability depends on $Z_{ti}$:
 
 $$
-p_t = P(X_{ti} = 1 \mid H_{it}) = 0.7 \cdot IF(Z_{ti} > -1.27) + 0.3 \cdot IF(Z_{ti} \leq -1.27),
+p_t = P(X_{ti} = 1 \mid H_{it}) = 
+\begin{cases} 
+0.7 & \text{if } Z_{ti} > -1.27, \\
+0.3 & \text{if } Z_{ti} \leq -1.27 
+\end{cases}
 $$
 
-where $IF(\cdot)$ represents the indicator function, and the cutoff $-1.27$ was chosen so that $p_t = P(X_{ti} = 1 \mid H_{it})$ equals 0.7 or 0.3 for about half of the time. In other words, if the value for the covariate for any given person and timepoint is above the cutoff, the probability of receiving the treatment $p_t$ is 0.7; otherwise, it is 0.3. Accordingly, $X_{ti} \sim \text{Bernoulli}(p_t)$ for $i = 1, \ldots, N$ and $t = 1, \ldots, T$. The exogenous noise is $e_{(t+1)i} \sim N(0, \sigma_e^2)$.
+where the cutoff $-1.27$ was chosen so that $p_t$ equals 0.7 or 0.3 for about half of the time. In other words, if the value for the covariate for any given person and timepoint is above the cutoff, the probability of receiving the treatment $p_t$ is 0.7; otherwise, it is 0.3. Accordingly, $X_{ti} \sim \text{Bernoulli}(p_t)$ for $i = 1, \ldots, N$ and $t = 1, \ldots, T$. The exogenous noise is $e_{(t+1)i} \sim N(0, \sigma_e^2)$.
 
 ### Generative Model 3
 
