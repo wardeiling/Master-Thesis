@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.4.553">
+<meta name="generator" content="quarto-1.5.57">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
@@ -36,7 +36,7 @@ ul.task-list li input[type="checkbox"] {
 <link href="DGM_with_treatment_files/libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
 <link href="DGM_with_treatment_files/libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
 
-  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
   <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
 
 <script type="text/javascript">
@@ -83,6 +83,7 @@ window.Quarto = {
   <li><a href="#generative-model-1" id="toc-generative-model-1" class="nav-link" data-scroll-target="#generative-model-1"><span class="header-section-number">1.1.1</span> Generative Model 1</a></li>
   <li><a href="#generative-model-2" id="toc-generative-model-2" class="nav-link" data-scroll-target="#generative-model-2"><span class="header-section-number">1.1.2</span> Generative Model 2</a></li>
   <li><a href="#generative-model-3" id="toc-generative-model-3" class="nav-link" data-scroll-target="#generative-model-3"><span class="header-section-number">1.1.3</span> Generative Model 3</a></li>
+  <li><a href="#parameter-values" id="toc-parameter-values" class="nav-link" data-scroll-target="#parameter-values"><span class="header-section-number">1.1.4</span> Parameter Values</a></li>
   </ul></li>
   <li><a href="#graphical-representations-of-data-generating-models" id="toc-graphical-representations-of-data-generating-models" class="nav-link" data-scroll-target="#graphical-representations-of-data-generating-models"><span class="header-section-number">1.2</span> Graphical representations of Data Generating Models</a></li>
   <li><a href="#data-generating-and-estimation" id="toc-data-generating-and-estimation" class="nav-link" data-scroll-target="#data-generating-and-estimation"><span class="header-section-number">1.3</span> Data Generating and Estimation</a></li>
@@ -97,7 +98,7 @@ window.Quarto = {
   </ul>
 <div class="quarto-alternate-formats"><h2>Other Formats</h2><ul><li><a href="DGM_with_treatment.pdf"><i class="bi bi-file-pdf"></i>PDF</a></li></ul></div></nav>
 </div>
-<div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+<div id="quarto-margin-sidebar" class="sidebar margin-sidebar zindex-bottom">
 </div>
 <main class="content" id="quarto-document-content">
 
@@ -138,11 +139,12 @@ window.Quarto = {
 </header>
 
 
+<div style="page-break-after: always;"></div>
 <section id="main-simulation-of-qian-et-al.-2020-with-treatment-and-with-translated-notation" class="level1" data-number="1">
 <h1 data-number="1"><span class="header-section-number">1</span> Main Simulation of Qian et al.&nbsp;(2020): With Treatment and with Translated Notation</h1>
 <section id="simulation-conditions" class="level2" data-number="1.1">
 <h2 data-number="1.1" class="anchored" data-anchor-id="simulation-conditions"><span class="header-section-number">1.1</span> Simulation Conditions</h2>
-<p>In the simulation, we considered three generative models (GMs), all of which have an endogenous covariate. In the first two GMs, the endogenous covariate <span class="math inline">\(Z_{ti}\)</span> equals the previous outcome <span class="math inline">\(Y_{ti}\)</span> plus some random noise, so the conditional independence assumption (10) is valid. In GM 3, the endogenous covariate depends directly on <span class="math inline">\(u_{0i}\)</span>, violating assumption (10). The details of the generative models are described below. We follow the notation of Schoot et al.&nbsp;(2017), which is largely based on that of Raudenbusch and Bryk (2002).</p>
+<p>In the simulation, we considered three generative models (GMs), all of which have an endogenous covariate. In the first two GMs, the endogenous covariate <span class="math inline">\(Z_{ti}\)</span> equals the previous outcome <span class="math inline">\(Y_{ti}\)</span> plus some random noise, so the conditional independence assumption is valid. In GM 3, the endogenous covariate depends directly on <span class="math inline">\(u_{0i}\)</span>, violating assumption. The details of the generative models are described below. We follow the notation of Schoot et al.&nbsp;(2017), which is largely based on that of Raudenbusch and Bryk (2002).</p>
 <section id="generative-model-1" class="level3" data-number="1.1.1">
 <h3 data-number="1.1.1" class="anchored" data-anchor-id="generative-model-1"><span class="header-section-number">1.1.1</span> Generative Model 1</h3>
 <p>In GM1, we considered a simple case with only a random intercept and a random slope for <span class="math inline">\(X_{ti}\)</span>. The outcome is generated according to the following repeated-observations or within-person model (level 1)</p>
@@ -164,7 +166,11 @@ Y_{(t+1)i} = \pi_{0i} + \pi_{1i} Z_{ti} + \pi_{2i} X_{ti} + \pi_{3i} X_{ti} Z_{t
 \]</span></p>
 <p>By substitution, we get the single equation model:</p>
 <p><span class="math display">\[
-Y_{(t+1)i} = \pi_{0i} + \pi_{1i} Z_{ti} + \pi_{2i} X_{ti} + \pi_{3i} X_{ti} Z_{ti} + e_{(t+1)i} \\ = (\beta_{00} + u_{0i}) + \beta_{10} Z_{ti} +  (\beta_{20} + u_{2i}) X_{ti} + \beta_{30} X_{ti} Z_{ti} + e_{(t+1)i} \\ = \beta_{00} + \beta_{10} Z_{ti} + u_{0i} + X_{ti} (\beta_{20} + \beta_{30} Z_{ti} + u_{2i}) + e_{(t+1)i}
+\begin{aligned}
+Y_{(t+1)i} &amp;= \pi_{0i} + \pi_{1i} Z_{ti} + \pi_{2i} X_{ti} + \pi_{3i} X_{ti} Z_{ti} + e_{(t+1)i} \\
+&amp;= (\beta_{00} + u_{0i}) + \beta_{10} Z_{ti} + (\beta_{20} + u_{2i}) X_{ti} + \beta_{30} X_{ti} Z_{ti} + e_{(t+1)i} \\
+&amp;= \beta_{00} + \beta_{10} Z_{ti} + u_{0i} + X_{ti} (\beta_{20} + \beta_{30} Z_{ti} + u_{2i}) + e_{(t+1)i}
+\end{aligned}
 \]</span></p>
 <p>The random effects <span class="math inline">\(u_{0i} \sim N(0, \sigma_{u0}^2)\)</span> and <span class="math inline">\(u_{2i} \sim N(0, \sigma_{u2}^2)\)</span> are independent of each other. The covariate is generated as <span class="math inline">\(Z_{i1} \sim N(0, 1)\)</span>, and for <span class="math inline">\(t \geq 2\)</span>,</p>
 <p><span class="math display">\[
@@ -174,7 +180,7 @@ Z_{ti} = Y_{ti} + N(0, 1).
 </section>
 <section id="generative-model-2" class="level3" data-number="1.1.2">
 <h3 data-number="1.1.2" class="anchored" data-anchor-id="generative-model-2"><span class="header-section-number">1.1.2</span> Generative Model 2</h3>
-<p>In GM2, we considered the case with a random intercept and a random slope for <span class="math inline">\(X_{ti}\)</span>, a random slope for <span class="math inline">\(Z_{ti}\)</span>, and a random slope for the interaction between <span class="math inline">\(X_{ti}\)</span> and <span class="math inline">\(Z_{ti}\)</span>; and with a time-varying randomization probability. In addition, the randomization probability is time-varying. The outcome is generated according to the same repeated-observations model presented in GM1. However, the person-level model is different:</p>
+<p>In GM2, we considered the case with a random intercept and a random slope for (1) covariate <span class="math inline">\(Z_{ti}\)</span>, (2) treatment <span class="math inline">\(X_{ti}\)</span>, and (3) the interaction between <span class="math inline">\(X_{ti}\)</span> and <span class="math inline">\(Z_{ti}\)</span>; and with a time-varying randomization probability for treatment. The outcome is generated according to the same repeated-observations model presented in GM1. However, the person-level model is different:</p>
 <p><span class="math display">\[
 \pi_{0i} = \beta_{00} + u_{0i} \quad \text{with} \quad u_{0i} \sim \mathcal{N}(0, \sigma^2_{u_0})
 \]</span></p>
@@ -189,7 +195,9 @@ Z_{ti} = Y_{ti} + N(0, 1).
 \]</span></p>
 <p>By substitution, we get the single equation model:</p>
 <p><span class="math display">\[
-Y_{(t+1)i} = \pi_{0i} + \pi_{1i} Z_{ti} + \pi_{2i} X_{ti} + \pi_{3i} X_{ti} Z_{ti} + e_{(t+1)i} \\ = (\beta_{00} + u_{0i}) + (\beta_{10} + u_{1i}) Z_{ti} + (\beta_{20} + u_{2i}) X_{ti} + (\beta_{30} + u_{3i}) X_{ti} Z_{ti} + e_{(t+1)i} \\ = \beta_{00} + \beta_{10} Z_{ti} + u_{0i} + u_{1i} Z_{ti} + X_{ti} \left( \beta_{20} + \beta_{30} Z_{ti} + u_{2i} + u_{3i} Z_{ti} \right) + e_{(t+1)i}
+\begin{aligned}
+Y_{(t+1)i} &amp;= \pi_{0i} + \pi_{1i} Z_{ti} + \pi_{2i} X_{ti} + \pi_{3i} X_{ti} Z_{ti} + e_{(t+1)i} \\ &amp;= (\beta_{00} + u_{0i}) + (\beta_{10} + u_{1i}) Z_{ti} + (\beta_{20} + u_{2i}) X_{ti} + (\beta_{30} + u_{3i}) X_{ti} Z_{ti} + e_{(t+1)i} \\ &amp;= \beta_{00} + \beta_{10} Z_{ti} + u_{0i} + u_{1i} Z_{ti} + X_{ti} \left( \beta_{20} + \beta_{30} Z_{ti} + u_{2i} + u_{3i} Z_{ti} \right) + e_{(t+1)i}
+\end{aligned}
 \]</span></p>
 <p>The random effects <span class="math inline">\(u_{ji} \sim N(0, \sigma_{u_j}^2)\)</span>, for <span class="math inline">\(0 \leq j \leq 3\)</span>, are independent of each other. The covariate is generated as <span class="math inline">\(Z_{i1} \sim N(0, 1)\)</span>, and for <span class="math inline">\(t \geq 2\)</span>,</p>
 <p><span class="math display">\[
@@ -211,7 +219,10 @@ p_t = P(X_{ti} = 1 \mid H_{it}) =
 <p><span class="math display">\[
 Z_{i1} \sim N(u_{0i}, 1), \quad Z_{ti} = Y_{ti} + N(u_{0i}, 1) \text{ for } t \geq 2.
 \]</span></p>
-<p>We chose the following parameter values:</p>
+</section>
+<section id="parameter-values" class="level3" data-number="1.1.4">
+<h3 data-number="1.1.4" class="anchored" data-anchor-id="parameter-values"><span class="header-section-number">1.1.4</span> Parameter Values</h3>
+<p>The following parameter values were chosen:</p>
 <p><span class="math display">\[
 \beta_{00} = -2, \quad \beta_{10} = -0.3, \quad \beta_{20} = 1, \quad \beta_{30} = 0.3,
 \]</span></p>
@@ -222,7 +233,7 @@ Z_{i1} \sim N(u_{0i}, 1), \quad Z_{ti} = Y_{ti} + N(u_{0i}, 1) \text{ for } t \g
 </section>
 <section id="graphical-representations-of-data-generating-models" class="level2" data-number="1.2">
 <h2 data-number="1.2" class="anchored" data-anchor-id="graphical-representations-of-data-generating-models"><span class="header-section-number">1.2</span> Graphical representations of Data Generating Models</h2>
-<p>So the DAG for the first couple observations of GM1 looks like</p>
+<p>The DAGs for the first three observations of the three generative models are presented in <a href="#fig-GM1_DAG" class="quarto-xref">Figure&nbsp;1 (a)</a>, <a href="#fig-GM2_DAG" class="quarto-xref">Figure&nbsp;1 (b)</a>, and <a href="#fig-GM3_DAG" class="quarto-xref">Figure&nbsp;1 (c)</a>, respectively. The red arrows show the biased paths after controlling for the covariate <span class="math inline">\(Z_{it}\)</span>. We may notice that the DAGs for GM1 and GM2 are identical (there are only differences in random effects and randomization probabilities), while GM3 has a different structure due to the dependency of the covariate <span class="math inline">\(Z_{it}\)</span> on the random intercept <span class="math inline">\(u_{0i}\)</span>.</p>
 <div id="fig-DAGs" class="quarto-layout-panel">
 <figure class="quarto-float quarto-float-fig figure">
 <figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-fig" id="fig-DAGs-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
@@ -230,8 +241,8 @@ Figure&nbsp;1: Directed Acylcic Graphs (DAGs) for the three Generative Models
 </figcaption>
 <div aria-describedby="fig-DAGs-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <div class="quarto-layout-row">
-<div class="quarto-layout-cell-subref quarto-layout-cell" data-ref-parent="fig-DAGs" style="flex-basis: 33.3%;justify-content: flex-start;">
-<div id="fig-GM1_DAG" class="quarto-figure quarto-figure-center quarto-float anchored">
+<div class="quarto-layout-cell-subref quarto-layout-cell" data-ref-parent="fig-DAGs" style="flex-basis: 50.0%;justify-content: flex-start;">
+<div id="fig-GM1_DAG" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-subfloat-fig figure">
 <figcaption class="quarto-float-caption-top quarto-subfloat-caption quarto-subfloat-fig" id="fig-GM1_DAG-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 (a) Generative Model 1
@@ -242,8 +253,8 @@ Figure&nbsp;1: Directed Acylcic Graphs (DAGs) for the three Generative Models
 </figure>
 </div>
 </div>
-<div class="quarto-layout-cell-subref quarto-layout-cell" data-ref-parent="fig-DAGs" style="flex-basis: 33.3%;justify-content: flex-start;">
-<div id="fig-GM2_DAG" class="quarto-figure quarto-figure-center quarto-float anchored">
+<div class="quarto-layout-cell-subref quarto-layout-cell" data-ref-parent="fig-DAGs" style="flex-basis: 50.0%;justify-content: flex-start;">
+<div id="fig-GM2_DAG" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-subfloat-fig figure">
 <figcaption class="quarto-float-caption-top quarto-subfloat-caption quarto-subfloat-fig" id="fig-GM2_DAG-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 (b) Generative Model 2
@@ -254,8 +265,10 @@ Figure&nbsp;1: Directed Acylcic Graphs (DAGs) for the three Generative Models
 </figure>
 </div>
 </div>
-<div class="quarto-layout-cell-subref quarto-layout-cell" data-ref-parent="fig-DAGs" style="flex-basis: 33.3%;justify-content: flex-start;">
-<div id="fig-GM3_DAG" class="quarto-figure quarto-figure-center quarto-float anchored">
+</div>
+<div class="quarto-layout-row">
+<div class="quarto-layout-cell-subref quarto-layout-cell" data-ref-parent="fig-DAGs" style="flex-basis: 50.0%;justify-content: flex-start;">
+<div id="fig-GM3_DAG" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-subfloat-fig figure">
 <figcaption class="quarto-float-caption-top quarto-subfloat-caption quarto-subfloat-fig" id="fig-GM3_DAG-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 (c) Generative Model 3
@@ -270,11 +283,10 @@ Figure&nbsp;1: Directed Acylcic Graphs (DAGs) for the three Generative Models
 </div>
 </figure>
 </div>
-<p>The red arrows here show the biased paths after controlling for the covariate <span class="math inline">\(Z_{it}\)</span>.</p>
-<p>Or we can display it as a path diagram, where parameter values are displayed and moderation is shown by the dashed arrow.</p>
+<p>Alternatively, we can display the data generating models as a path diagram, where latent variables are represented by circles, observed variables by squares and relationships across variables by arrows.</p>
 <div class="cell">
 <div class="cell-output-display">
-<div id="fig-GM1_path" class="quarto-figure quarto-figure-center quarto-float anchored">
+<div id="fig-GM1_path" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
 <figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-fig" id="fig-GM1_path-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 Figure&nbsp;2: Path diagram for Generative Model 1
@@ -295,15 +307,15 @@ Figure&nbsp;2: Path diagram for Generative Model 1
 </section>
 <section id="data-generating-and-estimation" class="level2" data-number="1.3">
 <h2 data-number="1.3" class="anchored" data-anchor-id="data-generating-and-estimation"><span class="header-section-number">1.3</span> Data Generating and Estimation</h2>
-<p>For the multilevel linear model, the analytical models are equivalent to each of the respective data generating models. As a reminder, the analytical multilevel model for GM1 and GM3 is given by</p>
+<p>For the multilevel linear model, the analytical models are equivalent to each of the respective data generating models. As a reminder, the analytical <em>multilevel model</em> for GM1 and GM3 is given by</p>
 <p><span class="math display">\[
 Y_{(t+1)i} = (\beta_{00} + u_{0i}) + \beta_{10} Z_{ti} +  (\beta_{20} + u_{2i}) X_{ti} + \beta_{30} X_{ti} Z_{ti} + e_{(t+1)i}
 \]</span></p>
-<p>and the analytical multilevel model for GM2 is given by</p>
+<p>and the analytical <em>multilevel model</em> for GM2 is given by</p>
 <p><span class="math display">\[
 Y_{(t+1)i} = (\beta_{00} + u_{0i}) + (\beta_{10} + u_{1i}) Z_{ti} + (\beta_{20} + u_{2i}) X_{ti} + (\beta_{30} + u_{3i}) X_{ti} Z_{ti} + e_{(t+1)i}
 \]</span></p>
-<p>However, for GEE, the analytical model is different, as they do not explictly model random effects. As the main effects modeled in GM1 through GM3 are the same (the only differences pertains to modelling of random effects), the <em>analytical GEE models</em> are identical for these different conditions. The analytical GEE model is given by</p>
+<p>However, for GEE, the analytical model is different, as they do not explictly model random effects. As the main effects modeled in GM1 through GM3 are the same (the only differences pertains to modelling of random effects), the analytical <em>GEE models</em> are identical for these different conditions. The analytical <em>GEE model</em> is given by</p>
 <p><span class="math display">\[
 Y_{(t+1)i} = \beta_{0} + \beta_{1} Z_{ti} + \beta_{2} X_{ti}  + \beta_{3} X_{ti} Z_{ti} + e_{(t+1)i}
 \]</span></p>
@@ -463,7 +475,7 @@ X_{i1} \sim N(b_{i0}, 1), \quad X_{it} = Y_{it} + N(b_{i0}, 1) \text{ for } t \g
 <section id="translation-of-notation" class="level2" data-number="2.2">
 <h2 data-number="2.2" class="anchored" data-anchor-id="translation-of-notation"><span class="header-section-number">2.2</span> Translation of Notation</h2>
 <p>In the table below, we will provide the translation of original notation in Qian et al.&nbsp;(2020) to the notation by Schoot et al.&nbsp;(2017). This notation in turn, is very similar to and likely based on the notation by Raudenbush and Bryk (2002). However, rather than representing the random effects with an <span class="math inline">\(r\)</span>, the notation by Schoot et al.&nbsp;(2017) uses <span class="math inline">\(u\)</span>.</p>
-<table class="table">
+<table class="caption-top table">
 <colgroup>
 <col style="width: 38%">
 <col style="width: 30%">
@@ -627,18 +639,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     }
     return false;
   }
-  const clipboard = new window.ClipboardJS('.code-copy-button', {
-    text: function(trigger) {
-      const codeEl = trigger.previousElementSibling.cloneNode(true);
-      for (const childEl of codeEl.children) {
-        if (isCodeAnnotation(childEl)) {
-          childEl.remove();
-        }
-      }
-      return codeEl.innerText;
-    }
-  });
-  clipboard.on('success', function(e) {
+  const onCopySuccess = function(e) {
     // button target
     const button = e.trigger;
     // don't keep focus
@@ -670,7 +671,29 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     }, 1000);
     // clear code selection
     e.clearSelection();
+  }
+  const getTextToCopy = function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+    text: getTextToCopy
   });
+  clipboard.on('success', onCopySuccess);
+  if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+    // For code content inside modals, clipBoardJS needs to be initialized with a container option
+    // TODO: Check when it could be a function (https://github.com/zenorocha/clipboard.js/issues/860)
+    const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+      text: getTextToCopy,
+      container: window.document.getElementById('quarto-embedded-source-code-modal')
+    });
+    clipboardModal.on('success', onCopySuccess);
+  }
     var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
     var mailtoRegex = new RegExp(/^mailto:/);
       var filterRegex = new RegExp('/' + window.location.host + '/');
@@ -678,7 +701,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
         return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
     }
     // Inspect non-navigation links and adorn them if external
- 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool)');
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
     for (var i=0; i<links.length; i++) {
       const link = links[i];
       if (!isInternal(link.href)) {
