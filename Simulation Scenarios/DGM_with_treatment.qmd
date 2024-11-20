@@ -665,6 +665,121 @@ In the table below, we will provide the translation of original notation in Qian
 | Random slope variance for treatment           | $\sigma^2_{b2}$    | $\sigma^2_{u2}$              |
 | Random slope variance for interaction         | $\sigma^2_{b3}$    | $\sigma^2_{u3}$              |
 
+
+### Generative Model 1
+
+Let's first state generative model 1 according to its original notation by Qian et al. (2020)
+
+$$
+\begin{aligned}
+Y_{it+1} &= \alpha_0 + \alpha_1 X_{it} + b_{i0} + A_{it} (\beta_0 + \beta_1 X_{it} + b_{i2}) + \epsilon_{it+1} \\
+&= \alpha_0 + \alpha_1 X_{it} + b_{i0} + A_{it} \beta_0 + A_{it} X_{it} \beta_1 + A_{it} b_{i2} + \epsilon_{it+1}
+\end{aligned}
+$$
+
+Using this new notation, we may thus rewrite GM1 as a repeated-observations or within-person model (level 1)
+
+$$
+Y_{(t+1)i} = \pi_{0i} + \pi_{1i} Z_{ti} + \pi_{2i} X_{ti} + \pi_{3i} X_{ti} Z_{ti} + e_{(t+1)i}
+$$
+
+with the person-level or between-person model (level 2)
+
+$$ 
+\pi_{0i} = \beta_{00} + u_{0i} \quad \text{with} \quad u_{0i} \sim \mathcal{N}(0, \sigma^2_{u_0})
+$$
+
+$$ 
+\pi_{1i} = \beta_{10}
+$$
+
+$$
+\pi_{2i} = \beta_{20} + u_{2i} \quad \text{with} \quad u_{2i} \sim \mathcal{N}(0, \sigma^2_{u_2})
+$$
+
+$$
+\pi_{3i} = \beta_{30}
+$$
+
+By substitution, we get the single equation model:
+
+$$
+\begin{aligned}
+Y_{(t+1)i} &= \pi_{0i} + \pi_{1i} Z_{ti} + \pi_{2i} X_{ti} + \pi_{3i} X_{ti} Z_{ti} + e_{(t+1)i} \\
+&= (\beta_{00} + u_{0i}) + \beta_{10} Z_{ti} + (\beta_{20} + u_{2i}) X_{ti} + \beta_{30} X_{ti} Z_{ti} + e_{(t+1)i} \\
+&= \beta_{00} + \beta_{10} Z_{ti} + u_{0i} + X_{ti} (\beta_{20} + \beta_{30} Z_{ti} + u_{2i}) + e_{(t+1)i}
+\end{aligned}
+$$
+
+We can see that the order of elements in the final equation aligns exactly with the notation of Qian et al. (2020).
+
+$$
+Y_{it+1} = \alpha_0 + \alpha_1 X_{it} + b_{i0} + A_{it} (\beta_0 + \beta_1 X_{it} + b_{i2}) + \epsilon_{it+1}
+$$
+
+### Generative Model 2
+
+The second generative model is given by Qian et al. (2020) as:
+
+$$
+\begin{aligned}
+Y_{it+1} &= \alpha_0 + \alpha_1 X_{it} + b_{i0} + b_{i1} X_{it} + A_{it} (\beta_0 + \beta_1 X_{it} + b_{i2} + b_{i3} X_{it}) + \epsilon_{it+1} \\ &= \alpha_0 + \alpha_1 X_{it} + b_{i0} + b_{i1} X_{it} + A_{it} \beta_0 + A_{it} X_{it} \beta_1 + A_{it} b_{i2} + A_{it} X_{it} b_{i3} + \epsilon_{it+1}
+\end{aligned}
+$$
+
+We may now rewrite this into the repeated-observations or within-person model (level 1)
+
+$$
+Y_{(t+1)i} = \pi_{0i} + \pi_{1i} Z_{ti} + \pi_{2i} X_{ti} + \pi_{3i} X_{ti} Z_{ti} + e_{(t+1)i}
+$$
+
+with the person-level or between-person models (level 2)
+
+$$ 
+\pi_{0i} = \beta_{00} + u_{0i} \quad \text{with} \quad u_{0i} \sim \mathcal{N}(0, \sigma^2_{u_0})
+$$
+
+$$
+\pi_{1i} = \beta_{10} + u_{1i} \quad \text{with} \quad u_{1i} \sim \mathcal{N}(0, \sigma^2_{u_1})
+$$
+
+$$
+\pi_{2i} = \beta_{20} + u_{2i} \quad \text{with} \quad u_{2i} \sim \mathcal{N}(0, \sigma^2_{u_2})
+$$
+
+$$
+\pi_{3i} = \beta_{30} + u_{3i} \quad \text{with} \quad u_{3i} \sim \mathcal{N}(0, \sigma^2_{u_3})
+$$
+
+By substitution, we get the single equation model:
+
+$$
+\begin{aligned}
+Y_{(t+1)i} &= \pi_{0i} + \pi_{1i} Z_{ti} + \pi_{2i} X_{ti} + \pi_{3i} X_{ti} Z_{ti} + e_{(t+1)i} \\ &= (\beta_{00} + u_{0i}) + (\beta_{10} + u_{1i}) Z_{ti} + (\beta_{20} + u_{2i}) X_{ti} + (\beta_{30} + u_{3i}) X_{ti} Z_{ti} + e_{(t+1)i} \\ &= \beta_{00} + \beta_{10} Z_{ti} + u_{0i} + u_{1i} Z_{ti} + X_{ti} \left( \beta_{20} + \beta_{30} Z_{ti} + u_{2i} + u_{3i} Z_{ti} \right) + e_{(t+1)i}
+\end{aligned}
+$$
+
+Now when we directly compare the final equation with the original notation, we can see that the order of elements aligns exactly. 
+
+$$
+Y_{it+1} = \alpha_0 + \alpha_1 X_{it} + b_{i0} + b_{i1} X_{it} + A_{it} (\beta_0 + \beta_1 X_{it} + b_{i2} + b_{i3} X_{it}) + \epsilon_{it+1}
+$$
+
+### Generative Model 3
+
+Generative model 3 is the same as GM 1, except that the covariate depends directly on the random intercept. In the original notation this was given by:
+
+$$
+X_{i1} \sim N(b_{i0}, 1), \quad X_{it} = Y_{it} + N(b_{i0}, 1) \text{ for } t \geq 2.
+$$
+
+whereas in the new notation, this can be written as:
+
+$$
+Z_{i1} \sim \mathcal{N}(u_{0i}, 1), \quad Z_{ti} = Y_{ti} + \mathcal{N}(u_{0i}, 1) \text{ for } t \geq 2.
+$$
+
+
 <!-- ## Explanation versus Prediction -->
 
 <!-- In het voorbeeld van Diggle et al. (2002) wat we vorige week hebben besproken, werd vermeld dat een cross-sectionele relatie tussen $X_{it}$ en $Y_{it}$ van interesse kan zijn met longitudinale data als voorspellen het doel is: -->
