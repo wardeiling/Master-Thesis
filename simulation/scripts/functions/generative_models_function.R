@@ -13,10 +13,10 @@ dgm_with_treatment <- function(sample_size, total_T, dgm_type) {
   stopifnot(dgm_type %in% c(1,2,3,4))
   
   # Replacing parameters with equivalent Schoot et al. (2017) values
-  beta_00 <- - 1
+  beta_00 <- - 2 # was originally -1 in the code but is -2 in the paper
   beta_10 <- - 0.3
-  beta_20 <- 1 # note: Qian script uses 0.5, but paper uses 1
-  beta_30 <- 0.1
+  beta_20 <- 1 # was originallly 0.5 in the code but is 1 in the paper
+  beta_30 <- 0.3 # was originally 0.1 in the code but is 0.3 in the paper
   sigma_u0 <- 2
   sigma_u1 <- 0
   sigma_u2 <- 1

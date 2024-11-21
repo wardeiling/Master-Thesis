@@ -47,6 +47,20 @@ saveRDS(sim_results, "simulation/output/simulation_results_1000reps_dorng.rds")
 
 sim_results <- readRDS("simulation/output/simulation_results_1000reps_dorng.rds")
 
+interesting <- sim_results["result.12",]
+interesting <- unlist(interesting)
+mlm <- interesting[grepl("mlm", names(interesting))]
+gee_ind <- interesting[grepl("gee_ind", names(interesting))]
+gee_exch <- interesting[grepl("gee_exch", names(interesting))]
+gee_ar1 <- interesting[grepl("gee_ar1", names(interesting))]
+
+# plot the results with histogram
+par(mfrow = c(2, 2))
+hist(mlm, breaks = 20, col = "lightblue", main = "Histogram of MLM estimates", xlab = "Estimates")
+hist(gee_ind, breaks = 20, col = "lightblue", main = "Histogram of GEE (independence) estimates", xlab = "Estimates")
+hist(gee_exch, breaks = 20, col = "lightblue", main = "Histogram of GEE (exchangeable) estimates", xlab = "Estimates")
+hist(gee_ar1, breaks = 20, col = "lightblue", main = "Histogram of GEE (AR1) estimates", xlab = "Estimates")
+
 # Create function that retrieves the estimates from the model results
 num_reps <- 20
 
