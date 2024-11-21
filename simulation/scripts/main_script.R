@@ -3,6 +3,7 @@ start_time <- Sys.time() # time the script
 
 library(foreach)
 library(doParallel)
+library(doRNG)
 library(data.table)
 
 # Load the functions
@@ -22,7 +23,7 @@ registerDoParallel(cl)
 settings <- expand.grid(sample_size = c(30, 100, 200), total_T = c(10, 30), dgm_type = 1:3)
 
 # Run simulation and model fitting
-sim_results <- foreach(setting = iter(settings, by = "row"), .combine = "rbind", .packages = c("lme4", "geepack", "data.table")) %dopar% {
+sim_results <- foreach(setting = iter(settings, by = "row"), .combine = "rbind", .packages = c("lme4", "geepack", "data.table")) %dorng% {
   sample_size <- setting$sample_size
   total_T <- setting$total_T
   dgm_type <- setting$dgm_type
@@ -40,11 +41,11 @@ sim_results <- foreach(setting = iter(settings, by = "row"), .combine = "rbind",
 stopCluster(cl)
 
 # Save results
-saveRDS(sim_results, "simulation/output/simulation_results_1000reps.rds")
+saveRDS(sim_results, "simulation/output/simulation_results_1000reps_dorng.rds")
 
 ### Data Extraction ###
 
-sim_results <- readRDS("simulation/output/simulation_results_1000reps.rds")
+sim_results <- readRDS("simulation/output/simulation_results_1000reps_dorng.rds")
 
 # Create function that retrieves the estimates from the model results
 num_reps <- 20
@@ -87,7 +88,7 @@ results_df <- results_df[, c(3, 2, 1, 4, 5, 6, 7)]
 colnames(results_df) <- c("GM", "T", "N", "mlm", "gee_ind", "gee_exch", "gee_ar1")
 
 # save as RDS file
-saveRDS(results_df, "simulation/output/simulation_results_table_1000reps.rds")
+saveRDS(results_df, "simulation/output/simulation_results_table_1000reps_dorng.rds")
 
 # compute bias (treatment effect beta_20 = 1)
 results_df_bias <- results_df
@@ -96,7 +97,7 @@ results_df_bias$gee_ind <- results_df$gee_ind - 1
 results_df_bias$gee_exch <- results_df$gee_exch - 1
 results_df_bias$gee_ar1 <- results_df$gee_ar1 - 1
 
-saveRDS(results_df_bias, "simulation/output/simulation_results_table_bias_1000reps.rds")
+saveRDS(results_df_bias, "simulation/output/simulation_results_table_bias_1000reps_dorng.rds")
   
 ### Create LaTeX Table ###
 
@@ -106,13 +107,13 @@ library(xtable)
 table_results <- xtable(results_df, caption = "Simulation Results of treatment effect ($beta_{20}$) estimate for different estimation methods, 1000 replications", 
                         label = "tab:sim_results", digits = c(0, 0, 0, 0, 3, 3, 3, 3))
 print(table_results, include.rownames = FALSE, hline.after = c(-1, 0, seq(from = 6, to = nrow(table_results), by = 6)), 
-                                                               file = "simulation/output/simulation_results_table_1000reps.tex")
+                                                               file = "simulation/output/simulation_results_table_1000reps_dorng.tex")
 
 # Create a table with the results of bias estimates
 table_results_bias <- xtable(results_df_bias, caption = "Simulation Results of bias in treatment effect ($beta_{20}$) estimate for different estimation methods, 1000 replications", 
                         label = "tab:sim_results_bias", digits = c(0, 0, 0, 0, 3, 3, 3, 3))
 print(table_results_bias, include.rownames = FALSE, hline.after = c(-1, 0, seq(from = 6, to = nrow(table_results_bias), by = 6)), 
-                                                               file = "simulation/output/simulation_results_table_bias_1000reps.tex")
+                                                               file = "simulation/output/simulation_results_table_bias_1000reps_dorng.tex")
 
 end_time <- Sys.time() # end time
 end_time - start_time # ~ 55 minutes with 11 cores
