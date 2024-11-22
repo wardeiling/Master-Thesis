@@ -10,14 +10,14 @@ dgm_with_treatment <- function(sample_size, total_T, dgm_type) {
     
     # dgm_type = 1 or 3
     alpha_0 <- - 2 # was originally -1 in the code but is -2 in the paper
-    alpha_1 <- - 0.3
+    alpha_1 <- - 0.3 # same as in the paper
     beta_0 <- 1 # was originallly 0.5 in the code but is 1 in the paper
     beta_1 <- 0.3 # was originally 0.1 in the code but is 0.3 in the paper
-    sigma_b0 <- 2
-    sigma_b1 <- 0
-    sigma_b2 <- 1
+    sigma_b0 <- 2 # sqrt(4)
+    sigma_b1 <- 0 
+    sigma_b2 <- 1 # sqrt(1)
     sigma_b3 <- 0
-    sigma_eps <- 1
+    sigma_eps <- 1 # sqrt(1)
     
     if (dgm_type == 2) {
         sigma_b1 <- sigma_b3 <- 0.5
@@ -103,16 +103,22 @@ if( 0 ){
     library(lme4)
     library(geepack)
   
-    dta <- dgm_with_treatment(sample_size = 200, total_T = 30, dgm_type = 2)
+    dta <- dgm_with_treatment(sample_size = 200, total_T = 10, dgm_type = 2)
+    dta2 <- dgm_with_treatment(sample_size = 200, total_T = 30, dgm_type = 4)
     # hist(dta$Y)
-    summary(dta)
+    summary(dta$X, dta$Y, dta$A)
     # dta$A <- dta$A - dta$prob_A # action centering doesn't matter when prob_A is constant
     
-    
-    (mlm <- summary(lmer(Y ~ X * A + (X * A | userid), data = dta))$coefficients["A", "Estimate"])
-    (gee_ex <- summary(geepack::geeglm(Y ~ X * A, id = userid, data = dta, family = gaussian, corstr = "exchangeable"))$coefficients["A", "Estimate"])
+    (mlm1 <- summary(lmer(Y ~ X * A + (1 + A | userid), data = dta))$coefficients)
+    (mlm2 <- summary(lmer(Y ~ X * A + (X * A | userid), data = dta))$coefficients)
+    (gee_ex <- summary(geepack::geeglm(Y ~ X * A, id = userid, data = dta, family = gaussian, corstr = "exchangeable"))$coefficients)
     (gee_in <- summary(geepack::geeglm(Y ~ X * A, id = userid, data = dta, family = gaussian, corstr = "independence"))$coefficients["A", "Estimate"])
     (gee_ar <- summary(geepack::geeglm(Y ~ X * A, id = userid, data = dta, family = gaussian, corstr = "ar1"))$coefficients["A", "Estimate"])
+    
+    col <- c("Estimate", "Std.err", "Wald", "Pr(>|W|)")
+    row <- c("(Intercept)", "X", "A", "X:A")
+    col == colnames(gee_ex)
+    row == rownames(gee_ex)
     
     fit <- lmer(Y ~ X * A + (X * A | userid), data = dta)
     fit

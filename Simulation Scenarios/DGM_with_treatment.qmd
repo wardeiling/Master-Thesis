@@ -182,16 +182,16 @@ The DAGs for the first three observations of the three data generating models ar
 #| eval: false
 #| cache: true
 
-GM1_DAG <- dagitty('dag {
+GM1_DAG1 <- dagitty('dag {
 bb="0,0,1,1"
 U [latent,pos="0.500,0.200"]
 X_1 [exposure,pos="0.200,0.600"]
-X_2 [exposure,pos="0.400,0.600"]
-Y_2 [outcome,pos="0.400,0.450"]
-Y_3 [outcome,pos="0.600,0.450"]
+X_2 [pos="0.400,0.600"]
+Y_2 [outcome,pos="0.450,0.450"]
+Y_3 [pos="0.650,0.450"]
 Z_1 [adjusted,pos="0.200,0.300"]
-Z_2 [adjusted,pos="0.400,0.300"]
-Z_3 [adjusted,pos="0.600,0.300"]
+Z_2 [pos="0.400,0.300"]
+Z_3 [pos="0.600,0.300"]
 U -> Y_2
 U -> Y_3
 X_1 -> Y_2
@@ -202,16 +202,16 @@ Z_1 -> Y_2
 Z_2 -> Y_3
 }')
 
-GM2_DAG <- dagitty('dag {
+GM1_DAG2 <- dagitty('dag {
 bb="0,0,1,1"
 U [latent,pos="0.500,0.200"]
-X_1 [exposure,pos="0.200,0.600"]
+X_1 [pos="0.200,0.600"]
 X_2 [exposure,pos="0.400,0.600"]
-Y_2 [outcome,pos="0.400,0.450"]
-Y_3 [outcome,pos="0.600,0.450"]
+Y_2 [pos="0.450,0.450"]
+Y_3 [outcome,pos="0.650,0.450"]
 Z_1 [adjusted,pos="0.200,0.300"]
 Z_2 [adjusted,pos="0.400,0.300"]
-Z_3 [adjusted,pos="0.600,0.300"]
+Z_3 [pos="0.600,0.300"]
 U -> Y_2
 U -> Y_3
 X_1 -> Y_2
@@ -222,16 +222,62 @@ Z_1 -> Y_2
 Z_2 -> Y_3
 }')
 
-GM3_DAG <- dagitty('dag {
+GM2_DAG1 <- dagitty('dag {
 bb="0,0,1,1"
 U [latent,pos="0.500,0.200"]
 X_1 [exposure,pos="0.200,0.600"]
+X_2 [pos="0.400,0.600"]
+Y_2 [outcome,pos="0.450,0.450"]
+Y_3 [pos="0.650,0.450"]
+Z_1 [adjusted,pos="0.200,0.300"]
+Z_2 [pos="0.400,0.300"]
+Z_3 [pos="0.600,0.300"]
+U -> Y_2
+U -> Y_3
+X_1 -> Y_2
+X_2 -> Y_3
+Y_2 -> Z_2
+Y_3 -> Z_3
+Z_1 -> X_1
+Z_1 -> Y_2
+Z_2 -> X_2
+Z_2 -> Y_3
+}
+')
+
+GM2_DAG2 <- dagitty('dag {
+bb="0,0,1,1"
+U [latent,pos="0.500,0.200"]
+X_1 [pos="0.200,0.600"]
 X_2 [exposure,pos="0.400,0.600"]
-Y_2 [outcome,pos="0.400,0.450"]
-Y_3 [outcome,pos="0.600,0.450"]
+Y_2 [pos="0.450,0.450"]
+Y_3 [outcome,pos="0.650,0.450"]
 Z_1 [adjusted,pos="0.200,0.300"]
 Z_2 [adjusted,pos="0.400,0.300"]
-Z_3 [adjusted,pos="0.600,0.300"]
+Z_3 [pos="0.600,0.300"]
+U -> Y_2
+U -> Y_3
+X_1 -> Y_2
+X_2 -> Y_3
+Y_2 -> Z_2
+Y_3 -> Z_3
+Z_1 -> X_1
+Z_1 -> Y_2
+Z_2 -> X_2
+Z_2 -> Y_3
+}
+')
+
+GM3_DAG1 <- dagitty('dag {
+bb="0,0,1,1"
+U [latent,pos="0.500,0.200"]
+X_1 [exposure,pos="0.200,0.600"]
+X_2 [pos="0.400,0.600"]
+Y_2 [outcome,pos="0.450,0.450"]
+Y_3 [pos="0.650,0.450"]
+Z_1 [adjusted,pos="0.200,0.300"]
+Z_2 [pos="0.400,0.300"]
+Z_3 [pos="0.600,0.300"]
 U -> Y_2
 U -> Y_3
 U -> Z_1
@@ -245,10 +291,35 @@ Z_1 -> Y_2
 Z_2 -> Y_3
 }')
 
+GM3_DAG2 <- dagitty('dag {
+bb="0,0,1,1"
+U [latent,pos="0.500,0.200"]
+X_1 [pos="0.200,0.600"]
+X_2 [exposure,pos="0.400,0.600"]
+Y_2 [pos="0.450,0.450"]
+Y_3 [outcome,pos="0.650,0.450"]
+Z_1 [adjusted,pos="0.200,0.300"]
+Z_2 [adjusted,pos="0.400,0.300"]
+Z_3 [pos="0.600,0.300"]
+U -> Y_2
+U -> Y_3
+U -> Z_1
+U -> Z_2
+U -> Z_3
+X_1 -> Y_2
+X_2 -> Y_3
+Y_2 -> Z_2
+Y_3 -> Z_3
+Z_1 -> Y_2
+Z_2 -> Y_3
+}')
 
-ggdag::ggdag_status(GM1_DAG) + ggdag::theme_dag()
-ggdag::ggdag_status(GM2_DAG) + ggdag::theme_dag()
-ggdag::ggdag_status(GM3_DAG) + ggdag::theme_dag()
+ggdag::ggdag_status(GM1_DAG1) + ggdag::theme_dag()
+ggdag::ggdag_status(GM1_DAG2) + ggdag::theme_dag()
+ggdag::ggdag_status(GM2_DAG1) + ggdag::theme_dag()
+ggdag::ggdag_status(GM2_DAG2) + ggdag::theme_dag()
+ggdag::ggdag_status(GM3_DAG1) + ggdag::theme_dag()
+ggdag::ggdag_status(GM3_DAG2) + ggdag::theme_dag()
 ```
 
 ::: {#fig-DAGs layout-ncol=2}
