@@ -9,7 +9,7 @@
 rm(list = ls())
 
 set.seed(123) # set global seed
-runname <- "GM123b_100reps" # set a runname
+runname <- "GM123b_1000reps" # set a runname
 
 # make a directory in simulation_results based on runname
 dir.create(paste0("simulation_results/", runname), showWarnings = FALSE)
@@ -34,13 +34,26 @@ cl <- makeCluster(cores - 1, outfile = paste0("simulation_results/", runname, "/
 registerDoParallel(cl)
 
 # set the number of simulations
-nsim <- 100
+nsim <- 1000
+
+# simulation in Section 4
+# design <- expand.grid(sample_size = c(30, 100, 200), total_T = c(10, 30), dgm_type = 1:3)
+
+# simulation with larger sample sizes
+# design <- expand.grid(sample_size = c(30, 100, 200), total_T = c(10, 30), dgm_type = 2)
 
 # simulation with "a" models
 # design <- expand.grid(sample_size = c(30, 100, 200), total_T = c(10, 30), dgm_type = c("1a", "2a", "3a"))
 
 # simulation with "b" models
 design <- expand.grid(sample_size = c(30, 100, 200), total_T = c(10, 30), dgm_type = c("1b", "2b", "3b"))
+
+# simulation for all models with N = 200, 1000, T = 10, 30
+# design <- expand.grid(sample_size = c(200, 1000), total_T = c(10, 30), dgm_type = c(1, "1a", "1b", 2, "2a", "2b", 3, "3a", "3b"))
+
+# simulation for models 3, 3a, 3b, 3c with N = 100, 200, 1000, T = 10, 30
+design <- expand.grid(sample_size = c(200,1000), total_T = c(10, 30), dgm_type = c(3, "3c"))
+
 design$dgm_type <- as.character(design$dgm_type)
 
 for (idesign in 1:nrow(design)) {
@@ -50,29 +63,38 @@ for (idesign in 1:nrow(design)) {
     
     ### create template output structure
     
-    # for mlm, but not "b" models
+    # for mlm (all "b" models)
     if (dgm_type %in% c("1b", "2b", "3b")) {
-        row_mlm <- c("(Intercept)", "X", "A")
-        col_mlm <- c("Estimate", "Std. Error", "t value")
-        coef_NA_fill_mlm <- matrix(NA, ncol = length(col_mlm), nrow = length(row_mlm), dimnames = list(row_mlm, col_mlm))
+        coef_NA_fill_mlm <- matrix(NA, ncol = 3, 
+                                   nrow = 3, 
+                                   dimnames = list(c("(Intercept)", "X", "A"), 
+                                                   c("Estimate", "Std. Error", "t value")))
+    # for gee (all "b" models)
+        coef_NA_fill_gee <- matrix(NA, ncol = 4, nrow = 3, 
+                                   dimnames = list(c("(Intercept)", "X", "A"), 
+                                                   c("Estimate", "Std.err", "Wald", "Pr(>|W|)")))
     } else {
+    # for mlm (all other models)
         row_mlm <- c("(Intercept)", "X", "A", "X:A")
         col_mlm <- c("Estimate", "Std. Error", "t value")
-        coef_NA_fill_mlm <- matrix(NA, ncol = length(col_mlm), nrow = length(row_mlm), dimnames = list(row_mlm, col_mlm))
+        coef_NA_fill_mlm <- matrix(NA, ncol = 3, 
+                                   nrow = 4, 
+                                   dimnames = list(c("(Intercept)", "X", "A", "X:A"), 
+                                                   c("Estimate", "Std. Error", "t value")))
+    # for gee (all other models)
+        coef_NA_fill_gee <- matrix(NA, ncol = 4, nrow = 4, 
+                                   dimnames = list(c("(Intercept)", "X", "A", "X:A"), 
+                                                   c("Estimate", "Std.err", "Wald", "Pr(>|W|)")))
     }
-    
-    # for gee
-    row_gee <- c("(Intercept)", "X", "A", "X:A")
-    col_gee <- c("Estimate", "Std.err", "Wald", "Pr(>|W|)")
-    coef_NA_fill_gee <- matrix(NA, ncol = length(col_gee), nrow = length(row_gee), dimnames = list(row_gee, col_gee))
     
     # set.seed(123) # original study had this here, but having a loop within the for loop
     # potentially makes it so that we get the same dataset for each of the settings, which
     # is undesirable as it is not really random.
+    
     result <- foreach(isim = 1:nsim, .combine = "c", .errorhandling = "remove", 
                       .packages = c("geepack", "lme4"), .options.RNG=120) %dorng% {
         if (isim %% 10 == 0) {
-            cat(paste("Starting iteration",isim,"\n"))
+            cat(paste("Starting iteration",isim, ", GM", dgm_type, ", N =", sample_size, ", T =", total_T, "\n"))
         }
         dta <- dgm_with_treatment(sample_size, total_T, dgm_type = dgm_type)
         
@@ -81,7 +103,7 @@ for (idesign in 1:nrow(design)) {
         # for mlm
         solution_lmm <- tryCatch(
           {
-            if (dgm_type == 1 | dgm_type == 3) {
+            if (dgm_type %in% c(1,3, "3c")) {
               mlm_fit <- lmer(Y ~ X * A + (1 + A| userid), data = dta)
             } else if (dgm_type == 2) {
               mlm_fit <- lmer(Y ~ X * A + (X * A| userid), data = dta)
@@ -91,9 +113,28 @@ for (idesign in 1:nrow(design)) {
               mlm_fit <- lmer(Y ~ X + A + (1 | userid), data = dta)
             }
             
+            # Check for singular fits
+            if (isSingular(mlm_fit, tol = 1e-05)) {
+              message("\nModel is singular.")
+              return(list(coef = coef_NA_fill_mlm))
+            }
+            
             list(coef = summary(mlm_fit)$coefficients) #, varcor = summary(fit)$varcor)
-          },
-          error = function(cond) {
+            
+          }, warning = function(w) {
+            # log the warning message
+            message("\nCaught warning in lmer():")
+            message(w)
+            
+            # handle specific warnings
+            if (grepl("Model failed to converge", w$message)) {
+              return(list(coef = coef_NA_fill_mlm))
+            }
+            
+            # For other warnings, return NA coefficients
+            return(list(coef = coef_NA_fill_mlm))
+            
+          }, error = function(cond) {
             message("\nCaught error in lmer():")
             message(cond)
             return(list(coef = coef_NA_fill_mlm)) #, varcor = varcor_NA_fill))
@@ -102,8 +143,14 @@ for (idesign in 1:nrow(design)) {
         # for gee with independence
         solution_gee_ind <- tryCatch(
             {
-              gee_ind_fit <- geeglm(Y ~ X * A, id = userid, family = gaussian, 
-                                corstr = "independence", data = dta)
+              if (dgm_type %in% c("1b", "2b", "3b")) {
+                gee_ind_fit <- geeglm(Y ~ X + A, id = userid, family = gaussian, 
+                                      corstr = "independence", data = dta)
+              } else {
+                gee_ind_fit <- geeglm(Y ~ X * A, id = userid, family = gaussian, 
+                                      corstr = "independence", data = dta)
+              }
+              
               list(coef = summary(gee_ind_fit)$coefficients)
             },
             error = function(cond) {
@@ -116,8 +163,14 @@ for (idesign in 1:nrow(design)) {
         # for gee with exchangeable
         solution_gee_ex <- tryCatch(
           {
-            gee_ex_fit <- geeglm(Y ~ X * A, id = userid, family = gaussian, 
-                                  corstr = "exchangeable", data = dta)
+            if (dgm_type %in% c("1b", "2b", "3b")) {
+              gee_ex_fit <- geeglm(Y ~ X + A, id = userid, family = gaussian, 
+                                    corstr = "exchangeable", data = dta)
+            } else {
+              gee_ex_fit <- geeglm(Y ~ X * A, id = userid, family = gaussian, 
+                                    corstr = "exchangeable", data = dta)
+            }
+            
             list(coef = summary(gee_ex_fit)$coefficients)
           },
           error = function(cond) {
@@ -130,8 +183,14 @@ for (idesign in 1:nrow(design)) {
         # for gee with AR(1)
         solution_gee_ar1 <- tryCatch(
           {
-            gee_ar1_fit <- geeglm(Y ~ X * A, id = userid, family = gaussian, 
-                                 corstr = "ar1", data = dta)
+            if (dgm_type %in% c("1b", "2b", "3b")) {
+              gee_ar1_fit <- geeglm(Y ~ X + A, id = userid, family = gaussian, 
+                                   corstr = "ar1", data = dta)
+            } else {
+              gee_ar1_fit <- geeglm(Y ~ X * A, id = userid, family = gaussian, 
+                                   corstr = "ar1", data = dta)
+            }
+
             list(coef = summary(gee_ar1_fit)$coefficients)
           },
           error = function(cond) {
@@ -171,7 +230,8 @@ design$gee_ex_alpha_0_bias <- design$gee_ex_alpha_0_sd <-
 design$gee_ar1_alpha_0_bias <- design$gee_ar1_alpha_0_sd <-
     design$gee_ar1_alpha_1_bias <- design$gee_ar1_alpha_1_sd <- 
     design$gee_ar1_beta_0_bias <- design$gee_ar1_beta_0_sd <- 
-    design$gee_ar1_beta_1_bias <- design$gee_ar1_beta_1_sd <- NA
+    design$gee_ar1_beta_1_bias <- design$gee_ar1_beta_1_sd <- 
+design$mlm_success <- design$gee_ind_success <- design$gee_ex_success <- design$gee_ar1_success <- NA
 
 for (idesign in 1:nrow(design)) {
   
@@ -187,11 +247,9 @@ for (idesign in 1:nrow(design)) {
     beta_0_true <- 1 # was originallly 0.5 in the code but is 1 in the paper
     beta_1_true <- 0.3 # was originally 0.1 in the code but is 0.3 in the paper
     
-    if (dgm_type == 2) {
-        sigma_b1_true <- sigma_b3_true <- 0.5
-    }
-    if (dgm_type == 4) {
-        sigma_b2_true <- 0
+    # set the interactions to 0 for "b" models
+    if (dgm_type %in% c("1b", "2b", "3b")) {
+      beta_1_true <- 0
     }
     
     ### Divide the list into sublists for each model type ###
@@ -217,18 +275,22 @@ for (idesign in 1:nrow(design)) {
       mlm_beta_1_sd <- sapply(result_lmm, function(l) l$coef["X:A", "Std. Error"])
     }
 
-    design$mlm_alpha_0_bias[idesign] <- mean(mlm_alpha_0) - alpha_0_true
-    design$mlm_alpha_0_sd[idesign] <- sd(mlm_alpha_0)
-    design$mlm_alpha_1_bias[idesign] <- mean(mlm_alpha_1) - alpha_1_true
-    design$mlm_alpha_1_sd[idesign] <- sd(mlm_alpha_1)
-    design$mlm_beta_0_bias[idesign] <- mean(mlm_beta_0) - beta_0_true
-    design$mlm_beta_0_sd[idesign] <- sd(mlm_beta_0)
+    design$mlm_alpha_0_bias[idesign] <- mean(mlm_alpha_0, na.rm = T) - alpha_0_true
+    design$mlm_alpha_0_sd[idesign] <- sd(mlm_alpha_0, na.rm = T)
+    design$mlm_alpha_1_bias[idesign] <- mean(mlm_alpha_1, na.rm = T) - alpha_1_true
+    design$mlm_alpha_1_sd[idesign] <- sd(mlm_alpha_1, na.rm = T)
+    design$mlm_beta_0_bias[idesign] <- mean(mlm_beta_0, na.rm = T) - beta_0_true
+    design$mlm_beta_0_sd[idesign] <- sd(mlm_beta_0, na.rm = T)
     
     # interaction beta1 is not present in the "b" models, so only calculate if not b
     if (!dgm_type %in% c("1b", "2b", "3b")) {
-        design$mlm_beta_1_bias[idesign] <- mean(mlm_beta_1) - beta_1_true
-        design$mlm_beta_1_sd[idesign] <- sd(mlm_beta_1)
+        design$mlm_beta_1_bias[idesign] <- mean(mlm_beta_1, na.rm = T) - beta_1_true
+        design$mlm_beta_1_sd[idesign] <- sd(mlm_beta_1, na.rm = T)
     }
+    
+    # check if models converged by calculating success proportion for beta_0
+    # so the value should not be NA or 0
+    design$mlm_success[idesign] <- 1 - sum(is.na(mlm_beta_0)) / nsim
     
     ### GEE with independence
     
@@ -244,17 +306,20 @@ for (idesign in 1:nrow(design)) {
       gee_ind_beta_1_sd <- sapply(result_gee_ind, function(l) l$coef["X:A", "Std.err"])
     }
     
-    design$gee_ind_alpha_0_bias[idesign] <- mean(gee_ind_alpha_0) - alpha_0_true
-    design$gee_ind_alpha_0_sd[idesign] <- sd(gee_ind_alpha_0)
-    design$gee_ind_alpha_1_bias[idesign] <- mean(gee_ind_alpha_1) - alpha_1_true
-    design$gee_ind_alpha_1_sd[idesign] <- sd(gee_ind_alpha_1)
-    design$gee_ind_beta_0_bias[idesign] <- mean(gee_ind_beta_0) - beta_0_true
-    design$gee_ind_beta_0_sd[idesign] <- sd(gee_ind_beta_0)
+    design$gee_ind_alpha_0_bias[idesign] <- mean(gee_ind_alpha_0, na.rm = T) - alpha_0_true
+    design$gee_ind_alpha_0_sd[idesign] <- sd(gee_ind_alpha_0, na.rm = T)
+    design$gee_ind_alpha_1_bias[idesign] <- mean(gee_ind_alpha_1, na.rm = T) - alpha_1_true
+    design$gee_ind_alpha_1_sd[idesign] <- sd(gee_ind_alpha_1, na.rm = T)
+    design$gee_ind_beta_0_bias[idesign] <- mean(gee_ind_beta_0, na.rm = T) - beta_0_true
+    design$gee_ind_beta_0_sd[idesign] <- sd(gee_ind_beta_0, na.rm = T)
     
     if (!dgm_type %in% c("1b", "2b", "3b")) {
-      design$gee_ind_beta_1_bias[idesign] <- mean(gee_ind_beta_1) - beta_1_true
-      design$gee_ind_beta_1_sd[idesign] <- sd(gee_ind_beta_1)
+      design$gee_ind_beta_1_bias[idesign] <- mean(gee_ind_beta_1, na.rm = T) - beta_1_true
+      design$gee_ind_beta_1_sd[idesign] <- sd(gee_ind_beta_1, na.rm = T)
     }
+    
+    # check if models converged by calculating success proportion for beta_0
+    design$gee_ind_success[idesign] <- 1 - sum(is.na(gee_ind_beta_0)) / nsim
     
     ### GEE with exchangeable
     
@@ -270,17 +335,20 @@ for (idesign in 1:nrow(design)) {
       gee_ex_beta_1_sd <- sapply(result_gee_ex, function(l) l$coef["X:A", "Std.err"])
     }
     
-    design$gee_ex_alpha_0_bias[idesign] <- mean(gee_ex_alpha_0) - alpha_0_true
-    design$gee_ex_alpha_0_sd[idesign] <- sd(gee_ex_alpha_0)
-    design$gee_ex_alpha_1_bias[idesign] <- mean(gee_ex_alpha_1) - alpha_1_true
-    design$gee_ex_alpha_1_sd[idesign] <- sd(gee_ex_alpha_1)
-    design$gee_ex_beta_0_bias[idesign] <- mean(gee_ex_beta_0) - beta_0_true
-    design$gee_ex_beta_0_sd[idesign] <- sd(gee_ex_beta_0)
+    design$gee_ex_alpha_0_bias[idesign] <- mean(gee_ex_alpha_0, na.rm = T) - alpha_0_true
+    design$gee_ex_alpha_0_sd[idesign] <- sd(gee_ex_alpha_0, na.rm = T)
+    design$gee_ex_alpha_1_bias[idesign] <- mean(gee_ex_alpha_1, na.rm = T) - alpha_1_true
+    design$gee_ex_alpha_1_sd[idesign] <- sd(gee_ex_alpha_1, na.rm = T)
+    design$gee_ex_beta_0_bias[idesign] <- mean(gee_ex_beta_0, na.rm = T) - beta_0_true
+    design$gee_ex_beta_0_sd[idesign] <- sd(gee_ex_beta_0, na.rm = T)
     
     if (!dgm_type %in% c("1b", "2b", "3b")) {
-      design$gee_ex_beta_1_bias[idesign] <- mean(gee_ex_beta_1) - beta_1_true
-      design$gee_ex_beta_1_sd[idesign] <- sd(gee_ex_beta_1)
+      design$gee_ex_beta_1_bias[idesign] <- mean(gee_ex_beta_1, na.rm = T) - beta_1_true
+      design$gee_ex_beta_1_sd[idesign] <- sd(gee_ex_beta_1, na.rm = T)
     }
+    
+    # check if models converged by calculating success proportion for beta_0
+    design$gee_ex_success[idesign] <- 1 - sum(is.na(gee_ex_beta_0)) / nsim
     
     ### GEE with AR(1)
     
@@ -296,17 +364,20 @@ for (idesign in 1:nrow(design)) {
       gee_ar1_beta_1_sd <- sapply(result_gee_ar1, function(l) l$coef["X:A", "Std.err"])
     }
     
-    design$gee_ar1_alpha_0_bias[idesign] <- mean(gee_ar1_alpha_0) - alpha_0_true
-    design$gee_ar1_alpha_0_sd[idesign] <- sd(gee_ar1_alpha_0)
-    design$gee_ar1_alpha_1_bias[idesign] <- mean(gee_ar1_alpha_1) - alpha_1_true
-    design$gee_ar1_alpha_1_sd[idesign] <- sd(gee_ar1_alpha_1)
-    design$gee_ar1_beta_0_bias[idesign] <- mean(gee_ar1_beta_0) - beta_0_true
-    design$gee_ar1_beta_0_sd[idesign] <- sd(gee_ar1_beta_0)
+    design$gee_ar1_alpha_0_bias[idesign] <- mean(gee_ar1_alpha_0, na.rm = T) - alpha_0_true
+    design$gee_ar1_alpha_0_sd[idesign] <- sd(gee_ar1_alpha_0, na.rm = T)
+    design$gee_ar1_alpha_1_bias[idesign] <- mean(gee_ar1_alpha_1, na.rm = T) - alpha_1_true
+    design$gee_ar1_alpha_1_sd[idesign] <- sd(gee_ar1_alpha_1, na.rm = T)
+    design$gee_ar1_beta_0_bias[idesign] <- mean(gee_ar1_beta_0, na.rm = T) - beta_0_true
+    design$gee_ar1_beta_0_sd[idesign] <- sd(gee_ar1_beta_0, na.rm = T)
     
     if (!dgm_type %in% c("1b", "2b", "3b")) {
-      design$gee_ar1_beta_1_bias[idesign] <- mean(gee_ar1_beta_1) - beta_1_true
-      design$gee_ar1_beta_1_sd[idesign] <- sd(gee_ar1_beta_1)
+      design$gee_ar1_beta_1_bias[idesign] <- mean(gee_ar1_beta_1, na.rm = T) - beta_1_true
+      design$gee_ar1_beta_1_sd[idesign] <- sd(gee_ar1_beta_1, na.rm = T)
     }
+    
+    # check if models converged by calculating success proportion for beta_0
+    design$gee_ar1_success[idesign] <- 1 - sum(is.na(gee_ar1_beta_0)) / nsim
     
 }
 
@@ -341,7 +412,7 @@ design3c <- design3a
 colnames(design3c) <- c("GM", "T", "N", "MLM_bias", "MLM_sd", "GEE-Ex_bias", "GEE-Ex_sd", 
                         "GEE-AR1_bias", "GEE-AR1_sd", "GEE-Ind_bias", "GEE-Ind_sd")
 print(xtable(design3c, digits = c(0, 0, 0, 0, rep(3, 8)), 
-             caption = paste0("Results for beta0 bias with Standarddeviation, 100 replications, run: ", runname), label = "tab:beta0_bias_sd"), 
+             caption = paste0("Results for beta0 bias with Standarddeviation, ", nsim, " replications, run: ", runname), label = "tab:beta0_bias_sd"), 
       include.rownames = FALSE, hline.after = c(-1, 0, seq(from = 6, to = nrow(design3c), by = 6)), 
       file = paste0("simulation_results/", runname, "/results_beta0_bias_sd.tex"))
 
@@ -350,6 +421,6 @@ design4b <- design4
 colnames(design4b) <- c("GM", "T", "N", "MLM", "GEE-Ex", "GEE-AR1", "GEE-Ind")
 
 print(xtable(design4b, digits = c(0, 0, 0, 0, rep(3, 4)), 
-             caption = paste0("Results for beta0 bias, 100 replications, run: ", runname), label = "tab:beta0_bias"),
+             caption = paste0("Results for beta0 bias, ", nsim, " replications, run: ", runname), label = "tab:beta0_bias"),
       include.rownames = FALSE, hline.after = c(-1, 0, seq(from = 6, to = nrow(design4b), by = 6)), 
       file = paste0("simulation_results/", runname, "/results_beta0_bias.tex"))

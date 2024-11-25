@@ -5,11 +5,12 @@
 
 # dmg_type with an "a" suffix means that there are no random slopes
 # dgm_type with a "b" suffix means that there are no random slopes nor interactions between the treatment and covariate
+# GM3c has a different value for the random slope b_i2 for the treatment effect
 
 dgm_with_treatment <- function(sample_size, total_T, dgm_type) {
     
     # dgm_type is in c(1,2,3,4)
-    stopifnot(dgm_type %in% c(1,2,3,"1a", "2a", "3a", "1b", "2b", "3b"))
+    stopifnot(dgm_type %in% c(1,2,3,"1a", "2a", "3a", "1b", "2b", "3b", "3c"))
     
     # dgm_type = 1 or 3
     alpha_0 <- - 2 # overall intercept, was originally -1 in the code but is -2 in the paper
@@ -23,7 +24,7 @@ dgm_with_treatment <- function(sample_size, total_T, dgm_type) {
     sigma_eps <- 1 # sqrt(1)
     
     if (dgm_type == 2) {
-        sigma_b1 <- sigma_b3 <- 0.5
+        sigma_b1 <- sigma_b3 <- 0.5 # sqrt(0.25)
     }
     
     # set the random slopes to 0 for "a" models
@@ -35,6 +36,11 @@ dgm_with_treatment <- function(sample_size, total_T, dgm_type) {
     if (dgm_type %in% c("1b", "2b", "3b")) {
         sigma_b1 <- sigma_b2 <- sigma_b3 <- 0
         beta_1 <- 0
+    }
+    
+    # increase the variance of random slope b_i2 for model 3c 
+    if (dgm_type == "3c") {
+        sigma_b2 <- 3
     }
     
     prob_a <- 0.5
@@ -77,7 +83,7 @@ dgm_with_treatment <- function(sample_size, total_T, dgm_type) {
                 dta$X[row_index] <- dta$Y[row_index_lag1] + rnorm(sample_size)
             }
             dta$prob_A[row_index] <- ifelse(dta$X[row_index] > - 1.27, 0.7, 0.3)
-        } else if (dgm_type %in% c(3, "3a", "3b")) {
+        } else if (dgm_type %in% c(3, "3a", "3b", "3c")) {
             if (t == 1) {
                 dta$X[row_index] <- rnorm(sample_size, mean = b_0i) # X involves b_i!!
             } else {
@@ -112,17 +118,20 @@ if( 0 ){
   
     library(lme4)
     library(geepack)
+    library(gee)
   
-    dta <- dgm_with_treatment(sample_size = 200, total_T = 10, dgm_type = "1b")
+    dta <- dgm_with_treatment(sample_size = 1000, total_T = 30, dgm_type = 2)
     # hist(dta$Y)
     summary(dta$X, dta$Y, dta$A)
     # dta$A <- dta$A - dta$prob_A # action centering doesn't matter when prob_A is constant
     
     (mlm1 <- summary(lmer(Y ~ X + A + (1  | userid), data = dta))$coefficients)
-    (mlm2 <- summary(lmer(Y ~ X * A + (X * A | userid), data = dta))$coefficients)
+    (mlm2 <- lmer(Y ~ X * A + (X * A | userid), data = dta))
+    isSingular(mlm2, tol = 1e-5)
     (gee_ex <- summary(geepack::geeglm(Y ~ X * A, id = userid, data = dta, family = gaussian, corstr = "exchangeable"))$coefficients)
-    (gee_in <- summary(geepack::geeglm(Y ~ X * A, id = userid, data = dta, family = gaussian, corstr = "independence"))$coefficients["A", "Estimate"])
-    (gee_ar <- summary(geepack::geeglm(Y ~ X * A, id = userid, data = dta, family = gaussian, corstr = "ar1"))$coefficients["A", "Estimate"])
+    (gee_in <- summary(geepack::geeglm(Y ~ X * A, id = userid, data = dta, family = gaussian, corstr = "independence"))$coefficients)
+    (gee_ar <- summary(geepack::geeglm(Y ~ X * A, id = userid, data = dta, family = gaussian, corstr = "ar1"))$coefficients)
+    # gee_ar1 <- gee::gee(Y ~ X * A, id = userid, data = dta, family = gaussian, corstr = "AR1")
     
     col <- c("Estimate", "Std.err", "Wald", "Pr(>|W|)")
     row <- c("(Intercept)", "X", "A", "X:A")
