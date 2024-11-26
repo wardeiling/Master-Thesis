@@ -9,7 +9,7 @@
 rm(list = ls())
 
 set.seed(123) # set global seed
-runname <- "GM3abcde_100reps" # set a runname
+runname <- "GM3abcd_N200_T10-30_100reps" # set a runname
 
 # make a directory in simulation_results based on runname
 dir.create(paste0("simulation_results/", runname), showWarnings = FALSE)
@@ -51,8 +51,8 @@ nsim <- 100
 # simulation for all models with N = 200, 1000, T = 10, 30
 # design <- expand.grid(sample_size = c(200, 1000), total_T = c(10, 30), dgm_type = c(1, "1a", "1b", 2, "2a", "2b", 3, "3a", "3b"))
 
-# simulation for models 3, 3a, 3b, 3c, 3d, 3e with N = 1000, T = 10, 30
-design <- expand.grid(sample_size = c(1000), total_T = c(10, 30), dgm_type = c(3, "3a", "3b", "3c", "3d", "3e"))
+# simulation for models 3, 3a, 3b, 3c, 3d with N = 1000, T = 10, 30
+design <- expand.grid(sample_size = c(200), total_T = c(10, 30), dgm_type = c(3, "3a", "3b", "3c", "3d"))
 
 design$dgm_type <- as.character(design$dgm_type)
 
@@ -63,8 +63,8 @@ for (idesign in 1:nrow(design)) {
     
     ### create template output structure
     
-    # for mlm (all "b" models)
-    if (dgm_type %in% c("1b", "2b", "3b")) {
+    # for mlm (all "b" models and "3d")
+    if (dgm_type %in% c("1b", "2b", "3b", "3d")) {
         coef_NA_fill_mlm <- matrix(NA, ncol = 3, 
                                    nrow = 3, 
                                    dimnames = list(c("(Intercept)", "X", "A"), 
@@ -103,14 +103,16 @@ for (idesign in 1:nrow(design)) {
         # for mlm
         solution_lmm <- tryCatch(
           {
-            if (dgm_type %in% c(1,3,"3c","3d")) {
+            if (dgm_type %in% c(1,3,"3c")) {
               mlm_fit <- lmer(Y ~ X * A + (1 + A| userid), data = dta)
             } else if (dgm_type == 2) {
               mlm_fit <- lmer(Y ~ X * A + (X * A| userid), data = dta)
-            } else if (dgm_type %in% c("1a", "2a", "3a", "3e")) {
+            } else if (dgm_type %in% c("1a", "2a", "3a")) {
               mlm_fit <- lmer(Y ~ X * A + (1 | userid), data = dta)
             } else if (dgm_type %in% c("1b", "2b", "3b")) {
               mlm_fit <- lmer(Y ~ X + A + (1 | userid), data = dta)
+            } else if (dgm_type == "3d") {
+              mlm_fit <- lmer(Y ~ X + A + (1 + A | userid), data = dta)
             }
             
             # Check for singular fits
@@ -143,7 +145,7 @@ for (idesign in 1:nrow(design)) {
         # for gee with independence
         solution_gee_ind <- tryCatch(
             {
-              if (dgm_type %in% c("1b", "2b", "3b")) {
+              if (dgm_type %in% c("1b", "2b", "3b", "3d")) {
                 gee_ind_fit <- geeglm(Y ~ X + A, id = userid, family = gaussian, 
                                       corstr = "independence", data = dta)
               } else {
@@ -163,7 +165,7 @@ for (idesign in 1:nrow(design)) {
         # for gee with exchangeable
         solution_gee_ex <- tryCatch(
           {
-            if (dgm_type %in% c("1b", "2b", "3b")) {
+            if (dgm_type %in% c("1b", "2b", "3b", "3d")) {
               gee_ex_fit <- geeglm(Y ~ X + A, id = userid, family = gaussian, 
                                     corstr = "exchangeable", data = dta)
             } else {
@@ -183,7 +185,7 @@ for (idesign in 1:nrow(design)) {
         # for gee with AR(1)
         solution_gee_ar1 <- tryCatch(
           {
-            if (dgm_type %in% c("1b", "2b", "3b")) {
+            if (dgm_type %in% c("1b", "2b", "3b", "3d")) {
               gee_ar1_fit <- geeglm(Y ~ X + A, id = userid, family = gaussian, 
                                    corstr = "ar1", data = dta)
             } else {
@@ -248,7 +250,7 @@ for (idesign in 1:nrow(design)) {
     beta_1_true <- 0.3 # was originally 0.1 in the code but is 0.3 in the paper
     
     # set the interactions to 0 for "b" models
-    if (dgm_type %in% c("1b", "2b", "3b")) {
+    if (dgm_type %in% c("1b", "2b", "3b", "3d")) {
       beta_1_true <- 0
     }
     
@@ -270,7 +272,7 @@ for (idesign in 1:nrow(design)) {
     mlm_beta_0 <- sapply(result_lmm, function(l) l$coef["A", "Estimate"])
     mlm_beta_0_sd <- sapply(result_lmm, function(l) l$coef["A", "Std. Error"])
     
-    if (!dgm_type %in% c("1b", "2b", "3b")) {
+    if (!dgm_type %in% c("1b", "2b", "3b", "3d")) {
       mlm_beta_1 <- sapply(result_lmm, function(l) l$coef["X:A", "Estimate"])
       mlm_beta_1_sd <- sapply(result_lmm, function(l) l$coef["X:A", "Std. Error"])
     }
@@ -283,7 +285,7 @@ for (idesign in 1:nrow(design)) {
     design$mlm_beta_0_sd[idesign] <- sd(mlm_beta_0, na.rm = T)
     
     # interaction beta1 is not present in the "b" models, so only calculate if not b
-    if (!dgm_type %in% c("1b", "2b", "3b")) {
+    if (!dgm_type %in% c("1b", "2b", "3b", "3d")) {
         design$mlm_beta_1_bias[idesign] <- mean(mlm_beta_1, na.rm = T) - beta_1_true
         design$mlm_beta_1_sd[idesign] <- sd(mlm_beta_1, na.rm = T)
     }
@@ -301,7 +303,7 @@ for (idesign in 1:nrow(design)) {
     gee_ind_beta_0 <- sapply(result_gee_ind, function(l) l$coef["A", "Estimate"])
     gee_ind_beta_0_sd <- sapply(result_gee_ind, function(l) l$coef["A", "Std.err"])
     
-    if (!dgm_type %in% c("1b", "2b", "3b")) {
+    if (!dgm_type %in% c("1b", "2b", "3b", "3d")) {
       gee_ind_beta_1 <- sapply(result_gee_ind, function(l) l$coef["X:A", "Estimate"])
       gee_ind_beta_1_sd <- sapply(result_gee_ind, function(l) l$coef["X:A", "Std.err"])
     }
@@ -313,7 +315,7 @@ for (idesign in 1:nrow(design)) {
     design$gee_ind_beta_0_bias[idesign] <- mean(gee_ind_beta_0, na.rm = T) - beta_0_true
     design$gee_ind_beta_0_sd[idesign] <- sd(gee_ind_beta_0, na.rm = T)
     
-    if (!dgm_type %in% c("1b", "2b", "3b")) {
+    if (!dgm_type %in% c("1b", "2b", "3b", "3d")) {
       design$gee_ind_beta_1_bias[idesign] <- mean(gee_ind_beta_1, na.rm = T) - beta_1_true
       design$gee_ind_beta_1_sd[idesign] <- sd(gee_ind_beta_1, na.rm = T)
     }
@@ -330,7 +332,7 @@ for (idesign in 1:nrow(design)) {
     gee_ex_beta_0 <- sapply(result_gee_ex, function(l) l$coef["A", "Estimate"])
     gee_ex_beta_0_sd <- sapply(result_gee_ex, function(l) l$coef["A", "Std.err"])
     
-    if (!dgm_type %in% c("1b", "2b", "3b")) {
+    if (!dgm_type %in% c("1b", "2b", "3b", "3d")) {
       gee_ex_beta_1 <- sapply(result_gee_ex, function(l) l$coef["X:A", "Estimate"])
       gee_ex_beta_1_sd <- sapply(result_gee_ex, function(l) l$coef["X:A", "Std.err"])
     }
@@ -342,7 +344,7 @@ for (idesign in 1:nrow(design)) {
     design$gee_ex_beta_0_bias[idesign] <- mean(gee_ex_beta_0, na.rm = T) - beta_0_true
     design$gee_ex_beta_0_sd[idesign] <- sd(gee_ex_beta_0, na.rm = T)
     
-    if (!dgm_type %in% c("1b", "2b", "3b")) {
+    if (!dgm_type %in% c("1b", "2b", "3b", "3d")) {
       design$gee_ex_beta_1_bias[idesign] <- mean(gee_ex_beta_1, na.rm = T) - beta_1_true
       design$gee_ex_beta_1_sd[idesign] <- sd(gee_ex_beta_1, na.rm = T)
     }
@@ -359,7 +361,7 @@ for (idesign in 1:nrow(design)) {
     gee_ar1_beta_0 <- sapply(result_gee_ar1, function(l) l$coef["A", "Estimate"])
     gee_ar1_beta_0_sd <- sapply(result_gee_ar1, function(l) l$coef["A", "Std.err"])
     
-    if (!dgm_type %in% c("1b", "2b", "3b")) {
+    if (!dgm_type %in% c("1b", "2b", "3b", "3d")) {
       gee_ar1_beta_1 <- sapply(result_gee_ar1, function(l) l$coef["X:A", "Estimate"])
       gee_ar1_beta_1_sd <- sapply(result_gee_ar1, function(l) l$coef["X:A", "Std.err"])
     }
@@ -371,7 +373,7 @@ for (idesign in 1:nrow(design)) {
     design$gee_ar1_beta_0_bias[idesign] <- mean(gee_ar1_beta_0, na.rm = T) - beta_0_true
     design$gee_ar1_beta_0_sd[idesign] <- sd(gee_ar1_beta_0, na.rm = T)
     
-    if (!dgm_type %in% c("1b", "2b", "3b")) {
+    if (!dgm_type %in% c("1b", "2b", "3b", "3d")) {
       design$gee_ar1_beta_1_bias[idesign] <- mean(gee_ar1_beta_1, na.rm = T) - beta_1_true
       design$gee_ar1_beta_1_sd[idesign] <- sd(gee_ar1_beta_1, na.rm = T)
     }
@@ -389,38 +391,51 @@ design2 <- design[, c(3, 2, 1, 4:ncol(design))]
 colnames(design2) <- c("GM", "T", "N", colnames(design2)[4:ncol(design2)])
 colnames(design2) <- gsub("beta_0", "beta0", colnames(design2))
 # colnames(design2) <- gsub("beta_1", "beta1", colnames(design2))
-colnames(design2) <- gsub("alpha_0", "alpha0", colnames(design2))
-colnames(design2) <- gsub("alpha_1", "alpha1", colnames(design2))
+# colnames(design2) <- gsub("alpha_0", "alpha0", colnames(design2))
+# colnames(design2) <- gsub("alpha_1", "alpha1", colnames(design2))
 saveRDS(design2, paste0("simulation_results/", runname, "/results_all.RDS"))
 
-# exclude any column that doesn't include "beta_0" and the first three columns
-design3a <- design2[, c(1:3, grep("beta0", colnames(design2)))]
+# exclude any column that doesn't include "beta_0", the first three columns and success rates
+design3a <- design2[, c(1:3, grep("beta0", colnames(design2)), grep("success", colnames(design2)))]
 design3a <- design3a[, c("GM", "T", "N", "mlm_beta0_bias", "mlm_beta0_sd", "gee_ex_beta0_bias", "gee_ex_beta0_sd", 
+                         "gee_ar1_beta0_bias", "gee_ar1_beta0_sd", "gee_ind_beta0_bias", "gee_ind_beta0_sd", 
+                         "mlm_success", "gee_ex_success", "gee_ar1_success", "gee_ind_success")]
+saveRDS(design3a, paste0("simulation_results/", runname, "/results_beta0_bias_sd_success.RDS"))
+
+# exclude any column that doesn't include "beta_0", the first three columns
+design3b <- design2[, c(1:3, grep("beta0", colnames(design2)))]
+design3c <- design3b[, c("GM", "T", "N", "mlm_beta0_bias", "mlm_beta0_sd", "gee_ex_beta0_bias", "gee_ex_beta0_sd", 
                          "gee_ar1_beta0_bias", "gee_ar1_beta0_sd", "gee_ind_beta0_bias", "gee_ind_beta0_sd")]
-saveRDS(design3a, paste0("simulation_results/", runname, "/results_beta0_bias_sd.RDS"))
+saveRDS(design3c, paste0("simulation_results/", runname, "/results_beta0_bias_sd.RDS"))
 
 # exclude any column that doesn't include "beta_0_bias" and the first three columns
-design3b <- design2[, c(1:3, grep("beta0_bias", colnames(design2)))]
-design4 <- design3b[, c("GM", "T", "N", "mlm_beta0_bias", "gee_ex_beta0_bias", "gee_ar1_beta0_bias", "gee_ind_beta0_bias")]
-saveRDS(design4, paste0("simulation_results/", runname, "/results_beta0_bias.RDS"))
+design4a <- design2[, c(1:3, grep("beta0_bias", colnames(design2)))]
+design4b <- design4a[, c("GM", "T", "N", "mlm_beta0_bias", "gee_ex_beta0_bias", "gee_ar1_beta0_bias", "gee_ind_beta0_bias")]
+saveRDS(design4b, paste0("simulation_results/", runname, "/results_beta0_bias.RDS"))
 
 # make LaTeX tables --------------------------------------------------------
 
 library(xtable)
 
-design3c <- design3a
-colnames(design3c) <- c("GM", "T", "N", "MLM_bias", "MLM_sd", "GEE-Ex_bias", "GEE-Ex_sd", 
+# make table for beta0 bias with Standarddeviation and success rate
+colnames(design3a) <- c("GM", "T", "N", "MLM_bias", "MLM_sd", "GEE-Ex_bias", "GEE-Ex_sd", 
+                        "GEE-AR1_bias", "GEE-AR1_sd", "GEE-Ind_bias", "GEE-Ind_sd", "MLM_success", "GEE-Ex_success", "GEE-AR1_success", "GEE-Ind_success")
+print(xtable(design3a, digits = c(0, 0, 0, 0, rep(3, 8), rep(2, 4)), 
+             caption = paste0("Results for beta0 bias with Standarddeviation and success rate, ", nsim, " replications, run: ", runname), label = "tab:beta0_bias_sd_success"), 
+      include.rownames = FALSE, file = paste0("simulation_results/", runname, "/results_beta0_bias_sd_success.tex"))
+
+# make table for beta0 bias with Standarddeviation
+design3d <- design3c
+colnames(design3d) <- c("GM", "T", "N", "MLM_bias", "MLM_sd", "GEE-Ex_bias", "GEE-Ex_sd", 
                         "GEE-AR1_bias", "GEE-AR1_sd", "GEE-Ind_bias", "GEE-Ind_sd")
-print(xtable(design3c, digits = c(0, 0, 0, 0, rep(3, 8)), 
+print(xtable(design3d, digits = c(0, 0, 0, 0, rep(3, 8)), 
              caption = paste0("Results for beta0 bias with Standarddeviation, ", nsim, " replications, run: ", runname), label = "tab:beta0_bias_sd"), 
-      include.rownames = FALSE, hline.after = c(-1, 0, seq(from = 6, to = nrow(design3c), by = 6)), 
-      file = paste0("simulation_results/", runname, "/results_beta0_bias_sd.tex"))
+      include.rownames = FALSE, file = paste0("simulation_results/", runname, "/results_beta0_bias_sd.tex"))
 
-# make variable names shorter
-design4b <- design4
-colnames(design4b) <- c("GM", "T", "N", "MLM", "GEE-Ex", "GEE-AR1", "GEE-Ind")
+# make table for beta0 bias
+design4c <- design4b
+colnames(design4c) <- c("GM", "T", "N", "MLM", "GEE-Ex", "GEE-AR1", "GEE-Ind")
 
-print(xtable(design4b, digits = c(0, 0, 0, 0, rep(3, 4)), 
+print(xtable(design4c, digits = c(0, 0, 0, 0, rep(3, 4)), 
              caption = paste0("Results for beta0 bias, ", nsim, " replications, run: ", runname), label = "tab:beta0_bias"),
-      include.rownames = FALSE, hline.after = c(-1, 0, seq(from = 6, to = nrow(design4b), by = 6)), 
-      file = paste0("simulation_results/", runname, "/results_beta0_bias.tex"))
+      include.rownames = FALSE, file = paste0("simulation_results/", runname, "/results_beta0_bias.tex"))

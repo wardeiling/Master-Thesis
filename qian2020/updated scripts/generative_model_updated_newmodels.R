@@ -5,9 +5,12 @@
 
 # dmg_type with an "a" suffix means that there are no random slopes
 # dgm_type with a "b" suffix means that there are no random slopes nor interactions between the treatment and covariate
-# GM3c has a different value for the random slope b_i2 for the treatment effect
-# GM3d has a different value for the random intercept b_i0 
-# GM3e has a different value for the random intercept b_i0 but no random slope
+# dgm_type == GM3c: GM3, except higher value for the random slope b_i2 variance (treatment effect)
+# dgm_type == GM3d: GM3, except no interaction effect beta_1
+# inactive:
+# dgm_type == GM3e: has a different value for the random intercept b_i0 but no random slope
+# dgm_type == GM3f has a higher value for the random intercept b_i0 but no random slope
+
 
 dgm_with_treatment <- function(sample_size, total_T, dgm_type) {
     
@@ -35,15 +38,16 @@ dgm_with_treatment <- function(sample_size, total_T, dgm_type) {
     } else if (dgm_type %in% c("1b", "2b", "3b")) {
       sigma_b2 <- 0
       beta_1 <- 0
-      # increase the variance of random slope b_i2 for model 3c
+      # increase the variance of random slope b_2i for model 3c
     } else if (dgm_type == "3c") {
       sigma_b2 <- 3
     } else if (dgm_type == "3d") {
-      sigma_b0 <- 3
-    } else if (dgm_type == "3e") {
-      sigma_b0 <- 3
-      sigma_b2 <- 0
-    }
+      beta_1 <- 0
+    } 
+    # else if (dgm_type == "3f") {
+    #   sigma_b0 <- 3
+    #   sigma_b2 <- 0
+    # }
     
     prob_a <- 0.5
     
@@ -87,7 +91,7 @@ dgm_with_treatment <- function(sample_size, total_T, dgm_type) {
             }
             dta$prob_A[row_index] <- ifelse(dta$X[row_index] > - 1.27, 0.7, 0.3)
             
-        } else if (dgm_type %in% c(3, "3a", "3b", "3c", "3d", "3e")) {
+        } else if (dgm_type %in% c(3, "3a", "3b", "3c", "3d")) {
             if (t == 1) {
                 dta$X[row_index] <- rnorm(sample_size, mean = b_0i) # X involves b_i!!
             } else {
