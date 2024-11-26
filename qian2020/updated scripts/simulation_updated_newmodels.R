@@ -9,7 +9,7 @@
 rm(list = ls())
 
 set.seed(123) # set global seed
-runname <- "GM123b_1000reps" # set a runname
+runname <- "GM3abcde_100reps" # set a runname
 
 # make a directory in simulation_results based on runname
 dir.create(paste0("simulation_results/", runname), showWarnings = FALSE)
@@ -34,7 +34,7 @@ cl <- makeCluster(cores - 1, outfile = paste0("simulation_results/", runname, "/
 registerDoParallel(cl)
 
 # set the number of simulations
-nsim <- 1000
+nsim <- 100
 
 # simulation in Section 4
 # design <- expand.grid(sample_size = c(30, 100, 200), total_T = c(10, 30), dgm_type = 1:3)
@@ -46,13 +46,13 @@ nsim <- 1000
 # design <- expand.grid(sample_size = c(30, 100, 200), total_T = c(10, 30), dgm_type = c("1a", "2a", "3a"))
 
 # simulation with "b" models
-design <- expand.grid(sample_size = c(30, 100, 200), total_T = c(10, 30), dgm_type = c("1b", "2b", "3b"))
+# design <- expand.grid(sample_size = c(30, 100, 200), total_T = c(10, 30), dgm_type = c("1b", "2b", "3b"))
 
 # simulation for all models with N = 200, 1000, T = 10, 30
 # design <- expand.grid(sample_size = c(200, 1000), total_T = c(10, 30), dgm_type = c(1, "1a", "1b", 2, "2a", "2b", 3, "3a", "3b"))
 
-# simulation for models 3, 3a, 3b, 3c with N = 100, 200, 1000, T = 10, 30
-design <- expand.grid(sample_size = c(200,1000), total_T = c(10, 30), dgm_type = c(3, "3c"))
+# simulation for models 3, 3a, 3b, 3c, 3d, 3e with N = 1000, T = 10, 30
+design <- expand.grid(sample_size = c(1000), total_T = c(10, 30), dgm_type = c(3, "3a", "3b", "3c", "3d", "3e"))
 
 design$dgm_type <- as.character(design$dgm_type)
 
@@ -103,11 +103,11 @@ for (idesign in 1:nrow(design)) {
         # for mlm
         solution_lmm <- tryCatch(
           {
-            if (dgm_type %in% c(1,3, "3c")) {
+            if (dgm_type %in% c(1,3,"3c","3d")) {
               mlm_fit <- lmer(Y ~ X * A + (1 + A| userid), data = dta)
             } else if (dgm_type == 2) {
               mlm_fit <- lmer(Y ~ X * A + (X * A| userid), data = dta)
-            } else if (dgm_type %in% c("1a", "2a", "3a")) {
+            } else if (dgm_type %in% c("1a", "2a", "3a", "3e")) {
               mlm_fit <- lmer(Y ~ X * A + (1 | userid), data = dta)
             } else if (dgm_type %in% c("1b", "2b", "3b")) {
               mlm_fit <- lmer(Y ~ X + A + (1 | userid), data = dta)
