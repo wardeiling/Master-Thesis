@@ -1,0 +1,154 @@
+starting worker pid=6812 on localhost:11662 at 14:00:26.581
+starting worker pid=14736 on localhost:11662 at 14:00:26.949
+starting worker pid=2148 on localhost:11662 at 14:00:27.885
+starting worker pid=11520 on localhost:11662 at 14:00:28.188
+starting worker pid=7548 on localhost:11662 at 14:00:28.541
+starting worker pid=1944 on localhost:11662 at 14:00:28.942
+starting worker pid=500 on localhost:11662 at 14:00:29.398
+Loading required package: Matrix
+Loading required package: Matrix
+Loading required package: Matrix
+Loading required package: Matrix
+Loading required package: Matrix
+Loading required package: Matrix
+Loading required package: Matrix
+Loading required package: foreach
+Loading required package: foreach
+Loading required package: foreach
+Loading required package: foreach
+Loading required package: rngtools
+Loading required package: rngtools
+Loading required package: rngtools
+Loading required package: rngtools
+Loading required package: foreach
+Loading required package: foreach
+Loading required package: rngtools
+Loading required package: rngtools
+Loading required package: foreach
+Loading required package: rngtools
+Starting iteration 10 , GM 3 , N = 200 , T = 10 
+Starting iteration 20 , GM 3 , N = 200 , T = 10 
+Starting iteration 30 , GM 3 , N = 200 , T = 10 
+Starting iteration 40 , GM 3 , N = 200 , T = 10 
+Starting iteration 50 , GM 3 , N = 200 , T = 10 
+Starting iteration 60 , GM 3 , N = 200 , T = 10 
+Starting iteration 70 , GM 3 , N = 200 , T = 10 
+Starting iteration 80 , GM 3 , N = 200 , T = 10 
+Starting iteration 90 , GM 3 , N = 200 , T = 10 
+Starting iteration 100 , GM 3 , N = 200 , T = 10 
+Starting iteration 10 , GM 3 , N = 200 , T = 30 
+Starting iteration 20 , GM 3 , N = 200 , T = 30 
+Starting iteration 30 , GM 3 , N = 200 , T = 30 
+Starting iteration 40 , GM 3 , N = 200 , T = 30 
+Starting iteration 50 , GM 3 , N = 200 , T = 30 
+Starting iteration 60 , GM 3 , N = 200 , T = 30 
+Starting iteration 70 , GM 3 , N = 200 , T = 30 
+Starting iteration 80 , GM 3 , N = 200 , T = 30 
+Starting iteration 90 , GM 3 , N = 200 , T = 30 
+Starting iteration 100 , GM 3 , N = 200 , T = 30 
+Starting iteration 10 , GM 3f , N = 200 , T = 10 
+Starting iteration 20 , GM 3f , N = 200 , T = 10 
+Starting iteration 30 , GM 3f , N = 200 , T = 10 
+Starting iteration 40 , GM 3f , N = 200 , T = 10 
+Starting iteration 50 , GM 3f , N = 200 , T = 10 
+Starting iteration 60 , GM 3f , N = 200 , T = 10 
+Starting iteration 70 , GM 3f , N = 200 , T = 10 
+Starting iteration 80 , GM 3f , N = 200 , T = 10 
+Starting iteration 90 , GM 3f , N = 200 , T = 10 
+Starting iteration 100 , GM 3f , N = 200 , T = 10 
+Starting iteration 10 , GM 3f , N = 200 , T = 30 
+Starting iteration 20 , GM 3f , N = 200 , T = 30 
+Starting iteration 30 , GM 3f , N = 200 , T = 30 
+Starting iteration 40 , GM 3f , N = 200 , T = 30 
+Starting iteration 50 , GM 3f , N = 200 , T = 30 
+Starting iteration 60 , GM 3f , N = 200 , T = 30 
+Starting iteration 70 , GM 3f , N = 200 , T = 30 
+Starting iteration 80 , GM 3f , N = 200 , T = 30 
+Starting iteration 90 , GM 3f , N = 200 , T = 30 
+
+Caught warning in lmer():
+Model failed to converge with max|grad| = 0.00419905 (tol = 0.002, component 1)Starting iteration 100 , GM 3f , N = 200 , T = 30 
+Starting iteration 10 , GM 3g , N = 200 , T = 10 
+Starting iteration 20 , GM 3g , N = 200 , T = 10 
+Starting iteration 30 , GM 3g , N = 200 , T = 10 
+Starting iteration 40 , GM 3g , N = 200 , T = 10 
+Starting iteration 50 , GM 3g , N = 200 , T = 10 
+Starting iteration 60 , GM 3g , N = 200 , T = 10 
+Starting iteration 70 , GM 3g , N = 200 , T = 10 
+Starting iteration 80 , GM 3g , N = 200 , T = 10 
+Starting iteration 90 , GM 3g , N = 200 , T = 10 
+Starting iteration 100 , GM 3g , N = 200 , T = 10 
+Starting iteration 10 , GM 3g , N = 200 , T = 30 
+Starting iteration 20 , GM 3g , N = 200 , T = 30 
+Starting iteration 30 , GM 3g , N = 200 , T = 30 
+Starting iteration 40 , GM 3g , N = 200 , T = 30 
+Starting iteration 50 , GM 3g , N = 200 , T = 30 
+Starting iteration 60 , GM 3g , N = 200 , T = 30 
+Starting iteration 70 , GM 3g , N = 200 , T = 30 
+Starting iteration 80 , GM 3g , N = 200 , T = 30 
+Starting iteration 90 , GM 3g , N = 200 , T = 30 
+Starting iteration 100 , GM 3g , N = 200 , T = 30 
+Error in unserialize(node$con) : error reading from connection
+Calls: <Anonymous> ... doTryCatch -> recvData -> recvData.SOCKnode -> unserialize
+In addition: Warning messages:
+1: package 'geepack' was built under R version 4.3.3 
+2: package 'lme4' was built under R version 4.3.2 
+3: package 'Matrix' was built under R version 4.3.2 
+4: package 'doRNG' was built under R version 4.3.3 
+5: package 'foreach' was built under R version 4.3.2 
+Error in unserialize(node$con) : error reading from connection
+Calls: <Anonymous> ... doTryCatch -> recvData -> recvData.SOCKnode -> unserialize
+6: package 'rngtools' was built under R version 4.3.3 
+In addition: Warning messages:
+1: package 'geepack' was built under R version 4.3.3 
+Error in unserialize(node$con) : error reading from connection
+Calls: <Anonymous> ... doTryCatch -> recvData -> recvData.SOCKnode -> unserialize
+Execution halted
+was built under R version 4.3.2 
+In addition: atrix' was built under R version 4.3.2 
+Warning messages:
+Error in unserialize(node$con) : error reading from connection
+Calls: <Anonymous> ... doTryCatch -> recvData -> recvData.SOCKnode -> unserialize
+1: package 'geepack' was built under R version 4.3.3 
+5: package 'foreach' was built under R version 4.3.2 
+6: package 'rngtools' was built under R version 4.3.3 
+In addition: 3: package 'Matrix' was built under R version 4.3.2 
+4: package 'doRNG' was built under R version 4.3.3 
+Error in unserialize(node$con) : error reading from connection
+Calls: <Anonymous> ... doTryCatch -> recvData -> recvData.SOCKnode -> unserialize
+Warning messages:
+' was built under R version 4.3.2 
+Execution halted
+k' was built under R version 4.3.3 
+
+2: package 'lme4' was built under R version 4.3.2 
+3: package 'Matrix' was built under R version 4.3.2 
+4: package 'doRNG' was built under R version 4.3.3 
+5: package 'foreach' was built under R version 4.3.2 
+nection
+Calls: <Anonymous> ... doTryCatch -> recvData -> recvData.SOCKnode -> unserialize
+6: package 'rngtools' was built under R version 4.3.3 Execution halted
+2: package 'lme4' was built under R version 4.3.2 
+3: package 'Matrix' was built under R version 4.3.2 
+4: package 'doRNG' was built under R version 4.3.3 
+5: package 'foreach' was built under R version 4.3.2 
+Execution halted
+
+s' was built under R version 4.3.3 
+1: package 'geepack' was built under R version 4.3.3 
+2: package 'lme4' was built under R version 4.3.2 
+3: package 'Matrix' was built under R version 4.3.2 
+4: package 'doRNG' was built under R version 4.3.3 
+5: package 'foreach' was built under R version 4.3.2 
+nection
+Calls: <Anonymous> ... doTryCatch -> recvData -> recvData.SOCKnode -> unserialize
+Execution halted
+6: package 'rngtools' was built under R version 4.3.3 
+In addition: Warning messages:
+1: package 'geepack' was built under R version 4.3.3 
+2: package 'lme4' was built under R version 4.3.2 
+3: package 'Matrix' was built under R version 4.3.2 
+4: package 'doRNG' was built under R version 4.3.3 
+5: package 'foreach' was built under R version 4.3.2 
+6: package 'rngtools' was built under R version 4.3.3 
+Execution halted

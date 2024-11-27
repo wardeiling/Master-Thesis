@@ -5,17 +5,16 @@
 
 # dmg_type with an "a" suffix means that there are no random slopes
 # dgm_type with a "b" suffix means that there are no random slopes nor interactions between the treatment and covariate
-# dgm_type == GM3c: GM3, except higher value for the random slope b_i2 variance (treatment effect)
-# dgm_type == GM3d: GM3, except no interaction effect beta_1
-# inactive:
-# dgm_type == GM3e: has a different value for the random intercept b_i0 but no random slope
-# dgm_type == GM3f has a higher value for the random intercept b_i0 but no random slope
-
+# dgm_type == 3c: GM3, except higher value for the random slope b_i2 variance (treatment effect)
+# dgm_type == 3d: GM3, except no interaction effect beta_1
+# dgm_type == 3e: GM3, except higher value for interaction beta_1
+# dgm_type == 3f: GM3, except higher value for fixed slope alpha_1
+# dgm_type == 3g: GM3, except lower value for fixed slope alpha_1
 
 dgm_with_treatment <- function(sample_size, total_T, dgm_type) {
     
     # dgm_type is in c(1,2,3,4)
-    stopifnot(dgm_type %in% c(1,2,3,"1a", "2a", "3a", "1b", "2b", "3b", "3c", "3d", "3e"))
+    stopifnot(dgm_type %in% c(1,2,3,"1a", "2a", "3a", "1b", "2b", "3b", "3c", "3d", "3e", "3f", "3g"))
     
     # dgm_type = 1 or 3
     alpha_0 <- - 2 # overall intercept, was originally -1 in the code but is -2 in the paper
@@ -43,12 +42,14 @@ dgm_with_treatment <- function(sample_size, total_T, dgm_type) {
       sigma_b2 <- 3
     } else if (dgm_type == "3d") {
       beta_1 <- 0
-    } 
-    # else if (dgm_type == "3f") {
-    #   sigma_b0 <- 3
-    #   sigma_b2 <- 0
-    # }
-    
+    } else if (dgm_type == "3e") {
+      beta_1 <- 0.6
+    } else if (dgm_type == "3f") {
+      alpha_1 <- -0.6
+    } else if (dgm_type == "3g") {
+      alpha_1 <- -0.15
+    }
+
     prob_a <- 0.5
     
     df_names <- c("userid", "day", "X", "prob_A", "A", "Y", "b0", "b1", "b2", "b3", "eps", "delta")
@@ -91,7 +92,7 @@ dgm_with_treatment <- function(sample_size, total_T, dgm_type) {
             }
             dta$prob_A[row_index] <- ifelse(dta$X[row_index] > - 1.27, 0.7, 0.3)
             
-        } else if (dgm_type %in% c(3, "3a", "3b", "3c", "3d")) {
+        } else if (dgm_type %in% c(3, "3a", "3b", "3c", "3d", "3e", "3f", "3g")) {
             if (t == 1) {
                 dta$X[row_index] <- rnorm(sample_size, mean = b_0i) # X involves b_i!!
             } else {

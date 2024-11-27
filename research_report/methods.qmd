@@ -44,7 +44,7 @@ library(pdftools)
 
 ## Simulation Conditions
 
-In the simulation, we considered nine generative models (GMs), all of which have an endogenous covariate. In the first GM1 and GM2, the endogenous covariate $X_{it}$ equals the previous outcome $Y_{it}$ plus some random noise, so the conditional independence assumption is valid. In GM3, the endogenous covariate depends directly on $b_{i0}$, violating the assumption. To isolate the issue described by Qian et al. (2020), we consider 6 models on top of the three models described in the original paper. More specifically, we considered models with an "a" suffix, where all random slopes were removed, and models with a "b" suffix, were on top of the removal of random slopes, the interaction terms were removed. The details of the generative models are described below. We follow the notation of Qian et al. (2020) to allow for direct comparison, but rewrite the equations into within- and between-person models (see Raudenbusch & Bryk, 2002).
+In the simulation, we considered nine generative models (GMs), all of which have an endogenous covariate. In the first GM1 and GM2, the endogenous covariate $X_{it}$ equals the previous outcome $Y_{it}$ plus some random noise, so the conditional independence assumption is valid. In GM3, the endogenous covariate depends directly on $b_{i0}$, violating the assumption. To isolate the issue described by Qian et al. (2020), we consider 6 models on top of the three models described in the original paper. More specifically, we considered models with an "a" suffix, where all random slopes were removed, and models with a "b" suffix, were on top of the removal of random slopes, the interaction terms were removed. The details of the generative models are described below. We follow the notation of Qian et al. (2020) to allow for direct comparison, but rewrite the equations into within- and between-person models (see Raudenbusch & Bryk, 2002). We accompany the equations of the GMs with graphical representations,  where latent variables are represented by circles, observed variables by squares and relationships across variables by arrows. The path diagrams of the three data generating models shows the discrepancies between the different generative models---especially concerning the interaction effects---more clearly than DAGs.
 
 ### Generative Model 1
 
@@ -89,6 +89,65 @@ X_{it} = Y_{it} + \mathcal{N}(0, 1).
 $$
 
 The randomization probability $p_t = P(A_{it} = 1 \mid H_{it})$ is constant at $1/2$. Thus, $A_{it} \sim \text{Bernoulli}(0.5)$ for $i = 1, \ldots, N$ and $t = 1, \ldots, T$. The exogenous noise is $\epsilon_{it+1} \sim \mathcal{N}(0, \sigma_\epsilon^2)$.
+
+@fig-GM1_path shows the path diagram for GM3.
+
+```{r}
+#| label: fig-GM1_path
+#| engine: 'tikz'
+#| echo: false
+#| cache: true
+#| fig-cap: "Path diagram for Generative Model 1"
+#| eval: false
+
+\begin{tikzpicture}
+  % Nodes for observed variables (squares)
+  \node[draw, rectangle] (X1) at (0, -2) {$X_{1i}$};
+  \node (X1var) at (0, -3) {$\sigma^2_{X}$};
+  \node[draw, rectangle] (A1) at (0, 2) {$A_{1i}$};
+  \node[draw, rectangle] (A1X1) at (0.3, 0) {$A_{1i}\cdot X_{1i}$};
+  \node[draw, rectangle] (Y2) at (3, 0) {$Y_{2i}$}; % Increased x-coordinate
+  \node (Y2var) at (4, 0) {$\sigma^2_{\epsilon}$};
+  \node[draw, rectangle] (X2) at (3, -2) {$X_{2i}$}; % Increased x-coordinate
+  \node (X2var) at (3, -3) {$\sigma^2_{X}$};
+  \node[draw, rectangle] (A2) at (3, 2) {$A_{2i}$}; % Increased x-coordinate
+  \node[draw, rectangle] (Y3) at (8, 0) {$Y_{3i}$}; % Increased x-coordinate
+  \node (Y3var) at (9, 0) {$\sigma^2_{\epsilon}$};
+  \node[draw, rectangle] (X3) at (8, -2) {$X_{3i}$}; % Increased x-coordinate
+  \node (X3var) at (8, -3) {$\sigma^2_{X}$};
+  \node[draw, rectangle] (A2X2) at (5.3, 0) {$A_{2i}\cdot X_{2i}$}; % Increased x-coordinate
+
+  % Nodes for latent variables (circles)
+  \node[draw, circle] (b0) at (6, 4) {$b_{i0}$}; % Increased x-coordinate
+  \node[draw, circle] (b2) at (3, 4) {$b_{i2}$}; % Adjusted to align with middle row
+
+  % Arrows with path coefficients
+  \draw [->] (b0) -- node[right] {$+$} (Y2);
+  \draw [->] (b0) -- node[right] {$+$} (Y3);
+  \draw [->] (A2) edge node[above] {$\beta_0$} (Y3);
+  \draw [->] (X2) edge node[below] {$\alpha_1$} (Y3);
+  \draw [->] (Y2) edge node[left] {$=$} (X2);
+  \draw [->] (A1) edge node[left] {$\beta_0$} (Y2);
+  \draw [->] (X1) edge node[below] {$\alpha_1$} (Y2);
+  \draw [->] (Y3) edge node[right] {$=$} (X3);
+  \draw [->] (A1X1) edge node[above] {$\beta_1$} (Y2);
+  \draw [->] (A2X2) edge node[above] {$\beta_1$} (Y3);
+  \draw [->] (X1var) edge (X1);
+  \draw [->] (X2var) edge (X2);
+  \draw [->] (X3var) edge (X3);
+  \draw [->] (Y2var) edge (Y2);
+  \draw [->] (Y3var) edge (Y3);
+
+  % Curved arrows for variances
+  \draw [<->, out=45, in=135, looseness=2] (b0) to node[above] {$\sigma^2_{b0}$} (b0);
+  \draw [<->, out=45, in=135, looseness=2] (b2) to node[above] {$\sigma^2_{b2}$} (b2);
+
+  % Additional paths for A and X interaction effects
+  \draw[->, dashed] (b2) -- (1.5,1); % Adjusted x-coordinates
+  \draw[->, dashed] (b2) -- (5,1.2); % Adjusted x-coordinates
+
+\end{tikzpicture}
+```
 
 ### Generative Model 1A
 
@@ -169,6 +228,68 @@ GM3 is the same as GM1, except that the covariate $X_{it}$ depends directly on $
 $$
 X_{i1} \sim \mathcal{N}(b_{i0}, 1), \quad X_{it} = Y_{it} + \mathcal{N}(b_{i0}, 1) \text{ for } t \geq 2.
 $$
+
+@fig-GM3_path shows the path diagram for GM3.
+
+```{r}
+#| label: fig-GM3_path
+#| engine: 'tikz'
+#| echo: false
+#| cache: true
+#| fig-cap: "Path diagram for Generative Model 3"
+#| eval: false
+
+\begin{tikzpicture}
+  % Nodes for observed variables (squares)
+  \node[draw, rectangle] (X1) at (0, -2) {$X_{1i}$};
+  \node (X1var) at (0, -3) {$\sigma^2_{X}$};
+  \node[draw, rectangle] (A1) at (0, 2) {$A_{1i}$};
+  \node[draw, rectangle] (A1X1) at (0.3, 0) {$A_{1i}\cdot X_{1i}$};
+  \node[draw, rectangle] (Y2) at (3, 0) {$Y_{2i}$}; % Increased x-coordinate
+  \node (Y2var) at (4, 0) {$\sigma^2_{\epsilon}$};
+  \node[draw, rectangle] (X2) at (3, -2) {$X_{2i}$}; % Increased x-coordinate
+  \node (X2var) at (3, -3) {$\sigma^2_{X}$};
+  \node[draw, rectangle] (A2) at (3, 2) {$A_{2i}$}; % Increased x-coordinate
+  \node[draw, rectangle] (Y3) at (8, 0) {$Y_{3i}$}; % Increased x-coordinate
+  \node (Y3var) at (9, 0) {$\sigma^2_{\epsilon}$};
+  \node[draw, rectangle] (X3) at (8, -2) {$X_{3i}$}; % Increased x-coordinate
+  \node (X3var) at (8, -3) {$\sigma^2_{X}$};
+  \node[draw, rectangle] (A2X2) at (5.3, 0) {$A_{2i}\cdot X_{2i}$}; % Increased x-coordinate
+
+  % Nodes for latent variables (circles)
+  \node[draw, circle] (b0) at (6, 4) {$b_{i0}$}; % Increased x-coordinate
+  \node[draw, circle] (b2) at (3, 4) {$b_{i2}$}; % Adjusted to align with middle row
+
+  % Arrows with path coefficients
+  \draw [->] (b0) -- node[right] {$+$} (Y2);
+  \draw [->] (b0) -- node[right] {$+$} (Y3);
+  \draw [->] (A2) edge node[above] {$\beta_0$} (Y3);
+  \draw [->] (X2) edge node[below] {$\alpha_1$} (Y3);
+  \draw [->] (Y2) edge node[left] {$=$} (X2);
+  \draw [->] (A1) edge node[left] {$\beta_0$} (Y2);
+  \draw [->] (X1) edge node[below] {$\alpha_1$} (Y2);
+  \draw [->] (Y3) edge node[right] {$=$} (X3);
+  \draw [->] (A1X1) edge node[above] {$\beta_1$} (Y2);
+  \draw [->] (A2X2) edge node[above] {$\beta_1$} (Y3);
+  \draw [->] (X1var) edge (X1);
+  \draw [->] (X2var) edge (X2);
+  \draw [->] (X3var) edge (X3);
+  \draw [->] (Y2var) edge (Y2);
+  \draw [->] (Y3var) edge (Y3);
+  \draw [->] (b0) edge (X1);
+  \draw [->] (b0) edge (X2);
+  \draw [->] (b0) edge (X3);
+
+  % Curved arrows for variances
+  \draw [<->, out=45, in=135, looseness=2] (b0) to node[above] {$\sigma^2_{b0}$} (b0);
+  \draw [<->, out=45, in=135, looseness=2] (b2) to node[above] {$\sigma^2_{b2}$} (b2);
+
+  % Additional paths for A and X interaction effects
+  \draw[->, dashed] (b2) -- (1.5,1); % Adjusted x-coordinates
+  \draw[->, dashed] (b2) -- (5,1.2); % Adjusted x-coordinates
+
+\end{tikzpicture}
+```
 
 ### Generative Model 3A
 
