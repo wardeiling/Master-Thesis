@@ -35,6 +35,10 @@ format:
 bibliography: references.bib
 link-citations: true
 csl: apa.csl
+execute:
+  message: false
+  warning: false
+fig-cap-location: top
 ---
 
 ```{=tex}

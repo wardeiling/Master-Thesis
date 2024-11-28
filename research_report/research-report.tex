@@ -1,0 +1,944 @@
+% Options for packages loaded elsewhere
+\PassOptionsToPackage{unicode}{hyperref}
+\PassOptionsToPackage{hyphens}{url}
+\PassOptionsToPackage{dvipsnames,svgnames,x11names}{xcolor}
+%
+\documentclass[
+  12pt,
+  a4paper,
+]{article}
+
+\usepackage{amsmath,amssymb}
+\usepackage{setspace}
+\usepackage{iftex}
+\ifPDFTeX
+  \usepackage[T1]{fontenc}
+  \usepackage[utf8]{inputenc}
+  \usepackage{textcomp} % provide euro and other symbols
+\else % if luatex or xetex
+  \usepackage{unicode-math}
+  \defaultfontfeatures{Scale=MatchLowercase}
+  \defaultfontfeatures[\rmfamily]{Ligatures=TeX,Scale=1}
+\fi
+\usepackage{lmodern}
+\ifPDFTeX\else  
+    % xetex/luatex font selection
+    \setmainfont[]{Latin Modern Roman}
+    \setsansfont[]{Latin Modern Roman}
+\fi
+% Use upquote if available, for straight quotes in verbatim environments
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
+\IfFileExists{microtype.sty}{% use microtype if available
+  \usepackage[]{microtype}
+  \UseMicrotypeSet[protrusion]{basicmath} % disable protrusion for tt fonts
+}{}
+\usepackage{xcolor}
+\usepackage[top=2.5cm,bottom=2.5cm,left=2.5cm,right=2.5cm]{geometry}
+\setlength{\emergencystretch}{3em} % prevent overfull lines
+\setcounter{secnumdepth}{-\maxdimen} % remove section numbering
+% Make \paragraph and \subparagraph free-standing
+\makeatletter
+\ifx\paragraph\undefined\else
+  \let\oldparagraph\paragraph
+  \renewcommand{\paragraph}{
+    \@ifstar
+      \xxxParagraphStar
+      \xxxParagraphNoStar
+  }
+  \newcommand{\xxxParagraphStar}[1]{\oldparagraph*{#1}\mbox{}}
+  \newcommand{\xxxParagraphNoStar}[1]{\oldparagraph{#1}\mbox{}}
+\fi
+\ifx\subparagraph\undefined\else
+  \let\oldsubparagraph\subparagraph
+  \renewcommand{\subparagraph}{
+    \@ifstar
+      \xxxSubParagraphStar
+      \xxxSubParagraphNoStar
+  }
+  \newcommand{\xxxSubParagraphStar}[1]{\oldsubparagraph*{#1}\mbox{}}
+  \newcommand{\xxxSubParagraphNoStar}[1]{\oldsubparagraph{#1}\mbox{}}
+\fi
+\makeatother
+
+
+\providecommand{\tightlist}{%
+  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}\usepackage{longtable,booktabs,array}
+\usepackage{calc} % for calculating minipage widths
+% Correct order of tables after \paragraph or \subparagraph
+\usepackage{etoolbox}
+\makeatletter
+\patchcmd\longtable{\par}{\if@noskipsec\mbox{}\fi\par}{}{}
+\makeatother
+% Allow footnotes in longtable head/foot
+\IfFileExists{footnotehyper.sty}{\usepackage{footnotehyper}}{\usepackage{footnote}}
+\makesavenoteenv{longtable}
+\usepackage{graphicx}
+\makeatletter
+\def\maxwidth{\ifdim\Gin@nat@width>\linewidth\linewidth\else\Gin@nat@width\fi}
+\def\maxheight{\ifdim\Gin@nat@height>\textheight\textheight\else\Gin@nat@height\fi}
+\makeatother
+% Scale images if necessary, so that they will not overflow the page
+% margins by default, and it is still possible to overwrite the defaults
+% using explicit options in \includegraphics[width, height, ...]{}
+\setkeys{Gin}{width=\maxwidth,height=\maxheight,keepaspectratio}
+% Set default figure placement to htbp
+\makeatletter
+\def\fps@figure{htbp}
+\makeatother
+% definitions for citeproc citations
+\NewDocumentCommand\citeproctext{}{}
+\NewDocumentCommand\citeproc{mm}{%
+  \begingroup\def\citeproctext{#2}\cite{#1}\endgroup}
+\makeatletter
+ % allow citations to break across lines
+ \let\@cite@ofmt\@firstofone
+ % avoid brackets around text for \cite:
+ \def\@biblabel#1{}
+ \def\@cite#1#2{{#1\if@tempswa , #2\fi}}
+\makeatother
+\newlength{\cslhangindent}
+\setlength{\cslhangindent}{1.5em}
+\newlength{\csllabelwidth}
+\setlength{\csllabelwidth}{3em}
+\newenvironment{CSLReferences}[2] % #1 hanging-indent, #2 entry-spacing
+ {\begin{list}{}{%
+  \setlength{\itemindent}{0pt}
+  \setlength{\leftmargin}{0pt}
+  \setlength{\parsep}{0pt}
+  % turn on hanging indent if param 1 is 1
+  \ifodd #1
+   \setlength{\leftmargin}{\cslhangindent}
+   \setlength{\itemindent}{-1\cslhangindent}
+  \fi
+  % set entry spacing
+  \setlength{\itemsep}{#2\baselineskip}}}
+ {\end{list}}
+\usepackage{calc}
+\newcommand{\CSLBlock}[1]{\hfill\break\parbox[t]{\linewidth}{\strut\ignorespaces#1\strut}}
+\newcommand{\CSLLeftMargin}[1]{\parbox[t]{\csllabelwidth}{\strut#1\strut}}
+\newcommand{\CSLRightInline}[1]{\parbox[t]{\linewidth - \csllabelwidth}{\strut#1\strut}}
+\newcommand{\CSLIndent}[1]{\hspace{\cslhangindent}#1}
+
+\usepackage{fancyhdr}
+\usepackage{amsmath}
+\usepackage{float}
+\makeatletter
+\@ifpackageloaded{caption}{}{\usepackage{caption}}
+\AtBeginDocument{%
+\ifdefined\contentsname
+  \renewcommand*\contentsname{Table of contents}
+\else
+  \newcommand\contentsname{Table of contents}
+\fi
+\ifdefined\listfigurename
+  \renewcommand*\listfigurename{List of Figures}
+\else
+  \newcommand\listfigurename{List of Figures}
+\fi
+\ifdefined\listtablename
+  \renewcommand*\listtablename{List of Tables}
+\else
+  \newcommand\listtablename{List of Tables}
+\fi
+\ifdefined\figurename
+  \renewcommand*\figurename{Figure}
+\else
+  \newcommand\figurename{Figure}
+\fi
+\ifdefined\tablename
+  \renewcommand*\tablename{Table}
+\else
+  \newcommand\tablename{Table}
+\fi
+}
+\@ifpackageloaded{float}{}{\usepackage{float}}
+\floatstyle{ruled}
+\@ifundefined{c@chapter}{\newfloat{codelisting}{h}{lop}}{\newfloat{codelisting}{h}{lop}[chapter]}
+\floatname{codelisting}{Listing}
+\newcommand*\listoflistings{\listof{codelisting}{List of Listings}}
+\makeatother
+\makeatletter
+\makeatother
+\makeatletter
+\@ifpackageloaded{caption}{}{\usepackage{caption}}
+\@ifpackageloaded{subcaption}{}{\usepackage{subcaption}}
+\makeatother
+
+\ifLuaTeX
+  \usepackage{selnolig}  % disable illegal ligatures
+\fi
+\usepackage{bookmark}
+
+\IfFileExists{xurl.sty}{\usepackage{xurl}}{} % add URL line breaks if available
+\urlstyle{same} % disable monospaced font for URLs
+\hypersetup{
+  pdftitle={Estimation of Effects of Endogenous Time-Varying Covariates: A Comparison Of Multilevel Linear Modeling and Generalized Estimating Equations},
+  pdfauthor={Ward B. Eiling (9294163)},
+  colorlinks=true,
+  linkcolor={blue},
+  filecolor={Maroon},
+  citecolor={Blue},
+  urlcolor={Blue},
+  pdfcreator={LaTeX via pandoc}}
+
+
+\title{Estimation of Effects of Endogenous Time-Varying Covariates: A
+Comparison Of Multilevel Linear Modeling and Generalized Estimating
+Equations}
+\usepackage{etoolbox}
+\makeatletter
+\providecommand{\subtitle}[1]{% add subtitle to \maketitle
+  \apptocmd{\@title}{\par {\large #1 \par}}{}{}
+}
+\makeatother
+\subtitle{Research Report}
+\author{Ward B. Eiling (9294163)}
+\date{November 1, 2024}
+
+\begin{document}
+\cleardoublepage
+\thispagestyle{empty}
+{\centering
+\hbox{}\vskip 0cm plus 1fill
+% \vspace{25ex}
+{\Large\bfseries Estimation of Effects of Endogenous Time-Varying
+Covariates: A Comparison Of Multilevel Linear Modeling and Generalized
+Estimating Equations \par}
+\vspace{3ex}
+{\large Research Report \par}
+\vspace{9ex}
+{\large\bfseries Ward B. Eiling (9294163) \par}
+\vspace{3ex}
+% {\Large ORCID: 0009-0007-8114-9497 \par}
+% \vspace{3ex}
+{\large Supervisors: Ellen Hamaker and Jeroen Mulder \par}
+% \vskip 0cm plus 2fill
+\vspace{9ex}
+{\normalsize \textit{Master's degree in Methodology and Statistics for the Behavioural, \\ Biomedical and Social Sciences} \par}
+\vspace{3ex}
+{\normalsize \textit{Utrecht University} \par}
+\vspace{9ex}
+{\normalsize November 1, 2024 \par}
+\vspace{3ex}
+{\normalsize Word count: 728 \par}
+\vspace{9ex}
+{\normalsize FETC-approved: 24-2003 \par}
+\vspace{9ex}
+{\normalsize \textit{Candidate journal: Psychological Methods} \par}
+\hbox{}\vskip 0cm plus 1fill
+% \vspace{12ex}
+% %
+% %
+% {\large Utrecht University \par}
+% %
+% %
+% {\large Methodology and Statistics \par}
+% \vspace{3ex}
+% %
+% {\large  \par}
+% %
+% \vspace{12ex}
+% {\small Submitted in total fulfilment of the requirements
+% of the degree of Doctor of Philosophy \par}
+}
+
+
+\setstretch{2}
+\newpage
+
+\section{Introduction}\label{introduction}
+
+Across a wide range of disciplines, researchers analyze clustered
+longitudinal, observational data to investigate prospective causal
+relationships between variables. When analyzing such data, the
+psychological sciences most commonly resort to the multilevel linear
+model (MLM, \citeproc{ref-mcneish2017}{McNeish et al., 2017}),
+which---in the context of longitudinal data analysis---separates
+observed variance into stable between-person differences and
+within-person fluctuations (\citeproc{ref-hamaker2020}{Hamaker \&
+Muthén, 2020}). Conversely, other fields, such as biostatistics and
+econometrics often favour generalized estimating equations (GEE) for the
+analysis of longitudinal data (\citeproc{ref-mcneish2017}{McNeish et
+al., 2017}). Despite some cross-disciplinary efforts to compare these
+methods (\citeproc{ref-mcneish2017}{McNeish et al., 2017};
+\citeproc{ref-muth2016}{Muth et al., 2016}; \citeproc{ref-yan2013}{Yan
+et al., 2013}), their scarcity may leave researchers with limited
+guidance in choosing the most suitable approach for their application.
+
+Recent evidence has highlighted an issue present in both methods, where
+controlling for \emph{time-varying endogenous covariates} may lead to
+biased causal estimates (\citeproc{ref-pepe1994}{Pepe \& Anderson,
+1994}; \citeproc{ref-qian2020}{Qian et al., 2020}). A time-varying
+covariate is \emph{endogenous} if it is directly or indirectly
+influenced by prior treatment or outcome, meaning its value may be
+determined by earlier stages of the process
+(\citeproc{ref-qian2020}{Qian et al., 2020}). As a result of including
+these covariates in the mentioned models, ordinary interpretations of
+the coefficients are no longer valid (\citeproc{ref-qian2020}{Qian et
+al., 2020, p. 3}). According to Diggle
+(\citeproc{ref-diggle2002}{2002}), this issue not only pertains GEE and
+MLM, but \emph{all} longitudinal data analysis methods.
+
+However, due to a divide between the disciplines that employ these
+methods, such critiques of the MLM appear to have largely failed to
+reach the applied researcher in psychology. One specific reason might be
+that the technical jargon in other disciplines makes it difficult for
+researchers to recognize when and how these issues emerge\footnote{For
+  instance, the term `endogeneity' in econometrics, while related, has a
+  distinct meaning from that of an endogenous variable, which can lead
+  to confusion.}. As a result, researchers may address related problems
+in disconnected literatures but fail to understand each other. For
+instance, while the MLM literature emphasizes on the distinction between
+different centering methods and the effect of cross-level interactions
+on parameter interpretations (e.g., \citeproc{ref-hamaker2020}{Hamaker
+\& Muthén, 2020}), the GEE literature appears to focus more on the
+marginal and conditional interpretations of model parameters (e.g.,
+\citeproc{ref-pepe1994}{Pepe \& Anderson, 1994}).
+
+Through a cross-fertilization of these literatures, this project aims to
+(1) explain the issue of including endogenous covariates in analyses
+involving GEE, MLM and DSEM (a widely used framework in the social
+sciences based on MLM) in a psychological context and (2) establish
+guidelines on how researchers can prevent this issue in their
+longitudinal data analysis. Accordingly, the following research
+questions will be addressed: \emph{In which cases do the inclusion of
+endogenous variables in multilevel linear models and generalized
+estimating equations result in a discrepancy between marginal and
+conditional estimates?} In line with the literature
+(\citeproc{ref-diggle2002}{Diggle, 2002}; \citeproc{ref-pepe1994}{Pepe
+\& Anderson, 1994}; \citeproc{ref-qian2020}{Qian et al., 2020}), we
+expect that the inclusion of endogenous time-varying covariates in
+longitudinal data analyses may result in bias that---depending on the
+circumstances---can promote the potential for faulty inferences. To
+isolate the issue described in Qian et al.
+(\citeproc{ref-qian2020}{2020}), we will focus on the following
+sub-questions: (1) When removing the interaction \(\beta_1\) from
+generative model 3, is there a difference between the marginal and
+conditional estimates of the treatment effect? (2) When removing the
+random slope \(b_{i2}\) from generative model 3, is there a difference
+between the marginal and conditional estimates of the treatment effect?
+
+\newpage
+
+\section{Methods}\label{methods}
+
+\newpage
+
+\subsection{Simulation Conditions}\label{simulation-conditions}
+
+In the simulation Qian et al. (\citeproc{ref-qian2020}{2020}) considered
+three generative models (GMs), all of which have an endogenous
+time-varying covariate. In GM1 and GM2, the endogenous covariate
+\(X_{it}\) equals the previous outcome \(Y_{it}\) plus some random
+noise, so the \emph{conditional independence} assumption is valid. In
+GM3, the endogenous covariate depends directly on \(b_{i0}\), violating
+the assumption. To isolate the issue described by Qian et al.~(2020), we
+consider 6 models on top of the three models described in the original
+paper.
+
+AJUST!!! More specifically, we considered models with an ``a'' suffix,
+where all random slopes were removed, and models with a ``b'' suffix,
+were on top of the removal of random slopes, the interaction terms were
+removed. AJUST!!!
+
+The details of the generative models are described below. We follow the
+notation of Qian et al.~(2020) to allow for direct comparison, but
+rewrite the equations into within- and between-person models (see
+Raudenbusch \& Bryk, 2002). We accompany the equations of the GMs with
+graphical representations, where latent variables are represented by
+circles, observed variables by squares and relationships across
+variables by arrows. The path diagrams of the three data generating
+models shows the discrepancies between the different generative
+models---especially concerning the interaction effects---more clearly
+than DAGs.
+
+\subsubsection{Generative Model 1}\label{generative-model-1}
+
+In GM1, we considered a simple case with only a random intercept and a
+random slope for \(X_{it}\). The outcome is generated according to the
+following repeated-observations or within-person model (level 1):
+
+\[
+Y_{it+1} = \pi_{0i} + \pi_{1i} X_{it} + \pi_{2i} A_{it} + \pi_{3i} A_{it} X_{it} + \epsilon_{it+1}
+\]
+
+with the person-level or between-person model (level 2):
+
+\[
+\pi_{0i} = \alpha_0 + b_{i0}, \quad b_{i0} \sim \mathcal{N}(0, \sigma_{b0}^2),
+\]
+
+\[
+\pi_{1i} = \alpha_1,
+\]
+
+\[
+\pi_{2i} = \beta_0 + b_{i2}, \quad b_{i2} \sim \mathcal{N}(0, \sigma_{b2}^2),
+\]
+
+\[
+\pi_{3i} = \beta_1.
+\]
+
+By substitution, we get the single equation model:
+
+\[
+\begin{aligned}
+Y_{it+1} &= \pi_{0i} + \pi_{1i} X_{it} + \pi_{2i} A_{it} + \pi_{3i} A_{it} X_{it} + \epsilon_{it+1} \\
+&= (\alpha_0 + b_{i0}) + \alpha_1 X_{it} + (\beta_0 + b_{i2}) A_{it} + \beta_1 A_{it} X_{it} + \epsilon_{it+1} \\
+&= \alpha_0 + \alpha_1 X_{it} + b_{i0} + A_{it} (\beta_0 + \beta_1 X_{it} + b_{i2}) + \epsilon_{it+1}.
+\end{aligned}
+\]
+
+The random effects \(b_{i0} \sim \mathcal{N}(0, \sigma_{b0}^2)\) and
+\(b_{i2} \sim \mathcal{N}(0, \sigma_{b2}^2)\) are independent of each
+other. The covariate is generated as \(X_{i1} \sim \mathcal{N}(0, 1)\),
+and for \(t \geq 2\),
+
+\[
+X_{it} = Y_{it} + \mathcal{N}(0, 1).
+\]
+
+The randomization probability \(p_t = P(A_{it} = 1 \mid H_{it})\) is
+constant at \(1/2\). Thus, \(A_{it} \sim \text{Bernoulli}(0.5)\) for
+\(i = 1, \ldots, N\) and \(t = 1, \ldots, T\). The exogenous noise is
+\(\epsilon_{it+1} \sim \mathcal{N}(0, \sigma_\epsilon^2)\).
+
+Figure~\ref{fig-GM1_path} shows the path diagram for GM3.
+
+\begin{figure}[H]
+
+\caption{\label{fig-GM1_path}Path diagram for Generative Model 1}
+
+\centering{
+
+\includegraphics{research-report_files/figure-pdf/fig-GM1_path-1.pdf}
+
+}
+
+\end{figure}%
+
+\subsubsection{Generative Model 1A}\label{generative-model-1a}
+
+GM1A is the same as GM1, except that the random slope \(b_{i2}\) for the
+treatment \(A_{it}\) is removed. The single equation model thus becomes:
+
+\[
+Y_{it+1} = \alpha_0 + \alpha_1 X_{it} + b_{i0} + A_{it} (\beta_0 + \beta_1 X_{it}) + \epsilon_{it+1}.
+\]
+
+\subsubsection{Generative Model 1B}\label{generative-model-1b}
+
+GM1B is the same as GM1A, except that the interaction term
+\(\beta_1 A_{it} X_{it}\) is removed. The single equation model thus
+becomes:
+
+\[
+Y_{it+1} = \alpha_0 + \alpha_1 X_{it} + b_{i0} + \beta_0 A_{it}  + \epsilon_{it+1}.
+\]
+
+\subsubsection{Generative Model 2}\label{generative-model-2}
+
+In GM2, we considered the case with a random intercept and random slopes
+for (1) covariate \(X_{it}\), (2) treatment \(A_{it}\), and (3) the
+interaction between \(A_{it}\) and \(X_{it}\); and with a time-varying
+randomization probability for treatment. The outcome is generated
+according to the same repeated-observations model presented in GM1.
+However, the person-level model is different:
+
+\[
+\pi_{0i} = \alpha_0 + b_{i0}, \quad b_{i0} \sim \mathcal{N}(0, \sigma_{b0}^2),
+\]
+
+\[
+\pi_{1i} = \alpha_1 + b_{i1}, \quad b_{i1} \sim \mathcal{N}(0, \sigma_{b1}^2),
+\]
+
+\[
+\pi_{2i} = \beta_0 + b_{i2}, \quad b_{i2} \sim \mathcal{N}(0, \sigma_{b2}^2),
+\]
+
+\[
+\pi_{3i} = \beta_1 + b_{i3}, \quad b_{i3} \sim \mathcal{N}(0, \sigma_{b3}^2).
+\]
+
+By substitution, we get the single equation model:
+
+\[
+\begin{aligned}
+Y_{it+1} &= \pi_{0i} + \pi_{1i} X_{it} + \pi_{2i} A_{it} + \pi_{3i} A_{it} X_{it} + \epsilon_{it+1} \\ 
+&= (\alpha_0 + b_{i0}) + (\alpha_1 + b_{i1}) X_{it} + (\beta_0 + b_{i2}) A_{it} + (\beta_1 + b_{i3}) A_{it} X_{it} + \epsilon_{it+1} \\ 
+&= \alpha_0 + \alpha_1 X_{it} + b_{i0} + b_{i1} X_{it} + A_{it} \left( \beta_0 + \beta_1 X_{it} + b_{i2} + b_{i3} X_{it} \right) + \epsilon_{it+1}.
+\end{aligned}
+\]
+
+The random effects \(b_{ij} \sim \mathcal{N}(0, \sigma_{bj}^2)\), for
+\(j = 0, 1, 2, 3\), are independent of each other. The covariate is
+generated as \(X_{i1} \sim \mathcal{N}(0, 1)\), and for \(t \geq 2\),
+
+\[
+X_{it} = Y_{it} + \mathcal{N}(0, 1).
+\]
+
+The randomization probability depends on \(X_{it}\):
+
+\[
+p_t = P(A_{it} = 1 \mid H_{it}) = 
+\begin{cases} 
+0.7 & \text{if } X_{it} > -1.27, \\
+0.3 & \text{if } X_{it} \leq -1.27,
+\end{cases}
+\]
+
+where the cutoff \(-1.27\) was chosen so that \(p_t\) equals 0.7 or 0.3
+for about half of the time. In other words, if the value of the
+covariate for any given person and time point is above the cutoff, the
+probability of receiving the treatment \(p_t\) is 0.7; otherwise, it is
+0.3. Accordingly, \(A_{it} \sim \text{Bernoulli}(p_t)\) for
+\(i = 1, \ldots, N\) and \(t = 1, \ldots, T\). The exogenous noise is
+\(\epsilon_{it+1} \sim \mathcal{N}(0, \sigma_\epsilon^2)\).
+
+\subsubsection{Generative Model 2A}\label{generative-model-2a}
+
+GM2A is the same as GM2, except that the random slopes \(b_{i1}\),
+\(b_{i2}\) and \(b_{i3}\) are removed. The single equation model then
+becomes the same as GM1A, but with the time-varying randomization
+probabilities of GM2.
+
+\subsubsection{Generative Model 2B}\label{generative-model-2b}
+
+GM2B is the same as GM2A, except that the interaction term
+\(\beta_1 A_{it} X_{it}\) is removed. The single equation model then
+becomes the same as GM1B, but with the time-varying randomization
+probabilities of GM2.
+
+\subsubsection{Generative Model 3}\label{generative-model-3}
+
+GM3 is the same as GM1, except that the covariate \(X_{it}\) depends
+directly on \(b_{i0}\):
+
+\[
+X_{i1} \sim \mathcal{N}(b_{i0}, 1), \quad X_{it} = Y_{it} + \mathcal{N}(b_{i0}, 1) \text{ for } t \geq 2.
+\]
+
+Figure~\ref{fig-GM3_path} shows the path diagram for GM3.
+
+\begin{figure}[H]
+
+\caption{\label{fig-GM3_path}Path diagram for Generative Model 3}
+
+\centering{
+
+\includegraphics{research-report_files/figure-pdf/fig-GM3_path-1.pdf}
+
+}
+
+\end{figure}%
+
+\subsubsection{Generative Model 3A}\label{generative-model-3a}
+
+GM3A is the same as GM3, except that the random slope \(b_{i2}\) for the
+treatment \(A_{it}\) is removed. The single equation model then becomes
+the same as GM1A, but including the dependency of the covariate
+\(X_{it}\) on the random intercept \(b_{i0}\) present in GM3.
+
+\subsubsection{Generative Model 3B}\label{generative-model-3b}
+
+GM3B is the same as GM3A, except that the interaction term
+\(\beta_1 A_{it} X_{it}\) is removed. The single equation model then
+becomes the same as GM1B, but including the dependency of the covariate
+\(X_{it}\) on the random intercept \(b_{i0}\) present in GM3.
+
+\subsubsection{Parameter Values}\label{parameter-values}
+
+The following parameter values were chosen:
+
+\[
+\alpha_0 = -2, \quad \alpha_1 = -0.3, \quad \beta_0 = 1, \quad \beta_1 = 0.3,
+\]
+
+\[
+\sigma_{b0}^2 = 4, \quad \sigma_{b1}^2 = \frac{1}{4}, \quad \sigma_{b2}^2 = 1, \quad \sigma_{b3}^2 = \frac{1}{4}, \quad \sigma_\epsilon^2 = 1.
+\]
+
+\subsection{Graphical representations of Data Generating
+Models}\label{graphical-representations-of-data-generating-models}
+
+\subsubsection{Directed Acyclic Graphs
+(DAGs)}\label{directed-acyclic-graphs-dags}
+
+The DAGs for the first three observations of the three data generating
+models are presented in Figure~\ref{fig-DAGs}. The red arrows show the
+biased paths after controlling for the covariate \(X_{it}\).
+
+\begin{figure}[H]
+
+\caption{\label{fig-DAGs}DAG for Generative Model 1}
+
+\begin{minipage}{0.50\linewidth}
+
+\subcaption{\label{fig-DAGs-1}Generative Model 1, 1A and 1B}
+
+\centering{
+
+\includegraphics{research-report_files/figure-pdf/fig-DAGs-1.pdf}
+
+}
+
+\end{minipage}%
+%
+\begin{minipage}{0.50\linewidth}
+
+\subcaption{\label{fig-DAGs-2}Generative Model 2, 2A and 2B}
+
+\centering{
+
+\includegraphics{research-report_files/figure-pdf/fig-DAGs-2.pdf}
+
+}
+
+\end{minipage}%
+\newline
+\begin{minipage}{0.50\linewidth}
+
+\subcaption{\label{fig-DAGs-3}Generative Model 3, 3A and 3B}
+
+\centering{
+
+\includegraphics{research-report_files/figure-pdf/fig-DAGs-3.pdf}
+
+}
+
+\end{minipage}%
+
+\end{figure}%
+
+We may notice that the DAGs for GM1 and GM2 are identical (there are
+only differences in random effects and randomization probabilities),
+while GM3 has a different structure due to the dependency of the
+covariate \(X_{it}\) on the random intercept \(b_{i0}\).
+
+Paraphrasing Qian et al.~(2020), the conditional independence assumption
+is:
+
+\[
+X_{it} \perp (b_{i0}, b_{i1}) \mid H_{it-1}, A_{it-1}, Y_{it}.
+\]
+
+This allows \(X_{it}\) to be endogenous, but the endogenous covariate
+\(X_{it}\) can only depend on the random effects through variables
+observed prior to \(X_{it}\): \(H_{it-1}\), \(A_{it-1}\), and
+\(Y_{it}\). If the only endogenous covariates are functions of prior
+treatments and prior outcomes, then the assumption automatically holds.
+
+When inspecting Figure~\ref{fig-DAGs}, we can see that this assumption
+is violated in GM3, as \(X_{it}\) depends directly on \(b_{i0}\) and is
+thus not independent of the random effects \(b_{i0}\) and \(b_{i1}\).
+Notice that GM1 and GM2 are also not marginally independent of
+\(b_{i0}\) and \(b_{i1}\), but they are conditionally independent given
+\(H_{it-1}\), \(A_{it-1}\), and \(Y_{it}\).
+
+\subsection{Data Estimation/Analysis}\label{data-estimationanalysis}
+
+For the multilevel linear model, the analytical models are equivalent to
+each of the respective data-generating models. The multilevel linear
+models were fitted using the \texttt{lmer} function in R. As a reminder,
+the analytical \emph{multilevel model} for GM1 and GM3 is given by:
+
+\[
+Y_{it+1} = (\alpha_0 + b_{i0}) + \alpha_1 X_{it} + (\beta_0 + b_{i2}) A_{it} + \beta_1 A_{it} X_{it} + \epsilon_{it+1}.
+\]
+
+which is fitted as
+\texttt{lmer(Y\ \textasciitilde{}\ X\ *\ A\ +\ (1\ +\ A\ \textbar{}\ id),\ data\ =\ data)}
+in R.
+
+The analytical \emph{multilevel model} for GM2 is given by:
+
+\[
+Y_{it+1} = (\alpha_0 + b_{i0}) + (\alpha_1 + b_{i1}) X_{it} + (\beta_0 + b_{i2}) A_{it} + (\beta_1 + b_{i3}) A_{it} X_{it} + \epsilon_{it+1}.
+\]
+
+which is fitted as
+\texttt{lmer(Y\ \textasciitilde{}\ X\ *\ A\ +\ (X\ *\ A\ \textbar{}\ id),\ data\ =\ data)}
+in R.
+
+The analytical \emph{multilevel model} for GM1A, GM2A, and GM3A is given
+by:
+
+\[
+Y_{it+1} = \alpha_0 + b_{i0} + \alpha_1 X_{it} + \beta_0 A_{it} + \beta_1 A_{it} X_{it} + \epsilon_{it+1}.
+\]
+
+which is fitted as
+\texttt{lmer(Y\ \textasciitilde{}\ X\ *\ A\ +\ (1\ \textbar{}\ id),\ data\ =\ data)}
+in R.
+
+The analytical \emph{multilevel model} for GM1B, GM2B, and GM3B is given
+by:
+
+\[
+Y_{it+1} = \alpha_0 + b_{i0} + \alpha_1 X_{it} + \beta_0 A_{it} + \epsilon_{it+1}.
+\]
+
+which is fitted as
+\texttt{lmer(Y\ \textasciitilde{}\ X\ +\ A\ +\ (1\ \textbar{}\ id),\ data\ =\ data)}
+in R.
+
+The specification of the GEE models related to each of the generative
+models is unsurprisingly different considering that GEE does not
+explicitly model random effects. For each of the generative models, we
+will fit three GEE models: one with an exchangeable correlation
+structure, one with an independent correlation structure, and one with
+an AR(1) correlation structure. The GEE models were fitted using the
+\texttt{geeglm} function in R. Since the fixed effects modeled in GM1,
+GM1a, GM2, GM2a, GM3, GM3a are the same (the only differences pertain to
+the modeling of random effects), the analytical \emph{GEE model} is
+identical across these three conditions. The analytical \emph{GEE model}
+is given by:
+
+\[
+Y_{it+1} = \alpha_0 + \alpha_1 X_{it} + \beta_0 A_{it} + \beta_1 A_{it} X_{it} + \epsilon_{it+1}.
+\]
+
+The GEE models were fitted as
+\texttt{geeglm(Y\ \textasciitilde{}\ X\ *\ A,\ id\ =\ id,\ data\ =\ data,\ family\ =\ gaussian,\ corstr\ =\ "exchangeable")},
+\texttt{geeglm(Y\ \textasciitilde{}\ X\ *\ A,\ id\ =\ id,\ data\ =\ data,\ family\ =\ gaussian,\ corstr\ =\ "independence")},
+and
+\texttt{geeglm(Y\ \textasciitilde{}\ X\ *\ A,\ id\ =\ id,\ data\ =\ data,\ family\ =\ gaussian,\ corstr\ =\ "ar1")}
+in R.
+
+In GM1b, GM2b, GM3b, the fixed interaction effect is removed, so the
+analytical \emph{GEE model} is given by:
+
+\[
+Y_{it+1} = \alpha_0 + \alpha_1 X_{it} + \beta_0 A_{it} + \epsilon_{it+1}.
+\]
+
+The GEE models were fitted as
+\texttt{geeglm(Y\ \textasciitilde{}\ X\ +\ A,\ id\ =\ id,\ data\ =\ data,\ family\ =\ gaussian,\ corstr\ =\ "exchangeable")},
+\texttt{geeglm(Y\ \textasciitilde{}\ X\ +\ A,\ id\ =\ id,\ data\ =\ data,\ family\ =\ gaussian,\ corstr\ =\ "independence")},
+and
+\texttt{geeglm(Y\ \textasciitilde{}\ X\ +\ A,\ id\ =\ id,\ data\ =\ data,\ family\ =\ gaussian,\ corstr\ =\ "ar1")}
+in R.
+
+\section{Results}\label{results}
+
+As shown in Table X, GM3 results in bias
+
+\section{Discussion}\label{discussion}
+
+\newpage
+
+\section{References}\label{references}
+
+\phantomsection\label{refs}
+\begin{CSLReferences}{1}{0}
+\bibitem[\citeproctext]{ref-bates2015}
+Bates, D., Mächler, M., Bolker, B., \& Walker, S. (2015). Fitting linear
+mixed-effects models using {lme4}. \emph{Journal of Statistical
+Software}, \emph{67}(1), 148.
+\url{https://doi.org/10.18637/jss.v067.i01}
+
+\bibitem[\citeproctext]{ref-diggle2002}
+Diggle, P. (2002). \emph{Analysis of Longitudinal Data}. OUP Oxford.
+
+\bibitem[\citeproctext]{ref-halekoh2006}
+Halekoh, U., Højsgaard, S., \& Yan, J. (2006). The r package geepack for
+generalized estimating equations. \emph{Journal of Statistical
+Software}, \emph{15/2}, 111.
+
+\bibitem[\citeproctext]{ref-hamaker2020}
+Hamaker, E. L., \& Muthén, B. (2020). The fixed versus random effects
+debate and how it relates to centering in multilevel modeling.
+\emph{Psychological Methods}, \emph{25}(3), 365--379.
+\url{https://doi.org/10.1037/met0000239}
+
+\bibitem[\citeproctext]{ref-mcneish2017}
+McNeish, D., Stapleton, L. M., \& Silverman, R. D. (2017). On the
+unnecessary ubiquity of hierarchical linear modeling.
+\emph{Psychological Methods}, \emph{22}(1), 114--140.
+\url{https://doi.org/10.1037/met0000078}
+
+\bibitem[\citeproctext]{ref-muth2016}
+Muth, C., Bales, K. L., Hinde, K., Maninger, N., Mendoza, S. P., \&
+Ferrer, E. (2016). Alternative Models for Small Samples in Psychological
+Research: Applying Linear Mixed Effects Models and Generalized
+Estimating Equations to Repeated Measures Data. \emph{Educational and
+Psychological Measurement}, \emph{76}(1), 64--87.
+\url{https://doi.org/10.1177/0013164415580432}
+
+\bibitem[\citeproctext]{ref-pepe1994}
+Pepe, M. S., \& Anderson, G. L. (1994). A cautionary note on inference
+for marginal regression models with longitudinal data and general
+correlated response data. \emph{Communications in Statistics -
+Simulation and Computation}, \emph{23}(4), 939--951.
+\url{https://doi.org/10.1080/03610919408813210}
+
+\bibitem[\citeproctext]{ref-qian2020}
+Qian, T., Klasnja, P., \& Murphy, S. A. (2020). Linear mixed models with
+endogenous covariates: Modeling sequential treatment effects with
+application to a mobile health study. \emph{Statistical Science : A
+Review Journal of the Institute of Mathematical Statistics},
+\emph{35}(3), 375--390. \url{https://doi.org/10.1214/19-sts720}
+
+\bibitem[\citeproctext]{ref-yan2013}
+Yan, J., Aseltine, R. H., \& Harel, O. (2013). Comparing Regression
+Coefficients Between Nested Linear Models for Clustered Data With
+Generalized Estimating Equations. \emph{Journal of Educational and
+Behavioral Statistics}, \emph{38}(2), 172--189.
+\url{https://doi.org/10.3102/1076998611432175}
+
+\end{CSLReferences}
+
+\section{Appendix}\label{appendix}
+
+\subsection{Original Section from Qian et al.~(2020): ``4.
+Simulation''}\label{original-section-from-qian-et-al.-2020-4.-simulation}
+
+In the simulation, we considered three generative models (GMs), all of
+which have an endogenous covariate. In the first two GMs, the endogenous
+covariate \(X_{it}\) equals the previous outcome \(Y_{it}\) plus some
+random noise, so the conditional independence assumption (10) is valid.
+In GM 3, the endogenous covariate depends directly on \(b_i\), violating
+assumption (10). The details of the generative models are described
+below.
+
+In GM1, we considered a simple case with only a random intercept and a
+random slope for \(A_{it}\), so that \(Z_{i(t_0)} = Z_{i(t_2)} = 1\) in
+model (7). The outcome is generated as:
+
+\[
+Y_{it+1} = \alpha_0 + \alpha_1 X_{it} + b_{i0} + A_{it} (\beta_0 + \beta_1 X_{it} + b_{i2}) + \epsilon_{it+1}.
+\]
+
+The random effects \(b_{i0} \sim N(0, \sigma_{b0}^2)\) and
+\(b_{i2} \sim N(0, \sigma_{b2}^2)\) are independent of each other. The
+covariate is generated as \(X_{i1} \sim N(0, 1)\), and for \(t \geq 2\),
+
+\[
+X_{it} = Y_{it} + N(0, 1).
+\]
+
+The randomization probability \(p_t\) is constant at \(1/2\). The
+exogenous noise is \(\epsilon_{it+1} \sim N(0, \sigma_\epsilon^2)\).
+
+In GM2, we considered the case where \(Z_{i(t_0)} = Z_{i(t_2)} = 1\),
+with time-varying randomization probability. The outcome is generated
+as:
+
+\[
+Y_{it+1} = \alpha_0 + \alpha_1 X_{it} + b_{i0} + b_{i1} X_{it} + A_{it} (\beta_0 + \beta_1 X_{it} + b_{i2} + b_{i3} X_{it}) + \epsilon_{it+1}.
+\]
+
+The random effects \(b_{ij} \sim N(0, \sigma_{b_j}^2)\), for
+\(0 \leq j \leq 3\), are independent of each other. The covariate is
+generated as \(X_{i1} \sim N(0, 1)\), and for \(t \geq 2\),
+
+\[
+X_{it} = Y_{it} + N(0, 1).
+\]
+
+The randomization probability depends on \(X_{it}\):
+
+\[
+p_t = 0.7 \cdot 1(X_{it} > -1.27) + 0.3 \cdot 1(X_{it} \leq -1.27),
+\]
+
+where \(1(\cdot)\) represents the indicator function, and the cutoff
+\(-1.27\) was chosen so that \(p_t\) equals 0.7 or 0.3 for about half of
+the time. The exogenous noise is
+\(\epsilon_{it+1} \sim N(0, \sigma_\epsilon^2)\).
+
+GM3 is the same as GM 1, except that the covariate \(X_{it}\) depends
+directly on \(b_i\):
+
+\[
+X_{i1} \sim N(b_{i0}, 1), \quad X_{it} = Y_{it} + N(b_{i0}, 1) \text{ for } t \geq 2.
+\]
+
+We chose the following parameter values:
+
+\[
+\alpha_0 = -2, \quad \alpha_1 = -0.3, \quad \beta_0 = 1, \quad \beta_1 = 0.3,
+\]
+
+\[
+\sigma_{b0}^2 = 4, \quad \sigma_{b1}^2 = \frac{1}{4}, \quad \sigma_{b2}^2 = 1, \quad \sigma_{b3}^2 = \frac{1}{4}, \quad \sigma_\epsilon^2 = 1.
+\]
+
+\newpage
+
+\subsection{Overview of Variations on Generative Model
+3}\label{overview-of-variations-on-generative-model-3}
+
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 8\tabcolsep) * \real{0.2000}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 8\tabcolsep) * \real{0.2000}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 8\tabcolsep) * \real{0.2000}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 8\tabcolsep) * \real{0.2000}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 8\tabcolsep) * \real{0.2000}}@{}}
+\caption{Models with 1 Parameter Less}\tabularnewline
+\toprule\noalign{}
+\endfirsthead
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+Generative Model & random slope treatment \(b_{i2}\) & interactie
+\(\beta_1\) & fixed slope covariate \(\alpha_1\) & bias \\
+3 & yes & yes & yes & yes, negative \\
+3a & no & yes & yes & no \\
+3d & yes & no & yes & no \\
+3h & yes & yes & no & yes, positive \\
+\end{longtable}
+
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 8\tabcolsep) * \real{0.2000}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 8\tabcolsep) * \real{0.2000}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 8\tabcolsep) * \real{0.2000}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 8\tabcolsep) * \real{0.2000}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 8\tabcolsep) * \real{0.2000}}@{}}
+\toprule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+Generative Model & random slope treatment \(b_{i2}\) & interactie
+\(\beta_1\) & fixed slope covariate \(\alpha_1\) & bias \\
+3 & yes & yes & yes & yes, negative \\
+3b & no & no & yes & no \\
+3i & no & yes & no & \\
+3j & yes & no & no & \\
+\end{longtable}
+
+\subsection{Simulation Plan Proposal}\label{simulation-plan-proposal}
+
+To uncover the undesirable effects of endogenous covariates and
+investigate robustness against these effects, we will carry out
+simulations in which data will be generated according to several
+increasingly complex scenarios. These scenarios will be visually
+represented using directed acyclic graphs and analyzed using GEE, MLM
+and DSEM. We will start out with a scenario of the basic MLM---where a
+time-varying outcome \(Y\) is regressed on a single time-varying
+predictor \(X\) and in the presence of stable between person differences
+in the intercept---and increase the complexity until we reach the
+scenario that includes a time-varying endogenous covariate. The primary
+interest of this simulation study is the comparative performance of
+different specifications of the MLM and GEE in terms of bias in the
+estimation of the effect of \(X\) to \(Y\). The secondary interest is
+the efficiency in mean squared error (MSE). We consider settings with
+timepoints \(T = 10,30\) and sample size \(N = 30, 100, 200\).
+
+Statistical analyses pertaining to the GEE and basic MLM will be
+performed in \texttt{R}, version 4.4.2
+(\citeproc{ref-rcoreteam2024}{\textbf{rcoreteam2024?}}). To fit the GEE,
+the R-package \texttt{geepack} (\citeproc{ref-halekoh2006}{Halekoh et
+al., 2006}) will evaluate several different working correlation
+structures, including independent, exchangeable, AR(1) and unstructured.
+To fit the basic MLM, the R-package \texttt{lme4}
+(\citeproc{ref-bates2015}{Bates et al., 2015}) will be employed, where
+we will use restricted maximum likelihood estimation.
+
+
+
+
+\end{document}

@@ -1,0 +1,489 @@
+starting worker pid=17220 on localhost:11144 at 15:46:26.633
+starting worker pid=2968 on localhost:11144 at 15:46:26.940
+starting worker pid=14064 on localhost:11144 at 15:46:27.226
+starting worker pid=4212 on localhost:11144 at 15:46:27.869
+starting worker pid=15692 on localhost:11144 at 15:46:28.141
+starting worker pid=16088 on localhost:11144 at 15:46:28.406
+starting worker pid=4552 on localhost:11144 at 15:46:28.672
+starting worker pid=7676 on localhost:11144 at 15:46:28.939
+starting worker pid=15712 on localhost:11144 at 15:46:29.203
+starting worker pid=14648 on localhost:11144 at 15:46:29.465
+starting worker pid=12588 on localhost:11144 at 15:46:29.733
+Loading required package: Matrix
+Loading required package: Matrix
+Loading required package: Matrix
+Loading required package: Matrix
+Loading required package: Matrix
+Loading required package: Matrix
+Loading required package: Matrix
+Loading required package: Matrix
+Loading required package: Matrix
+Loading required package: Matrix
+Loading required package: Matrix
+Loading required package: foreach
+Loading required package: foreach
+Loading required package: foreach
+Loading required package: foreach
+Loading required package: foreach
+Loading required package: foreach
+Loading required package: foreach
+Loading required package: foreach
+Loading required package: foreach
+Loading required package: foreach
+Loading required package: foreach
+Loading required package: rngtools
+Loading required package: rngtools
+Loading required package: rngtools
+Loading required package: rngtools
+Loading required package: rngtools
+Loading required package: rngtools
+Loading required package: rngtools
+Loading required package: rngtools
+Starting iteration 10 , GM 3 , N = 200 , T = 10 
+Starting iteration 20 , GM 3 , N = 200 , T = 10 
+Starting iteration 30 , GM 3 , N = 200 , T = 10 
+Starting iteration 40 , GM 3 , N = 200 , T = 10 
+Starting iteration 50 , GM 3 , N = 200 , T = 10 
+Starting iteration 60 , GM 3 , N = 200 , T = 10 
+Starting iteration 70 , GM 3 , N = 200 , T = 10 
+Starting iteration 80 , GM 3 , N = 200 , T = 10 
+Starting iteration 90 , GM 3 , N = 200 , T = 10 
+Starting iteration 100 , GM 3 , N = 200 , T = 10 
+Starting iteration 110 , GM 3 , N = 200 , T = 10 
+Starting iteration 120 , GM 3 , N = 200 , T = 10 
+Starting iteration 130 , GM 3 , N = 200 , T = 10 
+Starting iteration 140 , GM 3 , N = 200 , T = 10 
+Starting iteration 150 , GM 3 , N = 200 , T = 10 
+Starting iteration 160 , GM 3 , N = 200 , T = 10 
+Starting iteration 170 , GM 3 , N = 200 , T = 10 
+Starting iteration 180 , GM 3 , N = 200 , T = 10 
+Starting iteration 190 , GM 3 , N = 200 , T = 10 
+Starting iteration 200 , GM 3 , N = 200 , T = 10 
+Starting iteration 210 , GM 3 , N = 200 , T = 10 
+Starting iteration 220 , GM 3 , N = 200 , T = 10 
+Starting iteration 230 , GM 3 , N = 200 , T = 10 
+Starting iteration 240 , GM 3 , N = 200 , T = 10 
+Starting iteration 250 , GM 3 , N = 200 , T = 10 
+Starting iteration 260 , GM 3 , N = 200 , T = 10 
+Starting iteration 270 , GM 3 , N = 200 , T = 10 
+Starting iteration 280 , GM 3 , N = 200 , T = 10 
+Starting iteration 290 , GM 3 , N = 200 , T = 10 
+Starting iteration 300 , GM 3 , N = 200 , T = 10 
+Starting iteration 310 , GM 3 , N = 200 , T = 10 
+Starting iteration 320 , GM 3 , N = 200 , T = 10 
+Starting iteration 330 , GM 3 , N = 200 , T = 10 
+Starting iteration 340 , GM 3 , N = 200 , T = 10 
+Starting iteration 350 , GM 3 , N = 200 , T = 10 
+Starting iteration 360 , GM 3 , N = 200 , T = 10 
+Starting iteration 370 , GM 3 , N = 200 , T = 10 
+Starting iteration 380 , GM 3 , N = 200 , T = 10 
+Starting iteration 390 , GM 3 , N = 200 , T = 10 
+Starting iteration 400 , GM 3 , N = 200 , T = 10 
+Starting iteration 410 , GM 3 , N = 200 , T = 10 
+Starting iteration 420 , GM 3 , N = 200 , T = 10 
+Starting iteration 430 , GM 3 , N = 200 , T = 10 
+Starting iteration 440 , GM 3 , N = 200 , T = 10 
+Starting iteration 450 , GM 3 , N = 200 , T = 10 
+Starting iteration 460 , GM 3 , N = 200 , T = 10 
+Starting iteration 470 , GM 3 , N = 200 , T = 10 
+Starting iteration 480 , GM 3 , N = 200 , T = 10 
+Starting iteration 490 , GM 3 , N = 200 , T = 10 
+Starting iteration 500 , GM 3 , N = 200 , T = 10 
+Starting iteration 510 , GM 3 , N = 200 , T = 10 
+Starting iteration 520 , GM 3 , N = 200 , T = 10 
+Starting iteration 530 , GM 3 , N = 200 , T = 10 
+Starting iteration 540 , GM 3 , N = 200 , T = 10 
+Starting iteration 550 , GM 3 , N = 200 , T = 10 
+Starting iteration 560 , GM 3 , N = 200 , T = 10 
+Starting iteration 570 , GM 3 , N = 200 , T = 10 
+Starting iteration 580 , GM 3 , N = 200 , T = 10 
+Starting iteration 590 , GM 3 , N = 200 , T = 10 
+Starting iteration 600 , GM 3 , N = 200 , T = 10 
+Starting iteration 610 , GM 3 , N = 200 , T = 10 
+Starting iteration 620 , GM 3 , N = 200 , T = 10 
+Starting iteration 630 , GM 3 , N = 200 , T = 10 
+Starting iteration 640 , GM 3 , N = 200 , T = 10 
+Starting iteration 650 , GM 3 , N = 200 , T = 10 
+Starting iteration 660 , GM 3 , N = 200 , T = 10 
+Starting iteration 670 , GM 3 , N = 200 , T = 10 
+Starting iteration 680 , GM 3 , N = 200 , T = 10 
+Starting iteration 690 , GM 3 , N = 200 , T = 10 
+Starting iteration 700 , GM 3 , N = 200 , T = 10 
+Starting iteration 710 , GM 3 , N = 200 , T = 10 
+Starting iteration 720 , GM 3 , N = 200 , T = 10 
+Starting iteration 730 , GM 3 , N = 200 , T = 10 
+Starting iteration 740 , GM 3 , N = 200 , T = 10 
+Starting iteration 750 , GM 3 , N = 200 , T = 10 
+Starting iteration 760 , GM 3 , N = 200 , T = 10 
+Starting iteration 770 , GM 3 , N = 200 , T = 10 
+Starting iteration 780 , GM 3 , N = 200 , T = 10 
+Starting iteration 790 , GM 3 , N = 200 , T = 10 
+Starting iteration 800 , GM 3 , N = 200 , T = 10 
+Starting iteration 810 , GM 3 , N = 200 , T = 10 
+Starting iteration 820 , GM 3 , N = 200 , T = 10 
+Starting iteration 830 , GM 3 , N = 200 , T = 10 
+Starting iteration 840 , GM 3 , N = 200 , T = 10 
+Starting iteration 850 , GM 3 , N = 200 , T = 10 
+Starting iteration 860 , GM 3 , N = 200 , T = 10 
+Starting iteration 870 , GM 3 , N = 200 , T = 10 
+Starting iteration 880 , GM 3 , N = 200 , T = 10 
+Starting iteration 890 , GM 3 , N = 200 , T = 10 
+Starting iteration 900 , GM 3 , N = 200 , T = 10 
+Starting iteration 910 , GM 3 , N = 200 , T = 10 
+Starting iteration 920 , GM 3 , N = 200 , T = 10 
+Starting iteration 930 , GM 3 , N = 200 , T = 10 
+Starting iteration 940 , GM 3 , N = 200 , T = 10 
+Starting iteration 950 , GM 3 , N = 200 , T = 10 
+Starting iteration 960 , GM 3 , N = 200 , T = 10 
+Starting iteration 970 , GM 3 , N = 200 , T = 10 
+Starting iteration 980 , GM 3 , N = 200 , T = 10 
+Starting iteration 990 , GM 3 , N = 200 , T = 10 
+Starting iteration 1000 , GM 3 , N = 200 , T = 10 
+Starting iteration 10 , GM 3 , N = 200 , T = 30 
+Starting iteration 20 , GM 3 , N = 200 , T = 30 
+Starting iteration 30 , GM 3 , N = 200 , T = 30 
+Starting iteration 40 , GM 3 , N = 200 , T = 30 
+Starting iteration 50 , GM 3 , N = 200 , T = 30 
+Starting iteration 60 , GM 3 , N = 200 , T = 30 
+Starting iteration 70 , GM 3 , N = 200 , T = 30 
+Starting iteration 80 , GM 3 , N = 200 , T = 30 
+Starting iteration 90 , GM 3 , N = 200 , T = 30 
+Starting iteration 100 , GM 3 , N = 200 , T = 30 
+Starting iteration 110 , GM 3 , N = 200 , T = 30 
+Starting iteration 120 , GM 3 , N = 200 , T = 30 
+Starting iteration 130 , GM 3 , N = 200 , T = 30 
+Starting iteration 140 , GM 3 , N = 200 , T = 30 
+
+Caught warning in lmer():
+Model failed to converge with max|grad| = 0.00309354 (tol = 0.002, component 1)Starting iteration 150 , GM 3 , N = 200 , T = 30 
+Starting iteration 160 , GM 3 , N = 200 , T = 30 
+Starting iteration 170 , GM 3 , N = 200 , T = 30 
+Starting iteration 180 , GM 3 , N = 200 , T = 30 
+Starting iteration 190 , GM 3 , N = 200 , T = 30 
+Starting iteration 200 , GM 3 , N = 200 , T = 30 
+Starting iteration 210 , GM 3 , N = 200 , T = 30 
+Starting iteration 220 , GM 3 , N = 200 , T = 30 
+Starting iteration 230 , GM 3 , N = 200 , T = 30 
+Starting iteration 240 , GM 3 , N = 200 , T = 30 
+Starting iteration 250 , GM 3 , N = 200 , T = 30 
+Starting iteration 260 , GM 3 , N = 200 , T = 30 
+Starting iteration 270 , GM 3 , N = 200 , T = 30 
+Starting iteration 280 , GM 3 , N = 200 , T = 30 
+Starting iteration 290 , GM 3 , N = 200 , T = 30 
+Starting iteration 300 , GM 3 , N = 200 , T = 30 
+Starting iteration 310 , GM 3 , N = 200 , T = 30 
+Starting iteration 320 , GM 3 , N = 200 , T = 30 
+Starting iteration 330 , GM 3 , N = 200 , T = 30 
+Starting iteration 340 , GM 3 , N = 200 , T = 30 
+Starting iteration 350 , GM 3 , N = 200 , T = 30 
+Starting iteration 360 , GM 3 , N = 200 , T = 30 
+Starting iteration 370 , GM 3 , N = 200 , T = 30 
+Starting iteration 380 , GM 3 , N = 200 , T = 30 
+Starting iteration 390 , GM 3 , N = 200 , T = 30 
+Starting iteration 400 , GM 3 , N = 200 , T = 30 
+Starting iteration 410 , GM 3 , N = 200 , T = 30 
+Starting iteration 420 , GM 3 , N = 200 , T = 30 
+Starting iteration 430 , GM 3 , N = 200 , T = 30 
+Starting iteration 440 , GM 3 , N = 200 , T = 30 
+Starting iteration 450 , GM 3 , N = 200 , T = 30 
+Starting iteration 460 , GM 3 , N = 200 , T = 30 
+Starting iteration 470 , GM 3 , N = 200 , T = 30 
+Starting iteration 480 , GM 3 , N = 200 , T = 30 
+Starting iteration 490 , GM 3 , N = 200 , T = 30 
+Starting iteration 500 , GM 3 , N = 200 , T = 30 
+Starting iteration 510 , GM 3 , N = 200 , T = 30 
+Starting iteration 520 , GM 3 , N = 200 , T = 30 
+Starting iteration 530 , GM 3 , N = 200 , T = 30 
+Starting iteration 540 , GM 3 , N = 200 , T = 30 
+Starting iteration 550 , GM 3 , N = 200 , T = 30 
+Starting iteration 560 , GM 3 , N = 200 , T = 30 
+Starting iteration 570 , GM 3 , N = 200 , T = 30 
+Starting iteration 580 , GM 3 , N = 200 , T = 30 
+Starting iteration 590 , GM 3 , N = 200 , T = 30 
+Starting iteration 600 , GM 3 , N = 200 , T = 30 
+Starting iteration 610 , GM 3 , N = 200 , T = 30 
+Starting iteration 620 , GM 3 , N = 200 , T = 30 
+Starting iteration 630 , GM 3 , N = 200 , T = 30 
+Starting iteration 640 , GM 3 , N = 200 , T = 30 
+Starting iteration 650 , GM 3 , N = 200 , T = 30 
+
+Caught warning in lmer():
+Model failed to converge with max|grad| = 0.0160169 (tol = 0.002, component 1)Starting iteration 660 , GM 3 , N = 200 , T = 30 
+Starting iteration 670 , GM 3 , N = 200 , T = 30 
+Starting iteration 680 , GM 3 , N = 200 , T = 30 
+Starting iteration 690 , GM 3 , N = 200 , T = 30 
+Starting iteration 700 , GM 3 , N = 200 , T = 30 
+Starting iteration 710 , GM 3 , N = 200 , T = 30 
+Starting iteration 720 , GM 3 , N = 200 , T = 30 
+Starting iteration 730 , GM 3 , N = 200 , T = 30 
+Starting iteration 740 , GM 3 , N = 200 , T = 30 
+Starting iteration 750 , GM 3 , N = 200 , T = 30 
+Starting iteration 760 , GM 3 , N = 200 , T = 30 
+Starting iteration 770 , GM 3 , N = 200 , T = 30 
+Starting iteration 780 , GM 3 , N = 200 , T = 30 
+Starting iteration 790 , GM 3 , N = 200 , T = 30 
+Starting iteration 800 , GM 3 , N = 200 , T = 30 
+Starting iteration 810 , GM 3 , N = 200 , T = 30 
+Starting iteration 820 , GM 3 , N = 200 , T = 30 
+Starting iteration 830 , GM 3 , N = 200 , T = 30 
+
+Caught warning in lmer():
+Model failed to converge with max|grad| = 0.00226691 (tol = 0.002, component 1)Starting iteration 840 , GM 3 , N = 200 , T = 30 
+Starting iteration 850 , GM 3 , N = 200 , T = 30 
+Starting iteration 860 , GM 3 , N = 200 , T = 30 
+Starting iteration 870 , GM 3 , N = 200 , T = 30 
+Starting iteration 880 , GM 3 , N = 200 , T = 30 
+Starting iteration 890 , GM 3 , N = 200 , T = 30 
+Starting iteration 900 , GM 3 , N = 200 , T = 30 
+Starting iteration 910 , GM 3 , N = 200 , T = 30 
+Starting iteration 920 , GM 3 , N = 200 , T = 30 
+Starting iteration 930 , GM 3 , N = 200 , T = 30 
+Starting iteration 940 , GM 3 , N = 200 , T = 30 
+Starting iteration 950 , GM 3 , N = 200 , T = 30 
+Starting iteration 960 , GM 3 , N = 200 , T = 30 
+Starting iteration 970 , GM 3 , N = 200 , T = 30 
+Starting iteration 980 , GM 3 , N = 200 , T = 30 
+Starting iteration 990 , GM 3 , N = 200 , T = 30 
+Starting iteration 1000 , GM 3 , N = 200 , T = 30 
+Starting iteration 10 , GM 3c , N = 200 , T = 10 
+Starting iteration 20 , GM 3c , N = 200 , T = 10 
+Starting iteration 30 , GM 3c , N = 200 , T = 10 
+Starting iteration 40 , GM 3c , N = 200 , T = 10 
+Starting iteration 50 , GM 3c , N = 200 , T = 10 
+Starting iteration 60 , GM 3c , N = 200 , T = 10 
+Starting iteration 70 , GM 3c , N = 200 , T = 10 
+Starting iteration 80 , GM 3c , N = 200 , T = 10 
+Starting iteration 90 , GM 3c , N = 200 , T = 10 
+Starting iteration 100 , GM 3c , N = 200 , T = 10 
+Starting iteration 110 , GM 3c , N = 200 , T = 10 
+Starting iteration 120 , GM 3c , N = 200 , T = 10 
+Starting iteration 130 , GM 3c , N = 200 , T = 10 
+Starting iteration 140 , GM 3c , N = 200 , T = 10 
+Starting iteration 150 , GM 3c , N = 200 , T = 10 
+Starting iteration 160 , GM 3c , N = 200 , T = 10 
+Starting iteration 170 , GM 3c , N = 200 , T = 10 
+Starting iteration 180 , GM 3c , N = 200 , T = 10 
+Starting iteration 190 , GM 3c , N = 200 , T = 10 
+Starting iteration 200 , GM 3c , N = 200 , T = 10 
+Starting iteration 210 , GM 3c , N = 200 , T = 10 
+Starting iteration 220 , GM 3c , N = 200 , T = 10 
+Starting iteration 230 , GM 3c , N = 200 , T = 10 
+Starting iteration 240 , GM 3c , N = 200 , T = 10 
+Starting iteration 250 , GM 3c , N = 200 , T = 10 
+Starting iteration 260 , GM 3c , N = 200 , T = 10 
+Starting iteration 270 , GM 3c , N = 200 , T = 10 
+Starting iteration 280 , GM 3c , N = 200 , T = 10 
+Starting iteration 290 , GM 3c , N = 200 , T = 10 
+Starting iteration 300 , GM 3c , N = 200 , T = 10 
+Starting iteration 310 , GM 3c , N = 200 , T = 10 
+Starting iteration 320 , GM 3c , N = 200 , T = 10 
+Starting iteration 330 , GM 3c , N = 200 , T = 10 
+Starting iteration 340 , GM 3c , N = 200 , T = 10 
+Starting iteration 350 , GM 3c , N = 200 , T = 10 
+Starting iteration 360 , GM 3c , N = 200 , T = 10 
+Starting iteration 370 , GM 3c , N = 200 , T = 10 
+Starting iteration 380 , GM 3c , N = 200 , T = 10 
+Starting iteration 390 , GM 3c , N = 200 , T = 10 
+Starting iteration 400 , GM 3c , N = 200 , T = 10 
+Starting iteration 410 , GM 3c , N = 200 , T = 10 
+Starting iteration 420 , GM 3c , N = 200 , T = 10 
+Starting iteration 430 , GM 3c , N = 200 , T = 10 
+Starting iteration 440 , GM 3c , N = 200 , T = 10 
+Starting iteration 450 , GM 3c , N = 200 , T = 10 
+Starting iteration 460 , GM 3c , N = 200 , T = 10 
+Starting iteration 470 , GM 3c , N = 200 , T = 10 
+Starting iteration 480 , GM 3c , N = 200 , T = 10 
+Starting iteration 490 , GM 3c , N = 200 , T = 10 
+Starting iteration 500 , GM 3c , N = 200 , T = 10 
+Starting iteration 510 , GM 3c , N = 200 , T = 10 
+Starting iteration 520 , GM 3c , N = 200 , T = 10 
+
+Caught warning in lmer():
+Model failed to converge with max|grad| = 0.00320436 (tol = 0.002, component 1)Starting iteration 530 , GM 3c , N = 200 , T = 10 
+Starting iteration 540 , GM 3c , N = 200 , T = 10 
+Starting iteration 550 , GM 3c , N = 200 , T = 10 
+Starting iteration 560 , GM 3c , N = 200 , T = 10 
+Starting iteration 570 , GM 3c , N = 200 , T = 10 
+Starting iteration 580 , GM 3c , N = 200 , T = 10 
+Starting iteration 590 , GM 3c , N = 200 , T = 10 
+Starting iteration 600 , GM 3c , N = 200 , T = 10 
+Starting iteration 610 , GM 3c , N = 200 , T = 10 
+Starting iteration 620 , GM 3c , N = 200 , T = 10 
+Starting iteration 630 , GM 3c , N = 200 , T = 10 
+Starting iteration 640 , GM 3c , N = 200 , T = 10 
+Starting iteration 650 , GM 3c , N = 200 , T = 10 
+Starting iteration 660 , GM 3c , N = 200 , T = 10 
+Starting iteration 670 , GM 3c , N = 200 , T = 10 
+Starting iteration 680 , GM 3c , N = 200 , T = 10 
+Starting iteration 690 , GM 3c , N = 200 , T = 10 
+Starting iteration 700 , GM 3c , N = 200 , T = 10 
+Starting iteration 710 , GM 3c , N = 200 , T = 10 
+Starting iteration 720 , GM 3c , N = 200 , T = 10 
+Starting iteration 730 , GM 3c , N = 200 , T = 10 
+Starting iteration 740 , GM 3c , N = 200 , T = 10 
+Starting iteration 750 , GM 3c , N = 200 , T = 10 
+Starting iteration 760 , GM 3c , N = 200 , T = 10 
+Starting iteration 770 , GM 3c , N = 200 , T = 10 
+Starting iteration 780 , GM 3c , N = 200 , T = 10 
+Starting iteration 790 , GM 3c , N = 200 , T = 10 
+Starting iteration 800 , GM 3c , N = 200 , T = 10 
+Starting iteration 810 , GM 3c , N = 200 , T = 10 
+Starting iteration 820 , GM 3c , N = 200 , T = 10 
+Starting iteration 830 , GM 3c , N = 200 , T = 10 
+Starting iteration 840 , GM 3c , N = 200 , T = 10 
+Starting iteration 850 , GM 3c , N = 200 , T = 10 
+Starting iteration 860 , GM 3c , N = 200 , T = 10 
+Starting iteration 870 , GM 3c , N = 200 , T = 10 
+Starting iteration 880 , GM 3c , N = 200 , T = 10 
+Starting iteration 890 , GM 3c , N = 200 , T = 10 
+Starting iteration 900 , GM 3c , N = 200 , T = 10 
+Starting iteration 910 , GM 3c , N = 200 , T = 10 
+Starting iteration 920 , GM 3c , N = 200 , T = 10 
+Starting iteration 930 , GM 3c , N = 200 , T = 10 
+Starting iteration 940 , GM 3c , N = 200 , T = 10 
+Starting iteration 950 , GM 3c , N = 200 , T = 10 
+Starting iteration 960 , GM 3c , N = 200 , T = 10 
+Starting iteration 970 , GM 3c , N = 200 , T = 10 
+Starting iteration 980 , GM 3c , N = 200 , T = 10 
+Starting iteration 990 , GM 3c , N = 200 , T = 10 
+Starting iteration 1000 , GM 3c , N = 200 , T = 10 
+Starting iteration 10 , GM 3c , N = 200 , T = 30 
+Starting iteration 20 , GM 3c , N = 200 , T = 30 
+Starting iteration 30 , GM 3c , N = 200 , T = 30 
+Starting iteration 40 , GM 3c , N = 200 , T = 30 
+Starting iteration 50 , GM 3c , N = 200 , T = 30 
+Starting iteration 60 , GM 3c , N = 200 , T = 30 
+Starting iteration 70 , GM 3c , N = 200 , T = 30 
+Starting iteration 80 , GM 3c , N = 200 , T = 30 
+Starting iteration 90 , GM 3c , N = 200 , T = 30 
+Starting iteration 100 , GM 3c , N = 200 , T = 30 
+Starting iteration 110 , GM 3c , N = 200 , T = 30 
+Starting iteration 120 , GM 3c , N = 200 , T = 30 
+Starting iteration 130 , GM 3c , N = 200 , T = 30 
+Starting iteration 140 , GM 3c , N = 200 , T = 30 
+Starting iteration 150 , GM 3c , N = 200 , T = 30 
+Starting iteration 160 , GM 3c , N = 200 , T = 30 
+Starting iteration 170 , GM 3c , N = 200 , T = 30 
+Starting iteration 180 , GM 3c , N = 200 , T = 30 
+Starting iteration 190 , GM 3c , N = 200 , T = 30 
+Starting iteration 200 , GM 3c , N = 200 , T = 30 
+Starting iteration 210 , GM 3c , N = 200 , T = 30 
+Starting iteration 220 , GM 3c , N = 200 , T = 30 
+Starting iteration 230 , GM 3c , N = 200 , T = 30 
+Starting iteration 240 , GM 3c , N = 200 , T = 30 
+Starting iteration 250 , GM 3c , N = 200 , T = 30 
+Starting iteration 260 , GM 3c , N = 200 , T = 30 
+Starting iteration 270 , GM 3c , N = 200 , T = 30 
+Starting iteration 280 , GM 3c , N = 200 , T = 30 
+Starting iteration 290 , GM 3c , N = 200 , T = 30 
+Starting iteration 300 , GM 3c , N = 200 , T = 30 
+Starting iteration 310 , GM 3c , N = 200 , T = 30 
+Starting iteration 320 , GM 3c , N = 200 , T = 30 
+Starting iteration 330 , GM 3c , N = 200 , T = 30 
+Starting iteration 340 , GM 3c , N = 200 , T = 30 
+Starting iteration 350 , GM 3c , N = 200 , T = 30 
+Starting iteration 360 , GM 3c , N = 200 , T = 30 
+Starting iteration 370 , GM 3c , N = 200 , T = 30 
+Starting iteration 380 , GM 3c , N = 200 , T = 30 
+Starting iteration 390 , GM 3c , N = 200 , T = 30 
+Starting iteration 400 , GM 3c , N = 200 , T = 30 
+Starting iteration 410 , GM 3c , N = 200 , T = 30 
+Starting iteration 420 , GM 3c , N = 200 , T = 30 
+Starting iteration 430 , GM 3c , N = 200 , T = 30 
+Starting iteration 440 , GM 3c , N = 200 , T = 30 
+Starting iteration 450 , GM 3c , N = 200 , T = 30 
+Starting iteration 460 , GM 3c , N = 200 , T = 30 
+Starting iteration 470 , GM 3c , N = 200 , T = 30 
+Starting iteration 480 , GM 3c , N = 200 , T = 30 
+
+Caught warning in lmer():
+Model failed to converge with max|grad| = 0.0039078 (tol = 0.002, component 1)Starting iteration 490 , GM 3c , N = 200 , T = 30 
+Starting iteration 500 , GM 3c , N = 200 , T = 30 
+Starting iteration 510 , GM 3c , N = 200 , T = 30 
+Starting iteration 520 , GM 3c , N = 200 , T = 30 
+Starting iteration 530 , GM 3c , N = 200 , T = 30 
+Starting iteration 540 , GM 3c , N = 200 , T = 30 
+Starting iteration 550 , GM 3c , N = 200 , T = 30 
+Starting iteration 560 , GM 3c , N = 200 , T = 30 
+Starting iteration 570 , GM 3c , N = 200 , T = 30 
+Starting iteration 580 , GM 3c , N = 200 , T = 30 
+Starting iteration 590 , GM 3c , N = 200 , T = 30 
+Starting iteration 600 , GM 3c , N = 200 , T = 30 
+Starting iteration 610 , GM 3c , N = 200 , T = 30 
+
+Caught warning in lmer():
+Model failed to converge with max|grad| = 0.00220741 (tol = 0.002, component 1)Starting iteration 620 , GM 3c , N = 200 , T = 30 
+Starting iteration 630 , GM 3c , N = 200 , T = 30 
+Starting iteration 640 , GM 3c , N = 200 , T = 30 
+Starting iteration 650 , GM 3c , N = 200 , T = 30 
+Starting iteration 660 , GM 3c , N = 200 , T = 30 
+Starting iteration 670 , GM 3c , N = 200 , T = 30 
+Starting iteration 680 , GM 3c , N = 200 , T = 30 
+Starting iteration 690 , GM 3c , N = 200 , T = 30 
+Starting iteration 700 , GM 3c , N = 200 , T = 30 
+Starting iteration 710 , GM 3c , N = 200 , T = 30 
+
+Caught warning in lmer():
+Model failed to converge with max|grad| = 0.0025743 (tol = 0.002, component 1)Starting iteration 720 , GM 3c , N = 200 , T = 30 
+Starting iteration 730 , GM 3c , N = 200 , T = 30 
+Starting iteration 740 , GM 3c , N = 200 , T = 30 
+Starting iteration 750 , GM 3c , N = 200 , T = 30 
+Starting iteration 760 , GM 3c , N = 200 , T = 30 
+Starting iteration 770 , GM 3c , N = 200 , T = 30 
+Starting iteration 780 , GM 3c , N = 200 , T = 30 
+Starting iteration 790 , GM 3c , N = 200 , T = 30 
+Starting iteration 800 , GM 3c , N = 200 , T = 30 
+Starting iteration 810 , GM 3c , N = 200 , T = 30 
+Starting iteration 820 , GM 3c , N = 200 , T = 30 
+Starting iteration 830 , GM 3c , N = 200 , T = 30 
+Starting iteration 840 , GM 3c , N = 200 , T = 30 
+
+Caught warning in lmer():
+Model failed to converge with max|grad| = 0.00341664 (tol = 0.002, component 1)Starting iteration 850 , GM 3c , N = 200 , T = 30 
+Starting iteration 860 , GM 3c , N = 200 , T = 30 
+Starting iteration 870 , GM 3c , N = 200 , T = 30 
+Starting iteration 880 , GM 3c , N = 200 , T = 30 
+Starting iteration 890 , GM 3c , N = 200 , T = 30 
+Starting iteration 900 , GM 3c , N = 200 , T = 30 
+Starting iteration 910 , GM 3c , N = 200 , T = 30 
+Starting iteration 920 , GM 3c , N = 200 , T = 30 
+Starting iteration 930 , GM 3c , N = 200 , T = 30 
+Starting iteration 940 , GM 3c , N = 200 , T = 30 
+Starting iteration 950 , GM 3c , N = 200 , T = 30 
+Starting iteration 960 , GM 3c , N = 200 , T = 30 
+Starting iteration 970 , GM 3c , N = 200 , T = 30 
+Starting iteration 980 , GM 3c , N = 200 , T = 30 
+Starting iteration 990 , GM 3c , N = 200 , T = 30 
+Starting iteration 1000 , GM 3c , N = 200 , T = 30 
+Error in unserialize(node$con) : error reading from connection
+Calls: <Anonymous> ... doTryCatch -> recvData -> recvData.SOCKnode -> unserialize
+Error in unserialize(node$con) : error reading from connection
+Calls: <Anonymous> ... doTryCatch -> recvData -> recvData.SOCKnode -> unserialize
+Execution halted
+Execution halted
+Error in unserialize(node$con) : error reading from connection
+Calls: <Anonymous> ... doTryCatch -> recvData -> recvData.SOCKnode -> unserialize
+Execution halted
+Error in unserialize(node$con) : error reading from connection
+Calls: <Anonymous> ... doTryCatch -> recvData -> recvData.SOCKnode -> unserialize
+Execution halted
+Error in unserialize(node$con) : error reading from connection
+Calls: <Anonymous> ... doTryCatch -> recvData -> recvData.SOCKnode -> unserialize
+Execution halted
+Error in unserialize(node$con) : error reading from connection
+Calls: <Anonymous> ... doTryCatch -> recvData -> recvData.SOCKnode -> unserialize
+Execution halted
+Error in unserialize(node$con) : error reading from connection
+Calls: <Anonymous> ... doTryCatch -> recvData -> recvData.SOCKnode -> unserialize
+Execution halted
+Error in unserialize(node$con) : error reading from connection
+Calls: <Anonymous> ... doTryCatch -> recvData -> recvData.SOCKnode -> unserialize
+Error in unserialize(node$con) : error reading from connection
+Calls: <Anonymous> ... doTryCatch -> recvData -> recvData.SOCKnode -> unserialize
+Execution halted
+Error in unserialize(node$con) : error reading from connection
+Calls: <Anonymous> ... doTryCatch -> recvData -> recvData.SOCKnode -> unserialize
+Execution halted
+Error in unserialize(node$con) : error reading from connection
+Calls: <Anonymous> ... doTryCatch -> recvData -> recvData.SOCKnode -> unserialize
+Execution halted

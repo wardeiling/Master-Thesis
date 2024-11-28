@@ -9,7 +9,7 @@
 rm(list = ls())
 
 set.seed(123) # set global seed
-runname <- "GM123_1000reps" # set a runname
+runname <- "GM123_1000reps_comparison" # set a runname
 
 # make a directory in simulation_results based on runname
 dir.create(paste0("simulation_results/", runname), showWarnings = FALSE)
@@ -24,7 +24,7 @@ library(doParallel) # NEW
 library(doRNG)
 
 # source the generative model
-source("qian2020/updated scripts/generative_model_updated.R")
+source("qian2020/updated scripts/version-1/generative_model_updated.R")
 
 ### Simulation -----------------------------------------
 
@@ -302,7 +302,7 @@ design3c <- design3a
 colnames(design3c) <- c("GM", "T", "N", "MLM_bias", "MLM_sd", "GEE-Ex_bias", "GEE-Ex_sd", 
                         "GEE-AR1_bias", "GEE-AR1_sd", "GEE-Ind_bias", "GEE-Ind_sd")
 print(xtable(design3c, digits = c(0, 0, 0, 0, rep(3, 8)), 
-             caption = paste0("Results for beta0 bias with Standarddeviation, 100 replications, run: ", runname), label = "tab:beta0_bias_sd"), 
+             caption = paste0("Results for beta0 bias with Standarddeviation, 1000 replications, run: ", runname), label = "tab:beta0_bias_sd"), 
       include.rownames = FALSE, hline.after = c(-1, 0, seq(from = 6, to = nrow(design3c), by = 6)), 
       file = paste0("simulation_results/", runname, "/results_beta0_bias_sd.tex"))
 
@@ -311,7 +311,7 @@ design4b <- design4
 colnames(design4b) <- c("GM", "T", "N", "MLM", "GEE-Ex", "GEE-AR1", "GEE-Ind")
 
 print(xtable(design4b, digits = c(0, 0, 0, 0, rep(3, 4)), 
-             caption = paste0("Results for beta0 bias, 100 replications, run: ", runname), label = "tab:beta0_bias"),
+             caption = paste0("Results for beta0 bias, 1000 replications, run: ", runname), label = "tab:beta0_bias"),
       include.rownames = FALSE, hline.after = c(-1, 0, seq(from = 6, to = nrow(design4b), by = 6)), 
       file = paste0("simulation_results/", runname, "/results_beta0_bias.tex"))
 

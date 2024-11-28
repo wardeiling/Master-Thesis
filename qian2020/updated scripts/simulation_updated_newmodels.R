@@ -9,7 +9,7 @@
 rm(list = ls())
 
 set.seed(123) # set global seed
-runname <- "GM3fg_N200_T10-30_1000reps" # set a runname
+runname <- "GM3C_duo_1000reps" # set a runname
 
 # make a directory in simulation_results based on runname
 dir.create(paste0("simulation_results/", runname), showWarnings = FALSE)
@@ -52,7 +52,7 @@ nsim <- 1000
 # design <- expand.grid(sample_size = c(200, 1000), total_T = c(10, 30), dgm_type = c(1, "1a", "1b", 2, "2a", "2b", 3, "3a", "3b"))
 
 # simulation for models 3, 3a, 3b, 3c, 3d with N = 1000, T = 10, 30
-design <- expand.grid(sample_size = c(200), total_T = c(10, 30), dgm_type = c("3f", "3g"))
+design <- expand.grid(sample_size = c(200), total_T = c(10, 30), dgm_type = c(3, "3c"))
 
 # make sure dgm_type is not a factor
 design$dgm_type <- as.character(design$dgm_type)
@@ -64,33 +64,42 @@ for (idesign in 1:nrow(design)) {
     
     ### create template output structure
     
-    # for mlm (all "b" models and "3d")
+    # for models without interaction beta_1
     if (dgm_type %in% c("1b", "2b", "3b", "3d")) {
         coef_NA_fill_mlm <- matrix(NA, ncol = 3, 
                                    nrow = 3, 
                                    dimnames = list(c("(Intercept)", "X", "A"), 
                                                    c("Estimate", "Std. Error", "t value")))
-    # for gee (all "b" models)
         coef_NA_fill_gee <- matrix(NA, ncol = 4, nrow = 3, 
                                    dimnames = list(c("(Intercept)", "X", "A"), 
                                                    c("Estimate", "Std.err", "Wald", "Pr(>|W|)")))
+        
+    # for model with interaction but without alpha_1
+    } else if (dgm_type %in% c("3h")) {
+        coef_NA_fill_mlm <- matrix(NA, ncol = 3, 
+                                   nrow = 3, 
+                                   dimnames = list(c("(Intercept)", "A", "A:X"), 
+                                                   c("Estimate", "Std. Error", "t value")))
+        coef_NA_fill_gee <- matrix(NA, ncol = 4, nrow = 3, 
+                                   dimnames = list(c("(Intercept)", "A", "A:X"), 
+                                                   c("Estimate", "Std.err", "Wald", "Pr(>|W|)")))
+    
+    # for all other models with all fixed effects
     } else {
-    # for mlm (all other models)
         row_mlm <- c("(Intercept)", "X", "A", "X:A")
         col_mlm <- c("Estimate", "Std. Error", "t value")
         coef_NA_fill_mlm <- matrix(NA, ncol = 3, 
                                    nrow = 4, 
                                    dimnames = list(c("(Intercept)", "X", "A", "X:A"), 
                                                    c("Estimate", "Std. Error", "t value")))
-    # for gee (all other models)
         coef_NA_fill_gee <- matrix(NA, ncol = 4, nrow = 4, 
                                    dimnames = list(c("(Intercept)", "X", "A", "X:A"), 
                                                    c("Estimate", "Std.err", "Wald", "Pr(>|W|)")))
     }
     
     # set.seed(123) # original study had this here, but having a loop within the for loop
-    # potentially makes it so that we get the same dataset for each of the settings, which
-    # is undesirable as it is not really random.
+    # potentially makes it so that we get the same dataset for each of the parallel processes, 
+    # which is undesirable as it is not really random.
     
     result <- foreach(isim = 1:nsim, .combine = "c", .errorhandling = "remove", 
                       .packages = c("geepack", "lme4"), .options.RNG=120) %dorng% {
@@ -114,7 +123,9 @@ for (idesign in 1:nrow(design)) {
               mlm_fit <- lmer(Y ~ X + A + (1 | userid), data = dta)
             } else if (dgm_type == "3d") {
               mlm_fit <- lmer(Y ~ X + A + (1 + A | userid), data = dta)
-            }
+            } else if (dgm_type == "3h") {
+              mlm_fit <- lmer(Y ~ A + A:X + (1 + A | userid), data = dta)
+            } 
             
             # Check for singular fits
             if (isSingular(mlm_fit, tol = 1e-05)) {
@@ -149,6 +160,9 @@ for (idesign in 1:nrow(design)) {
               if (dgm_type %in% c("1b", "2b", "3b", "3d")) {
                 gee_ind_fit <- geeglm(Y ~ X + A, id = userid, family = gaussian, 
                                       corstr = "independence", data = dta)
+              } else if (dgm_type == "3h") {
+                gee_ind_fit <- geeglm(Y ~ A + A:X, id = userid, family = gaussian, 
+                                      corstr = "independence", data = dta)
               } else {
                 gee_ind_fit <- geeglm(Y ~ X * A, id = userid, family = gaussian, 
                                       corstr = "independence", data = dta)
@@ -169,6 +183,9 @@ for (idesign in 1:nrow(design)) {
             if (dgm_type %in% c("1b", "2b", "3b", "3d")) {
               gee_ex_fit <- geeglm(Y ~ X + A, id = userid, family = gaussian, 
                                     corstr = "exchangeable", data = dta)
+            } else if (dgm_type == "3h"){
+              gee_ex_fit <- geeglm(Y ~ A + A:X, id = userid, family = gaussian, 
+                                    corstr = "exchangeable", data = dta)
             } else {
               gee_ex_fit <- geeglm(Y ~ X * A, id = userid, family = gaussian, 
                                     corstr = "exchangeable", data = dta)
@@ -188,6 +205,9 @@ for (idesign in 1:nrow(design)) {
           {
             if (dgm_type %in% c("1b", "2b", "3b", "3d")) {
               gee_ar1_fit <- geeglm(Y ~ X + A, id = userid, family = gaussian, 
+                                   corstr = "ar1", data = dta)
+            } else if (dgm_type == "3h") {
+              gee_ar1_fit <- geeglm(Y ~ A + A:X, id = userid, family = gaussian, 
                                    corstr = "ar1", data = dta)
             } else {
               gee_ar1_fit <- geeglm(Y ~ X * A, id = userid, family = gaussian, 
@@ -250,10 +270,10 @@ for (idesign in 1:nrow(design)) {
     beta_0_true <- 1 # was originallly 0.5 in the code but is 1 in the paper
     beta_1_true <- 0.3 # was originally 0.1 in the code but is 0.3 in the paper
     
-    # set the interactions to 0 for "b" models
-    if (dgm_type %in% c("1b", "2b", "3b", "3d")) {
-      beta_1_true <- 0
-    }
+    # # set the interactions to 0 for "b" models
+    # if (dgm_type %in% c("1b", "2b", "3b", "3d")) {
+    #   beta_1_true <- 0
+    # }
     
     ### Divide the list into sublists for each model type ###
     
@@ -266,30 +286,30 @@ for (idesign in 1:nrow(design)) {
     
     ### Linear Mixed Model
     
-    mlm_alpha_0 <- sapply(result_lmm, function(l) l$coef["(Intercept)", "Estimate"])
-    mlm_alpha_0_sd <- sapply(result_lmm, function(l) l$coef["(Intercept)", "Std. Error"])
-    mlm_alpha_1 <- sapply(result_lmm, function(l) l$coef["X", "Estimate"])
-    mlm_alpha_1_sd <- sapply(result_lmm, function(l) l$coef["X", "Std. Error"])
+    # mlm_alpha_0 <- sapply(result_lmm, function(l) l$coef["(Intercept)", "Estimate"])
+    # mlm_alpha_0_sd <- sapply(result_lmm, function(l) l$coef["(Intercept)", "Std. Error"])
+    # mlm_alpha_1 <- sapply(result_lmm, function(l) l$coef["X", "Estimate"])
+    # mlm_alpha_1_sd <- sapply(result_lmm, function(l) l$coef["X", "Std. Error"])
     mlm_beta_0 <- sapply(result_lmm, function(l) l$coef["A", "Estimate"])
     mlm_beta_0_sd <- sapply(result_lmm, function(l) l$coef["A", "Std. Error"])
     
-    if (!dgm_type %in% c("1b", "2b", "3b", "3d")) {
-      mlm_beta_1 <- sapply(result_lmm, function(l) l$coef["X:A", "Estimate"])
-      mlm_beta_1_sd <- sapply(result_lmm, function(l) l$coef["X:A", "Std. Error"])
-    }
+    # if (!dgm_type %in% c("1b", "2b", "3b", "3d")) {
+    #   mlm_beta_1 <- sapply(result_lmm, function(l) l$coef["X:A", "Estimate"])
+    #   mlm_beta_1_sd <- sapply(result_lmm, function(l) l$coef["X:A", "Std. Error"])
+    # }
 
-    design$mlm_alpha_0_bias[idesign] <- mean(mlm_alpha_0, na.rm = T) - alpha_0_true
-    design$mlm_alpha_0_sd[idesign] <- sd(mlm_alpha_0, na.rm = T)
-    design$mlm_alpha_1_bias[idesign] <- mean(mlm_alpha_1, na.rm = T) - alpha_1_true
-    design$mlm_alpha_1_sd[idesign] <- sd(mlm_alpha_1, na.rm = T)
+    # design$mlm_alpha_0_bias[idesign] <- mean(mlm_alpha_0, na.rm = T) - alpha_0_true
+    # design$mlm_alpha_0_sd[idesign] <- sd(mlm_alpha_0, na.rm = T)
+    # design$mlm_alpha_1_bias[idesign] <- mean(mlm_alpha_1, na.rm = T) - alpha_1_true
+    # design$mlm_alpha_1_sd[idesign] <- sd(mlm_alpha_1, na.rm = T)
     design$mlm_beta_0_bias[idesign] <- mean(mlm_beta_0, na.rm = T) - beta_0_true
     design$mlm_beta_0_sd[idesign] <- sd(mlm_beta_0, na.rm = T)
     
-    # interaction beta1 is not present in the "b" models, so only calculate if not b
-    if (!dgm_type %in% c("1b", "2b", "3b", "3d")) {
-        design$mlm_beta_1_bias[idesign] <- mean(mlm_beta_1, na.rm = T) - beta_1_true
-        design$mlm_beta_1_sd[idesign] <- sd(mlm_beta_1, na.rm = T)
-    }
+    # # interaction beta1 is not present in the "b" models, so only calculate if not b
+    # if (!dgm_type %in% c("1b", "2b", "3b", "3d")) {
+    #     design$mlm_beta_1_bias[idesign] <- mean(mlm_beta_1, na.rm = T) - beta_1_true
+    #     design$mlm_beta_1_sd[idesign] <- sd(mlm_beta_1, na.rm = T)
+    # }
     
     # check if models converged by calculating success proportion for beta_0
     # so the value should not be NA or 0
@@ -297,87 +317,87 @@ for (idesign in 1:nrow(design)) {
     
     ### GEE with independence
     
-    gee_ind_alpha_0 <- sapply(result_gee_ind, function(l) l$coef["(Intercept)", "Estimate"])
-    gee_ind_alpha_0_sd <- sapply(result_gee_ind, function(l) l$coef["(Intercept)", "Std.err"])
-    gee_ind_alpha_1 <- sapply(result_gee_ind, function(l) l$coef["X", "Estimate"])
-    gee_ind_alpha_1_sd <- sapply(result_gee_ind, function(l) l$coef["X", "Std.err"])
+    # gee_ind_alpha_0 <- sapply(result_gee_ind, function(l) l$coef["(Intercept)", "Estimate"])
+    # gee_ind_alpha_0_sd <- sapply(result_gee_ind, function(l) l$coef["(Intercept)", "Std.err"])
+    # gee_ind_alpha_1 <- sapply(result_gee_ind, function(l) l$coef["X", "Estimate"])
+    # gee_ind_alpha_1_sd <- sapply(result_gee_ind, function(l) l$coef["X", "Std.err"])
     gee_ind_beta_0 <- sapply(result_gee_ind, function(l) l$coef["A", "Estimate"])
     gee_ind_beta_0_sd <- sapply(result_gee_ind, function(l) l$coef["A", "Std.err"])
     
-    if (!dgm_type %in% c("1b", "2b", "3b", "3d")) {
-      gee_ind_beta_1 <- sapply(result_gee_ind, function(l) l$coef["X:A", "Estimate"])
-      gee_ind_beta_1_sd <- sapply(result_gee_ind, function(l) l$coef["X:A", "Std.err"])
-    }
+    # if (!dgm_type %in% c("1b", "2b", "3b", "3d")) {
+    #   gee_ind_beta_1 <- sapply(result_gee_ind, function(l) l$coef["X:A", "Estimate"])
+    #   gee_ind_beta_1_sd <- sapply(result_gee_ind, function(l) l$coef["X:A", "Std.err"])
+    # }
     
-    design$gee_ind_alpha_0_bias[idesign] <- mean(gee_ind_alpha_0, na.rm = T) - alpha_0_true
-    design$gee_ind_alpha_0_sd[idesign] <- sd(gee_ind_alpha_0, na.rm = T)
-    design$gee_ind_alpha_1_bias[idesign] <- mean(gee_ind_alpha_1, na.rm = T) - alpha_1_true
-    design$gee_ind_alpha_1_sd[idesign] <- sd(gee_ind_alpha_1, na.rm = T)
+    # design$gee_ind_alpha_0_bias[idesign] <- mean(gee_ind_alpha_0, na.rm = T) - alpha_0_true
+    # design$gee_ind_alpha_0_sd[idesign] <- sd(gee_ind_alpha_0, na.rm = T)
+    # design$gee_ind_alpha_1_bias[idesign] <- mean(gee_ind_alpha_1, na.rm = T) - alpha_1_true
+    # design$gee_ind_alpha_1_sd[idesign] <- sd(gee_ind_alpha_1, na.rm = T)
     design$gee_ind_beta_0_bias[idesign] <- mean(gee_ind_beta_0, na.rm = T) - beta_0_true
     design$gee_ind_beta_0_sd[idesign] <- sd(gee_ind_beta_0, na.rm = T)
     
-    if (!dgm_type %in% c("1b", "2b", "3b", "3d")) {
-      design$gee_ind_beta_1_bias[idesign] <- mean(gee_ind_beta_1, na.rm = T) - beta_1_true
-      design$gee_ind_beta_1_sd[idesign] <- sd(gee_ind_beta_1, na.rm = T)
-    }
+    # if (!dgm_type %in% c("1b", "2b", "3b", "3d")) {
+    #   design$gee_ind_beta_1_bias[idesign] <- mean(gee_ind_beta_1, na.rm = T) - beta_1_true
+    #   design$gee_ind_beta_1_sd[idesign] <- sd(gee_ind_beta_1, na.rm = T)
+    # }
     
     # check if models converged by calculating success proportion for beta_0
     design$gee_ind_success[idesign] <- 1 - sum(is.na(gee_ind_beta_0)) / nsim
     
     ### GEE with exchangeable
     
-    gee_ex_alpha_0 <- sapply(result_gee_ex, function(l) l$coef["(Intercept)", "Estimate"])
-    gee_ex_alpha_0_sd <- sapply(result_gee_ex, function(l) l$coef["(Intercept)", "Std.err"])
-    gee_ex_alpha_1 <- sapply(result_gee_ex, function(l) l$coef["X", "Estimate"])
-    gee_ex_alpha_1_sd <- sapply(result_gee_ex, function(l) l$coef["X", "Std.err"])
+    # gee_ex_alpha_0 <- sapply(result_gee_ex, function(l) l$coef["(Intercept)", "Estimate"])
+    # gee_ex_alpha_0_sd <- sapply(result_gee_ex, function(l) l$coef["(Intercept)", "Std.err"])
+    # gee_ex_alpha_1 <- sapply(result_gee_ex, function(l) l$coef["X", "Estimate"])
+    # gee_ex_alpha_1_sd <- sapply(result_gee_ex, function(l) l$coef["X", "Std.err"])
     gee_ex_beta_0 <- sapply(result_gee_ex, function(l) l$coef["A", "Estimate"])
     gee_ex_beta_0_sd <- sapply(result_gee_ex, function(l) l$coef["A", "Std.err"])
     
-    if (!dgm_type %in% c("1b", "2b", "3b", "3d")) {
-      gee_ex_beta_1 <- sapply(result_gee_ex, function(l) l$coef["X:A", "Estimate"])
-      gee_ex_beta_1_sd <- sapply(result_gee_ex, function(l) l$coef["X:A", "Std.err"])
-    }
+    # if (!dgm_type %in% c("1b", "2b", "3b", "3d")) {
+    #   gee_ex_beta_1 <- sapply(result_gee_ex, function(l) l$coef["X:A", "Estimate"])
+    #   gee_ex_beta_1_sd <- sapply(result_gee_ex, function(l) l$coef["X:A", "Std.err"])
+    # }
     
-    design$gee_ex_alpha_0_bias[idesign] <- mean(gee_ex_alpha_0, na.rm = T) - alpha_0_true
-    design$gee_ex_alpha_0_sd[idesign] <- sd(gee_ex_alpha_0, na.rm = T)
-    design$gee_ex_alpha_1_bias[idesign] <- mean(gee_ex_alpha_1, na.rm = T) - alpha_1_true
-    design$gee_ex_alpha_1_sd[idesign] <- sd(gee_ex_alpha_1, na.rm = T)
+    # design$gee_ex_alpha_0_bias[idesign] <- mean(gee_ex_alpha_0, na.rm = T) - alpha_0_true
+    # design$gee_ex_alpha_0_sd[idesign] <- sd(gee_ex_alpha_0, na.rm = T)
+    # design$gee_ex_alpha_1_bias[idesign] <- mean(gee_ex_alpha_1, na.rm = T) - alpha_1_true
+    # design$gee_ex_alpha_1_sd[idesign] <- sd(gee_ex_alpha_1, na.rm = T)
     design$gee_ex_beta_0_bias[idesign] <- mean(gee_ex_beta_0, na.rm = T) - beta_0_true
     design$gee_ex_beta_0_sd[idesign] <- sd(gee_ex_beta_0, na.rm = T)
     
-    if (!dgm_type %in% c("1b", "2b", "3b", "3d")) {
-      design$gee_ex_beta_1_bias[idesign] <- mean(gee_ex_beta_1, na.rm = T) - beta_1_true
-      design$gee_ex_beta_1_sd[idesign] <- sd(gee_ex_beta_1, na.rm = T)
-    }
+    # if (!dgm_type %in% c("1b", "2b", "3b", "3d")) {
+    #   design$gee_ex_beta_1_bias[idesign] <- mean(gee_ex_beta_1, na.rm = T) - beta_1_true
+    #   design$gee_ex_beta_1_sd[idesign] <- sd(gee_ex_beta_1, na.rm = T)
+    # }
     
     # check if models converged by calculating success proportion for beta_0
     design$gee_ex_success[idesign] <- 1 - sum(is.na(gee_ex_beta_0)) / nsim
     
     ### GEE with AR(1)
     
-    gee_ar1_alpha_0 <- sapply(result_gee_ar1, function(l) l$coef["(Intercept)", "Estimate"])
-    gee_ar1_alpha_0_sd <- sapply(result_gee_ar1, function(l) l$coef["(Intercept)", "Std.err"])
-    gee_ar1_alpha_1 <- sapply(result_gee_ar1, function(l) l$coef["X", "Estimate"])
-    gee_ar1_alpha_1_sd <- sapply(result_gee_ar1, function(l) l$coef["X", "Std.err"])
+    # gee_ar1_alpha_0 <- sapply(result_gee_ar1, function(l) l$coef["(Intercept)", "Estimate"])
+    # gee_ar1_alpha_0_sd <- sapply(result_gee_ar1, function(l) l$coef["(Intercept)", "Std.err"])
+    # gee_ar1_alpha_1 <- sapply(result_gee_ar1, function(l) l$coef["X", "Estimate"])
+    # gee_ar1_alpha_1_sd <- sapply(result_gee_ar1, function(l) l$coef["X", "Std.err"])
     gee_ar1_beta_0 <- sapply(result_gee_ar1, function(l) l$coef["A", "Estimate"])
     gee_ar1_beta_0_sd <- sapply(result_gee_ar1, function(l) l$coef["A", "Std.err"])
     
-    if (!dgm_type %in% c("1b", "2b", "3b", "3d")) {
-      gee_ar1_beta_1 <- sapply(result_gee_ar1, function(l) l$coef["X:A", "Estimate"])
-      gee_ar1_beta_1_sd <- sapply(result_gee_ar1, function(l) l$coef["X:A", "Std.err"])
-    }
+    # if (!dgm_type %in% c("1b", "2b", "3b", "3d")) {
+    #   gee_ar1_beta_1 <- sapply(result_gee_ar1, function(l) l$coef["X:A", "Estimate"])
+    #   gee_ar1_beta_1_sd <- sapply(result_gee_ar1, function(l) l$coef["X:A", "Std.err"])
+    # }
     
-    design$gee_ar1_alpha_0_bias[idesign] <- mean(gee_ar1_alpha_0, na.rm = T) - alpha_0_true
-    design$gee_ar1_alpha_0_sd[idesign] <- sd(gee_ar1_alpha_0, na.rm = T)
-    design$gee_ar1_alpha_1_bias[idesign] <- mean(gee_ar1_alpha_1, na.rm = T) - alpha_1_true
-    design$gee_ar1_alpha_1_sd[idesign] <- sd(gee_ar1_alpha_1, na.rm = T)
+    # design$gee_ar1_alpha_0_bias[idesign] <- mean(gee_ar1_alpha_0, na.rm = T) - alpha_0_true
+    # design$gee_ar1_alpha_0_sd[idesign] <- sd(gee_ar1_alpha_0, na.rm = T)
+    # design$gee_ar1_alpha_1_bias[idesign] <- mean(gee_ar1_alpha_1, na.rm = T) - alpha_1_true
+    # design$gee_ar1_alpha_1_sd[idesign] <- sd(gee_ar1_alpha_1, na.rm = T)
     design$gee_ar1_beta_0_bias[idesign] <- mean(gee_ar1_beta_0, na.rm = T) - beta_0_true
     design$gee_ar1_beta_0_sd[idesign] <- sd(gee_ar1_beta_0, na.rm = T)
     
-    if (!dgm_type %in% c("1b", "2b", "3b", "3d")) {
-      design$gee_ar1_beta_1_bias[idesign] <- mean(gee_ar1_beta_1, na.rm = T) - beta_1_true
-      design$gee_ar1_beta_1_sd[idesign] <- sd(gee_ar1_beta_1, na.rm = T)
-    }
+    # if (!dgm_type %in% c("1b", "2b", "3b", "3d")) {
+    #   design$gee_ar1_beta_1_bias[idesign] <- mean(gee_ar1_beta_1, na.rm = T) - beta_1_true
+    #   design$gee_ar1_beta_1_sd[idesign] <- sd(gee_ar1_beta_1, na.rm = T)
+    # }
     
     # check if models converged by calculating success proportion for beta_0
     design$gee_ar1_success[idesign] <- 1 - sum(is.na(gee_ar1_beta_0)) / nsim

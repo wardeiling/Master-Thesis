@@ -3,6 +3,8 @@
 # generative model:
 # Y_t+1 = alpha_0 + alpha_1 X_t + b_0i + b_1i X_t + A_t (beta_0 + beta_1 X_t + b_2i + b_3i X_t) + epsilon_it
 
+### Naming Scheme 1 ###
+
 # dmg_type with an "a" suffix means that there are no random slopes
 # dgm_type with a "b" suffix means that there are no random slopes nor interactions between the treatment and covariate
 # dgm_type == 3c: GM3, except higher value for the random slope b_i2 variance (treatment effect)
@@ -10,11 +12,14 @@
 # dgm_type == 3e: GM3, except higher value for interaction beta_1
 # dgm_type == 3f: GM3, except higher value for fixed slope alpha_1
 # dgm_type == 3g: GM3, except lower value for fixed slope alpha_1
+# dgm_type == 3h: GM3, except no fixed slope alpha_1
+# dgm_type == 3i: GM3, except no random slope b_i2 nor fixed slope alpha_1
+# dgm_type == 3j: GM3, except no interaction effect beta_1 nor fixed slope alpha_1
 
 dgm_with_treatment <- function(sample_size, total_T, dgm_type) {
     
     # dgm_type is in c(1,2,3,4)
-    stopifnot(dgm_type %in% c(1,2,3,"1a", "2a", "3a", "1b", "2b", "3b", "3c", "3d", "3e", "3f", "3g"))
+    stopifnot(dgm_type %in% c(1,2,3,"1a", "2a", "3a", "1b", "2b", "3b", "3c", "3d", "3e", "3f", "3g", "3h", "3i", "3j"))
     
     # dgm_type = 1 or 3
     alpha_0 <- - 2 # overall intercept, was originally -1 in the code but is -2 in the paper
@@ -48,6 +53,14 @@ dgm_with_treatment <- function(sample_size, total_T, dgm_type) {
       alpha_1 <- -0.6
     } else if (dgm_type == "3g") {
       alpha_1 <- -0.15
+    } else if (dgm_type == "3h") {
+      alpha_1 <- 0
+    } else if (dgm_type == "3i") {
+      sigma_b2 <- 0
+      alpha_1 <- 0
+    } else if (dgm_type == "3j") {
+      beta_1 <- 0
+      alpha_1 <- 0
     }
 
     prob_a <- 0.5
@@ -92,7 +105,7 @@ dgm_with_treatment <- function(sample_size, total_T, dgm_type) {
             }
             dta$prob_A[row_index] <- ifelse(dta$X[row_index] > - 1.27, 0.7, 0.3)
             
-        } else if (dgm_type %in% c(3, "3a", "3b", "3c", "3d", "3e", "3f", "3g")) {
+        } else if (dgm_type %in% c(3, "3a", "3b", "3c", "3d", "3e", "3f", "3g", "3h", "3i", "3j")) {
             if (t == 1) {
                 dta$X[row_index] <- rnorm(sample_size, mean = b_0i) # X involves b_i!!
             } else {
@@ -129,16 +142,16 @@ if( 0 ){
     library(geepack)
     library(gee)
   
-    dta <- dgm_with_treatment(sample_size = 10000, total_T = 30, dgm_type = "2")
+    dta <- dgm_with_treatment(sample_size = 200, total_T = 30, dgm_type = "1")
     # hist(dta$Y)
     summary(dta)
     # dta$A <- dta$A - dta$prob_A # action centering doesn't matter when prob_A is constant
-    mlm_fit <- lmer(Y ~ X * A + (1 | userid), data = dta)
+    mlm_fit <- lmer(Y ~ A + A:X + (1 + A | userid), data = dta)
     summary(mlm_fit)
     (mlm1 <- summary(lmer(Y ~ X + A + (1  | userid), data = dta))$coefficients)
     (mlm2 <- lmer(Y ~ X * A + (X * A | userid), data = dta))
     isSingular(mlm2, tol = 1e-5)
-    (gee_ex <- summary(geepack::geeglm(Y ~ X * A, id = userid, data = dta, family = gaussian, corstr = "exchangeable"))$coefficients)
+    (gee_ex <- summary(geepack::geeglm(Y ~ A + A:X, id = userid, data = dta, family = gaussian, corstr = "exchangeable"))$coefficients)
     (gee_in <- summary(geepack::geeglm(Y ~ X * A, id = userid, data = dta, family = gaussian, corstr = "independence"))$coefficients)
     (gee_ar <- summary(geepack::geeglm(Y ~ X * A, id = userid, data = dta, family = gaussian, corstr = "ar1"))$coefficients)
     (gee_in2 <- summary(gee(Y ~ X * A, id = userid, data = dta, family = gaussian, corstr = "independence"))$coefficients)
