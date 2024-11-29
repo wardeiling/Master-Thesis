@@ -311,6 +311,9 @@ generate_data <- function(n_i = 5000, sigma_u = 1, sigma_Z1 = 1, sigma_e = 1, be
   return(data_long)
 }
 
+data <- generate_data()
+summary(data)
+
 # Create a function that runs the simulations
 run_simulations <- function(n_sim, n_i, sigma_u, sigma_Z1, sigma_e, beta_1, gamma_00) {
   
