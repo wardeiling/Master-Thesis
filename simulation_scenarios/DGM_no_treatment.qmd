@@ -247,6 +247,7 @@ Wat gebeurt hier precies?
   \draw[<->, out=120, in=60, looseness=1.5] (eY2) to node[above] {$\sigma_e^2$} (eY2);
   \draw[<->, out=120, in=60, looseness=1.5] (eY3) to node[above] {$\sigma_e^2$} (eY3);
   \draw[<->, out=120, in=60, looseness=1.5] (Z1) to node[above] {$\sigma_{Z_1}^2$} (Z1);
+  \draw[<->, out=120, in=60, looseness=1.5] (u0) to node[above] {$\sigma_{u_0}^2$} (u0);
 
 \end{tikzpicture}
 ```
@@ -310,6 +311,9 @@ generate_data <- function(n_i = 5000, sigma_u = 1, sigma_Z1 = 1, sigma_e = 1, be
   data_long <- do.call(rbind, data_list)
   return(data_long)
 }
+
+data <- generate_data()
+summary(data)
 
 # Create a function that runs the simulations
 run_simulations <- function(n_sim, n_i, sigma_u, sigma_Z1, sigma_e, beta_1, gamma_00) {
