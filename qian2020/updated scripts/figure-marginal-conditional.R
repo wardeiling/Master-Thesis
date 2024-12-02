@@ -17,6 +17,8 @@ sample10 <- data.frame(ri_vals = seq(from = -2.5, to = 2.5, by = 0.4),
                              slope = 0.8)
 sample10$intercept_i <- sample10$intercept - sample10$ri_vals
 
+par(mfrow = c(1, 2))
+
 ### Step 2. Obtain the conditional average: the subject with b_i = 0, the mean individual
 
 # when we fill in sigma_u = 0, the random effect is 0 for all individuals.
@@ -54,12 +56,12 @@ abline(a = marg_intercept, b = marg_slope, col = "red", , lwd = 4)
 # The estimated effect should therefore represent the conditional average.
 
 cond_slope <- 0.8
-cond_intercept <- 2
+cond_intercept <- 2.0
 
 ### Step 3. Obtain the population average: the average Y for every level of X over all individuals
 
-marg_slope <- 0.8
-marg_intercept <- 2.10
+marg_slope <- 0.98
+marg_intercept <- 1.82
 
 ### Step 4. Create Figure
 

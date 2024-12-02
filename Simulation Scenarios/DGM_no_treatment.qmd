@@ -247,6 +247,7 @@ Wat gebeurt hier precies?
   \draw[<->, out=120, in=60, looseness=1.5] (eY2) to node[above] {$\sigma_e^2$} (eY2);
   \draw[<->, out=120, in=60, looseness=1.5] (eY3) to node[above] {$\sigma_e^2$} (eY3);
   \draw[<->, out=120, in=60, looseness=1.5] (Z1) to node[above] {$\sigma_{Z_1}^2$} (Z1);
+  \draw[<->, out=120, in=60, looseness=1.5] (u0) to node[above] {$\sigma_{u_0}^2$} (u0);
 
 \end{tikzpicture}
 ```
