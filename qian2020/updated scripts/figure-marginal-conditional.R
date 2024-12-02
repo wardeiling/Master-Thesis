@@ -1,12 +1,6 @@
 # This script generates a figure that shows how marginal and conditional effects may not 
 # be equivalent under certain conditions (GM3) in a multilevel linear model.
 
-library(ggplot2)
-library(tidyr)
-library(dplyr)
-library(lme4)
-library(gee)
-
 ### Example without Problem ----
 
 ### Step 1. Obtain data for 10 different individuals with increasing random effects
@@ -78,22 +72,4 @@ for (i in 1:nrow(sample10)) {
 
 abline(a = cond_intercept, b = cond_slope, col = "black", lwd = 4)
 abline(a = marg_intercept, b = marg_slope, col = "red", , lwd = 4)
-  
-
-
-# head(u_0i, 5)
-# 
-# scenario1.data %>%
-#   filter(id <= 5) %>%
-#   ggplot(aes(x = X, y = Y, group = id)) +
-#   geom_point(aes(color = as.factor(id))) +
-#   geom_abline(intercept = gamma_00, slope = beta_1, color = "black", size = 1) + # overall regression line
-#   geom_abline(intercept = gamma_00 + u_0i[1], slope = beta_1, color = "red", size = 1) + # for id = 1
-#   geom_abline(intercept = gamma_00 + u_0i[2], slope = beta_1, color = "orange", size = 1) + # for id = 2
-#   geom_abline(intercept = gamma_00 + u_0i[3], slope = beta_1, color = "green", size = 1) + # for id = 3
-#   geom_abline(intercept = gamma_00 + u_0i[4], slope = beta_1, color = "blue", size = 1) + # for id = 4
-#   geom_abline(intercept = gamma_00 + u_0i[5], slope = beta_1, color = "purple", size = 1) + # for id = 5
-#   theme_minimal()
-
-
 
