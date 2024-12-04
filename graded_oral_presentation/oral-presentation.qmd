@@ -52,10 +52,8 @@ So we should all be using GEE with working independence?
 
 Aims:
 
-1.  Restate the issue in a psychological context
-<!-- for instance, are we able to understand this bias in the treatment effect in terms of DAGs? -->
-2.  Provide practical recommendations
-<!-- for instance, in what situation is the bias of MLM worrisome and when is it negligible?  -->
+1.  Restate the issue in a psychological context <!-- for instance, are we able to understand this bias in the treatment effect in terms of DAGs? -->
+2.  Provide practical recommendations <!-- for instance, in what situation is the bias of MLM worrisome and when is it negligible?  -->
 
 ## Endogenous Time-varying Covariates: What Are They?
 
@@ -64,17 +62,18 @@ Aims:
 #| engine: 'tikz'
 #| cache: true
 #| echo: false
-#| fig-cap: "Path Diagram of Model Without Treatment"
+#| fig-cap: "Path Diagram of MLM Without Treatment"
 
 \begin{tikzpicture}
   % Nodes
-  \node[draw] (X1) at (1.5, 1.5) {$X_1$};
-  \node[draw] (X2) at (6.0, 1.5) {$X_2$};
-  \node[draw] (Y2) at (6.0, 3.5) {$Y_2$};
-  \node[draw] (Y3) at (10.0, 3.5) {$Y_3$};
+  \node[draw] (X1) at (1.5, 1.5) {$X_{1i}$};
+  \node[draw] (X2) at (6.0, 1.5) {$X_{2i}$};
+  \node[draw] (Y2) at (6.0, 3.5) {$Y_{2i}$};
+  \node[draw] (Y3) at (10.0, 3.5) {$Y_{3i}$};
   \node[draw, circle, fill=gray!20] (b0) at (8.0, 5.5) {$b_{0i}$};
-  \node[draw, circle, fill=gray!20] (eY2) at (7.5, 3.5) {$\epsilon_{i2}$};
-  \node[draw, circle, fill=gray!20] (eY3) at (11.5, 3.5) {$\epsilon_{i3}$};
+  \node (eY2) at (7, 3.5) {$\sigma_{\epsilon}^2$};
+  \node (eY3) at (11, 3.5) {$\sigma_{\epsilon}^2$};
+  \node (eX1) at (1.5, 0.5) {$\sigma_{X_1}^2$};
 
   % Edges with labels
   \draw[->] (X1) -- (Y2) node[midway, below right] {$\beta_{1}$};
@@ -82,13 +81,14 @@ Aims:
   \draw[->] (Y2) -- (X2) node[midway, left] {$=$};
   \draw[->] (b0) -- (Y2) node[midway, left] {$+$};
   \draw[->] (b0) -- (Y3) node[midway, left] {$+$};
-  \draw[->] (eY2) -- (Y2) ;
-  \draw[->] (eY3) -- (Y3) ;
+  \draw[->] (eY2) -- (Y2);
+  \draw[->] (eY3) -- (Y3);
+  \draw[->] (eX1) -- (X1);
 
   % Double-headed arrows for residual variances
-  \draw[<->, out=120, in=60, looseness=1.5] (eY2) to node[above] {$\sigma_{\epsilon}^2$} (eY2);
-  \draw[<->, out=120, in=60, looseness=1.5] (eY3) to node[above] {$\sigma_{\epsilon}^2$} (eY3);
-  \draw[<->, out=120, in=60, looseness=1.5] (X1) to node[above] {$\sigma_{X_1}^2$} (X1);
+  % \draw[<->, out=120, in=60, looseness=1.5] (eY2) to node[above] {$\sigma_{\epsilon}^2$} (eY2);
+  % \draw[<->, out=120, in=60, looseness=1.5] (eY3) to node[above] {$\sigma_{\epsilon}^2$} (eY3);
+  % \draw[<->, out=120, in=60, looseness=1.5] (X1) to node[above] {$\sigma_{X_1}^2$} (X1);
   \draw[<->, out=120, in=60, looseness=1.5] (b0) to node[above] {$\sigma_{b_0}^2$} (b0);
 
 \end{tikzpicture}
@@ -101,17 +101,18 @@ Aims:
 #| engine: 'tikz'
 #| cache: true
 #| echo: false
-#| fig-cap: "Path Diagram of Model Without Treatment"
+#| fig-cap: "Path Diagram of MLM Without Treatment"
 
 \begin{tikzpicture}
   % Nodes
-  \node[draw] (X1) at (1.5, 1.5) {$X_1$};
-  \node[draw] (X2) at (6.0, 1.5) {$X_2$};
-  \node[draw] (Y2) at (6.0, 3.5) {$Y_2$};
-  \node[draw] (Y3) at (10.0, 3.5) {$Y_3$};
+  \node[draw] (X1) at (1.5, 1.5) {$X_{1i}$};
+  \node[draw] (X2) at (6.0, 1.5) {$X_{2i}$};
+  \node[draw] (Y2) at (6.0, 3.5) {$Y_{2i}$};
+  \node[draw] (Y3) at (10.0, 3.5) {$Y_{3i}$};
   \node[draw, circle, fill=gray!20] (b0) at (8.0, 5.5) {$b_{0i}$};
-  \node[draw, circle, fill=gray!20] (eY2) at (7.5, 3.5) {$\epsilon_{i2}$};
-  \node[draw, circle, fill=gray!20] (eY3) at (11.5, 3.5) {$\epsilon_{i3}$};
+  \node (eY2) at (7, 3.5) {$\sigma_{\epsilon}^2$};
+  \node (eY3) at (11, 3.5) {$\sigma_{\epsilon}^2$};
+  \node (eX1) at (1.5, 0.5) {$\sigma_{X_1}^2$};
 
   % Edges with labels
   \draw[->, blue] (X1) -- (Y2) node[midway, below right] {$\beta_{1}$};
@@ -119,13 +120,14 @@ Aims:
   \draw[->] (Y2) -- (X2) node[midway, left] {$=$};
   \draw[->] (b0) -- (Y2) node[midway, left] {$+$};
   \draw[->] (b0) -- (Y3) node[midway, left] {$+$};
-  \draw[->] (eY2) -- (Y2) ;
-  \draw[->] (eY3) -- (Y3) ;
+  \draw[->] (eY2) -- (Y2);
+  \draw[->] (eY3) -- (Y3);
+  \draw[->] (eX1) -- (X1);
 
   % Double-headed arrows for residual variances
-  \draw[<->, out=120, in=60, looseness=1.5] (eY2) to node[above] {$\sigma_{\epsilon}^2$} (eY2);
-  \draw[<->, out=120, in=60, looseness=1.5] (eY3) to node[above] {$\sigma_{\epsilon}^2$} (eY3);
-  \draw[<->, out=120, in=60, looseness=1.5] (X1) to node[above] {$\sigma_{X_1}^2$} (X1);
+  % \draw[<->, out=120, in=60, looseness=1.5] (eY2) to node[above] {$\sigma_{\epsilon}^2$} (eY2);
+  % \draw[<->, out=120, in=60, looseness=1.5] (eY3) to node[above] {$\sigma_{\epsilon}^2$} (eY3);
+  % \draw[<->, out=120, in=60, looseness=1.5] (X1) to node[above] {$\sigma_{X_1}^2$} (X1);
   \draw[<->, out=120, in=60, looseness=1.5] (b0) to node[above] {$\sigma_{b_0}^2$} (b0);
 
 \end{tikzpicture}
@@ -138,6 +140,7 @@ Aims:
 <!-- In this path diagram, if we follow the red line, we can clearly see that Z is an endogenous covariate, as it is determined by the outcome Y and thus also by indirectly by the random intercept u_0i -->
 
 <!-- Thus, when covariates are determined by the outcome, the covariate is also determined by the random effects, with the result that the conditional relationship no longer reduces to the marginal relationship.  -->
+
 <!-- When we now fit an MLM, we will only be able to interpret the fixed effects according to the conditional interpretation. -->
 
 ## Expanding to a Generative Model with Treatment
@@ -168,18 +171,18 @@ Aims:
   \node[draw, rectangle] (A2X2) at (5.3, 0) {$A_{2i}\cdot X_{2i}$}; % Increased x-coordinate
 
   % Nodes for latent variables (circles)
-  \node[draw, circle] (b0) at (6, 4) {$b_{i0}$}; % Increased x-coordinate
-  \node[draw, circle] (b2) at (3, 4) {$b_{i2}$}; % Adjusted to align with middle row
+  \node[draw, circle, fill=gray!20] (b0) at (6, 4) {$b_{i0}$}; % Increased x-coordinate
+  \node[draw, circle, fill=gray!20] (b2) at (3, 4) {$b_{i2}$}; % Adjusted to align with middle row
 
   % Arrows with path coefficients
   \draw [->] (b0) -- node[right] {$+$} (Y2);
   \draw [->] (b0) -- node[right] {$+$} (Y3);
   \draw [->, blue] (A2) edge node[above] {$\beta_0$} (Y3);
   \draw [->] (X2) edge node[below] {$\alpha_1$} (Y3);
-  \draw [->] (Y2) edge node[left] {$=$} (X2);
+  \draw [->] (Y2) edge node[left] {$1$} (X2);
   \draw [->, blue] (A1) edge node[left] {$\beta_0$} (Y2);
   \draw [->] (X1) edge node[below] {$\alpha_1$} (Y2);
-  \draw [->] (Y3) edge node[right] {$=$} (X3);
+  \draw [->] (Y3) edge node[right] {$1$} (X3);
   \draw [->] (A1X1) edge node[above] {$\beta_1$} (Y2);
   \draw [->] (A2X2) edge node[above] {$\beta_1$} (Y3);
   \draw [->] (X1var) edge (X1);
@@ -199,7 +202,7 @@ Aims:
 \end{tikzpicture}
 ```
 
-## Generative Model 3
+## Expanding to a Generative Model with Treatment
 
 ```{r}
 #| label: fig-GM3_path
@@ -227,18 +230,18 @@ Aims:
   \node[draw, rectangle] (A2X2) at (5.3, 0) {$A_{2i}\cdot X_{2i}$}; % Increased x-coordinate
 
   % Nodes for latent variables (circles)
-  \node[draw, circle] (b0) at (6, 4) {$b_{i0}$}; % Increased x-coordinate
-  \node[draw, circle] (b2) at (3, 4) {$b_{i2}$}; % Adjusted to align with middle row
+  \node[draw, circle, fill=gray!20] (b0) at (6, 4) {$b_{i0}$}; % Increased x-coordinate
+  \node[draw, circle, fill=gray!20] (b2) at (3, 4) {$b_{i2}$}; % Adjusted to align with middle row
 
   % Arrows with path coefficients
   \draw [->] (b0) -- node[right] {$+$} (Y2);
   \draw [->] (b0) -- node[right] {$+$} (Y3);
   \draw [->, blue] (A2) edge node[above] {$\beta_0$} (Y3);
   \draw [->] (X2) edge node[below] {$\alpha_1$} (Y3);
-  \draw [->] (Y2) edge node[left] {$=$} (X2);
+  \draw [->] (Y2) edge node[left] {$1$} (X2);
   \draw [->, blue] (A1) edge node[left] {$\beta_0$} (Y2);
   \draw [->] (X1) edge node[below] {$\alpha_1$} (Y2);
-  \draw [->] (Y3) edge node[right] {$=$} (X3);
+  \draw [->] (Y3) edge node[right] {$1$} (X3);
   \draw [->] (A1X1) edge node[above] {$\beta_1$} (Y2);
   \draw [->] (A2X2) edge node[above] {$\beta_1$} (Y3);
   \draw [->] (X1var) edge (X1);
@@ -261,37 +264,63 @@ Aims:
 \end{tikzpicture}
 ```
 
-## Variations on GM3
+## Simulation Results
 
+|  |  |  |  |
+|---------------|---------------------------|---------------|---------------|
+| GM | Characteristics | Bias (T = 10) | Bias (T = 30) |
+| 1 | Includes random intercept and random slope for treatment | 0.003  | 0.001  |
+| 3 | Model 1 with dependency random slope and covariate | -0.051 | -0.023 |
 
-## DAGs are the Same?
+: Simulation results of Parameter Bias present in GM 1 and 3 for N = 200 over 1000 replications, for T = 10 and T = 30
 
-- Pearl’s backdoor criterion and interaction effects?
+## Treatment Effect Bias: Can DAGs help us?
+
+-   Pearl’s backdoor criterion and interaction effects?
 
 <!-- Alternatively, if too much time, put this in the discussion section -->
 
-## Simulation Results
+## Isolating the issue
+
+|  |  |  |  |
+|---------------|---------------------------|---------------|---------------|
+| GM | Characteristics | Bias (T = 10) | Bias (T = 30) |
+|  |  |  |  |
+| 3 |  | -0.051 | -0.023 |
+| 3a | Model 3 without random slope $b_{2i}$ | 0.002 | -0.000 |
+| 3b | Model 3 without interaction effect $\beta_1$ (between treatment and covariate interaction) | 0.005 | 0.001 |
+
+: Simulation results of Parameter Bias present in GM 3, 3a, 3b for N = 200 over 1000 replications, for T = 10 and T = 30
+
+Conditional independence assumption is still violated for these models...
+
+What is happening here?
+
+<!-- 1. is it only the case that the removal of random slope or interaction results in the dissapearance of bias in this particular generative model? Bad example? -->
+
+<!-- 2. is it the case that this holds more the MLM more generally? Then this may imply that in practice this bias is not a big issue as long as we do not include interaction effects or random slopes in our model. -->
 
 
 ## Discussion: Takeaways and Moving Forward
 
 -   Marginal relationship primary interest?
+    -   GEE with independence
 
 <!-- (e.g., screening)  -->
 
-    -   GEE with independence
 -   In practice, we don’t know the DGM
+    -   Theory-based decisions
 
 <!-- -   Does it include endogenous covariates? -->
+
 <!-- -   Does conditional independence hold? -->
+
 <!-- Generative Model 2 in qian was simulated with very implausible data (high and low values of X and Y). Therefore GEE estimates were inflated. We should be mindful that generative models should be plausible. -->
 
-    -   Theory-based decisions
 -   Next steps
     -   What makes bias increase?
 
 <!-- -   of random intercept/slope and interaction effects? -->
-
 
 ## References
 
