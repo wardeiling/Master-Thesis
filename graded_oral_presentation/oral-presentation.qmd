@@ -30,12 +30,13 @@ format:
     aspectratio: 169
     navigation: horizontal
     incremental: true 
+    keep_tex: true
   #   # theme: AnnArbor
   #   # colortheme: lily
 bibliography: references.bib
 ---
 
-## The Project: Inspiration
+## Once upon a time...
 
 <!-- > "random effects models were designed for settings where the covariates are considered fixed, and inferential challenges arise when one tries to apply the standard random effects model if there are endogenous time-varying covariates." [@qian2020] -->
 
@@ -54,6 +55,7 @@ Aims:
 1.  Restate the issue in a psychological context
 <!-- for instance, are we able to understand this bias in the treatment effect in terms of DAGs? -->
 2.  Provide practical recommendations
+<!-- for instance, in what situation is the bias of MLM worrisome and when is it negligible?  -->
 
 ## Endogenous Time-varying Covariates: What Are They?
 
@@ -138,7 +140,7 @@ Aims:
 <!-- Thus, when covariates are determined by the outcome, the covariate is also determined by the random effects, with the result that the conditional relationship no longer reduces to the marginal relationship.  -->
 <!-- When we now fit an MLM, we will only be able to interpret the fixed effects according to the conditional interpretation. -->
 
-## Generative Model 1
+## Expanding to a Generative Model with Treatment
 
 ```{r}
 #| label: fig-GM1_path
@@ -274,15 +276,21 @@ Aims:
 ## Discussion: Takeaways and Moving Forward
 
 -   Marginal relationship primary interest?
+
 <!-- (e.g., screening)  -->
+
     -   GEE with independence
 -   In practice, we don’t know the DGM
-    <!-- -   Does it include endogenous covariates? -->
-    <!-- -   Does conditional independence hold? -->
+
+<!-- -   Does it include endogenous covariates? -->
+<!-- -   Does conditional independence hold? -->
+<!-- Generative Model 2 in qian was simulated with very implausible data (high and low values of X and Y). Therefore GEE estimates were inflated. We should be mindful that generative models should be plausible. -->
+
     -   Theory-based decisions
 -   Next steps
     -   What makes bias increase?
-    <!-- -   of random intercept/slope and interaction effects? -->
+
+<!-- -   of random intercept/slope and interaction effects? -->
 
 
 ## References
