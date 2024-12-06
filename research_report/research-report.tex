@@ -35,7 +35,7 @@
 \usepackage{xcolor}
 \usepackage[top=2.5cm,bottom=2.5cm,left=2.5cm,right=2.5cm]{geometry}
 \setlength{\emergencystretch}{3em} % prevent overfull lines
-\setcounter{secnumdepth}{-\maxdimen} % remove section numbering
+\setcounter{secnumdepth}{5}
 % Make \paragraph and \subparagraph free-standing
 \makeatletter
 \ifx\paragraph\undefined\else
@@ -193,7 +193,7 @@ Equations}
 \makeatother
 \subtitle{Research Report}
 \author{Ward B. Eiling (9294163)}
-\date{November 1, 2024}
+\date{December 22, 2024}
 
 \begin{document}
 \cleardoublepage
@@ -218,7 +218,7 @@ Estimating Equations \par}
 \vspace{3ex}
 {\normalsize \textit{Utrecht University} \par}
 \vspace{9ex}
-{\normalsize November 1, 2024 \par}
+{\normalsize December 22, 2024 \par}
 \vspace{3ex}
 {\normalsize Word count: 728 \par}
 \vspace{9ex}
@@ -322,9 +322,7 @@ between the marginal and conditional estimates of the treatment effect?
 
 \section{Methods}\label{methods}
 
-\newpage
-
-\subsection{Simulation Conditions}\label{simulation-conditions}
+\subsection{Data Generation}\label{data-generation}
 
 In the simulation Qian et al. (\citeproc{ref-qian2020}{2020}) considered
 three generative models (GMs), all of which have an endogenous
@@ -332,25 +330,20 @@ time-varying covariate. In GM1 and GM2, the endogenous covariate
 \(X_{it}\) equals the previous outcome \(Y_{it}\) plus some random
 noise, so the \emph{conditional independence} assumption is valid. In
 GM3, the endogenous covariate depends directly on \(b_{i0}\), violating
-the assumption. To isolate the issue described by Qian et al.~(2020), we
-consider 6 models on top of the three models described in the original
-paper.
-
-AJUST!!! More specifically, we considered models with an ``a'' suffix,
-where all random slopes were removed, and models with a ``b'' suffix,
-were on top of the removal of random slopes, the interaction terms were
-removed. AJUST!!!
-
-The details of the generative models are described below. We follow the
-notation of Qian et al.~(2020) to allow for direct comparison, but
+the assumption. To isolate the issue in GM3, we consider three
+variations on this model: GM3A, where the random slope \(b_{i2}\) for
+the treatment \(A_{it}\) is removed; GM3B, where the interaction term
+\(\beta_1 A_{it} X_{it}\) is removed. The details of the generative
+models are described below. We follow the notation of Qian et al.
+(\citeproc{ref-qian2020}{2020}) to allow for direct comparison, but
 rewrite the equations into within- and between-person models (see
-Raudenbusch \& Bryk, 2002). We accompany the equations of the GMs with
-graphical representations, where latent variables are represented by
-circles, observed variables by squares and relationships across
-variables by arrows. The path diagrams of the three data generating
-models shows the discrepancies between the different generative
-models---especially concerning the interaction effects---more clearly
-than DAGs.
+\citeproc{ref-raudenbush2002}{Raudenbush \& Bryk, 2002}). We accompany
+the equations of the GMs with graphical representations, where random
+effects are represented by grey circles, observed variables by squares
+and relationships across variables by arrows. The path diagrams of the
+three data generating models shows the discrepancies between the
+different generative models---especially concerning the interaction
+effects---more clearly than DAGs.
 
 \subsubsection{Generative Model 1}\label{generative-model-1}
 
@@ -408,7 +401,8 @@ Figure~\ref{fig-GM1_path} shows the path diagram for GM3.
 
 \begin{figure}[H]
 
-\caption{\label{fig-GM1_path}Path diagram for Generative Model 1}
+\caption{\label{fig-GM1_path}Path diagram for Generative Model 1
+(\(t = 1, 2, 3\))}
 
 \centering{
 
@@ -417,25 +411,6 @@ Figure~\ref{fig-GM1_path} shows the path diagram for GM3.
 }
 
 \end{figure}%
-
-\subsubsection{Generative Model 1A}\label{generative-model-1a}
-
-GM1A is the same as GM1, except that the random slope \(b_{i2}\) for the
-treatment \(A_{it}\) is removed. The single equation model thus becomes:
-
-\[
-Y_{it+1} = \alpha_0 + \alpha_1 X_{it} + b_{i0} + A_{it} (\beta_0 + \beta_1 X_{it}) + \epsilon_{it+1}.
-\]
-
-\subsubsection{Generative Model 1B}\label{generative-model-1b}
-
-GM1B is the same as GM1A, except that the interaction term
-\(\beta_1 A_{it} X_{it}\) is removed. The single equation model thus
-becomes:
-
-\[
-Y_{it+1} = \alpha_0 + \alpha_1 X_{it} + b_{i0} + \beta_0 A_{it}  + \epsilon_{it+1}.
-\]
 
 \subsubsection{Generative Model 2}\label{generative-model-2}
 
@@ -498,20 +473,6 @@ probability of receiving the treatment \(p_t\) is 0.7; otherwise, it is
 \(i = 1, \ldots, N\) and \(t = 1, \ldots, T\). The exogenous noise is
 \(\epsilon_{it+1} \sim \mathcal{N}(0, \sigma_\epsilon^2)\).
 
-\subsubsection{Generative Model 2A}\label{generative-model-2a}
-
-GM2A is the same as GM2, except that the random slopes \(b_{i1}\),
-\(b_{i2}\) and \(b_{i3}\) are removed. The single equation model then
-becomes the same as GM1A, but with the time-varying randomization
-probabilities of GM2.
-
-\subsubsection{Generative Model 2B}\label{generative-model-2b}
-
-GM2B is the same as GM2A, except that the interaction term
-\(\beta_1 A_{it} X_{it}\) is removed. The single equation model then
-becomes the same as GM1B, but with the time-varying randomization
-probabilities of GM2.
-
 \subsubsection{Generative Model 3}\label{generative-model-3}
 
 GM3 is the same as GM1, except that the covariate \(X_{it}\) depends
@@ -525,7 +486,8 @@ Figure~\ref{fig-GM3_path} shows the path diagram for GM3.
 
 \begin{figure}[H]
 
-\caption{\label{fig-GM3_path}Path diagram for Generative Model 3}
+\caption{\label{fig-GM3_path}Path diagram for Generative Model 3
+(\(t = 1, 2, 3\))}
 
 \centering{
 
@@ -538,20 +500,52 @@ Figure~\ref{fig-GM3_path} shows the path diagram for GM3.
 \subsubsection{Generative Model 3A}\label{generative-model-3a}
 
 GM3A is the same as GM3, except that the random slope \(b_{i2}\) for the
-treatment \(A_{it}\) is removed. The single equation model then becomes
-the same as GM1A, but including the dependency of the covariate
-\(X_{it}\) on the random intercept \(b_{i0}\) present in GM3.
+treatment \(A_{it}\) is removed. The single equation model then becomes:
+
+\[
+Y_{it+1} = \alpha_0 + \alpha_1 X_{it} + b_{i0} + A_{it} (\beta_0 + \beta_1 X_{it}) + \epsilon_{it+1}.
+\]
+
+\begin{figure}[H]
+
+\caption{\label{fig-GM3A_path}Path diagram for Generative Model 3A
+(\(t = 1, 2, 3\))}
+
+\centering{
+
+\includegraphics{research-report_files/figure-pdf/fig-GM3A_path-1.pdf}
+
+}
+
+\end{figure}%
 
 \subsubsection{Generative Model 3B}\label{generative-model-3b}
 
-GM3B is the same as GM3A, except that the interaction term
+GM3B is the same as GM3, except that the interaction term
 \(\beta_1 A_{it} X_{it}\) is removed. The single equation model then
-becomes the same as GM1B, but including the dependency of the covariate
-\(X_{it}\) on the random intercept \(b_{i0}\) present in GM3.
+becomes:
+
+\[
+Y_{it+1} = \alpha_0 + \alpha_1 X_{it} + b_{i0} + A_{it} (\beta_0 + b_{i2}) + \epsilon_{it+1}.
+\]
+
+\begin{figure}[H]
+
+\caption{\label{fig-GM3B_path}Path diagram for Generative Model 3B
+(\(t = 1, 2, 3\))}
+
+\centering{
+
+\includegraphics{research-report_files/figure-pdf/fig-GM3B_path-1.pdf}
+
+}
+
+\end{figure}%
 
 \subsubsection{Parameter Values}\label{parameter-values}
 
-The following parameter values were chosen:
+The following parameter values were adapted from Qian et al.
+(\citeproc{ref-qian2020}{2020}):
 
 \[
 \alpha_0 = -2, \quad \alpha_1 = -0.3, \quad \beta_0 = 1, \quad \beta_1 = 0.3,
@@ -561,8 +555,9 @@ The following parameter values were chosen:
 \sigma_{b0}^2 = 4, \quad \sigma_{b1}^2 = \frac{1}{4}, \quad \sigma_{b2}^2 = 1, \quad \sigma_{b3}^2 = \frac{1}{4}, \quad \sigma_\epsilon^2 = 1.
 \]
 
-\subsection{Graphical representations of Data Generating
-Models}\label{graphical-representations-of-data-generating-models}
+\subsection{Graphical representations of Data Generating Models: DECIDE
+WHAT TO DO WITH
+THIS!!!}\label{graphical-representations-of-data-generating-models-decide-what-to-do-with-this}
 
 \subsubsection{Directed Acyclic Graphs
 (DAGs)}\label{directed-acyclic-graphs-dags}
@@ -577,7 +572,7 @@ biased paths after controlling for the covariate \(X_{it}\).
 
 \begin{minipage}{0.50\linewidth}
 
-\subcaption{\label{fig-DAGs-1}Generative Model 1, 1A and 1B}
+\subcaption{\label{fig-DAGs-1}Generative Model 1}
 
 \centering{
 
@@ -589,7 +584,7 @@ biased paths after controlling for the covariate \(X_{it}\).
 %
 \begin{minipage}{0.50\linewidth}
 
-\subcaption{\label{fig-DAGs-2}Generative Model 2, 2A and 2B}
+\subcaption{\label{fig-DAGs-2}Generative Model 2}
 
 \centering{
 
@@ -618,8 +613,8 @@ only differences in random effects and randomization probabilities),
 while GM3 has a different structure due to the dependency of the
 covariate \(X_{it}\) on the random intercept \(b_{i0}\).
 
-Paraphrasing Qian et al.~(2020), the conditional independence assumption
-is:
+Paraphrasing Qian et al. (\citeproc{ref-qian2020}{2020}), the
+conditional independence assumption is:
 
 \[
 X_{it} \perp (b_{i0}, b_{i1}) \mid H_{it-1}, A_{it-1}, Y_{it}.
@@ -638,89 +633,49 @@ Notice that GM1 and GM2 are also not marginally independent of
 \(b_{i0}\) and \(b_{i1}\), but they are conditionally independent given
 \(H_{it-1}\), \(A_{it-1}\), and \(Y_{it}\).
 
-\subsection{Data Estimation/Analysis}\label{data-estimationanalysis}
+\subsection{Data Analysis}\label{data-analysis}
 
-For the multilevel linear model, the analytical models are equivalent to
-each of the respective data-generating models. The multilevel linear
-models were fitted using the \texttt{lmer} function in R. As a reminder,
-the analytical \emph{multilevel model} for GM1 and GM3 is given by:
+We evaluated the performance of the models across a total of 30
+different settings, each replicated 1,000 times, by systematically
+varying the following factors:
 
-\[
-Y_{it+1} = (\alpha_0 + b_{i0}) + \alpha_1 X_{it} + (\beta_0 + b_{i2}) A_{it} + \beta_1 A_{it} X_{it} + \epsilon_{it+1}.
-\]
+\begin{itemize}
+\item
+  \textbf{Generative Models (GM):} 1, 2, 3, 3A, 3B
+\item
+  \textbf{Number of timepoints (T):} 10, 30
+\item
+  \textbf{Sample size (N):} 30, 100, 200
+\end{itemize}
 
-which is fitted as
-\texttt{lmer(Y\ \textasciitilde{}\ X\ *\ A\ +\ (1\ +\ A\ \textbar{}\ id),\ data\ =\ data)}
-in R.
-
-The analytical \emph{multilevel model} for GM2 is given by:
-
-\[
-Y_{it+1} = (\alpha_0 + b_{i0}) + (\alpha_1 + b_{i1}) X_{it} + (\beta_0 + b_{i2}) A_{it} + (\beta_1 + b_{i3}) A_{it} X_{it} + \epsilon_{it+1}.
-\]
-
-which is fitted as
-\texttt{lmer(Y\ \textasciitilde{}\ X\ *\ A\ +\ (X\ *\ A\ \textbar{}\ id),\ data\ =\ data)}
-in R.
-
-The analytical \emph{multilevel model} for GM1A, GM2A, and GM3A is given
-by:
-
-\[
-Y_{it+1} = \alpha_0 + b_{i0} + \alpha_1 X_{it} + \beta_0 A_{it} + \beta_1 A_{it} X_{it} + \epsilon_{it+1}.
-\]
-
-which is fitted as
-\texttt{lmer(Y\ \textasciitilde{}\ X\ *\ A\ +\ (1\ \textbar{}\ id),\ data\ =\ data)}
-in R.
-
-The analytical \emph{multilevel model} for GM1B, GM2B, and GM3B is given
-by:
-
-\[
-Y_{it+1} = \alpha_0 + b_{i0} + \alpha_1 X_{it} + \beta_0 A_{it} + \epsilon_{it+1}.
-\]
-
-which is fitted as
-\texttt{lmer(Y\ \textasciitilde{}\ X\ +\ A\ +\ (1\ \textbar{}\ id),\ data\ =\ data)}
-in R.
-
-The specification of the GEE models related to each of the generative
-models is unsurprisingly different considering that GEE does not
-explicitly model random effects. For each of the generative models, we
-will fit three GEE models: one with an exchangeable correlation
-structure, one with an independent correlation structure, and one with
-an AR(1) correlation structure. The GEE models were fitted using the
-\texttt{geeglm} function in R. Since the fixed effects modeled in GM1,
-GM1a, GM2, GM2a, GM3, GM3a are the same (the only differences pertain to
-the modeling of random effects), the analytical \emph{GEE model} is
-identical across these three conditions. The analytical \emph{GEE model}
-is given by:
+All data generation and estimation was performed in \texttt{R}, version
+4.4.2 (\citeproc{ref-rcoreteam2024}{Team, 2024}). To fit the standard
+MLM, the \texttt{lmer} function from the R-package \texttt{lme4}
+(\citeproc{ref-bates2015}{Bates et al., 2015}) was employed with
+restricted maximum likelihood estimation. For the MLM, the analytical
+models were equivalent to each of the respective data-generating models.
+To fit the GEE with the ``exchangeable'', ``independent'' and ``AR(1)''
+working correlation structures, the \texttt{geeglm} function from the
+R-package \texttt{geepack} (\citeproc{ref-halekoh2006}{Halekoh et al.,
+2006}) was employed with the identity link function. Unsurprisingly,
+since the GEE does not explicitly model random effects, the
+specification of the analytical GEE models is different the analytical
+MLM models for all GMs. Compared to their MLM counterparts, the
+analytical GEE models simply excluded the random effects. Since the
+fixed effects modeled in GM1, GM2, GM3, GM3a are the same (the only
+differences pertain to the modeling of random effects), the analytical
+\emph{GEE model} is identical across these conditions:
 
 \[
 Y_{it+1} = \alpha_0 + \alpha_1 X_{it} + \beta_0 A_{it} + \beta_1 A_{it} X_{it} + \epsilon_{it+1}.
 \]
 
-The GEE models were fitted as
-\texttt{geeglm(Y\ \textasciitilde{}\ X\ *\ A,\ id\ =\ id,\ data\ =\ data,\ family\ =\ gaussian,\ corstr\ =\ "exchangeable")},
-\texttt{geeglm(Y\ \textasciitilde{}\ X\ *\ A,\ id\ =\ id,\ data\ =\ data,\ family\ =\ gaussian,\ corstr\ =\ "independence")},
-and
-\texttt{geeglm(Y\ \textasciitilde{}\ X\ *\ A,\ id\ =\ id,\ data\ =\ data,\ family\ =\ gaussian,\ corstr\ =\ "ar1")}
-in R.
-
-In GM1b, GM2b, GM3b, the fixed interaction effect is removed, so the
-analytical \emph{GEE model} is given by:
+In GM3b, the fixed interaction effect is removed, so the analytical
+\emph{GEE model} is given by:
 
 \[
 Y_{it+1} = \alpha_0 + \alpha_1 X_{it} + \beta_0 A_{it} + \epsilon_{it+1}.
 \]
-
-The GEE models were fitted as
-\texttt{geeglm(Y\ \textasciitilde{}\ X\ +\ A,\ id\ =\ id,\ data\ =\ data,\ family\ =\ gaussian,\ corstr\ =\ "exchangeable")},
-\texttt{geeglm(Y\ \textasciitilde{}\ X\ +\ A,\ id\ =\ id,\ data\ =\ data,\ family\ =\ gaussian,\ corstr\ =\ "independence")},
-and
-\texttt{geeglm(Y\ \textasciitilde{}\ X\ +\ A,\ id\ =\ id,\ data\ =\ data,\ family\ =\ gaussian,\ corstr\ =\ "ar1")}
-in R.
 
 \section{Results}\label{results}
 
@@ -781,6 +736,15 @@ endogenous covariates: Modeling sequential treatment effects with
 application to a mobile health study. \emph{Statistical Science : A
 Review Journal of the Institute of Mathematical Statistics},
 \emph{35}(3), 375--390. \url{https://doi.org/10.1214/19-sts720}
+
+\bibitem[\citeproctext]{ref-raudenbush2002}
+Raudenbush, S. W., \& Bryk, A. S. (2002). \emph{Hierarchical Linear
+Models: Applications and Data Analysis Methods} (2nd ed.). SAGE.
+
+\bibitem[\citeproctext]{ref-rcoreteam2024}
+Team, R. C. (2024). \emph{R: A language and environment for statistical
+computing}. R Foundation for Statistical Computing.
+\url{https://www.R-project.org/}
 
 \bibitem[\citeproctext]{ref-yan2013}
 Yan, J., Aseltine, R. H., \& Harel, O. (2013). Comparing Regression
@@ -930,13 +894,13 @@ timepoints \(T = 10,30\) and sample size \(N = 30, 100, 200\).
 
 Statistical analyses pertaining to the GEE and basic MLM will be
 performed in \texttt{R}, version 4.4.2
-(\citeproc{ref-rcoreteam2024}{\textbf{rcoreteam2024?}}). To fit the GEE,
-the R-package \texttt{geepack} (\citeproc{ref-halekoh2006}{Halekoh et
-al., 2006}) will evaluate several different working correlation
-structures, including independent, exchangeable, AR(1) and unstructured.
-To fit the basic MLM, the R-package \texttt{lme4}
-(\citeproc{ref-bates2015}{Bates et al., 2015}) will be employed, where
-we will use restricted maximum likelihood estimation.
+(\citeproc{ref-rcoreteam2024}{Team, 2024}). To fit the GEE, the
+R-package \texttt{geepack} (\citeproc{ref-halekoh2006}{Halekoh et al.,
+2006}) will evaluate several different working correlation structures,
+including independent, exchangeable, AR(1) and unstructured. To fit the
+basic MLM, the R-package \texttt{lme4} (\citeproc{ref-bates2015}{Bates
+et al., 2015}) will be employed, where we will use restricted maximum
+likelihood estimation.
 
 
 

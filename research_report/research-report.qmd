@@ -7,7 +7,7 @@ author:
     affiliation: 
       - name: "Utrecht University"
       - department: "Methodology and Statistics"
-date: "Nov XX, 2024"
+date: "Dec 22, 2024"
 date-format: long
 format: 
   pdf:
@@ -15,7 +15,7 @@ format:
     fig-pos: 'H'
     keep-tex: true
     # toc: true
-    # number-sections: true
+    number-sections: true
     colorlinks: true
     indent: true
     header-includes:
@@ -90,15 +90,11 @@ Through a cross-fertilization of these literatures, this project aims to (1) exp
 
 # Methods
 
-\newpage
+## Data Generation
 
-## Simulation Conditions
+In the simulation @qian2020 considered three generative models (GMs), all of which have an endogenous time-varying covariate. In GM1 and GM2, the endogenous covariate $X_{it}$ equals the previous outcome $Y_{it}$ plus some random noise, so the *conditional independence* assumption is valid. In GM3, the endogenous covariate depends directly on $b_{i0}$, violating the assumption. To isolate the issue in GM3, we consider three variations on this model: GM3A, where the random slope $b_{i2}$ for the treatment $A_{it}$ is removed; GM3B, where the interaction term $\beta_1 A_{it} X_{it}$ is removed. The details of the generative models are described below. We follow the notation of @qian2020 to allow for direct comparison, but rewrite the equations into within- and between-person models [see @raudenbush2002]. We accompany the equations of the GMs with graphical representations, where random effects are represented by grey circles, observed variables by squares and relationships across variables by arrows. The path diagrams of the three data generating models shows the discrepancies between the different generative models---especially concerning the interaction effects---more clearly than DAGs.
 
-In the simulation @qian2020 considered three generative models (GMs), all of which have an endogenous time-varying covariate. In GM1 and GM2, the endogenous covariate $X_{it}$ equals the previous outcome $Y_{it}$ plus some random noise, so the *conditional independence* assumption is valid. In GM3, the endogenous covariate depends directly on $b_{i0}$, violating the assumption. To isolate the issue described by Qian et al. (2020), we consider 6 models on top of the three models described in the original paper.
-
-AJUST!!! More specifically, we considered models with an "a" suffix, where all random slopes were removed, and models with a "b" suffix, were on top of the removal of random slopes, the interaction terms were removed. AJUST!!!
-
-The details of the generative models are described below. We follow the notation of Qian et al. (2020) to allow for direct comparison, but rewrite the equations into within- and between-person models (see Raudenbusch & Bryk, 2002). We accompany the equations of the GMs with graphical representations, where latent variables are represented by circles, observed variables by squares and relationships across variables by arrows. The path diagrams of the three data generating models shows the discrepancies between the different generative models---especially concerning the interaction effects---more clearly than DAGs.
+<!-- and GM3C, where the fixed effect $\alpha_1$ is removed -->
 
 ### Generative Model 1
 
@@ -151,7 +147,7 @@ The randomization probability $p_t = P(A_{it} = 1 \mid H_{it})$ is constant at $
 #| engine: 'tikz'
 #| echo: false
 #| cache: true
-#| fig-cap: "Path diagram for Generative Model 1"
+#| fig-cap: "Path diagram for Generative Model 1 ($t = 1, 2, 3$)"
 #| eval: true
 
 \begin{tikzpicture}
@@ -172,20 +168,20 @@ The randomization probability $p_t = P(A_{it} = 1 \mid H_{it})$ is constant at $
   \node[draw, rectangle] (A2X2) at (5.3, 0) {$A_{2i}\cdot X_{2i}$}; % Increased x-coordinate
 
   % Nodes for latent variables (circles)
-  \node[draw, circle] (b0) at (6, 4) {$b_{i0}$}; % Increased x-coordinate
-  \node[draw, circle] (b2) at (3, 4) {$b_{i2}$}; % Adjusted to align with middle row
+  \node[draw, circle, fill=gray!20] (b0) at (6, 4) {$b_{i0}$}; % Increased x-coordinate
+  \node[draw, circle, fill=gray!20] (b2) at (3, 4) {$b_{i2}$}; % Adjusted to align with middle row
 
   % Arrows with path coefficients
   \draw [->] (b0) -- node[right] {$+$} (Y2);
   \draw [->] (b0) -- node[right] {$+$} (Y3);
-  \draw [->] (A2) edge node[above] {$\beta_0$} (Y3);
+  \draw [->] (A2) edge node[below left] {$\beta_0$} (Y3);
   \draw [->] (X2) edge node[below] {$\alpha_1$} (Y3);
-  \draw [->] (Y2) edge node[left] {$=$} (X2);
+  \draw [->] (Y2) edge node[right] {$1$} (X2);
   \draw [->] (A1) edge node[left] {$\beta_0$} (Y2);
   \draw [->] (X1) edge node[below] {$\alpha_1$} (Y2);
-  \draw [->] (Y3) edge node[right] {$=$} (X3);
+  \draw [->] (Y3) edge node[right] {$1$} (X3);
   \draw [->] (A1X1) edge node[above] {$\beta_1$} (Y2);
-  \draw [->] (A2X2) edge node[above] {$\beta_1$} (Y3);
+  \draw [->] (A2X2) edge node[above left] {$\beta_1$} (Y3);
   \draw [->] (X1var) edge (X1);
   \draw [->] (X2var) edge (X2);
   \draw [->] (X3var) edge (X3);
@@ -203,21 +199,25 @@ The randomization probability $p_t = P(A_{it} = 1 \mid H_{it})$ is constant at $
 \end{tikzpicture}
 ```
 
-### Generative Model 1A
+<!-- ### Generative Model 1A -->
 
-GM1A is the same as GM1, except that the random slope $b_{i2}$ for the treatment $A_{it}$ is removed. The single equation model thus becomes:
+<!-- GM1A is the same as GM1, except that the random slope $b_{i2}$ for the treatment $A_{it}$ is removed. The single equation model thus becomes: -->
 
-$$
-Y_{it+1} = \alpha_0 + \alpha_1 X_{it} + b_{i0} + A_{it} (\beta_0 + \beta_1 X_{it}) + \epsilon_{it+1}.
-$$
+<!-- $$ -->
 
-### Generative Model 1B
+<!-- Y_{it+1} = \alpha_0 + \alpha_1 X_{it} + b_{i0} + A_{it} (\beta_0 + \beta_1 X_{it}) + \epsilon_{it+1}. -->
 
-GM1B is the same as GM1A, except that the interaction term $\beta_1 A_{it} X_{it}$ is removed. The single equation model thus becomes:
+<!-- $$ -->
 
-$$
-Y_{it+1} = \alpha_0 + \alpha_1 X_{it} + b_{i0} + \beta_0 A_{it}  + \epsilon_{it+1}.
-$$
+<!-- ### Generative Model 1B -->
+
+<!-- GM1B is the same as GM1A, except that the interaction term $\beta_1 A_{it} X_{it}$ is removed. The single equation model thus becomes: -->
+
+<!-- $$ -->
+
+<!-- Y_{it+1} = \alpha_0 + \alpha_1 X_{it} + b_{i0} + \beta_0 A_{it}  + \epsilon_{it+1}. -->
+
+<!-- $$ -->
 
 ### Generative Model 2
 
@@ -267,13 +267,13 @@ $$
 
 where the cutoff $-1.27$ was chosen so that $p_t$ equals 0.7 or 0.3 for about half of the time. In other words, if the value of the covariate for any given person and time point is above the cutoff, the probability of receiving the treatment $p_t$ is 0.7; otherwise, it is 0.3. Accordingly, $A_{it} \sim \text{Bernoulli}(p_t)$ for $i = 1, \ldots, N$ and $t = 1, \ldots, T$. The exogenous noise is $\epsilon_{it+1} \sim \mathcal{N}(0, \sigma_\epsilon^2)$.
 
-### Generative Model 2A
+<!-- ### Generative Model 2A -->
 
-GM2A is the same as GM2, except that the random slopes $b_{i1}$, $b_{i2}$ and $b_{i3}$ are removed. The single equation model then becomes the same as GM1A, but with the time-varying randomization probabilities of GM2.
+<!-- GM2A is the same as GM2, except that the random slopes $b_{i1}$, $b_{i2}$ and $b_{i3}$ are removed. The single equation model then becomes the same as GM1A, but with the time-varying randomization probabilities of GM2. -->
 
-### Generative Model 2B
+<!-- ### Generative Model 2B -->
 
-GM2B is the same as GM2A, except that the interaction term $\beta_1 A_{it} X_{it}$ is removed. The single equation model then becomes the same as GM1B, but with the time-varying randomization probabilities of GM2.
+<!-- GM2B is the same as GM2A, except that the interaction term $\beta_1 A_{it} X_{it}$ is removed. The single equation model then becomes the same as GM1B, but with the time-varying randomization probabilities of GM2. -->
 
 ### Generative Model 3
 
@@ -290,7 +290,7 @@ $$
 #| engine: 'tikz'
 #| echo: false
 #| cache: true
-#| fig-cap: "Path diagram for Generative Model 3"
+#| fig-cap: "Path diagram for Generative Model 3 ($t = 1, 2, 3$)"
 #| eval: true
 
 \begin{tikzpicture}
@@ -311,20 +311,20 @@ $$
   \node[draw, rectangle] (A2X2) at (5.3, 0) {$A_{2i}\cdot X_{2i}$}; % Increased x-coordinate
 
   % Nodes for latent variables (circles)
-  \node[draw, circle] (b0) at (6, 4) {$b_{i0}$}; % Increased x-coordinate
-  \node[draw, circle] (b2) at (3, 4) {$b_{i2}$}; % Adjusted to align with middle row
+  \node[draw, circle, fill=gray!20] (b0) at (6, 4) {$b_{i0}$}; % Increased x-coordinate
+  \node[draw, circle, fill=gray!20] (b2) at (3, 4) {$b_{i2}$}; % Adjusted to align with middle row
 
   % Arrows with path coefficients
   \draw [->] (b0) -- node[right] {$+$} (Y2);
   \draw [->] (b0) -- node[right] {$+$} (Y3);
-  \draw [->] (A2) edge node[above] {$\beta_0$} (Y3);
+  \draw [->] (A2) edge node[below left] {$\beta_0$} (Y3);
   \draw [->] (X2) edge node[below] {$\alpha_1$} (Y3);
-  \draw [->] (Y2) edge node[left] {$=$} (X2);
+  \draw [->] (Y2) edge node[right] {$1$} (X2);
   \draw [->] (A1) edge node[left] {$\beta_0$} (Y2);
   \draw [->] (X1) edge node[below] {$\alpha_1$} (Y2);
-  \draw [->] (Y3) edge node[right] {$=$} (X3);
+  \draw [->] (Y3) edge node[right] {$1$} (X3);
   \draw [->] (A1X1) edge node[above] {$\beta_1$} (Y2);
-  \draw [->] (A2X2) edge node[above] {$\beta_1$} (Y3);
+  \draw [->] (A2X2) edge node[above left] {$\beta_1$} (Y3);
   \draw [->] (X1var) edge (X1);
   \draw [->] (X2var) edge (X2);
   \draw [->] (X3var) edge (X3);
@@ -347,15 +347,143 @@ $$
 
 ### Generative Model 3A
 
-GM3A is the same as GM3, except that the random slope $b_{i2}$ for the treatment $A_{it}$ is removed. The single equation model then becomes the same as GM1A, but including the dependency of the covariate $X_{it}$ on the random intercept $b_{i0}$ present in GM3.
+GM3A is the same as GM3, except that the random slope $b_{i2}$ for the treatment $A_{it}$ is removed. The single equation model then becomes:
+
+$$
+Y_{it+1} = \alpha_0 + \alpha_1 X_{it} + b_{i0} + A_{it} (\beta_0 + \beta_1 X_{it}) + \epsilon_{it+1}.
+$$
+
+```{r}
+#| label: fig-GM3A_path
+#| engine: 'tikz'
+#| echo: false
+#| cache: true
+#| fig-cap: "Path diagram for Generative Model 3A ($t = 1, 2, 3$)"
+#| eval: true
+
+\begin{tikzpicture}
+  % Nodes for observed variables (squares)
+  \node[draw, rectangle] (X1) at (0, -2) {$X_{1i}$};
+  \node (X1var) at (0, -3) {$\sigma^2_{X}$};
+  \node[draw, rectangle] (A1) at (0, 2) {$A_{1i}$};
+  \node[draw, rectangle] (A1X1) at (0.3, 0) {$A_{1i}\cdot X_{1i}$};
+  \node[draw, rectangle] (Y2) at (3, 0) {$Y_{2i}$}; % Increased x-coordinate
+  \node (Y2var) at (4, 0) {$\sigma^2_{\epsilon}$};
+  \node[draw, rectangle] (X2) at (3, -2) {$X_{2i}$}; % Increased x-coordinate
+  \node (X2var) at (3, -3) {$\sigma^2_{X}$};
+  \node[draw, rectangle] (A2) at (3, 2) {$A_{2i}$}; % Increased x-coordinate
+  \node[draw, rectangle] (Y3) at (8, 0) {$Y_{3i}$}; % Increased x-coordinate
+  \node (Y3var) at (9, 0) {$\sigma^2_{\epsilon}$};
+  \node[draw, rectangle] (X3) at (8, -2) {$X_{3i}$}; % Increased x-coordinate
+  \node (X3var) at (8, -3) {$\sigma^2_{X}$};
+  \node[draw, rectangle] (A2X2) at (5.3, 0) {$A_{2i}\cdot X_{2i}$}; % Increased x-coordinate
+
+  % Nodes for latent variables (circles)
+  \node[draw, circle, fill=gray!20] (b0) at (6, 4) {$b_{i0}$}; % Increased x-coordinate
+
+  % Arrows with path coefficients
+  \draw [->] (b0) -- node[right] {$+$} (Y2);
+  \draw [->] (b0) -- node[right] {$+$} (Y3);
+  \draw [->] (A2) edge node[below left] {$\beta_0$} (Y3);
+  \draw [->] (X2) edge node[below] {$\alpha_1$} (Y3);
+  \draw [->] (Y2) edge node[right] {$1$} (X2);
+  \draw [->] (A1) edge node[left] {$\beta_0$} (Y2);
+  \draw [->] (X1) edge node[below] {$\alpha_1$} (Y2);
+  \draw [->] (Y3) edge node[right] {$1$} (X3);
+  \draw [->] (A1X1) edge node[above] {$\beta_1$} (Y2);
+  \draw [->] (A2X2) edge node[above left] {$\beta_1$} (Y3);
+  \draw [->] (X1var) edge (X1);
+  \draw [->] (X2var) edge (X2);
+  \draw [->] (X3var) edge (X3);
+  \draw [->] (Y2var) edge (Y2);
+  \draw [->] (Y3var) edge (Y3);
+  \draw [->] (b0) edge (X1);
+  \draw [->] (b0) edge (X2);
+  \draw [->] (b0) edge (X3);
+
+  % Curved arrows for variances
+  \draw [<->, out=45, in=135, looseness=2] (b0) to node[above] {$\sigma^2_{b0}$} (b0);
+
+\end{tikzpicture}
+```
 
 ### Generative Model 3B
 
-GM3B is the same as GM3A, except that the interaction term $\beta_1 A_{it} X_{it}$ is removed. The single equation model then becomes the same as GM1B, but including the dependency of the covariate $X_{it}$ on the random intercept $b_{i0}$ present in GM3.
+GM3B is the same as GM3, except that the interaction term $\beta_1 A_{it} X_{it}$ is removed. The single equation model then becomes:
+
+$$
+Y_{it+1} = \alpha_0 + \alpha_1 X_{it} + b_{i0} + A_{it} (\beta_0 + b_{i2}) + \epsilon_{it+1}.
+$$
+
+```{r}
+#| label: fig-GM3B_path
+#| engine: 'tikz'
+#| echo: false
+#| cache: true
+#| fig-cap: "Path diagram for Generative Model 3B ($t = 1, 2, 3$)"
+#| eval: true
+
+\begin{tikzpicture}
+  % Nodes for observed variables (squares)
+  \node[draw, rectangle] (X1) at (0, -2) {$X_{1i}$};
+  \node (X1var) at (0, -3) {$\sigma^2_{X}$};
+  \node[draw, rectangle] (A1) at (0, 2) {$A_{1i}$};
+  \node[draw, rectangle] (Y2) at (3, 0) {$Y_{2i}$}; % Increased x-coordinate
+  \node (Y2var) at (4, 0) {$\sigma^2_{\epsilon}$};
+  \node[draw, rectangle] (X2) at (3, -2) {$X_{2i}$}; % Increased x-coordinate
+  \node (X2var) at (3, -3) {$\sigma^2_{X}$};
+  \node[draw, rectangle] (A2) at (3, 2) {$A_{2i}$}; % Increased x-coordinate
+  \node[draw, rectangle] (Y3) at (8, 0) {$Y_{3i}$}; % Increased x-coordinate
+  \node (Y3var) at (9, 0) {$\sigma^2_{\epsilon}$};
+  \node[draw, rectangle] (X3) at (8, -2) {$X_{3i}$}; % Increased x-coordinate
+  \node (X3var) at (8, -3) {$\sigma^2_{X}$};
+
+  % Nodes for latent variables (circles)
+  \node[draw, circle, fill=gray!20] (b0) at (6, 4) {$b_{i0}$}; % Increased x-coordinate
+  \node[draw, circle, fill=gray!20] (b2) at (3, 4) {$b_{i2}$}; % Adjusted to align with middle row
+
+  % Arrows with path coefficients
+  \draw [->] (b0) -- node[right] {$+$} (Y2);
+  \draw [->] (b0) -- node[right] {$+$} (Y3);
+  \draw [->] (A2) edge node[below left] {$\beta_0$} (Y3);
+  \draw [->] (X2) edge node[below] {$\alpha_1$} (Y3);
+  \draw [->] (Y2) edge node[right] {$1$} (X2);
+  \draw [->] (A1) edge node[left] {$\beta_0$} (Y2);
+  \draw [->] (X1) edge node[below] {$\alpha_1$} (Y2);
+  \draw [->] (Y3) edge node[right] {$1$} (X3);
+  \draw [->] (X1var) edge (X1);
+  \draw [->] (X2var) edge (X2);
+  \draw [->] (X3var) edge (X3);
+  \draw [->] (Y2var) edge (Y2);
+  \draw [->] (Y3var) edge (Y3);
+  \draw [->] (b0) edge (X1);
+  \draw [->] (b0) edge (X2);
+  \draw [->] (b0) edge (X3);
+
+  % Curved arrows for variances
+  \draw [<->, out=45, in=135, looseness=2] (b0) to node[above] {$\sigma^2_{b0}$} (b0);
+  \draw [<->, out=45, in=135, looseness=2] (b2) to node[above] {$\sigma^2_{b2}$} (b2);
+
+  % Additional paths for A and X interaction effects
+  \draw[->, dashed] (b2) -- (1.5,1); % Adjusted x-coordinates
+  \draw[->, dashed] (b2) -- (5,1.2); % Adjusted x-coordinates
+
+\end{tikzpicture}
+```
+
+<!-- ### Generative Model 3C -->
+
+<!-- GM3C is the same as GM3, except that the fixed slope $\alpha_1$ for the covariate $X_{it}$ is removed. The single equation model then becomes: -->
+
+<!-- $$ -->
+
+<!-- Y_{it+1} = \alpha_0 + b_{i0} + A_{it} (\beta_0 + \beta_1 X_{it} + b_{i2}) + \epsilon_{it+1}. -->
+
+<!-- $$ -->
 
 ### Parameter Values
 
-The following parameter values were chosen:
+The following parameter values were adapted from @qian2020:
 
 $$
 \alpha_0 = -2, \quad \alpha_1 = -0.3, \quad \beta_0 = 1, \quad \beta_1 = 0.3,
@@ -365,7 +493,7 @@ $$
 \sigma_{b0}^2 = 4, \quad \sigma_{b1}^2 = \frac{1}{4}, \quad \sigma_{b2}^2 = 1, \quad \sigma_{b3}^2 = \frac{1}{4}, \quad \sigma_\epsilon^2 = 1.
 $$
 
-## Graphical representations of Data Generating Models
+## Graphical representations of Data Generating Models: DECIDE WHAT TO DO WITH THIS!!!
 
 ### Directed Acyclic Graphs (DAGs)
 
@@ -376,8 +504,8 @@ The DAGs for the first three observations of the three data generating models ar
 #| fig-cap: "DAG for Generative Model 1"
 #| layout-ncol: 2
 #| fig-subcap:
-#|  - "Generative Model 1, 1A and 1B"
-#|  - "Generative Model 2, 2A and 2B"
+#|  - "Generative Model 1"
+#|  - "Generative Model 2"
 #|  - "Generative Model 3, 3A and 3B"
 #| echo: false
 #| eval: true
@@ -456,7 +584,7 @@ ggdag::ggdag_status(GM3ab_DAG) + ggdag::theme_dag()
 
 We may notice that the DAGs for GM1 and GM2 are identical (there are only differences in random effects and randomization probabilities), while GM3 has a different structure due to the dependency of the covariate $X_{it}$ on the random intercept $b_{i0}$.
 
-Paraphrasing Qian et al. (2020), the conditional independence assumption is:
+Paraphrasing @qian2020, the conditional independence assumption is:
 
 $$
 X_{it} \perp (b_{i0}, b_{i1}) \mid H_{it-1}, A_{it-1}, Y_{it}.
@@ -482,55 +610,75 @@ When inspecting @fig-DAGs, we can see that this assumption is violated in GM3, a
 
 <!-- -   The path diagram does not display the difference in the randomized treatment assignment probabilities between GM1 and GM2. -->
 
-## Data Estimation/Analysis
+## Data Analysis
 
-For the multilevel linear model, the analytical models are equivalent to each of the respective data-generating models. The multilevel linear models were fitted using the `lmer` function in R. As a reminder, the analytical *multilevel model* for GM1 and GM3 is given by:
+We evaluated the performance of the models across a total of 30 different settings, each replicated 1,000 times, by systematically varying the following factors:
 
-$$
-Y_{it+1} = (\alpha_0 + b_{i0}) + \alpha_1 X_{it} + (\beta_0 + b_{i2}) A_{it} + \beta_1 A_{it} X_{it} + \epsilon_{it+1}.
-$$
+-   **Generative Models (GM):** 1, 2, 3, 3A, 3B
 
-which is fitted as `lmer(Y ~ X * A + (1 + A | id), data = data)` in R.
+-   **Number of timepoints (T):** 10, 30
 
-The analytical *multilevel model* for GM2 is given by:
+-   **Sample size (N):** 30, 100, 200
 
-$$
-Y_{it+1} = (\alpha_0 + b_{i0}) + (\alpha_1 + b_{i1}) X_{it} + (\beta_0 + b_{i2}) A_{it} + (\beta_1 + b_{i3}) A_{it} X_{it} + \epsilon_{it+1}.
-$$
-
-which is fitted as `lmer(Y ~ X * A + (X * A | id), data = data)` in R.
-
-The analytical *multilevel model* for GM1A, GM2A, and GM3A is given by:
-
-$$
-Y_{it+1} = \alpha_0 + b_{i0} + \alpha_1 X_{it} + \beta_0 A_{it} + \beta_1 A_{it} X_{it} + \epsilon_{it+1}.
-$$
-
-which is fitted as `lmer(Y ~ X * A + (1 | id), data = data)` in R.
-
-The analytical *multilevel model* for GM1B, GM2B, and GM3B is given by:
-
-$$
-Y_{it+1} = \alpha_0 + b_{i0} + \alpha_1 X_{it} + \beta_0 A_{it} + \epsilon_{it+1}.
-$$
-
-which is fitted as `lmer(Y ~ X + A + (1 | id), data = data)` in R.
-
-The specification of the GEE models related to each of the generative models is unsurprisingly different considering that GEE does not explicitly model random effects. For each of the generative models, we will fit three GEE models: one with an exchangeable correlation structure, one with an independent correlation structure, and one with an AR(1) correlation structure. The GEE models were fitted using the `geeglm` function in R. Since the fixed effects modeled in GM1, GM1a, GM2, GM2a, GM3, GM3a are the same (the only differences pertain to the modeling of random effects), the analytical *GEE model* is identical across these three conditions. The analytical *GEE model* is given by:
+All data generation and estimation was performed in `R`, version 4.4.2 [@rcoreteam2024]. To fit the standard MLM, the `lmer` function from the R-package `lme4` [@bates2015] was employed with restricted maximum likelihood estimation. For the MLM, the analytical models were equivalent to each of the respective data-generating models. To fit the GEE with the "exchangeable", "independent" and "AR(1)" working correlation structures, the `geeglm` function from the R-package `geepack` [@halekoh2006] was employed with the identity link function. Unsurprisingly, since the GEE does not explicitly model random effects, the specification of the analytical GEE models is different the analytical MLM models for all GMs. Compared to their MLM counterparts, the analytical GEE models simply excluded the random effects. Since the fixed effects modeled in GM1, GM2, GM3, GM3a are the same (the only differences pertain to the modeling of random effects), the analytical *GEE model* is identical across these conditions:
 
 $$
 Y_{it+1} = \alpha_0 + \alpha_1 X_{it} + \beta_0 A_{it} + \beta_1 A_{it} X_{it} + \epsilon_{it+1}.
 $$
 
-The GEE models were fitted as `geeglm(Y ~ X * A, id = id, data = data, family = gaussian, corstr = "exchangeable")`, `geeglm(Y ~ X * A, id = id, data = data, family = gaussian, corstr = "independence")`, and `geeglm(Y ~ X * A, id = id, data = data, family = gaussian, corstr = "ar1")` in R.
-
-In GM1b, GM2b, GM3b, the fixed interaction effect is removed, so the analytical *GEE model* is given by:
+In GM3b, the fixed interaction effect is removed, so the analytical *GEE model* is given by:
 
 $$
 Y_{it+1} = \alpha_0 + \alpha_1 X_{it} + \beta_0 A_{it} + \epsilon_{it+1}.
 $$
 
-The GEE models were fitted as `geeglm(Y ~ X + A, id = id, data = data, family = gaussian, corstr = "exchangeable")`, `geeglm(Y ~ X + A, id = id, data = data, family = gaussian, corstr = "independence")`, and `geeglm(Y ~ X + A, id = id, data = data, family = gaussian, corstr = "ar1")` in R.
+<!-- As a reminder, the analytical *multilevel model* for GM1 and GM3 is given by: -->
+
+<!-- $$ -->
+<!-- Y_{it+1} = (\alpha_0 + b_{i0}) + \alpha_1 X_{it} + (\beta_0 + b_{i2}) A_{it} + \beta_1 A_{it} X_{it} + \epsilon_{it+1}. -->
+<!-- $$ -->
+
+<!-- which is fitted as `lmer(Y ~ X * A + (1 + A | id), data = data)` in R. -->
+
+<!-- The analytical *multilevel model* for GM2 is given by: -->
+
+<!-- $$ -->
+<!-- Y_{it+1} = (\alpha_0 + b_{i0}) + (\alpha_1 + b_{i1}) X_{it} + (\beta_0 + b_{i2}) A_{it} + (\beta_1 + b_{i3}) A_{it} X_{it} + \epsilon_{it+1}. -->
+<!-- $$ -->
+
+<!-- which is fitted as `lmer(Y ~ X * A + (X * A | id), data = data)` in R. -->
+
+<!-- The analytical *multilevel model* for GM1A, GM2A, and GM3A is given by: -->
+
+<!-- $$ -->
+<!-- Y_{it+1} = \alpha_0 + b_{i0} + \alpha_1 X_{it} + \beta_0 A_{it} + \beta_1 A_{it} X_{it} + \epsilon_{it+1}. -->
+<!-- $$ -->
+
+<!-- which is fitted as `lmer(Y ~ X * A + (1 | id), data = data)` in R. -->
+
+<!-- The analytical *multilevel model* for GM1B, GM2B, and GM3B is given by: -->
+
+<!-- $$ -->
+<!-- Y_{it+1} = \alpha_0 + b_{i0} + \alpha_1 X_{it} + \beta_0 A_{it} + \epsilon_{it+1}. -->
+<!-- $$ -->
+
+<!-- which is fitted as `lmer(Y ~ X + A + (1 | id), data = data)` in R. -->
+
+<!-- The specification of the GEE models related to each of the generative models is unsurprisingly different considering that GEE does not explicitly model random effects. For each of the generative models, we will fit three GEE models: one with an exchangeable correlation structure, one with an independent correlation structure, and one with an AR(1) correlation structure. The GEE models were fitted using the `geeglm` function in R. Since the fixed effects modeled in GM1, GM1a, GM2, GM2a, GM3, GM3a are the same (the only differences pertain to the modeling of random effects), the analytical *GEE model* is identical across these three conditions. The analytical *GEE model* is given by: -->
+
+<!-- $$ -->
+<!-- Y_{it+1} = \alpha_0 + \alpha_1 X_{it} + \beta_0 A_{it} + \beta_1 A_{it} X_{it} + \epsilon_{it+1}. -->
+<!-- $$ -->
+
+<!-- The GEE models were fitted as `geeglm(Y ~ X * A, id = id, data = data, family = gaussian, corstr = "exchangeable")`, `geeglm(Y ~ X * A, id = id, data = data, family = gaussian, corstr = "independence")`, and `geeglm(Y ~ X * A, id = id, data = data, family = gaussian, corstr = "ar1")` in R. -->
+
+<!-- In GM1b, GM2b, GM3b, the fixed interaction effect is removed, so the analytical *GEE model* is given by: -->
+
+<!-- $$ -->
+<!-- Y_{it+1} = \alpha_0 + \alpha_1 X_{it} + \beta_0 A_{it} + \epsilon_{it+1}. -->
+<!-- $$ -->
+
+<!-- The GEE models were fitted as `geeglm(Y ~ X + A, id = id, data = data, family = gaussian, corstr = "exchangeable")`, `geeglm(Y ~ X + A, id = id, data = data, family = gaussian, corstr = "independence")`, and `geeglm(Y ~ X + A, id = id, data = data, family = gaussian, corstr = "ar1")` in R. -->
 
 # Results
 
