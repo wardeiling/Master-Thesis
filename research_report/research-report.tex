@@ -23,8 +23,8 @@
 \usepackage{lmodern}
 \ifPDFTeX\else  
     % xetex/luatex font selection
-    \setmainfont[]{Latin Modern Roman}
-    \setsansfont[]{Latin Modern Roman}
+  \setmainfont[]{Latin Modern Roman}
+  \setsansfont[]{Latin Modern Roman}
 \fi
 % Use upquote if available, for straight quotes in verbatim environments
 \IfFileExists{upquote.sty}{\usepackage{upquote}}{}
@@ -37,28 +37,14 @@
 \setlength{\emergencystretch}{3em} % prevent overfull lines
 \setcounter{secnumdepth}{5}
 % Make \paragraph and \subparagraph free-standing
-\makeatletter
 \ifx\paragraph\undefined\else
   \let\oldparagraph\paragraph
-  \renewcommand{\paragraph}{
-    \@ifstar
-      \xxxParagraphStar
-      \xxxParagraphNoStar
-  }
-  \newcommand{\xxxParagraphStar}[1]{\oldparagraph*{#1}\mbox{}}
-  \newcommand{\xxxParagraphNoStar}[1]{\oldparagraph{#1}\mbox{}}
+  \renewcommand{\paragraph}[1]{\oldparagraph{#1}\mbox{}}
 \fi
 \ifx\subparagraph\undefined\else
   \let\oldsubparagraph\subparagraph
-  \renewcommand{\subparagraph}{
-    \@ifstar
-      \xxxSubParagraphStar
-      \xxxSubParagraphNoStar
-  }
-  \newcommand{\xxxSubParagraphStar}[1]{\oldsubparagraph*{#1}\mbox{}}
-  \newcommand{\xxxSubParagraphNoStar}[1]{\oldsubparagraph{#1}\mbox{}}
+  \renewcommand{\subparagraph}[1]{\oldsubparagraph{#1}\mbox{}}
 \fi
-\makeatother
 
 
 \providecommand{\tightlist}{%
@@ -163,7 +149,6 @@
 \@ifpackageloaded{caption}{}{\usepackage{caption}}
 \@ifpackageloaded{subcaption}{}{\usepackage{subcaption}}
 \makeatother
-
 \ifLuaTeX
   \usepackage{selnolig}  % disable illegal ligatures
 \fi
@@ -180,7 +165,6 @@
   citecolor={Blue},
   urlcolor={Blue},
   pdfcreator={LaTeX via pandoc}}
-
 
 \title{Estimation of Effects of Endogenous Time-Varying Covariates: A
 Comparison Of Multilevel Linear Modeling and Generalized Estimating
@@ -241,7 +225,6 @@ Estimating Equations \par}
 % {\small Submitted in total fulfilment of the requirements
 % of the degree of Doctor of Philosophy \par}
 }
-
 
 \setstretch{2}
 \newpage
@@ -322,6 +305,17 @@ between the marginal and conditional estimates of the treatment effect?
 
 \section{Methods}\label{methods}
 
+To obtain a better understanding of the issue exposed by Qian et al.
+(\citeproc{ref-qian2020}{2020}), two methods were employed. First,
+graphical methods were used provide insight into the presence and extent
+of bias with potential violation of assumptions: (a) path diagrams were
+used to evaluate the conditional independence assumption and (b)
+directed acyclic graphs (DAGs) were used to evaluate the backdoor
+criterion (Pearl, 1988, 2009). Second, a simulation study was performed
+to reproduce the results for the generative models (GMs) from Qian et
+al. (\citeproc{ref-qian2020}{2020}) and to further isolate the issue
+using additional GMs.
+
 \subsection{Data Generation}\label{data-generation}
 
 In the simulation Qian et al. (\citeproc{ref-qian2020}{2020}) considered
@@ -330,20 +324,21 @@ time-varying covariate. In GM1 and GM2, the endogenous covariate
 \(X_{it}\) equals the previous outcome \(Y_{it}\) plus some random
 noise, so the \emph{conditional independence} assumption is valid. In
 GM3, the endogenous covariate depends directly on \(b_{i0}\), violating
-the assumption. To isolate the issue in GM3, we consider three
-variations on this model: GM3A, where the random slope \(b_{i2}\) for
-the treatment \(A_{it}\) is removed; GM3B, where the interaction term
-\(\beta_1 A_{it} X_{it}\) is removed. The details of the generative
-models are described below. We follow the notation of Qian et al.
-(\citeproc{ref-qian2020}{2020}) to allow for direct comparison, but
-rewrite the equations into within- and between-person models (see
-\citeproc{ref-raudenbush2002}{Raudenbush \& Bryk, 2002}). We accompany
-the equations of the GMs with graphical representations, where random
-effects are represented by grey circles, observed variables by squares
-and relationships across variables by arrows. The path diagrams of the
-three data generating models shows the discrepancies between the
-different generative models---especially concerning the interaction
-effects---more clearly than DAGs.
+the assumption. To isolate the issue in GM3, we consider two variations
+on this model: GM3A, where the random slope \(b_{i2}\) for the treatment
+\(A_{it}\) is removed; GM3B, where the interaction term
+\(\beta_1 A_{it} X_{it}\) is removed. Note that the conditional
+independence assumption is violated in either of these variations. The
+details of the generative models are described below. We follow the
+notation of Qian et al. (\citeproc{ref-qian2020}{2020}) to allow for
+direct comparison, but rewrite the equations into within- and
+between-person models (see \citeproc{ref-raudenbush2002}{Raudenbush \&
+Bryk, 2002}). We accompany the equations of the GMs with graphical
+representations, where random effects are represented by grey circles,
+observed variables by squares and relationships across variables by
+arrows. The path diagrams of the three data generating models shows the
+discrepancies between the different generative models---especially
+concerning the interaction effects---more clearly than DAGs.
 
 \subsubsection{Generative Model 1}\label{generative-model-1}
 
@@ -555,83 +550,86 @@ The following parameter values were adapted from Qian et al.
 \sigma_{b0}^2 = 4, \quad \sigma_{b1}^2 = \frac{1}{4}, \quad \sigma_{b2}^2 = 1, \quad \sigma_{b3}^2 = \frac{1}{4}, \quad \sigma_\epsilon^2 = 1.
 \]
 
-\subsection{Graphical representations of Data Generating Models: DECIDE
-WHAT TO DO WITH
-THIS!!!}\label{graphical-representations-of-data-generating-models-decide-what-to-do-with-this}
+\subsection{Path Diagrams and Conditional
+Independence}\label{path-diagrams-and-conditional-independence}
 
-\subsubsection{Directed Acyclic Graphs
-(DAGs)}\label{directed-acyclic-graphs-dags}
+Qian et al. (\citeproc{ref-qian2020}{2020}) proposes the use of the
+conditional independence assumption to identify whether bias may occur,
+which is given by:
+
+\[ X_{it} \perp (b_{i0}, b_{i1}) \mid H_{it-1}, A_{it-1}, Y_{it}. \]
+
+This allows \(X_{it}\) to be endogenous, but the endogenous covariate
+\(X_{it}\) can only depend on the random effects through variables
+observed prior to \(X_{it}\). If the only endogenous covariates are
+functions of prior treatments and prior outcomes, then the assumption
+automatically holds.
+
+When inspecting Figure~\ref{fig-GM1_path} and \textbf{?@fig-GM2\_path},
+we may notice that \(X_{it}\) becomes independent of the random effects
+after conditioning on \(Y_{it}\). On the other hand, we can see that
+this assumption is violated in GM3/GM3A/GM3B, as \(X_{it}\) depends
+directly on \(b_{i0}\) and can thus not be made independent of the
+random effects by conditioning on prior variables such as \(Y_{it}\)
+(see Figure~\ref{fig-GM3_path}, Figure~\ref{fig-GM3A_path} and
+Figure~\ref{fig-GM3B_path})
+
+\subsection{Backdoor Criterion and
+DAGs}\label{backdoor-criterion-and-dags}
+
+We formulated the DAGs in \texttt{dagitty}, where the random disturbance
+\(b_{0i}\) was represented by the node U (e.g.,
+\citeproc{ref-Kim2021a}{Kim \& Steiner, 2021}).
+
+\begin{quote}
+``According to the backdoor criterion (Pearl, 1988, 2009) or the
+adjustment criterion (Shpitser, VanderWeele, \& Robins, 2010),
+identification of causal effects requires that all non-causal paths are
+blocked by conditioning on middle variables on the non-causal paths
+(i.e., by controlling for or matching on the variables). If it is not
+possible to block all non-causal paths due to omitted or unreliably
+measured variables, the treatment and outcome remain connected via
+non-causal (or backdoor) paths and the remaining confounding association
+biases the effect estimators. In Figure 1b, since U is unmeasured, the
+non-causal path A2 U ! Y 2 cannot be blocked,'' (Kim and Steiner, 2021)
+\end{quote}
 
 The DAGs for the first three observations of the three data generating
 models are presented in Figure~\ref{fig-DAGs}. The red arrows show the
 biased paths after controlling for the covariate \(X_{it}\).
 
+REMAKE THEM IN TIKZ (USE CHATGPT), MAKE backdoor path ARROW RED FOR GM2.
+
 \begin{figure}[H]
 
-\caption{\label{fig-DAGs}DAG for Generative Model 1}
-
 \begin{minipage}{0.50\linewidth}
-
-\subcaption{\label{fig-DAGs-1}Generative Model 1}
-
-\centering{
-
-\includegraphics{research-report_files/figure-pdf/fig-DAGs-1.pdf}
-
-}
-
-\end{minipage}%
-%
-\begin{minipage}{0.50\linewidth}
-
-\subcaption{\label{fig-DAGs-2}Generative Model 2}
-
-\centering{
-
-\includegraphics{research-report_files/figure-pdf/fig-DAGs-2.pdf}
-
-}
-
-\end{minipage}%
-\newline
-\begin{minipage}{0.50\linewidth}
-
-\subcaption{\label{fig-DAGs-3}Generative Model 3, 3A and 3B}
-
-\centering{
-
-\includegraphics{research-report_files/figure-pdf/fig-DAGs-3.pdf}
-
-}
-
-\end{minipage}%
+DAG for Generative Models\end{minipage}%
 
 \end{figure}%
 
-We may notice that the DAGs for GM1 and GM2 are identical (there are
-only differences in random effects and randomization probabilities),
-while GM3 has a different structure due to the dependency of the
-covariate \(X_{it}\) on the random intercept \(b_{i0}\).
+\begin{quote}
+According to the backdoor criterion (Pearl, 1988, 2009) or the
+adjustment criterion (Shpitser, VanderWeele, \& Robins, 2010),
+identification of causal effects requires that all non-causal paths are
+blocked by conditioning on middle variables on the non-causal paths
+(i.e., by controlling for or matching on the variables). If it is not
+possible to block all non-causal paths due to omitted or unreliably
+measured variables, the treatment and outcome remain connected via
+non-causal (or backdoor) paths and the remaining confounding association
+biases the effect estimators
+\end{quote}
 
-Paraphrasing Qian et al. (\citeproc{ref-qian2020}{2020}), the
-conditional independence assumption is:
+When applying Pearl's backdoor criterion to GM1 and GM3, it may be
+observed that there exists no backdoor path in the treatment effect
+\(A_{it} \to Y_{it+1}\). On the other hand, in GM2, there is a backdoor
+path in the treatment effect:
+\(A_{it} \leftarrow X_{it} \rightarrow Y_{it+1}\). Thus, Pearl's
+backdoor criterion fails to identify when the treatment effect is
+biased.
 
-\[
-X_{it} \perp (b_{i0}, b_{i1}) \mid H_{it-1}, A_{it-1}, Y_{it}.
-\]
-
-This allows \(X_{it}\) to be endogenous, but the endogenous covariate
-\(X_{it}\) can only depend on the random effects through variables
-observed prior to \(X_{it}\): \(H_{it-1}\), \(A_{it-1}\), and
-\(Y_{it}\). If the only endogenous covariates are functions of prior
-treatments and prior outcomes, then the assumption automatically holds.
-
-When inspecting Figure~\ref{fig-DAGs}, we can see that this assumption
-is violated in GM3, as \(X_{it}\) depends directly on \(b_{i0}\) and is
-thus not independent of the random effects \(b_{i0}\) and \(b_{i1}\).
-Notice that GM1 and GM2 are also not marginally independent of
-\(b_{i0}\) and \(b_{i1}\), but they are conditionally independent given
-\(H_{it-1}\), \(A_{it-1}\), and \(Y_{it}\).
+Note, however, that limitations to Pearl's backdoor criterion have been
+voiced by several people, when there are interaction effects/
+modification effects.
 
 \subsection{Data Analysis}\label{data-analysis}
 
@@ -657,31 +655,34 @@ models were equivalent to each of the respective data-generating models.
 To fit the GEE with the ``exchangeable'', ``independent'' and ``AR(1)''
 working correlation structures, the \texttt{geeglm} function from the
 R-package \texttt{geepack} (\citeproc{ref-halekoh2006}{Halekoh et al.,
-2006}) was employed with the identity link function. Unsurprisingly,
-since the GEE does not explicitly model random effects, the
-specification of the analytical GEE models is different the analytical
-MLM models for all GMs. Compared to their MLM counterparts, the
-analytical GEE models simply excluded the random effects. Since the
-fixed effects modeled in GM1, GM2, GM3, GM3a are the same (the only
-differences pertain to the modeling of random effects), the analytical
-\emph{GEE model} is identical across these conditions:
-
-\[
-Y_{it+1} = \alpha_0 + \alpha_1 X_{it} + \beta_0 A_{it} + \beta_1 A_{it} X_{it} + \epsilon_{it+1}.
-\]
-
-In GM3b, the fixed interaction effect is removed, so the analytical
-\emph{GEE model} is given by:
-
-\[
-Y_{it+1} = \alpha_0 + \alpha_1 X_{it} + \beta_0 A_{it} + \epsilon_{it+1}.
-\]
+2006}) was employed with the identity link function. Since the random
+effects are not explicitly modelled in GEE, the analytical GEE models
+simply contain only the fixed effects of the generative model at hand.
 
 \section{Results}\label{results}
 
 As shown in Table X, GM3 results in bias
 
+\begin{table}[H]
+    \caption{Simulation results for $N=200$ over $1000$ replications, with $T=10$ and $T=30$.}
+    \centering
+    \begin{tabular}{@{}p{1.5cm} p{5cm} cc cc@{}}
+        \toprule
+        GM & Characteristics & \multicolumn{2}{c}{$\hat{\beta}_{0,MLM}-\beta_{0,MLM}$} & \multicolumn{2}{c}{$\hat{\beta}_{0,GEE-ind}-\beta_{0,MLM}$} \\ 
+        \cmidrule(lr){3-4} \cmidrule(lr){5-6}
+           &                 & \( T = 10 \) & \( T = 30 \) & \( T = 10 \) & \( T = 30 \) \\ \midrule
+        1  & Includes random intercept and random slope for treatment & 0.003 & 0.001 & 0.086 & 0.090 \\
+        3  & Model 1 with dependency random intercept and covariate       & -0.051 & -0.023 & 0.033 & 0.032 \\
+        3a & Model 3 without random slope $b_{2i}$           & 0.002 & -0.000 & -0.001 & -0.000 \\
+        3b & Model 3 without interaction effect $\beta_1$ (between treatment and covariate) & 0.005 & 0.001 & 0.003 & 0.001 \\
+        \bottomrule
+    \end{tabular}
+\end{table}
+
 \section{Discussion}\label{discussion}
+
+Despite a violation of the conditional independence assumption in GM 3,
+3A and 3B; biased MLM estimates were only found for GM3.
 
 \newpage
 
@@ -708,6 +709,12 @@ Hamaker, E. L., \& Muthén, B. (2020). The fixed versus random effects
 debate and how it relates to centering in multilevel modeling.
 \emph{Psychological Methods}, \emph{25}(3), 365--379.
 \url{https://doi.org/10.1037/met0000239}
+
+\bibitem[\citeproctext]{ref-Kim2021a}
+Kim, Y., \& Steiner, P. M. (2021). Causal graphical views of fixed
+effects and random effects models. \emph{British Journal of Mathematical
+and Statistical Psychology}, \emph{74}(2), 165--183.
+\url{https://doi.org/10.1111/bmsp.12217}
 
 \bibitem[\citeproctext]{ref-mcneish2017}
 McNeish, D., Stapleton, L. M., \& Silverman, R. D. (2017). On the
@@ -901,7 +908,6 @@ including independent, exchangeable, AR(1) and unstructured. To fit the
 basic MLM, the R-package \texttt{lme4} (\citeproc{ref-bates2015}{Bates
 et al., 2015}) will be employed, where we will use restricted maximum
 likelihood estimation.
-
 
 
 
