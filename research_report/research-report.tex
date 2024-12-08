@@ -247,19 +247,19 @@ methods (\citeproc{ref-mcneish2017}{McNeish et al., 2017};
 et al., 2013}), their scarcity may leave researchers with limited
 guidance in choosing the most suitable approach for their application.
 
-Recent evidence has highlighted an issue present in both methods, where
-controlling for \emph{time-varying endogenous covariates} may lead to
-biased causal estimates (\citeproc{ref-pepe1994}{Pepe \& Anderson,
-1994}; \citeproc{ref-qian2020}{Qian et al., 2020}). A time-varying
-covariate is \emph{endogenous} if it is directly or indirectly
-influenced by prior treatment or outcome, meaning its value may be
-determined by earlier stages of the process
+A recent study by Qian et al. (\citeproc{ref-qian2020}{2020})
+highlighted an issue present in both methods---except for GEE with
+working independence---where controlling for \emph{time-varying
+endogenous covariates} may lead to biased causal estimates. A
+time-varying covariate is \emph{endogenous} if it is directly or
+indirectly influenced by prior treatment or outcome, meaning its value
+may be determined by earlier stages of the process
 (\citeproc{ref-qian2020}{Qian et al., 2020}). As a result of including
-these covariates in the mentioned models, ordinary interpretations of
-the coefficients are no longer valid (\citeproc{ref-qian2020}{Qian et
-al., 2020, p. 3}). According to Diggle
-(\citeproc{ref-diggle2002}{2002}), this issue not only pertains GEE and
-MLM, but \emph{all} longitudinal data analysis methods.
+these covariates in these models, ordinary interpretations of the
+coefficients are no longer valid (\citeproc{ref-qian2020}{Qian et al.,
+2020, p. 3}). According to Diggle (\citeproc{ref-diggle2002}{2002}),
+this issue not only pertains GEE and MLM, but \emph{all} longitudinal
+data analysis methods.
 
 However, due to a divide between the disciplines that employ these
 methods, such critiques of the MLM appear to have largely failed to
@@ -268,37 +268,34 @@ that the technical jargon in other disciplines makes it difficult for
 researchers to recognize when and how these issues emerge\footnote{For
   instance, the term `endogeneity' in econometrics, while related, has a
   distinct meaning from that of an endogenous variable, which can lead
-  to confusion.}. As a result, researchers may address related problems
-in disconnected literatures but fail to understand each other. For
-instance, while the MLM literature emphasizes on the distinction between
-different centering methods and the effect of cross-level interactions
-on parameter interpretations (e.g., \citeproc{ref-hamaker2020}{Hamaker
-\& Muthén, 2020}), the GEE literature appears to focus more on the
-marginal and conditional interpretations of model parameters (e.g.,
-\citeproc{ref-pepe1994}{Pepe \& Anderson, 1994}).
+  to confusion.}. Therefore, this report aims to understand and explain
+the issue of including endogenous covariates in analyses involving GEE
+and MLM in a psychological context. To achieve this aim, the current
+investigation will employ (a) graphical tools such as the directed
+acyclic graph (DAG) and path diagram to assess causal identification
+assumptions, as well as (b) simulations with additional scenarios to
+pinpoint the issue.
 
-Through a cross-fertilization of these literatures, this project aims to
-(1) explain the issue of including endogenous covariates in analyses
-involving GEE, MLM and DSEM (a widely used framework in the social
-sciences based on MLM) in a psychological context and (2) establish
-guidelines on how researchers can prevent this issue in their
-longitudinal data analysis. Accordingly, the following research
-questions will be addressed: \emph{In which cases do the inclusion of
-endogenous variables in multilevel linear models and generalized
-estimating equations result in a discrepancy between marginal and
-conditional estimates?} In line with the literature
-(\citeproc{ref-diggle2002}{Diggle, 2002}; \citeproc{ref-pepe1994}{Pepe
-\& Anderson, 1994}; \citeproc{ref-qian2020}{Qian et al., 2020}), we
-expect that the inclusion of endogenous time-varying covariates in
-longitudinal data analyses may result in bias that---depending on the
-circumstances---can promote the potential for faulty inferences. To
-isolate the issue described in Qian et al.
-(\citeproc{ref-qian2020}{2020}), we will focus on the following
-sub-questions: (1) When removing the interaction \(\beta_1\) from
-generative model 3, is there a difference between the marginal and
-conditional estimates of the treatment effect? (2) When removing the
-random slope \(b_{i2}\) from generative model 3, is there a difference
-between the marginal and conditional estimates of the treatment effect?
+Accordingly, the following research question will be addressed:
+\emph{When does the inclusion of endogenous variables in multilevel
+linear models result in biased parameter estimates?}. In additi
+
+and generalized estimating equations result in a discrepancy between
+marginal and conditional estimates?*
+
+In line with the literature (\citeproc{ref-diggle2002}{Diggle, 2002};
+\citeproc{ref-pepe1994}{Pepe \& Anderson, 1994};
+\citeproc{ref-qian2020}{Qian et al., 2020}), we expect that the
+inclusion of endogenous time-varying covariates in longitudinal data
+analyses may result in bias that---depending on the circumstances---can
+promote the potential for faulty inferences. To isolate the issue
+described in Qian et al. (\citeproc{ref-qian2020}{2020}), we will focus
+on the following sub-questions: (1) When removing the interaction
+\(\beta_1\) from generative model 3, is there a difference between the
+marginal and conditional estimates of the treatment effect? (2) When
+removing the random slope \(b_{i2}\) from generative model 3, is there a
+difference between the marginal and conditional estimates of the
+treatment effect?
 
 \newpage
 
@@ -467,8 +464,7 @@ probability of receiving the treatment \(p_t\) is 0.7; otherwise, it is
 \(i = 1, \ldots, N\) and \(t = 1, \ldots, T\). The exogenous noise is
 \(\epsilon_{it+1} \sim \mathcal{N}(0, \sigma_\epsilon^2)\).
 
-Figure~\ref{fig-GM2_path} shows the path diagram for GM2. ADD THE RANDOM
-INTERACTIN SLOPE BI3!!!!!
+Figure~\ref{fig-GM2_path} shows the path diagram for GM2.
 
 \begin{figure}[H]
 
@@ -583,11 +579,12 @@ automatically holds.
 When inspecting Figure~\ref{fig-GM1_path} and Figure~\ref{fig-GM2_path},
 we may notice that \(X_{it}\) becomes independent of the random effects
 after conditioning on \(Y_{it}\). On the other hand, we can see that
-this assumption is violated in GM3/GM3A/GM3B, as \(X_{it}\) depends
-directly on \(b_{i0}\) and can thus not be made independent of the
-random effects by conditioning on prior variables such as \(Y_{it}\)
-(see Figure~\ref{fig-GM3_path}, Figure~\ref{fig-GM3A_path} and
-Figure~\ref{fig-GM3B_path})
+this assumption is violated in GM3/3A/3B, as \(X_{it}\) depends directly
+on \(b_{i0}\) and can thus not be made independent of the random effects
+by conditioning on prior variables such as \(Y_{it}\) (see
+Figure~\ref{fig-GM3_path}, Figure~\ref{fig-GM3A_path} and
+Figure~\ref{fig-GM3B_path}). Thus, we would expect biased estimates of
+the treatment effect for GM3/3A/3B.
 
 \subsection{Backdoor Criterion and
 DAGs}\label{backdoor-criterion-and-dags}
@@ -608,8 +605,7 @@ We formulated the DAGs in \texttt{dagitty}, where the random disturbance
 \(b_{0i}\) was represented by the node U (e.g.,
 \citeproc{ref-Kim2021a}{Kim \& Steiner, 2021}). The DAGs for the first
 three observations of the three data generating models are presented in
-Figure~\ref{fig-DAGs}. The red arrows show the biased paths after
-controlling for the covariate \(X_{it}\).
+Figure~\ref{fig-DAGs}.
 
 \begin{figure}[H]
 
@@ -654,7 +650,7 @@ controlling for the covariate \(X_{it}\).
 %
 \begin{minipage}{0.50\linewidth}
 \emph{Note.} The red arrows show the biased backdoor path(s) in the
-treatment efffect.\end{minipage}%
+treatment efffect (before controlling for \(X_{it}\)).\end{minipage}%
 
 \end{figure}%
 
@@ -732,8 +728,42 @@ As shown in Table X, GM3 results in bias
 
 \section{Discussion}\label{discussion}
 
-Despite a violation of the conditional independence assumption in GM 3,
-3A and 3B; biased MLM estimates were only found for GM3.
+\begin{itemize}
+\item
+  Initially, it seemed that the issue of endogenous covariates meant
+  that, for unbiased estimation of the treatment effect, we should rely
+  on GEE with independence. However, it is important not to conflate the
+  issues mentioned by Qian et al. (\citeproc{ref-qian2020}{2020}). The
+  first issue pertains to model interpretation: should we expect
+  covariates to be endogenous and be primarily interested in marginal
+  interpretations of the parameters rather than the person-specific
+  (conditional-on-the-random-effect) interpretation, we should indeed
+  employ GEE with working independence (OR STRUCTURAL MARGINAL MODELS???
+  CHECK THIS OUT IN ZOTERO). The second issue pertains to model fitting:
+  once we conclude that person-specific interpretation aligns with our
+  interest but we fear the presence of endogenous covariates, we have to
+  assess the conditional independence assumption.
+\item
+  Despite a violation of the conditional independence assumption in GM
+  3, 3A and 3B; biased MLM estimates were only found for GM3.
+\item
+  While GEE with independence may indeed yield unbiased estimators of
+  the marginal effect as mentioned by Qian et al.
+  (\citeproc{ref-qian2020}{2020}), this
+\end{itemize}
+
+\section{To-do}\label{to-do}
+
+\begin{itemize}
+\tightlist
+\item
+  wasn't working exchangeability in GEE equivalent to MLM? then use this
+  to argue why using this GEE variation. Because for the difference of
+  GEE with independence from the actual specified conditional parameter
+  estimates should indicate a difference between the marginal and
+  conditional effect, but this is not bias. Can we speak of bias with
+  exchangeability?
+\end{itemize}
 
 \newpage
 

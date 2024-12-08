@@ -74,17 +74,26 @@ library(pdftools)
 
 Across a wide range of disciplines, researchers analyze clustered longitudinal, observational data to investigate prospective causal relationships between variables. When analyzing such data, the psychological sciences most commonly resort to the multilevel linear model [MLM, @mcneish2017], which---in the context of longitudinal data analysis---separates observed variance into stable between-person differences and within-person fluctuations [@hamaker2020]. Conversely, other fields, such as biostatistics and econometrics often favour generalized estimating equations (GEE) for the analysis of longitudinal data [@mcneish2017]. Despite some cross-disciplinary efforts to compare these methods [@muth2016; @mcneish2017; @yan2013], their scarcity may leave researchers with limited guidance in choosing the most suitable approach for their application.
 
-<!-- -   Then, add a paragraph describing what is known in the literature; -->
-
-Recent evidence has highlighted an issue present in both methods, where controlling for *time-varying endogenous covariates* may lead to biased causal estimates [@qian2020; @pepe1994]. A time-varying covariate is *endogenous* if it is directly or indirectly influenced by prior treatment or outcome, meaning its value may be determined by earlier stages of the process [@qian2020]. As a result of including these covariates in the mentioned models, ordinary interpretations of the coefficients are no longer valid [@qian2020, p. 3]. According to @diggle2002, this issue not only pertains GEE and MLM, but *all* longitudinal data analysis methods.
-
-However, due to a divide between the disciplines that employ these methods, such critiques of the MLM appear to have largely failed to reach the applied researcher in psychology. One specific reason might be that the technical jargon in other disciplines makes it difficult for researchers to recognize when and how these issues emerge[^1]. As a result, researchers may address related problems in disconnected literatures but fail to understand each other. For instance, while the MLM literature emphasizes on the distinction between different centering methods and the effect of cross-level interactions on parameter interpretations [e.g., @hamaker2020], the GEE literature appears to focus more on the marginal and conditional interpretations of model parameters [e.g., @pepe1994].
-
-[^1]: For instance, the term 'endogeneity' in econometrics, while related, has a distinct meaning from that of an endogenous variable, which can lead to confusion.
+<!-- -   Then, add a paragraph describing what is known in the literature; --> 
 
 <!-- -   Also, describe what is not known and which gap you will address in your thesis; End with a clear research question and, if applicable, your hypothesis (for confirmatory research questions – it should be a testable hypothesis) or expectations (for exploratory research questions – can be much vaguer because of the explorative nature of the question). -->
 
-Through a cross-fertilization of these literatures, this project aims to (1) explain the issue of including endogenous covariates in analyses involving GEE, MLM and DSEM (a widely used framework in the social sciences based on MLM) in a psychological context and (2) establish guidelines on how researchers can prevent this issue in their longitudinal data analysis. Accordingly, the following research questions will be addressed: *In which cases do the inclusion of endogenous variables in multilevel linear models and generalized estimating equations result in a discrepancy between marginal and conditional estimates?* In line with the literature [@diggle2002; @qian2020; @pepe1994], we expect that the inclusion of endogenous time-varying covariates in longitudinal data analyses may result in bias that—depending on the circumstances—can promote the potential for faulty inferences. To isolate the issue described in @qian2020, we will focus on the following sub-questions: (1) When removing the interaction $\beta_1$ from generative model 3, is there a difference between the marginal and conditional estimates of the treatment effect? (2) When removing the random slope $b_{i2}$ from generative model 3, is there a difference between the marginal and conditional estimates of the treatment effect?
+A recent study by @qian2020 highlighted an issue present in both methods---except for GEE with working independence---where controlling for *time-varying endogenous covariates* may lead to biased causal estimates. A time-varying covariate is *endogenous* if it is directly or indirectly influenced by prior treatment or outcome, meaning its value may be determined by earlier stages of the process [@qian2020]. As a result of including these covariates in these models, ordinary interpretations of the coefficients are no longer valid [@qian2020, p. 3]. According to @diggle2002, this issue not only pertains GEE and MLM, but *all* longitudinal data analysis methods.
+
+However, due to a divide between the disciplines that employ these methods, such critiques of the MLM appear to have largely failed to reach the applied researcher in psychology. One specific reason might be that the technical jargon in other disciplines makes it difficult for researchers to recognize when and how these issues emerge[^1]. Therefore, this report aims to understand and explain the issue of including endogenous covariates in analyses involving GEE and MLM in a psychological context. To achieve this aim, the current investigation will employ (a) graphical tools such as the directed acyclic graph (DAG) and path diagram to assess causal identification assumptions, as well as (b) simulations with additional scenarios to pinpoint the issue.
+
+[^1]: For instance, the term 'endogeneity' in econometrics, while related, has a distinct meaning from that of an endogenous variable, which can lead to confusion. 
+
+<!-- -   Also, describe what is not known and which gap you will address in your thesis; End with a clear research question and, if applicable, your hypothesis (for confirmatory research questions – it should be a testable hypothesis) or expectations (for exploratory research questions – can be much vaguer because of the explorative nature of the question). -->
+
+<!-- Through a cross-fertilization of these literatures,  -->
+
+Accordingly, the following research question will be addressed: *When does the inclusion of endogenous variables in multilevel linear models result in biased parameter estimates?*. In additi
+
+and generalized estimating equations result in a discrepancy between marginal and conditional estimates?* 
+
+
+In line with the literature [@diggle2002; @qian2020; @pepe1994], we expect that the inclusion of endogenous time-varying covariates in longitudinal data analyses may result in bias that—depending on the circumstances—can promote the potential for faulty inferences. To isolate the issue described in @qian2020, we will focus on the following sub-questions: (1) When removing the interaction $\beta_1$ from generative model 3, is there a difference between the marginal and conditional estimates of the treatment effect? (2) When removing the random slope $b_{i2}$ from generative model 3, is there a difference between the marginal and conditional estimates of the treatment effect?
 
 <!-- It would be interesting to compare the RI-CLPM to the CLPM, as the former is said to be superior in addressing certain confounders, but could it also be more susceptible to time-varying moderators? -->
 
@@ -156,33 +165,33 @@ The randomization probability $p_t = P(A_{it} = 1 \mid H_{it})$ is constant at $
 
 \begin{tikzpicture}
   % Nodes for observed variables (squares)
-  \node[draw, rectangle] (X1) at (0, -2) {$X_{1i}$};
-  \node (X1var) at (0, -3) {$\sigma^2_{X}$};
-  \node[draw, rectangle] (A1) at (0, 2) {$A_{1i}$};
+  \node[draw, rectangle] (X1) at (0, 2) {$X_{1i}$};
+  \node (X1var) at (0, 3) {$\sigma^2_{X}$};
+  \node[draw, rectangle] (A1) at (0, -2) {$A_{1i}$};
   \node[draw, rectangle] (A1X1) at (0.3, 0) {$A_{1i}\cdot X_{1i}$};
   \node[draw, rectangle] (Y2) at (3, 0) {$Y_{2i}$}; % Increased x-coordinate
   \node (Y2var) at (4, 0) {$\sigma^2_{\epsilon}$};
-  \node[draw, rectangle] (X2) at (3, -2) {$X_{2i}$}; % Increased x-coordinate
-  \node (X2var) at (3, -3) {$\sigma^2_{X}$};
-  \node[draw, rectangle] (A2) at (3, 2) {$A_{2i}$}; % Increased x-coordinate
+  \node[draw, rectangle] (X2) at (3, 2) {$X_{2i}$}; % Increased x-coordinate
+  \node (X2var) at (3, 3) {$\sigma^2_{X}$};
+  \node[draw, rectangle] (A2) at (3, -2) {$A_{2i}$}; % Increased x-coordinate
   \node[draw, rectangle] (Y3) at (8, 0) {$Y_{3i}$}; % Increased x-coordinate
   \node (Y3var) at (9, 0) {$\sigma^2_{\epsilon}$};
-  \node[draw, rectangle] (X3) at (8, -2) {$X_{3i}$}; % Increased x-coordinate
-  \node (X3var) at (8, -3) {$\sigma^2_{X}$};
+  \node[draw, rectangle] (X3) at (8, 2) {$X_{3i}$}; % Increased x-coordinate
+  \node (X3var) at (8, 3) {$\sigma^2_{X}$};
   \node[draw, rectangle] (A2X2) at (5.3, 0) {$A_{2i}\cdot X_{2i}$}; % Increased x-coordinate
 
   % Nodes for latent variables (circles)
   \node[draw, circle, fill=gray!20] (b0) at (6, 4) {$b_{i0}$}; % Increased x-coordinate
-  \node[draw, circle, fill=gray!20] (b2) at (3, 4) {$b_{i2}$}; % Adjusted to align with middle row
+  \node[draw, circle, fill=gray!20] (b2) at (3, -4) {$b_{i2}$}; % Adjusted to align with middle row
 
   % Arrows with path coefficients
   \draw [->] (b0) -- node[right] {$+$} (Y2);
   \draw [->] (b0) -- node[right] {$+$} (Y3);
-  \draw [->] (A2) edge node[below left] {$\beta_0$} (Y3);
-  \draw [->] (X2) edge node[below] {$\alpha_1$} (Y3);
+  \draw [->] (A2) edge node[above left] {$\beta_0$} (Y3);
+  \draw [->] (X2) edge node[above] {$\alpha_1$} (Y3);
   \draw [->] (Y2) edge node[right] {$1$} (X2);
-  \draw [->] (A1) edge node[left] {$\beta_0$} (Y2);
-  \draw [->] (X1) edge node[below] {$\alpha_1$} (Y2);
+  \draw [->] (A1) edge node[above left] {$\beta_0$} (Y2);
+  \draw [->] (X1) edge node[above] {$\alpha_1$} (Y2);
   \draw [->] (Y3) edge node[right] {$1$} (X3);
   \draw [->] (A1X1) edge node[above] {$\beta_1$} (Y2);
   \draw [->] (A2X2) edge node[above left] {$\beta_1$} (Y3);
@@ -194,11 +203,11 @@ The randomization probability $p_t = P(A_{it} = 1 \mid H_{it})$ is constant at $
 
   % Curved arrows for variances
   \draw [<->, out=45, in=135, looseness=2] (b0) to node[above] {$\sigma^2_{b0}$} (b0);
-  \draw [<->, out=45, in=135, looseness=2] (b2) to node[above] {$\sigma^2_{b2}$} (b2);
+  \draw [<->, out=315, in=225, looseness=2] (b2) to node[below] {$\sigma^2_{b2}$} (b2);
 
-  % Additional paths for A and X interaction effects
-  \draw[->, dashed] (b2) -- (1.5,1); % Adjusted x-coordinates
-  \draw[->, dashed] (b2) -- (5,1.2); % Adjusted x-coordinates
+  % Additional paths for random effects
+  \draw[->, dashed] (b2) -- (1.5,-1); 
+  \draw[->, dashed] (b2) -- (5,-1.2); 
 
 \end{tikzpicture}
 ```
@@ -271,7 +280,7 @@ $$
 
 where the cutoff $-1.27$ was chosen so that $p_t$ equals 0.7 or 0.3 for about half of the time. In other words, if the value of the covariate for any given person and time point is above the cutoff, the probability of receiving the treatment $p_t$ is 0.7; otherwise, it is 0.3. Accordingly, $A_{it} \sim \text{Bernoulli}(p_t)$ for $i = 1, \ldots, N$ and $t = 1, \ldots, T$. The exogenous noise is $\epsilon_{it+1} \sim \mathcal{N}(0, \sigma_\epsilon^2)$.
 
-@fig-GM2_path shows the path diagram for GM2. ADD THE RANDOM INTERACTIN SLOPE BI3!!!!!
+@fig-GM2_path shows the path diagram for GM2.
 
 ```{r}
 #| label: fig-GM2_path
@@ -283,33 +292,35 @@ where the cutoff $-1.27$ was chosen so that $p_t$ equals 0.7 or 0.3 for about ha
 
 \begin{tikzpicture}
   % Nodes for observed variables (squares)
-  \node[draw, rectangle] (X1) at (0, -2) {$X_{1i}$};
-  \node (X1var) at (0, -3) {$\sigma^2_{X}$};
-  \node[draw, rectangle] (A1) at (0, 2) {$A_{1i}$};
+  \node[draw, rectangle] (X1) at (0, 2) {$X_{1i}$};
+  \node (X1var) at (0, 3) {$\sigma^2_{X}$};
+  \node[draw, rectangle] (A1) at (0, -2) {$A_{1i}$};
   \node[draw, rectangle] (A1X1) at (0.3, 0) {$A_{1i}\cdot X_{1i}$};
   \node[draw, rectangle] (Y2) at (3, 0) {$Y_{2i}$}; % Increased x-coordinate
   \node (Y2var) at (4, 0) {$\sigma^2_{\epsilon}$};
-  \node[draw, rectangle] (X2) at (3, -2) {$X_{2i}$}; % Increased x-coordinate
-  \node (X2var) at (3, -3) {$\sigma^2_{X}$};
-  \node[draw, rectangle] (A2) at (3, 2) {$A_{2i}$}; % Increased x-coordinate
+  \node[draw, rectangle] (X2) at (3, 2) {$X_{2i}$}; % Increased x-coordinate
+  \node (X2var) at (3, 3) {$\sigma^2_{X}$};
+  \node[draw, rectangle] (A2) at (3, -2) {$A_{2i}$}; % Increased x-coordinate
   \node[draw, rectangle] (Y3) at (8, 0) {$Y_{3i}$}; % Increased x-coordinate
   \node (Y3var) at (9, 0) {$\sigma^2_{\epsilon}$};
-  \node[draw, rectangle] (X3) at (8, -2) {$X_{3i}$}; % Increased x-coordinate
-  \node (X3var) at (8, -3) {$\sigma^2_{X}$};
+  \node[draw, rectangle] (X3) at (8, 2) {$X_{3i}$}; % Increased x-coordinate
+  \node (X3var) at (8, 3) {$\sigma^2_{X}$};
   \node[draw, rectangle] (A2X2) at (5.3, 0) {$A_{2i}\cdot X_{2i}$}; % Increased x-coordinate
 
   % Nodes for latent variables (circles)
-  \node[draw, circle, fill=gray!20] (b0) at (6, 4) {$b_{i0}$}; % Increased x-coordinate
-  \node[draw, circle, fill=gray!20] (b2) at (3, 4) {$b_{i2}$}; % Adjusted to align with middle row
+  \node[draw, circle, fill=gray!20] (b0) at (6, 4) {$b_{i0}$}; 
+  \node[draw, circle, fill=gray!20] (b1) at (3, 4) {$b_{i1}$}; 
+  \node[draw, circle, fill=gray!20] (b2) at (3, -4) {$b_{i2}$}; 
+  \node[draw, circle, fill=gray!20] (b3) at (6, -4) {$b_{i3}$}; 
 
   % Arrows with path coefficients
   \draw [->] (b0) -- node[right] {$+$} (Y2);
   \draw [->] (b0) -- node[right] {$+$} (Y3);
-  \draw [->] (A2) edge node[below left] {$\beta_0$} (Y3);
-  \draw [->] (X2) edge node[below] {$\alpha_1$} (Y3);
+  \draw [->] (A2) edge node[above left] {$\beta_0$} (Y3);
+  \draw [->] (X2) edge node[above] {$\alpha_1$} (Y3);
   \draw [->] (Y2) edge node[right] {$1$} (X2);
-  \draw [->] (A1) edge node[left] {$\beta_0$} (Y2);
-  \draw [->] (X1) edge node[below] {$\alpha_1$} (Y2);
+  \draw [->] (A1) edge node[above left] {$\beta_0$} (Y2);
+  \draw [->] (X1) edge node[above] {$\alpha_1$} (Y2);
   \draw [->] (Y3) edge node[right] {$1$} (X3);
   \draw [->] (A1X1) edge node[above] {$\beta_1$} (Y2);
   \draw [->] (A2X2) edge node[above left] {$\beta_1$} (Y3);
@@ -319,21 +330,27 @@ where the cutoff $-1.27$ was chosen so that $p_t$ equals 0.7 or 0.3 for about ha
   \draw [->] (Y2var) edge (Y2);
   \draw [->] (Y3var) edge (Y3);
 
-  \draw [->, bend left=40] (X1) to (A1); 
-  \draw [->, bend left=40] (X2) to (A2);
+  \draw [->, bend right=40] (X1) to (A1); 
+  \draw [->, bend right=40] (X2) to (A2);
 
   % Curved arrows for variances
   \draw [<->, out=45, in=135, looseness=2] (b0) to node[above] {$\sigma^2_{b0}$} (b0);
-  \draw [<->, out=45, in=135, looseness=2] (b2) to node[above] {$\sigma^2_{b2}$} (b2);
+  \draw [<->, out=45, in=135, looseness=2] (b1) to node[above] {$\sigma^2_{b1}$} (b1);
+  \draw [<->, out=315, in=225, looseness=2] (b2) to node[below] {$\sigma^2_{b2}$} (b2);
+  \draw [<->, out=315, in=225, looseness=2] (b3) to node[below] {$\sigma^2_{b3}$} (b3);
 
-  % Additional paths for A and X interaction effects
-  \draw[->, dashed] (b2) -- (1.5,1); % Adjusted x-coordinates
-  \draw[->, dashed] (b2) -- (5,1.2); % Adjusted x-coordinates
+  % Additional paths for random effects
+  \draw[->, dashed] (b2) -- (1.5,-1); 
+  \draw[->, dashed] (b2) -- (5,-1.2); 
+
+  \draw[->, dashed] (b1) -- (1.5,1); 
+  \draw[->, dashed] (b1) -- (5,1.2); 
+
+  \draw[->, dashed] (b3) -- (1.75, 0); 
+  \draw[->, dashed] (b3) -- (6.75, 0); 
 
 \end{tikzpicture}
 ```
-
-
 
 <!-- ### Generative Model 2A -->
 
@@ -363,33 +380,33 @@ $$
 
 \begin{tikzpicture}
   % Nodes for observed variables (squares)
-  \node[draw, rectangle] (X1) at (0, -2) {$X_{1i}$};
-  \node (X1var) at (0, -3) {$\sigma^2_{X}$};
-  \node[draw, rectangle] (A1) at (0, 2) {$A_{1i}$};
+  \node[draw, rectangle] (X1) at (0, 2) {$X_{1i}$};
+  \node (X1var) at (0, 3) {$\sigma^2_{X}$};
+  \node[draw, rectangle] (A1) at (0, -2) {$A_{1i}$};
   \node[draw, rectangle] (A1X1) at (0.3, 0) {$A_{1i}\cdot X_{1i}$};
   \node[draw, rectangle] (Y2) at (3, 0) {$Y_{2i}$}; % Increased x-coordinate
   \node (Y2var) at (4, 0) {$\sigma^2_{\epsilon}$};
-  \node[draw, rectangle] (X2) at (3, -2) {$X_{2i}$}; % Increased x-coordinate
-  \node (X2var) at (3, -3) {$\sigma^2_{X}$};
-  \node[draw, rectangle] (A2) at (3, 2) {$A_{2i}$}; % Increased x-coordinate
+  \node[draw, rectangle] (X2) at (3, 2) {$X_{2i}$}; % Increased x-coordinate
+  \node (X2var) at (3, 3) {$\sigma^2_{X}$};
+  \node[draw, rectangle] (A2) at (3, -2) {$A_{2i}$}; % Increased x-coordinate
   \node[draw, rectangle] (Y3) at (8, 0) {$Y_{3i}$}; % Increased x-coordinate
   \node (Y3var) at (9, 0) {$\sigma^2_{\epsilon}$};
-  \node[draw, rectangle] (X3) at (8, -2) {$X_{3i}$}; % Increased x-coordinate
-  \node (X3var) at (8, -3) {$\sigma^2_{X}$};
+  \node[draw, rectangle] (X3) at (8, 2) {$X_{3i}$}; % Increased x-coordinate
+  \node (X3var) at (8, 3) {$\sigma^2_{X}$};
   \node[draw, rectangle] (A2X2) at (5.3, 0) {$A_{2i}\cdot X_{2i}$}; % Increased x-coordinate
 
   % Nodes for latent variables (circles)
   \node[draw, circle, fill=gray!20] (b0) at (6, 4) {$b_{i0}$}; % Increased x-coordinate
-  \node[draw, circle, fill=gray!20] (b2) at (3, 4) {$b_{i2}$}; % Adjusted to align with middle row
+  \node[draw, circle, fill=gray!20] (b2) at (3, -4) {$b_{i2}$}; % Adjusted to align with middle row
 
   % Arrows with path coefficients
   \draw [->] (b0) -- node[right] {$+$} (Y2);
   \draw [->] (b0) -- node[right] {$+$} (Y3);
-  \draw [->] (A2) edge node[below left] {$\beta_0$} (Y3);
-  \draw [->] (X2) edge node[below] {$\alpha_1$} (Y3);
+  \draw [->] (A2) edge node[above left] {$\beta_0$} (Y3);
+  \draw [->] (X2) edge node[above] {$\alpha_1$} (Y3);
   \draw [->] (Y2) edge node[right] {$1$} (X2);
-  \draw [->] (A1) edge node[left] {$\beta_0$} (Y2);
-  \draw [->] (X1) edge node[below] {$\alpha_1$} (Y2);
+  \draw [->] (A1) edge node[above left] {$\beta_0$} (Y2);
+  \draw [->] (X1) edge node[above] {$\alpha_1$} (Y2);
   \draw [->] (Y3) edge node[right] {$1$} (X3);
   \draw [->] (A1X1) edge node[above] {$\beta_1$} (Y2);
   \draw [->] (A2X2) edge node[above left] {$\beta_1$} (Y3);
@@ -404,11 +421,11 @@ $$
 
   % Curved arrows for variances
   \draw [<->, out=45, in=135, looseness=2] (b0) to node[above] {$\sigma^2_{b0}$} (b0);
-  \draw [<->, out=45, in=135, looseness=2] (b2) to node[above] {$\sigma^2_{b2}$} (b2);
+  \draw [<->, out=315, in=225, looseness=2] (b2) to node[below] {$\sigma^2_{b2}$} (b2);
 
-  % Additional paths for A and X interaction effects
-  \draw[->, dashed] (b2) -- (1.5,1); % Adjusted x-coordinates
-  \draw[->, dashed] (b2) -- (5,1.2); % Adjusted x-coordinates
+  % Additional paths for random effects
+  \draw[->, dashed] (b2) -- (1.5,-1); 
+  \draw[->, dashed] (b2) -- (5,-1.2); 
 
 \end{tikzpicture}
 ```
@@ -431,19 +448,19 @@ $$
 
 \begin{tikzpicture}
   % Nodes for observed variables (squares)
-  \node[draw, rectangle] (X1) at (0, -2) {$X_{1i}$};
-  \node (X1var) at (0, -3) {$\sigma^2_{X}$};
-  \node[draw, rectangle] (A1) at (0, 2) {$A_{1i}$};
+  \node[draw, rectangle] (X1) at (0, 2) {$X_{1i}$};
+  \node (X1var) at (0, 3) {$\sigma^2_{X}$};
+  \node[draw, rectangle] (A1) at (0, -2) {$A_{1i}$};
   \node[draw, rectangle] (A1X1) at (0.3, 0) {$A_{1i}\cdot X_{1i}$};
   \node[draw, rectangle] (Y2) at (3, 0) {$Y_{2i}$}; % Increased x-coordinate
   \node (Y2var) at (4, 0) {$\sigma^2_{\epsilon}$};
-  \node[draw, rectangle] (X2) at (3, -2) {$X_{2i}$}; % Increased x-coordinate
-  \node (X2var) at (3, -3) {$\sigma^2_{X}$};
-  \node[draw, rectangle] (A2) at (3, 2) {$A_{2i}$}; % Increased x-coordinate
+  \node[draw, rectangle] (X2) at (3, 2) {$X_{2i}$}; % Increased x-coordinate
+  \node (X2var) at (3, 3) {$\sigma^2_{X}$};
+  \node[draw, rectangle] (A2) at (3, -2) {$A_{2i}$}; % Increased x-coordinate
   \node[draw, rectangle] (Y3) at (8, 0) {$Y_{3i}$}; % Increased x-coordinate
   \node (Y3var) at (9, 0) {$\sigma^2_{\epsilon}$};
-  \node[draw, rectangle] (X3) at (8, -2) {$X_{3i}$}; % Increased x-coordinate
-  \node (X3var) at (8, -3) {$\sigma^2_{X}$};
+  \node[draw, rectangle] (X3) at (8, 2) {$X_{3i}$}; % Increased x-coordinate
+  \node (X3var) at (8, 3) {$\sigma^2_{X}$};
   \node[draw, rectangle] (A2X2) at (5.3, 0) {$A_{2i}\cdot X_{2i}$}; % Increased x-coordinate
 
   % Nodes for latent variables (circles)
@@ -452,11 +469,11 @@ $$
   % Arrows with path coefficients
   \draw [->] (b0) -- node[right] {$+$} (Y2);
   \draw [->] (b0) -- node[right] {$+$} (Y3);
-  \draw [->] (A2) edge node[below left] {$\beta_0$} (Y3);
-  \draw [->] (X2) edge node[below] {$\alpha_1$} (Y3);
+  \draw [->] (A2) edge node[above left] {$\beta_0$} (Y3);
+  \draw [->] (X2) edge node[above] {$\alpha_1$} (Y3);
   \draw [->] (Y2) edge node[right] {$1$} (X2);
-  \draw [->] (A1) edge node[left] {$\beta_0$} (Y2);
-  \draw [->] (X1) edge node[below] {$\alpha_1$} (Y2);
+  \draw [->] (A1) edge node[above left] {$\beta_0$} (Y2);
+  \draw [->] (X1) edge node[above] {$\alpha_1$} (Y2);
   \draw [->] (Y3) edge node[right] {$1$} (X3);
   \draw [->] (A1X1) edge node[above] {$\beta_1$} (Y2);
   \draw [->] (A2X2) edge node[above left] {$\beta_1$} (Y3);
@@ -493,31 +510,31 @@ $$
 
 \begin{tikzpicture}
   % Nodes for observed variables (squares)
-  \node[draw, rectangle] (X1) at (0, -2) {$X_{1i}$};
-  \node (X1var) at (0, -3) {$\sigma^2_{X}$};
-  \node[draw, rectangle] (A1) at (0, 2) {$A_{1i}$};
+  \node[draw, rectangle] (X1) at (0, 2) {$X_{1i}$};
+  \node (X1var) at (0, 3) {$\sigma^2_{X}$};
+  \node[draw, rectangle] (A1) at (0, -2) {$A_{1i}$};
   \node[draw, rectangle] (Y2) at (3, 0) {$Y_{2i}$}; % Increased x-coordinate
   \node (Y2var) at (4, 0) {$\sigma^2_{\epsilon}$};
-  \node[draw, rectangle] (X2) at (3, -2) {$X_{2i}$}; % Increased x-coordinate
-  \node (X2var) at (3, -3) {$\sigma^2_{X}$};
-  \node[draw, rectangle] (A2) at (3, 2) {$A_{2i}$}; % Increased x-coordinate
+  \node[draw, rectangle] (X2) at (3, 2) {$X_{2i}$}; % Increased x-coordinate
+  \node (X2var) at (3, 3) {$\sigma^2_{X}$};
+  \node[draw, rectangle] (A2) at (3, -2) {$A_{2i}$}; % Increased x-coordinate
   \node[draw, rectangle] (Y3) at (8, 0) {$Y_{3i}$}; % Increased x-coordinate
   \node (Y3var) at (9, 0) {$\sigma^2_{\epsilon}$};
-  \node[draw, rectangle] (X3) at (8, -2) {$X_{3i}$}; % Increased x-coordinate
-  \node (X3var) at (8, -3) {$\sigma^2_{X}$};
+  \node[draw, rectangle] (X3) at (8, 2) {$X_{3i}$}; % Increased x-coordinate
+  \node (X3var) at (8, 3) {$\sigma^2_{X}$};
 
   % Nodes for latent variables (circles)
   \node[draw, circle, fill=gray!20] (b0) at (6, 4) {$b_{i0}$}; % Increased x-coordinate
-  \node[draw, circle, fill=gray!20] (b2) at (3, 4) {$b_{i2}$}; % Adjusted to align with middle row
+  \node[draw, circle, fill=gray!20] (b2) at (3, -4) {$b_{i2}$}; % Adjusted to align with middle row
 
   % Arrows with path coefficients
   \draw [->] (b0) -- node[right] {$+$} (Y2);
   \draw [->] (b0) -- node[right] {$+$} (Y3);
-  \draw [->] (A2) edge node[below left] {$\beta_0$} (Y3);
-  \draw [->] (X2) edge node[below] {$\alpha_1$} (Y3);
+  \draw [->] (A2) edge node[above left] {$\beta_0$} (Y3);
+  \draw [->] (X2) edge node[above] {$\alpha_1$} (Y3);
   \draw [->] (Y2) edge node[right] {$1$} (X2);
-  \draw [->] (A1) edge node[left] {$\beta_0$} (Y2);
-  \draw [->] (X1) edge node[below] {$\alpha_1$} (Y2);
+  \draw [->] (A1) edge node[above left] {$\beta_0$} (Y2);
+  \draw [->] (X1) edge node[above] {$\alpha_1$} (Y2);
   \draw [->] (Y3) edge node[right] {$1$} (X3);
   \draw [->] (X1var) edge (X1);
   \draw [->] (X2var) edge (X2);
@@ -530,11 +547,11 @@ $$
 
   % Curved arrows for variances
   \draw [<->, out=45, in=135, looseness=2] (b0) to node[above] {$\sigma^2_{b0}$} (b0);
-  \draw [<->, out=45, in=135, looseness=2] (b2) to node[above] {$\sigma^2_{b2}$} (b2);
+  \draw [<->, out=315, in=225, looseness=2] (b2) to node[below] {$\sigma^2_{b2}$} (b2);
 
-  % Additional paths for A and X interaction effects
-  \draw[->, dashed] (b2) -- (1.5,1); % Adjusted x-coordinates
-  \draw[->, dashed] (b2) -- (5,1.2); % Adjusted x-coordinates
+  % Additional paths for random effects
+  \draw[->, dashed] (b2) -- (1.5,-1); 
+  \draw[->, dashed] (b2) -- (5,-1.2); 
 
 \end{tikzpicture}
 ```
@@ -569,13 +586,13 @@ $$ X_{it} \perp (b_{i0}, b_{i1}) \mid H_{it-1}, A_{it-1}, Y_{it}. $$
 
 This allows $X_{it}$ to be endogenous, but the endogenous covariate $X_{it}$ can only depend on the random effects through variables observed prior to $X_{it}$. If the only endogenous covariates are functions of prior treatments and prior outcomes, then the assumption automatically holds.
 
-When inspecting @fig-GM1_path and @fig-GM2_path, we may notice that $X_{it}$ becomes independent of the random effects after conditioning on $Y_{it}$. On the other hand, we can see that this assumption is violated in GM3/GM3A/GM3B, as $X_{it}$ depends directly on $b_{i0}$ and can thus not be made independent of the random effects by conditioning on prior variables such as $Y_{it}$ (see @fig-GM3_path, @fig-GM3A_path and @fig-GM3B_path)
+When inspecting @fig-GM1_path and @fig-GM2_path, we may notice that $X_{it}$ becomes independent of the random effects after conditioning on $Y_{it}$. On the other hand, we can see that this assumption is violated in GM3/3A/3B, as $X_{it}$ depends directly on $b_{i0}$ and can thus not be made independent of the random effects by conditioning on prior variables such as $Y_{it}$ (see @fig-GM3_path, @fig-GM3A_path and @fig-GM3B_path). Thus, we would expect biased estimates of the treatment effect for GM3/3A/3B.
 
 ## Backdoor Criterion and DAGs
 
 DAGs are a useful tool for representing causal relationships between variables and to evaluate the assumptions needed for causal identification. According to the backdoor criterion [@pearl1988; @pearl2009], a requirement for causal identification, causal effects can be identified by blocking non-causal paths through conditioning on intermediate variables (e.g., controlling or matching). If any non-causal paths cannot be blocked due to omitted variables or measurement error, treatment and outcome remain linked via backdoor paths, leading to biased estimates of the treatment effect [@Kim2021a].
 
-We formulated the DAGs in `dagitty`, where the random disturbance $b_{0i}$ was represented by the node U [e.g., @Kim2021a]. The DAGs for the first three observations of the three data generating models are presented in @fig-DAGs. The red arrows show the biased paths after controlling for the covariate $X_{it}$.
+We formulated the DAGs in `dagitty`, where the random disturbance $b_{0i}$ was represented by the node U [e.g., @Kim2021a]. The DAGs for the first three observations of the three data generating models are presented in @fig-DAGs.
 
 ::: {#fig-DAGs layout-ncol="2"}
 ```{r}
@@ -678,7 +695,7 @@ We formulated the DAGs in `dagitty`, where the random disturbance $b_{0i}$ was r
 \end{tikzpicture}
 ```
 
-*Note.* The red arrows show the biased backdoor path(s) in the treatment efffect.
+*Note.* The red arrows show the biased backdoor path(s) in the treatment efffect (before controlling for $X_{it}$).
 
 DAGs for Generative Models 1, 2, 3/3A/3B (t = 1, 2, 3)
 :::
@@ -816,9 +833,20 @@ As shown in Table X, GM3 results in bias
     \end{tabular}
 \end{table}
 ```
+
 # Discussion
 
-Despite a violation of the conditional independence assumption in GM 3, 3A and 3B; biased MLM estimates were only found for GM3.
+-   Initially, it seemed that the issue of endogenous covariates meant that, for unbiased estimation of the treatment effect, we should rely on GEE with independence. However, it is important not to conflate the issues mentioned by @qian2020. The first issue pertains to model interpretation: should we expect covariates to be endogenous and be primarily interested in marginal interpretations of the parameters rather than the person-specific (conditional-on-the-random-effect) interpretation, we should indeed employ GEE with working independence (OR STRUCTURAL MARGINAL MODELS??? CHECK THIS OUT IN ZOTERO). The second issue pertains to model fitting: once we conclude that person-specific interpretation aligns with our interest but we fear the presence of endogenous covariates, we have to assess the conditional independence assumption.
+
+-   Despite a violation of the conditional independence assumption in GM 3, 3A and 3B; biased MLM estimates were only found for GM3.
+
+-   While GEE with independence may indeed yield unbiased estimators of the marginal effect as mentioned by @qian2020, this 
+
+
+# To-do
+
+- wasn't working exchangeability in GEE equivalent to MLM? then use this to argue why using this GEE variation. Because for the difference of GEE with independence from the actual specified conditional parameter estimates should indicate a difference between the marginal and conditional effect, but this is not bias. Can we speak of bias with exchangeability?
+
 
 \newpage
 
@@ -932,8 +960,6 @@ Statistical analyses pertaining to the GEE and basic MLM will be performed in `R
 #| echo: false
 #| eval: false
 #| cache: true
-
-library(dagitty)
 
 GM1_DAG <- dagitty('dag {
 bb="0,0,1,1"
