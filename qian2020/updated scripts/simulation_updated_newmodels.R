@@ -9,7 +9,7 @@
 rm(list = ls())
 
 set.seed(123) # set global seed
-runname <- "GM3C_duo_1000reps" # set a runname
+runname <- "GM123ad-1000reps-researchreport" # set a runname
 
 # make a directory in simulation_results based on runname
 dir.create(paste0("simulation_results/", runname), showWarnings = FALSE)
@@ -51,8 +51,11 @@ nsim <- 1000
 # simulation for all models with N = 200, 1000, T = 10, 30
 # design <- expand.grid(sample_size = c(200, 1000), total_T = c(10, 30), dgm_type = c(1, "1a", "1b", 2, "2a", "2b", 3, "3a", "3b"))
 
+# simulation for Research Report
+design <- expand.grid(sample_size = c(30, 100, 200), total_T = c(10, 30), dgm_type = c(1,2,3,"3a","3d"))
+
 # simulation for models 3, 3a, 3b, 3c, 3d with N = 1000, T = 10, 30
-design <- expand.grid(sample_size = c(200), total_T = c(10, 30), dgm_type = c(3, "3c"))
+# design <- expand.grid(sample_size = c(200), total_T = c(10, 30), dgm_type = c(3, "3c"))
 
 # make sure dgm_type is not a factor
 design$dgm_type <- as.character(design$dgm_type)
@@ -441,7 +444,7 @@ library(xtable)
 # make table for beta0 bias with Standarddeviation and success rate
 colnames(design3a) <- c("GM", "T", "N", "MLM_bias", "MLM_sd", "GEE-Ex_bias", "GEE-Ex_sd", 
                         "GEE-AR1_bias", "GEE-AR1_sd", "GEE-Ind_bias", "GEE-Ind_sd", "MLM_success", "GEE-Ex_success", "GEE-AR1_success", "GEE-Ind_success")
-print(xtable(design3a, digits = c(0, 0, 0, 0, rep(3, 8), rep(2, 4)), 
+print(xtable(design3a, digits = c(0, 0, 0, 0, rep(3, 8), rep(3, 4)), 
              caption = paste0("Results for beta0 bias with Standarddeviation and success rate, ", nsim, " replications, run: ", runname), label = "tab:beta0_bias_sd_success"), 
       include.rownames = FALSE, file = paste0("simulation_results/", runname, "/results_beta0_bias_sd_success.tex"))
 

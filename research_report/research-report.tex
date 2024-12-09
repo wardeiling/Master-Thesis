@@ -23,8 +23,8 @@
 \usepackage{lmodern}
 \ifPDFTeX\else  
     % xetex/luatex font selection
-  \setmainfont[]{Latin Modern Roman}
-  \setsansfont[]{Latin Modern Roman}
+    \setmainfont[]{Latin Modern Roman}
+    \setsansfont[]{Latin Modern Roman}
 \fi
 % Use upquote if available, for straight quotes in verbatim environments
 \IfFileExists{upquote.sty}{\usepackage{upquote}}{}
@@ -37,14 +37,28 @@
 \setlength{\emergencystretch}{3em} % prevent overfull lines
 \setcounter{secnumdepth}{5}
 % Make \paragraph and \subparagraph free-standing
+\makeatletter
 \ifx\paragraph\undefined\else
   \let\oldparagraph\paragraph
-  \renewcommand{\paragraph}[1]{\oldparagraph{#1}\mbox{}}
+  \renewcommand{\paragraph}{
+    \@ifstar
+      \xxxParagraphStar
+      \xxxParagraphNoStar
+  }
+  \newcommand{\xxxParagraphStar}[1]{\oldparagraph*{#1}\mbox{}}
+  \newcommand{\xxxParagraphNoStar}[1]{\oldparagraph{#1}\mbox{}}
 \fi
 \ifx\subparagraph\undefined\else
   \let\oldsubparagraph\subparagraph
-  \renewcommand{\subparagraph}[1]{\oldsubparagraph{#1}\mbox{}}
+  \renewcommand{\subparagraph}{
+    \@ifstar
+      \xxxSubParagraphStar
+      \xxxSubParagraphNoStar
+  }
+  \newcommand{\xxxSubParagraphStar}[1]{\oldsubparagraph*{#1}\mbox{}}
+  \newcommand{\xxxSubParagraphNoStar}[1]{\oldsubparagraph{#1}\mbox{}}
 \fi
+\makeatother
 
 
 \providecommand{\tightlist}{%
@@ -107,6 +121,8 @@
 
 \usepackage{fancyhdr}
 \usepackage{amsmath}
+\usepackage{multirow}
+\usepackage{booktabs}
 \makeatletter
 \@ifpackageloaded{caption}{}{\usepackage{caption}}
 \AtBeginDocument{%
@@ -148,6 +164,7 @@
 \@ifpackageloaded{caption}{}{\usepackage{caption}}
 \@ifpackageloaded{subcaption}{}{\usepackage{subcaption}}
 \makeatother
+
 \ifLuaTeX
   \usepackage{selnolig}  % disable illegal ligatures
 \fi
@@ -164,6 +181,7 @@
   citecolor={Blue},
   urlcolor={Blue},
   pdfcreator={LaTeX via pandoc}}
+
 
 \title{Estimation of Effects of Endogenous Time-Varying Covariates: A
 Comparison Of Multilevel Linear Modeling and Generalized Estimating
@@ -225,6 +243,7 @@ Estimating Equations \par}
 % of the degree of Doctor of Philosophy \par}
 }
 
+
 \setstretch{2}
 \newpage
 
@@ -254,12 +273,35 @@ endogenous covariates} may lead to biased causal estimates. A
 time-varying covariate is \emph{endogenous} if it is directly or
 indirectly influenced by prior treatment or outcome, meaning its value
 may be determined by earlier stages of the process
-(\citeproc{ref-qian2020}{Qian et al., 2020}). As a result of including
-these covariates in these models, ordinary interpretations of the
-coefficients are no longer valid (\citeproc{ref-qian2020}{Qian et al.,
-2020, p. 3}). According to Diggle (\citeproc{ref-diggle2002}{2002}),
-this issue not only pertains GEE and MLM, but \emph{all} longitudinal
-data analysis methods.
+(\citeproc{ref-qian2020}{Qian et al., 2020}).
+Figure~\ref{fig-endogenous-example} showcases a simple multilevel linear
+model, with a random intercept \(b_{0i}\) and an endogenous covariate
+\(X_{it}\).
+
+\begin{figure}[H]
+
+\caption{\label{fig-endogenous-example}Multilevel Linear Model with
+Time-Varying Endogenous Covariate \(X_{it}\).}
+
+\centering{
+
+\includegraphics{research-report_files/figure-pdf/endogenous-example-1.pdf}
+
+\emph{Note}. Adapted from Section 2.2 of Qian et al.
+(\citeproc{ref-qian2020}{2020}).
+
+}
+
+\end{figure}%
+
+As a result of including these covariates in these models, ordinary
+interpretations of the coefficients are no longer valid
+(\citeproc{ref-qian2020}{Qian et al., 2020, p. 3}). According to Diggle
+(\citeproc{ref-diggle2002}{2002}), this issue not only pertains GEE and
+MLM, but \emph{all} longitudinal data analysis methods.
+
+The issue described in Qian et al. (\citeproc{ref-qian2020}{2020}) can
+be
 
 However, due to a divide between the disciplines that employ these
 methods, such critiques of the MLM appear to have largely failed to
@@ -577,8 +619,8 @@ which is given by:
 
 \[ X_{it} \perp (b_{i0}, b_{i1}) \mid H_{it-1}, A_{it-1}, Y_{it}. \]
 
-where \(H_it\) refers to the history of the set of covariates, which in
-this case are all observations of covariate \(X_it\) prior to the
+where \(H_{it-1}\) refers to the history of the set of covariates, which
+in this case are all observations of covariate \(X_{it}\) prior to the
 current timepoint \(t\). This allows \(X_{it}\) to be endogenous, but
 the endogenous covariate \(X_{it}\) can only depend on the random
 effects through variables observed prior to \(X_{it}\). If the only
@@ -618,7 +660,7 @@ Figure~\ref{fig-DAGs}.
 
 \begin{figure}[H]
 
-\caption{\label{fig-DAGs}DAGs for Generative Models 1, 2, 3/3A/3B (t =
+\caption{\label{fig-DAGs}DAGs for Generative Models 1, 2, 3, 3A, 3B (t =
 1, 2, 3)}
 
 \begin{minipage}{0.50\linewidth}
@@ -677,15 +719,9 @@ controlling for \(X_{it}\) blocks this backdoor path, making the
 treatment effect unbiased. In other words, the history of covariate
 \(X_{it}\) is a sufficient adjustment set for the treatment effect.
 
-The results of Qian et al. (\citeproc{ref-qian2020}{2020}) show that GM3
-is the only model with bias in the treatment effect. However, the
-backdoor criterion failed to identify this bias, as there is no backdoor
-path in the treatment effect. This may be explained by the fact that the
-DAG does not impose restrictions based on (a) the random slopes and (b)
-interaction effects. Concerns regarding the use of Pearl's backdoor
-criterion in situations with interaction effects have been voiced by
-several people (see Weinberg (\citeproc{ref-weinberg2007}{2007}); Attia
-et al. (\citeproc{ref-attia2022}{2022})).
+All things considered, according to the backdoor criterion, controlling
+for the covariate \(X_{it}\) should not result in biased estimates of
+the treatment effect for any of the generative models.
 
 \subsection{Data Analysis}\label{data-analysis}
 
@@ -719,29 +755,36 @@ effects of the generative model at hand.
 
 \section{Results}\label{results}
 
-\textbf{?@tbl-simulation\_results} presents the simulation results for
+Table~\ref{tbl-simulation-results} presents the simulation results for
 each of the generative and analytical models. The estimates for the
 analytical MLM may be interpreted in terms of bias. Here we find that
-there is little to no bias for GM1/3a/3b, small bias for GM2 and
-substantial bias for GM3. Thus, once we remove either the dependency of
-the random intercept with the covariate (GM1), the random slope
-\(b_{i2}\) (GM3A) or the interaction \(\beta_1\) (GM3B) from GM3, the
-bias dissapears or becomes extremely small. This bias in GM3 decreases
-as the number of timepoints \(T\) increases from 10 to 30. Note that the
-MLM model fitting success rates are poor for GM2, ranging from 0.92 to
-0.09, implying that for the latter case, only 90 of the 1000 models were
-fitted.
+there is little to no bias for GM1/2/3A/3B and substantial bias for GM3.
+Thus, once we remove either the dependency of the random intercept with
+the covariate (GM1), the random slope \(b_{i2}\) (GM3A) or the
+interaction \(\beta_1\) (GM3B) from GM3, the bias dissapears or becomes
+extremely small. The bias in GM3 decreases as the number of timepoints
+\(T\) increases from 10 to 30. Note that the MLM model fitting success
+rates are particularly poor for GM2, where in the worst case, only 87 of
+the 1000 models were fitted.
 
 For the GEE with independence, the values refer to the difference
-between the estimated unbiased marginal effect and the specified
-conditional effect. Here we find that there is a difference between
-these effects of around .09 for GM1, 0.03 for GM3 and close to zero for
-GM3A/GM3B.
+between the estimated marginal effect---which should be unbiased under
+endogenous covariates (see \citeproc{ref-pepe1994}{Pepe \& Anderson,
+1994})---and the specified conditional effect. Here we find that there
+is a enormous difference between these effects for GM2, which increases
+along with an increase in \(T\) and \(N\), up to a difference of more
+than 6,000. This is followed by a difference of around .07-.09 for GM1,
+.02-.04 for GM3, \(\leq 0.015\) for GM3B and close to zero for GM3A. The
+GEE models fitted succesfully for all settings.
 
-The GEE models fitted succesfully for all settings.
+\begin{table}
 
-\begin{table}[H]
-    \caption{Simulation results for $N=200$ and $\beta_{0,MLM} = 1$ over $1000$ replications, with $T=10$ and $T=30$.}
+\caption{\label{tbl-simulation-summary}Simulation results for \(N=200\)
+and \(\beta_{0,MLM} = 1\) over \(1000\) replications, with \(T=10\) and
+\(T=30\).}
+
+\centering{
+
     \centering
     \begin{tabular}{@{}p{1.5cm} p{5cm} cc cc@{}}
         \toprule
@@ -750,76 +793,144 @@ The GEE models fitted succesfully for all settings.
            &                 & \( T = 10 \) & \( T = 30 \) & \( T = 10 \) & \( T = 30 \) \\ \midrule
         1  & Includes random intercept and random slope for treatment & 0.003 & 0.001 & 0.086 & 0.090 \\
         3  & Model 1 with dependency random intercept and covariate       & -0.051 & -0.023 & 0.033 & 0.032 \\
-        3a & Model 3 without random slope $b_{2i}$           & 0.002 & -0.000 & -0.001 & -0.000 \\
-        3b & Model 3 without interaction effect $\beta_1$ (between treatment and covariate) & 0.005 & 0.001 & 0.003 & 0.001 \\
+        3A & Model 3 without random slope $b_{2i}$           & 0.002 & -0.000 & -0.001 & -0.000 \\
+        3B & Model 3 without interaction effect $\beta_1$ (between treatment and covariate) & 0.005 & 0.001 & 0.003 & 0.001 \\
         \bottomrule
     \end{tabular}
     \label{tab:tbl-simulation_results}
-\end{table}
 
-% latex table generated in R 4.4.2 by xtable 1.8-4 package
-% Thu Nov 28 15:42:58 2024
-\begin{table}[H]
-\centering
-\begin{tabular}{lrrrrrrrrrrrrrr}
-  \hline
-GM & T & N & MLM\_bias & MLM\_sd & GEE-Ex\_bias & GEE-Ex\_sd & GEE-AR1\_bias & GEE-AR1\_sd & GEE-Ind\_bias & GEE-Ind\_sd & MLM\_success & GEE-Ex\_success & GEE-AR1\_success & GEE-Ind\_success \\ 
-  \hline
-1 & 10 & 30 & 0.000 & 0.238 & 0.080 & 0.235 & -0.042 & 0.268 & 0.071 & 0.296 & 1.00 & 1.00 & 1.00 & 1.00 \\ 
-  1 & 10 & 100 & -0.012 & 0.129 & 0.071 & 0.129 & -0.037 & 0.142 & 0.074 & 0.169 & 1.00 & 1.00 & 1.00 & 1.00 \\ 
-  1 & 10 & 200 & 0.003 & 0.093 & 0.087 & 0.090 & -0.015 & 0.097 & 0.085 & 0.116 & 1.00 & 1.00 & 1.00 & 1.00 \\ 
-  1 & 30 & 30 & -0.001 & 0.203 & 0.086 & 0.205 & -0.091 & 0.219 & 0.085 & 0.224 & 1.00 & 1.00 & 1.00 & 1.00 \\ 
-  1 & 30 & 100 & -0.007 & 0.107 & 0.084 & 0.110 & -0.106 & 0.134 & 0.083 & 0.123 & 1.00 & 1.00 & 1.00 & 1.00 \\ 
-  1 & 30 & 200 & 0.001 & 0.079 & 0.095 & 0.079 & -0.103 & 0.106 & 0.094 & 0.088 & 1.00 & 1.00 & 1.00 & 1.00 \\ 
-  \hline
-  2 & 10 & 30 & 0.011 & 0.282 & -0.116 & 1.017 & -0.354 & 0.836 & 0.306 & 1.630 & 0.92 & 1.00 & 1.00 & 1.00 \\ 
-  2 & 10 & 100 & 0.005 & 0.147 & -0.095 & 1.183 & -0.367 & 0.867 & 0.565 & 1.836 & 0.88 & 1.00 & 1.00 & 1.00 \\ 
-  2 & 10 & 200 & 0.008 & 0.103 & 0.066 & 1.219 & -0.248 & 0.892 & 0.935 & 1.887 & 0.84 & 1.00 & 1.00 & 1.00 \\ 
-  2 & 30 & 30 & 0.000 & 0.220 & -373.623 & 15220.410 & -7.737 & 6866.989 & 182.565 & 4751.387 & 0.60 & 1.00 & 1.00 & 1.00 \\ 
-  2 & 30 & 100 & -0.014 & 0.114 & -891.751 & 35797.928 & -381.111 & 19404.416 & -356.412 & 39799.388 & 0.25 & 1.00 & 1.00 & 1.00 \\ 
-  2 & 30 & 200 & -0.013 & 0.087 & 4311.505 & 127396.588 & 2377.454 & 70214.358 & 6319.792 & 136201.790 & 0.09 & 1.00 & 1.00 & 1.00 \\ 
-  \hline
-  3 & 10 & 30 & -0.052 & 0.245 & 0.031 & 0.230 & -0.122 & 0.223 & 0.020 & 0.249 & 1.00 & 1.00 & 1.00 & 1.00 \\ 
-  3 & 10 & 100 & -0.064 & 0.134 & 0.024 & 0.127 & -0.121 & 0.124 & 0.024 & 0.141 & 1.00 & 1.00 & 1.00 & 1.00 \\ 
-  3 & 10 & 200 & -0.051 & 0.096 & 0.039 & 0.089 & -0.111 & 0.087 & 0.035 & 0.097 & 1.00 & 1.00 & 1.00 & 1.00 \\ 
-  3 & 30 & 30 & -0.024 & 0.206 & 0.032 & 0.202 & -0.124 & 0.182 & 0.030 & 0.208 & 1.00 & 1.00 & 1.00 & 1.00 \\ 
-  3 & 30 & 100 & -0.030 & 0.108 & 0.028 & 0.108 & -0.128 & 0.096 & 0.027 & 0.112 & 1.00 & 1.00 & 1.00 & 1.00 \\ 
-  3 & 30 & 200 & -0.023 & 0.080 & 0.038 & 0.078 & -0.120 & 0.070 & 0.037 & 0.081 & 1.00 & 1.00 & 1.00 & 1.00 \\ 
-   \hline
-\end{tabular}
-\caption{Results for beta0 bias with Standarddeviation and success rate, 1000 replications, run: GM123-trio-1000reps} 
-\label{tab:beta0_bias_sd_success}
-\end{table}
+}
 
-% latex table generated in R 4.4.2 by xtable 1.8-4 package
-% Thu Nov 28 15:08:39 2024
-\begin{table}[H]
+\end{table}%
+
+\begin{table}
+
+\caption{\label{tbl-simulation-results}Simulation results for treatment
+effect bias and differences between estimated marginal and true
+conditional parameter estimates, 1000 replications}
+
+\centering{
+
 \centering
-\begin{tabular}{lrrrrrrrrrr}
-  \hline
-GM & T & N & MLM\_bias & MLM\_sd & GEE-Ex\_bias & GEE-Ex\_sd & GEE-AR1\_bias & GEE-AR1\_sd & GEE-Ind\_bias & GEE-Ind\_sd \\ 
-  \hline
-3 & 10 & 200 & -0.051 & 0.096 & 0.039 & 0.089 & -0.111 & 0.087 & 0.035 & 0.097 \\ 
-  3 & 30 & 200 & -0.023 & 0.080 & 0.038 & 0.078 & -0.120 & 0.070 & 0.037 & 0.081 \\ 
-  3a & 10 & 200 & 0.002 & 0.048 & 0.002 & 0.048 & -0.146 & 0.056 & -0.001 & 0.062 \\ 
-  3a & 30 & 200 & -0.000 & 0.028 & -0.000 & 0.028 & -0.154 & 0.032 & -0.000 & 0.036 \\ 
-  3d & 10 & 200 & 0.005 & 0.087 & 0.005 & 0.087 & -0.195 & 0.080 & 0.003 & 0.097 \\ 
-  3d & 30 & 200 & 0.001 & 0.075 & 0.001 & 0.075 & -0.207 & 0.064 & 0.001 & 0.080 \\ 
-  3h & 10 & 200 & 0.020 & 0.092 & 0.053 & 0.089 & -0.046 & 0.100 & 0.628 & 0.152 \\ 
-  3h & 30 & 200 & 0.003 & 0.078 & 0.042 & 0.078 & -0.053 & 0.084 & 0.673 & 0.144 \\ 
-   \hline
+%\renewcommand{\arraystretch}{0.65} % Decrease row height
+\begin{tabular}{@{}lcccccccc@{}}
+\toprule
+GM & T & N & \multicolumn{2}{c}{MLM} & \multicolumn{2}{c}{GEE-Ind} & MLM\_success \\
+\cmidrule(lr){4-5} \cmidrule(lr){6-7}
+   &   &   & Bias & SD & Bias & SD &   \\ \midrule
+\multirow{6}{*}{1} & 10 & 30 & 0.000 & 0.238 & 0.071 & 0.296 & 0.998 \\ 
+   & 10 & 100 & -0.012 & 0.129 & 0.074 & 0.169 & 1.000 \\ 
+   & 10 & 200 & 0.003 & 0.093 & 0.085 & 0.116 & 0.999 \\ 
+   & 30 & 30 & -0.001 & 0.203 & 0.085 & 0.224 & 0.998 \\ 
+   & 30 & 100 & -0.007 & 0.107 & 0.083 & 0.123 & 0.996 \\ 
+   & 30 & 200 & 0.001 & 0.079 & 0.094 & 0.088 & 0.996 \\ 
+\midrule
+\multirow{6}{*}{2} & 10 & 30 & 0.011 & 0.282 & 0.306 & 1.630 & 0.925 \\ 
+   & 10 & 100 & 0.005 & 0.147 & 0.565 & 1.836 & 0.881 \\ 
+   & 10 & 200 & 0.008 & 0.103 & 0.935 & 1.887 & 0.844 \\ 
+   & 30 & 30 & 0.000 & 0.220 & 182.565 & 4751.387 & 0.603 \\ 
+   & 30 & 100 & -0.014 & 0.114 & -356.412 & 39799.388 & 0.247 \\ 
+   & 30 & 200 & -0.013 & 0.087 & 6319.792 & 136201.790 & 0.087 \\ 
+\midrule
+\multirow{6}{*}{3} & 10 & 30 & -0.052 & 0.245 & 0.020 & 0.249 & 0.999 \\ 
+   & 10 & 100 & -0.064 & 0.134 & 0.024 & 0.141 & 1.000 \\ 
+   & 10 & 200 & -0.051 & 0.096 & 0.035 & 0.097 & 1.000 \\ 
+   & 30 & 30 & -0.024 & 0.206 & 0.030 & 0.208 & 0.997 \\ 
+   & 30 & 100 & -0.030 & 0.108 & 0.027 & 0.112 & 0.996 \\ 
+   & 30 & 200 & -0.023 & 0.080 & 0.037 & 0.081 & 0.997 \\ 
+\midrule
+\multirow{6}{*}{3A} & 10 & 30 & 0.000 & 0.126 & -0.004 & 0.157 & 1.000 \\ 
+   & 10 & 100 & 0.004 & 0.073 & 0.001 & 0.090 & 1.000 \\ 
+   & 10 & 200 & 0.002 & 0.048 & -0.001 & 0.062 & 1.000 \\ 
+   & 30 & 30 & -0.001 & 0.071 & -0.003 & 0.090 & 1.000 \\ 
+   & 30 & 100 & 0.000 & 0.040 & -0.001 & 0.051 & 1.000 \\ 
+   & 30 & 200 & -0.000 & 0.028 & -0.000 & 0.036 & 1.000 \\ 
+\midrule
+\multirow{6}{*}{3B} & 10 & 30 & 0.001 & 0.217 & -0.013 & 0.241 & 0.999 \\ 
+   & 10 & 100 & -0.008 & 0.121 & -0.008 & 0.138 & 1.000 \\ 
+   & 10 & 200 & 0.005 & 0.087 & 0.003 & 0.097 & 1.000 \\ 
+   & 30 & 30 & 0.000 & 0.193 & -0.004 & 0.200 & 1.000 \\ 
+   & 30 & 100 & -0.008 & 0.103 & -0.007 & 0.108 & 0.997 \\ 
+   & 30 & 200 & 0.001 & 0.075 & 0.001 & 0.080 & 0.999 \\ 
+\bottomrule
 \end{tabular}
-\caption{Results for beta0 bias with Standarddeviation, 1000 replications, run: GM3adh-trio-1000reps} 
-\label{tab:beta0_bias_sd}
-\end{table}
+
+}
+
+\end{table}%
 
 \section{Discussion}\label{discussion}
 
-The first research question, pertained to the extent of bias in MLM
-estimates of generative model that were nested in GM3. Here, we found
-that bias in the treatment effect practically dissapeared when removing
-either (1) the dependency between the random intercept and covariate,
-(2) the random slope for treatment or (3) the interaction effect. This
+This report employed both graphical methods and data simulations to
+understand and explain the issue of endogenous covariates. Now we will
+discuss the findings relating to the two research questions, while
+excluding GM2 due to model fitting issues.
+
+Using the conditional independence assumption of Qian et al.
+(\citeproc{ref-qian2020}{2020}), we would expect, based on the path
+diagrams, that the treatment effect would be biased for GM3, 3A and 3B.
+On the other hand, the backdoor criterion suggested the absence of bias
+for all generative models. While Qian et al.
+(\citeproc{ref-qian2020}{2020}) show that GM3 is the only model with
+bias in the treatment effect, the backdoor criterion failed to identify
+this bias, as there is no backdoor path in the treatment effect. This
+may be explained by the fact that the DAG does not impose restrictions
+based on (a) the random slopes and (b) interaction effects. Concerns
+regarding the use of Pearl's backdoor criterion in situations with
+interaction effects have been voiced by several people (see Weinberg
+(\citeproc{ref-weinberg2007}{2007}); Attia et al.
+(\citeproc{ref-attia2022}{2022})).
+
+The first research question---pertaining to the extent of treatment
+effect bias in MLM estimates of generative model that were nested in
+GM3---was investigated using the analytical multilevel model. First, we
+reproduced the findings by Qian et al. (\citeproc{ref-qian2020}{2020})
+that the estimators are consistent for GM1 and GM2, but inconsistent for
+GM3. Using additional generative models, we found that bias became
+indiscernable when removing from GM3 either the dependency between the
+random intercept and covariate (GM1), the random slope for treatment
+(GM3A) or the interaction effect (GM3B). This finding is in sharp
+contrast to the suggestion of the conditional independence assumption
+that the treatment effect would be biased for GM3, 3A and 3B.
+
+The second research question---related to the discrepancy between
+marginal and conditional interpretations of the treatment effect---was
+assessed with analytical GEE with working independence. Here we found
+extreme differences between the estimated marginal and specified
+conditional effect for GM2, suggesting that the marginal interpretation
+breaks down the most for this generative model\footnote{Note, however,
+  that this generative model may not be plausible given the extreme
+  spread across the covariate and treatment variables.}. Hence, for this
+GM, a false interpretation of the MLM parameters as marginal, would
+potentially have great inferential consequences. For GM1 and GM3, there
+smaller but still noticeable differences between the marginal and
+conditional effect. This suggests that the marginal interpretation of
+the treatment effect may be recovered for GM3, 3A and 3B, but not for
+GM2. Especially for GM3A, this difference was practically indescernable,
+suggesting that the marginal interpretation of the treatment effect may
+be recovered. Conversely, Qian et al. (\citeproc{ref-qian2020}{2020})
+notes that if the random effect in the model does not interact with the
+treatment variable, the interaction recovers its marginal interpretation
+but the treatment effect does not (p.~382). This difference in
+conclusions may be explained through the difference in approach: while
+Qian et al. (\citeproc{ref-qian2020}{2020}) provides an analytical
+answer, the current study provides approximations through simulations.
+
+For the GM2 setting of Qian et al. (\citeproc{ref-qian2020}{2020}), we
+found several issues, which were most pronounced for \(T = 30\). First,
+we noticed extreme model fitting issues for the MLM, due to, among other
+things, a lack of convergence and singularity. It should be noted that
+unlike the script used here, Qian et al. (\citeproc{ref-qian2020}{2020})
+deals only with errors of the \texttt{lmer()} function, but not with
+warnings (e.g., pertaining to non-convergence) in their script. This
+discrepancy may explain the slightly different estimates of MLM bias for
+GM2. Second, we found extremely large GEE estimates of the treatment
+effect. This may be explained by the fact that the values of the
+covariate and outcome were also extremely great, often exceeding a
+million. All things considered, this suggests that GM2 may be a poorly
+specified model.
+
+\section{Other ideas}\label{other-ideas}
 
 \begin{itemize}
 \item
@@ -837,22 +948,12 @@ either (1) the dependency between the random intercept and covariate,
   interest but we fear the presence of endogenous covariates, we have to
   assess the conditional independence assumption.
 \item
-  Despite a violation of the conditional independence assumption in GM
-  3, 3A and 3B; biased MLM estimates were only found for GM3.
-\item
   Across all generative model, we generally found that the estimated
   fixed treatment effect differed more from the specified MLM effect for
   the analytical GEE models than for the analytical MLM model. This is
   rather unsurprising, considering that the MLM is analyzing the exact
   same model as was specified, thereby putting it at an advantage over
   the GEE.
-\item
-  For GEE with independence we found the largest difference between the
-  estimated marginal and specified conditional effect for GM1,
-  indicating that a false interpretation of the MLM parameters as
-  marginal, would potentially have the greatest inferential consequences
-  compared to the other GMs. For GM3A/3B, such a mistake would not be
-  consequential.
 \item
   While GEE with independence may indeed yield unbiased estimators of
   the marginal effect as mentioned by Qian et al.
@@ -864,35 +965,15 @@ either (1) the dependency between the random intercept and covariate,
   it is unclear what utility the combined marginal effect may serve in
   this context.
 \item
-  For GM2, we noticed extreme model fitting issues for the MLM, due to,
-  among other things, a lack of convergence. It should be noted that
-  unlike the script used here, Qian et al.
-  (\citeproc{ref-qian2020}{2020}) deals only with errors of the
-  \texttt{lmer()} function, but not with warnings (e.g., pertaining to
-  non-convergence) in their script. This discrepancy may explain the
-  slightly different estimates of MLM bias for GM2.
-\end{itemize}
-
-They set the same seed for every setting, potentially making the first
-dataset the same for every setting. Nevertheless, properly randomizing
-does not seem to drastically impact the results. The settings with GM2,
-\(T = 30\) and \(N \geq 100\) of Qian et al.
-(\citeproc{ref-qian2020}{2020}) results in very implausible values for
-the covariate \(X_{it}\) and outcome \(Y_{it+1}\), often exceeding a
-million. This may imply the presence of a non-stationary process (e.g.,
-unit root). In the case of GEE analytical models, these settings result
-in very large estimates.
-
-\begin{itemize}
-\tightlist
-\item
-  \ldots{}
-\end{itemize}
-
-\section{To-do}\label{to-do}
-
-\begin{itemize}
-\tightlist
+  They set the same seed for every setting, potentially making the first
+  dataset the same for every setting. Nevertheless, properly randomizing
+  does not seem to drastically impact the results. The settings with
+  GM2, \(T = 30\) and \(N \geq 100\) of Qian et al.
+  (\citeproc{ref-qian2020}{2020}) results in very implausible values for
+  the covariate \(X_{it}\) and outcome \(Y_{it+1}\), often exceeding a
+  million. This may imply the presence of a non-stationary process
+  (e.g., unit root). In the case of GEE analytical models, these
+  settings result in very large estimates.
 \item
   wasn't working exchangeability in GEE equivalent to MLM? then use this
   to argue why using this GEE variation. Because for the difference of
@@ -900,6 +981,13 @@ in very large estimates.
   estimates should indicate a difference between the marginal and
   conditional effect, but this is not bias. Can we speak of bias with
   exchangeability?
+
+  \begin{itemize}
+  \tightlist
+  \item
+    no it depends on the random effects, and it was compound symmetry.
+    Leave this for next time.
+  \end{itemize}
 \end{itemize}
 
 \newpage
@@ -961,6 +1049,13 @@ Networks of Plausible Inference}. Morgan Kaufmann.
 \bibitem[\citeproctext]{ref-pearl2009}
 Pearl, J. (2009). \emph{Causality: Models, reasoning, and inference}
 (2nd ed.). Cambridge University Press.
+
+\bibitem[\citeproctext]{ref-pepe1994}
+Pepe, M. S., \& Anderson, G. L. (1994). A cautionary note on inference
+for marginal regression models with longitudinal data and general
+correlated response data. \emph{Communications in Statistics -
+Simulation and Computation}, \emph{23}(4), 939--951.
+\url{https://doi.org/10.1080/03610919408813210}
 
 \bibitem[\citeproctext]{ref-qian2020}
 Qian, T., Klasnja, P., \& Murphy, S. A. (2020). Linear mixed models with
@@ -1147,6 +1242,7 @@ likelihood estimation.
 DAG for Generative Models\end{minipage}%
 
 \end{figure}%
+
 
 
 
