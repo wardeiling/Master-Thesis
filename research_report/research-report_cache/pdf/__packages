@@ -21,3 +21,5 @@ papaja
 rlang
 rmarkdown
 knitr
+kableExtra
+here

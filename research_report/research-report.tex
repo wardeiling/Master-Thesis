@@ -119,6 +119,20 @@
 \newcommand{\CSLRightInline}[1]{\parbox[t]{\linewidth - \csllabelwidth}{\strut#1\strut}}
 \newcommand{\CSLIndent}[1]{\hspace{\cslhangindent}#1}
 
+\usepackage{booktabs}
+\usepackage{longtable}
+\usepackage{array}
+\usepackage{multirow}
+\usepackage{wrapfig}
+\usepackage{float}
+\usepackage{colortbl}
+\usepackage{pdflscape}
+\usepackage{tabu}
+\usepackage{threeparttable}
+\usepackage{threeparttablex}
+\usepackage[normalem]{ulem}
+\usepackage{makecell}
+\usepackage{xcolor}
 \usepackage{fancyhdr}
 \usepackage{amsmath}
 \usepackage{multirow}
@@ -274,9 +288,14 @@ time-varying covariate is \emph{endogenous} if it is directly or
 indirectly influenced by prior treatment or outcome, meaning its value
 may be determined by earlier stages of the process
 (\citeproc{ref-qian2020}{Qian et al., 2020}).
-Figure~\ref{fig-endogenous-example} showcases a simple multilevel linear
-model, with a random intercept \(b_{0i}\) and an endogenous covariate
-\(X_{it}\).
+Figure~\ref{fig-endogenous-example} showcases a time-varying endogenous
+covariate \(X_{it}\) in the context of a simple multilevel linear model
+with a random intercept \(b_{0i}\). As a result of including these
+covariates in these models, ordinary interpretations of the coefficients
+are no longer valid (\citeproc{ref-qian2020}{Qian et al., 2020, p. 3}).
+According to Diggle (\citeproc{ref-diggle2002}{2002}), this issue not
+only pertains GEE and MLM, but \emph{all} longitudinal data analysis
+methods.
 
 \begin{figure}[H]
 
@@ -294,59 +313,29 @@ Time-Varying Endogenous Covariate \(X_{it}\).}
 
 \end{figure}%
 
-As a result of including these covariates in these models, ordinary
-interpretations of the coefficients are no longer valid
-(\citeproc{ref-qian2020}{Qian et al., 2020, p. 3}). According to Diggle
-(\citeproc{ref-diggle2002}{2002}), this issue not only pertains GEE and
-MLM, but \emph{all} longitudinal data analysis methods.
-
-The issue described in Qian et al. (\citeproc{ref-qian2020}{2020}) can
-be
-
 However, due to a divide between the disciplines that employ these
 methods, such critiques of the MLM appear to have largely failed to
 reach the applied researcher in psychology. One specific reason might be
 that the technical jargon in other disciplines makes it difficult for
-researchers to recognize when and how these issues emerge\footnote{For
-  instance, the term `endogeneity' in econometrics, while related, has a
-  distinct meaning from that of an endogenous variable, which can lead
-  to confusion.}. Therefore, this report aims to understand and explain
-the issue of including endogenous covariates in analyses involving GEE
-and MLM in a psychological context. To achieve this aim, the current
-investigation will employ (a) graphical tools such as the directed
-acyclic graph (DAG) and path diagram to assess causal identification
-assumptions, as well as (b) simulations with additional scenarios to
-pinpoint the issue.
-
-Accordingly, the following research questions will be addressed with
-sub-questions being specified to isolate the issue described in the Qian
-et al. (\citeproc{ref-qian2020}{2020}):
+researchers to recognize when and how these issues emerge{[}\^{}1{]}.
+Therefore, this report aims to understand and explain the issue of
+including endogenous covariates in analyses involving GEE and MLM in a
+psychological context. To achieve this aim, the current investigation
+employs (a) graphical tools such as the directed acyclic graph (DAG) and
+path diagram to assess potentially relevant assumptions, as well as (b)
+data simulations with additional scenarios to pinpoint the issue.
+Accordingly, the following research questions will be addressed:
 
 \begin{enumerate}
 \def\labelenumi{(\arabic{enumi})}
 \item
   When does the inclusion of endogenous variables in multilevel linear
   models result in biased estimates of the treatment effect?
-
-  \begin{enumerate}
-  \def\labelenumii{(\alph{enumii})}
-  \item
-    How is the bias in the treatment effect affected by the removal of
-    the interaction \(\beta_1\) from generative model 3?
-  \item
-    How is the bias in the treatment effect affected by the removal of
-    the random slope \(b_{i2}\) from generative model 3?
-  \end{enumerate}
 \item
   When does the inclusion of of endogenous covariates in multilevel
   linear models result in a discrepancy between conditional and marginal
   interpretations of the treatment effect?
 \end{enumerate}
-
-Research questions 1 and 2 will be investigated by employing MLM and GEE
-estimation respectively.
-
-\newpage
 
 \section{Methods}\label{methods}
 
@@ -359,7 +348,10 @@ directed acyclic graphs (DAGs) were used to evaluate the backdoor
 criterion (Pearl, 1988, 2009). Second, a simulation study was performed
 to reproduce the results for the generative models (GMs) from Qian et
 al. (\citeproc{ref-qian2020}{2020}) and to further isolate the issue
-using additional GMs.
+using additional GMs. In this simulation, bias in the treatment effect
+(RQ 1) was assessed with analytical multilevel models. The discrepancy
+between conditional and marginal interpretations of the treatment effect
+(RQ 2) was assessed with GEE with working independence.
 
 \subsection{Data Generation}\label{data-generation}
 
@@ -779,81 +771,84 @@ GEE models fitted succesfully for all settings.
 
 \begin{table}
 
-\caption{\label{tbl-simulation-summary}Simulation results for \(N=200\)
-and \(\beta_{0,MLM} = 1\) over \(1000\) replications, with \(T=10\) and
-\(T=30\).}
+\caption{\label{tbl-simulation-results}Simulation results for Generative
+Models 1, 2, 3, 3A and 3B over 1000 replications}
 
 \centering{
 
-    \centering
-    \begin{tabular}{@{}p{1.5cm} p{5cm} cc cc@{}}
-        \toprule
-        GM & Characteristics & \multicolumn{2}{c}{$\hat{\beta}_{0,MLM}-\beta_{0,MLM}$} & \multicolumn{2}{c}{$\hat{\beta}_{0,GEE-ind}-\beta_{0,MLM}$} \\ 
-        \cmidrule(lr){3-4} \cmidrule(lr){5-6}
-           &                 & \( T = 10 \) & \( T = 30 \) & \( T = 10 \) & \( T = 30 \) \\ \midrule
-        1  & Includes random intercept and random slope for treatment & 0.003 & 0.001 & 0.086 & 0.090 \\
-        3  & Model 1 with dependency random intercept and covariate       & -0.051 & -0.023 & 0.033 & 0.032 \\
-        3A & Model 3 without random slope $b_{2i}$           & 0.002 & -0.000 & -0.001 & -0.000 \\
-        3B & Model 3 without interaction effect $\beta_1$ (between treatment and covariate) & 0.005 & 0.001 & 0.003 & 0.001 \\
-        \bottomrule
-    \end{tabular}
-    \label{tab:tbl-simulation_results}
-
-}
-
-\end{table}%
-
-\begin{table}
-
-\caption{\label{tbl-simulation-results}Simulation results for treatment
-effect bias and differences between estimated marginal and true
-conditional parameter estimates, 1000 replications}
-
-\centering{
-
-\centering
-%\renewcommand{\arraystretch}{0.65} % Decrease row height
-\begin{tabular}{@{}lcccccccc@{}}
+\centering\centering
+\begin{tabular}[t]{>{\raggedright\arraybackslash}p{5em}rrrrrrrr}
 \toprule
-GM & T & N & \multicolumn{2}{c}{MLM} & \multicolumn{2}{c}{GEE-Ind} & MLM\_success \\
-\cmidrule(lr){4-5} \cmidrule(lr){6-7}
-   &   &   & Bias & SD & Bias & SD &   \\ \midrule
-\multirow{6}{*}{1} & 10 & 30 & 0.000 & 0.238 & 0.071 & 0.296 & 0.998 \\ 
-   & 10 & 100 & -0.012 & 0.129 & 0.074 & 0.169 & 1.000 \\ 
-   & 10 & 200 & 0.003 & 0.093 & 0.085 & 0.116 & 0.999 \\ 
-   & 30 & 30 & -0.001 & 0.203 & 0.085 & 0.224 & 0.998 \\ 
-   & 30 & 100 & -0.007 & 0.107 & 0.083 & 0.123 & 0.996 \\ 
-   & 30 & 200 & 0.001 & 0.079 & 0.094 & 0.088 & 0.996 \\ 
+\multicolumn{3}{c}{ } & \multicolumn{3}{c}{MLM} & \multicolumn{3}{c}{GEE-IND} \\
+\cmidrule(l{3pt}r{3pt}){4-6} \cmidrule(l{3pt}r{3pt}){7-9}
+GM & T & N & Bias & SD & SR & Difference & SD & SR\\
 \midrule
-\multirow{6}{*}{2} & 10 & 30 & 0.011 & 0.282 & 0.306 & 1.630 & 0.925 \\ 
-   & 10 & 100 & 0.005 & 0.147 & 0.565 & 1.836 & 0.881 \\ 
-   & 10 & 200 & 0.008 & 0.103 & 0.935 & 1.887 & 0.844 \\ 
-   & 30 & 30 & 0.000 & 0.220 & 182.565 & 4751.387 & 0.603 \\ 
-   & 30 & 100 & -0.014 & 0.114 & -356.412 & 39799.388 & 0.247 \\ 
-   & 30 & 200 & -0.013 & 0.087 & 6319.792 & 136201.790 & 0.087 \\ 
-\midrule
-\multirow{6}{*}{3} & 10 & 30 & -0.052 & 0.245 & 0.020 & 0.249 & 0.999 \\ 
-   & 10 & 100 & -0.064 & 0.134 & 0.024 & 0.141 & 1.000 \\ 
-   & 10 & 200 & -0.051 & 0.096 & 0.035 & 0.097 & 1.000 \\ 
-   & 30 & 30 & -0.024 & 0.206 & 0.030 & 0.208 & 0.997 \\ 
-   & 30 & 100 & -0.030 & 0.108 & 0.027 & 0.112 & 0.996 \\ 
-   & 30 & 200 & -0.023 & 0.080 & 0.037 & 0.081 & 0.997 \\ 
-\midrule
-\multirow{6}{*}{3A} & 10 & 30 & 0.000 & 0.126 & -0.004 & 0.157 & 1.000 \\ 
-   & 10 & 100 & 0.004 & 0.073 & 0.001 & 0.090 & 1.000 \\ 
-   & 10 & 200 & 0.002 & 0.048 & -0.001 & 0.062 & 1.000 \\ 
-   & 30 & 30 & -0.001 & 0.071 & -0.003 & 0.090 & 1.000 \\ 
-   & 30 & 100 & 0.000 & 0.040 & -0.001 & 0.051 & 1.000 \\ 
-   & 30 & 200 & -0.000 & 0.028 & -0.000 & 0.036 & 1.000 \\ 
-\midrule
-\multirow{6}{*}{3B} & 10 & 30 & 0.001 & 0.217 & -0.013 & 0.241 & 0.999 \\ 
-   & 10 & 100 & -0.008 & 0.121 & -0.008 & 0.138 & 1.000 \\ 
-   & 10 & 200 & 0.005 & 0.087 & 0.003 & 0.097 & 1.000 \\ 
-   & 30 & 30 & 0.000 & 0.193 & -0.004 & 0.200 & 1.000 \\ 
-   & 30 & 100 & -0.008 & 0.103 & -0.007 & 0.108 & 0.997 \\ 
-   & 30 & 200 & 0.001 & 0.075 & 0.001 & 0.080 & 0.999 \\ 
+ &  & 30 & 0.000 & 0.238 & 0.998 & 0.071 & 0.296 & 1\\
+\cmidrule{3-9}
+ &  & 100 & -0.012 & 0.129 & 1.000 & 0.074 & 0.169 & 1\\
+\cmidrule{3-9}
+ & \multirow{-3}{*}{\raggedleft\arraybackslash 10} & 200 & 0.003 & 0.093 & 0.999 & 0.085 & 0.116 & 1\\
+\cmidrule{2-9}
+ &  & 30 & -0.001 & 0.203 & 0.998 & 0.085 & 0.224 & 1\\
+\cmidrule{3-9}
+ &  & 100 & -0.007 & 0.107 & 0.996 & 0.083 & 0.123 & 1\\
+\cmidrule{3-9}
+\multirow{-6}{5em}[0.5\dimexpr\aboverulesep+\belowrulesep+\cmidrulewidth]{\raggedright\arraybackslash 1} & \multirow{-3}{*}{\raggedleft\arraybackslash 30} & 200 & 0.001 & 0.079 & 0.996 & 0.094 & 0.088 & 1\\
+\cmidrule{1-9}
+ &  & 30 & 0.011 & 0.282 & 0.925 & 0.306 & 1.630 & 1\\
+\cmidrule{3-9}
+ &  & 100 & 0.005 & 0.147 & 0.881 & 0.565 & 1.836 & 1\\
+\cmidrule{3-9}
+ & \multirow{-3}{*}{\raggedleft\arraybackslash 10} & 200 & 0.008 & 0.103 & 0.844 & 0.935 & 1.887 & 1\\
+\cmidrule{2-9}
+ &  & 30 & 0.000 & 0.220 & 0.603 & 182.565 & 4751.387 & 1\\
+\cmidrule{3-9}
+ &  & 100 & -0.014 & 0.114 & 0.247 & -356.412 & 39799.388 & 1\\
+\cmidrule{3-9}
+\multirow{-6}{5em}[0.5\dimexpr\aboverulesep+\belowrulesep+\cmidrulewidth]{\raggedright\arraybackslash 2} & \multirow{-3}{*}{\raggedleft\arraybackslash 30} & 200 & -0.013 & 0.087 & 0.087 & 6319.792 & 136201.790 & 1\\
+\cmidrule{1-9}
+ &  & 30 & -0.052 & 0.245 & 0.999 & 0.020 & 0.249 & 1\\
+\cmidrule{3-9}
+ &  & 100 & -0.064 & 0.134 & 1.000 & 0.024 & 0.141 & 1\\
+\cmidrule{3-9}
+ & \multirow{-3}{*}{\raggedleft\arraybackslash 10} & 200 & -0.051 & 0.096 & 1.000 & 0.035 & 0.097 & 1\\
+\cmidrule{2-9}
+ &  & 30 & -0.024 & 0.206 & 0.997 & 0.030 & 0.208 & 1\\
+\cmidrule{3-9}
+ &  & 100 & -0.030 & 0.108 & 0.996 & 0.027 & 0.112 & 1\\
+\cmidrule{3-9}
+\multirow{-6}{5em}[0.5\dimexpr\aboverulesep+\belowrulesep+\cmidrulewidth]{\raggedright\arraybackslash 3} & \multirow{-3}{*}{\raggedleft\arraybackslash 30} & 200 & -0.023 & 0.080 & 0.997 & 0.037 & 0.081 & 1\\
+\cmidrule{1-9}
+ &  & 30 & 0.000 & 0.126 & 1.000 & -0.004 & 0.157 & 1\\
+\cmidrule{3-9}
+ &  & 100 & 0.004 & 0.073 & 1.000 & 0.001 & 0.090 & 1\\
+\cmidrule{3-9}
+ & \multirow{-3}{*}{\raggedleft\arraybackslash 10} & 200 & 0.002 & 0.048 & 1.000 & -0.001 & 0.062 & 1\\
+\cmidrule{2-9}
+ &  & 30 & -0.001 & 0.071 & 1.000 & -0.003 & 0.090 & 1\\
+\cmidrule{3-9}
+ &  & 100 & 0.000 & 0.040 & 1.000 & -0.001 & 0.051 & 1\\
+\cmidrule{3-9}
+\multirow{-6}{5em}[0.5\dimexpr\aboverulesep+\belowrulesep+\cmidrulewidth]{\raggedright\arraybackslash 3A} & \multirow{-3}{*}{\raggedleft\arraybackslash 30} & 200 & 0.000 & 0.028 & 1.000 & 0.000 & 0.036 & 1\\
+\cmidrule{1-9}
+ &  & 30 & 0.001 & 0.217 & 0.999 & -0.013 & 0.241 & 1\\
+\cmidrule{3-9}
+ &  & 100 & -0.008 & 0.121 & 1.000 & -0.008 & 0.138 & 1\\
+\cmidrule{3-9}
+ & \multirow{-3}{*}{\raggedleft\arraybackslash 10} & 200 & 0.005 & 0.087 & 1.000 & 0.003 & 0.097 & 1\\
+\cmidrule{2-9}
+ &  & 30 & 0.000 & 0.193 & 1.000 & -0.004 & 0.200 & 1\\
+\cmidrule{3-9}
+ &  & 100 & -0.008 & 0.103 & 0.997 & -0.007 & 0.108 & 1\\
+\cmidrule{3-9}
+\multirow{-6}{5em}[0.5\dimexpr\aboverulesep+\belowrulesep+\cmidrulewidth]{\raggedright\arraybackslash 3B} & \multirow{-3}{*}{\raggedleft\arraybackslash 30} & 200 & 0.001 & 0.075 & 0.999 & 0.001 & 0.080 & 1\\
 \bottomrule
 \end{tabular}
+
+\emph{Note.} SR: model fitting success rate. Bias:
+\(\hat{\beta}_{0,MLM} - \beta_{0,MLM}\). Difference:
+\(\hat{\beta}_{0,GEE} - \beta_{0,MLM}\). SD: standard deviation of
+estimates across replications.
 
 }
 
@@ -929,66 +924,6 @@ effect. This may be explained by the fact that the values of the
 covariate and outcome were also extremely great, often exceeding a
 million. All things considered, this suggests that GM2 may be a poorly
 specified model.
-
-\section{Other ideas}\label{other-ideas}
-
-\begin{itemize}
-\item
-  Initially, it seemed that the issue of endogenous covariates meant
-  that, for unbiased estimation of the treatment effect, we should rely
-  on GEE with independence. However, it is important not to conflate the
-  issues mentioned by Qian et al. (\citeproc{ref-qian2020}{2020}). The
-  first issue pertains to model interpretation: should we expect
-  covariates to be endogenous and be primarily interested in marginal
-  interpretations of the parameters rather than the person-specific
-  (conditional-on-the-random-effect) interpretation, we should indeed
-  employ GEE with working independence (OR STRUCTURAL MARGINAL MODELS???
-  CHECK THIS OUT IN ZOTERO). The second issue pertains to model fitting:
-  once we conclude that person-specific interpretation aligns with our
-  interest but we fear the presence of endogenous covariates, we have to
-  assess the conditional independence assumption.
-\item
-  Across all generative model, we generally found that the estimated
-  fixed treatment effect differed more from the specified MLM effect for
-  the analytical GEE models than for the analytical MLM model. This is
-  rather unsurprising, considering that the MLM is analyzing the exact
-  same model as was specified, thereby putting it at an advantage over
-  the GEE.
-\item
-  While GEE with independence may indeed yield unbiased estimators of
-  the marginal effect as mentioned by Qian et al.
-  (\citeproc{ref-qian2020}{2020}), they do not reflect the value of the
-  model parameter. And since the endogeneity of a covariate implies that
-  it is determined by the random effect, thereby making the marginal
-  relationship between any given \(X_{it}\) and \(Y_{it+1}\) different
-  as shown by Qian et al. (\citeproc{ref-qian2020}{2020}) (section 2.2),
-  it is unclear what utility the combined marginal effect may serve in
-  this context.
-\item
-  They set the same seed for every setting, potentially making the first
-  dataset the same for every setting. Nevertheless, properly randomizing
-  does not seem to drastically impact the results. The settings with
-  GM2, \(T = 30\) and \(N \geq 100\) of Qian et al.
-  (\citeproc{ref-qian2020}{2020}) results in very implausible values for
-  the covariate \(X_{it}\) and outcome \(Y_{it+1}\), often exceeding a
-  million. This may imply the presence of a non-stationary process
-  (e.g., unit root). In the case of GEE analytical models, these
-  settings result in very large estimates.
-\item
-  wasn't working exchangeability in GEE equivalent to MLM? then use this
-  to argue why using this GEE variation. Because for the difference of
-  GEE with independence from the actual specified conditional parameter
-  estimates should indicate a difference between the marginal and
-  conditional effect, but this is not bias. Can we speak of bias with
-  exchangeability?
-
-  \begin{itemize}
-  \tightlist
-  \item
-    no it depends on the random effects, and it was compound symmetry.
-    Leave this for next time.
-  \end{itemize}
-\end{itemize}
 
 \newpage
 
@@ -1086,162 +1021,6 @@ Behavioral Statistics}, \emph{38}(2), 172--189.
 \url{https://doi.org/10.3102/1076998611432175}
 
 \end{CSLReferences}
-
-\section{Appendix}\label{appendix}
-
-\subsection{Original Section from Qian et al.~(2020): ``4.
-Simulation''}\label{original-section-from-qian-et-al.-2020-4.-simulation}
-
-In the simulation, we considered three generative models (GMs), all of
-which have an endogenous covariate. In the first two GMs, the endogenous
-covariate \(X_{it}\) equals the previous outcome \(Y_{it}\) plus some
-random noise, so the conditional independence assumption (10) is valid.
-In GM 3, the endogenous covariate depends directly on \(b_i\), violating
-assumption (10). The details of the generative models are described
-below.
-
-In GM1, we considered a simple case with only a random intercept and a
-random slope for \(A_{it}\), so that \(Z_{i(t_0)} = Z_{i(t_2)} = 1\) in
-model (7). The outcome is generated as:
-
-\[
-Y_{it+1} = \alpha_0 + \alpha_1 X_{it} + b_{i0} + A_{it} (\beta_0 + \beta_1 X_{it} + b_{i2}) + \epsilon_{it+1}.
-\]
-
-The random effects \(b_{i0} \sim N(0, \sigma_{b0}^2)\) and
-\(b_{i2} \sim N(0, \sigma_{b2}^2)\) are independent of each other. The
-covariate is generated as \(X_{i1} \sim N(0, 1)\), and for \(t \geq 2\),
-
-\[
-X_{it} = Y_{it} + N(0, 1).
-\]
-
-The randomization probability \(p_t\) is constant at \(1/2\). The
-exogenous noise is \(\epsilon_{it+1} \sim N(0, \sigma_\epsilon^2)\).
-
-In GM2, we considered the case where \(Z_{i(t_0)} = Z_{i(t_2)} = 1\),
-with time-varying randomization probability. The outcome is generated
-as:
-
-\[
-Y_{it+1} = \alpha_0 + \alpha_1 X_{it} + b_{i0} + b_{i1} X_{it} + A_{it} (\beta_0 + \beta_1 X_{it} + b_{i2} + b_{i3} X_{it}) + \epsilon_{it+1}.
-\]
-
-The random effects \(b_{ij} \sim N(0, \sigma_{b_j}^2)\), for
-\(0 \leq j \leq 3\), are independent of each other. The covariate is
-generated as \(X_{i1} \sim N(0, 1)\), and for \(t \geq 2\),
-
-\[
-X_{it} = Y_{it} + N(0, 1).
-\]
-
-The randomization probability depends on \(X_{it}\):
-
-\[
-p_t = 0.7 \cdot 1(X_{it} > -1.27) + 0.3 \cdot 1(X_{it} \leq -1.27),
-\]
-
-where \(1(\cdot)\) represents the indicator function, and the cutoff
-\(-1.27\) was chosen so that \(p_t\) equals 0.7 or 0.3 for about half of
-the time. The exogenous noise is
-\(\epsilon_{it+1} \sim N(0, \sigma_\epsilon^2)\).
-
-GM3 is the same as GM 1, except that the covariate \(X_{it}\) depends
-directly on \(b_i\):
-
-\[
-X_{i1} \sim N(b_{i0}, 1), \quad X_{it} = Y_{it} + N(b_{i0}, 1) \text{ for } t \geq 2.
-\]
-
-We chose the following parameter values:
-
-\[
-\alpha_0 = -2, \quad \alpha_1 = -0.3, \quad \beta_0 = 1, \quad \beta_1 = 0.3,
-\]
-
-\[
-\sigma_{b0}^2 = 4, \quad \sigma_{b1}^2 = \frac{1}{4}, \quad \sigma_{b2}^2 = 1, \quad \sigma_{b3}^2 = \frac{1}{4}, \quad \sigma_\epsilon^2 = 1.
-\]
-
-\newpage
-
-\subsection{Overview of Variations on Generative Model
-3}\label{overview-of-variations-on-generative-model-3}
-
-\begin{longtable}[]{@{}
-  >{\raggedright\arraybackslash}p{(\columnwidth - 8\tabcolsep) * \real{0.2000}}
-  >{\raggedright\arraybackslash}p{(\columnwidth - 8\tabcolsep) * \real{0.2000}}
-  >{\raggedright\arraybackslash}p{(\columnwidth - 8\tabcolsep) * \real{0.2000}}
-  >{\raggedright\arraybackslash}p{(\columnwidth - 8\tabcolsep) * \real{0.2000}}
-  >{\raggedright\arraybackslash}p{(\columnwidth - 8\tabcolsep) * \real{0.2000}}@{}}
-\caption{Models with 1 Parameter Less}\tabularnewline
-\toprule\noalign{}
-\endfirsthead
-\endhead
-\bottomrule\noalign{}
-\endlastfoot
-Generative Model & random slope treatment \(b_{i2}\) & interactie
-\(\beta_1\) & fixed slope covariate \(\alpha_1\) & bias \\
-3 & yes & yes & yes & yes, negative \\
-3a & no & yes & yes & no \\
-3d & yes & no & yes & no \\
-3h & yes & yes & no & yes, positive \\
-\end{longtable}
-
-\begin{longtable}[]{@{}
-  >{\raggedright\arraybackslash}p{(\columnwidth - 8\tabcolsep) * \real{0.2000}}
-  >{\raggedright\arraybackslash}p{(\columnwidth - 8\tabcolsep) * \real{0.2000}}
-  >{\raggedright\arraybackslash}p{(\columnwidth - 8\tabcolsep) * \real{0.2000}}
-  >{\raggedright\arraybackslash}p{(\columnwidth - 8\tabcolsep) * \real{0.2000}}
-  >{\raggedright\arraybackslash}p{(\columnwidth - 8\tabcolsep) * \real{0.2000}}@{}}
-\toprule\noalign{}
-\endhead
-\bottomrule\noalign{}
-\endlastfoot
-Generative Model & random slope treatment \(b_{i2}\) & interactie
-\(\beta_1\) & fixed slope covariate \(\alpha_1\) & bias \\
-3 & yes & yes & yes & yes, negative \\
-3b & no & no & yes & no \\
-3i & no & yes & no & \\
-3j & yes & no & no & \\
-\end{longtable}
-
-\subsection{Simulation Plan Proposal}\label{simulation-plan-proposal}
-
-To uncover the undesirable effects of endogenous covariates and
-investigate robustness against these effects, we will carry out
-simulations in which data will be generated according to several
-increasingly complex scenarios. These scenarios will be visually
-represented using directed acyclic graphs and analyzed using GEE, MLM
-and DSEM. We will start out with a scenario of the basic MLM---where a
-time-varying outcome \(Y\) is regressed on a single time-varying
-predictor \(X\) and in the presence of stable between person differences
-in the intercept---and increase the complexity until we reach the
-scenario that includes a time-varying endogenous covariate. The primary
-interest of this simulation study is the comparative performance of
-different specifications of the MLM and GEE in terms of bias in the
-estimation of the effect of \(X\) to \(Y\). The secondary interest is
-the efficiency in mean squared error (MSE). We consider settings with
-timepoints \(T = 10,30\) and sample size \(N = 30, 100, 200\).
-
-Statistical analyses pertaining to the GEE and basic MLM will be
-performed in \texttt{R}, version 4.4.2
-(\citeproc{ref-rcoreteam2024}{Team, 2024}). To fit the GEE, the
-R-package \texttt{geepack} (\citeproc{ref-halekoh2006}{Halekoh et al.,
-2006}) will evaluate several different working correlation structures,
-including independent, exchangeable, AR(1) and unstructured. To fit the
-basic MLM, the R-package \texttt{lme4} (\citeproc{ref-bates2015}{Bates
-et al., 2015}) will be employed, where we will use restricted maximum
-likelihood estimation.
-
-\subsection{Trash}\label{trash}
-
-\begin{figure}[H]
-
-\begin{minipage}{0.50\linewidth}
-DAG for Generative Models\end{minipage}%
-
-\end{figure}%
 
 
 
