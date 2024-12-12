@@ -208,7 +208,7 @@ Equations}
 \makeatother
 \subtitle{Research Report}
 \author{Ward B. Eiling (9294163)}
-\date{December 22, 2024}
+\date{December 10, 2024}
 
 \begin{document}
 \cleardoublepage
@@ -233,9 +233,9 @@ Estimating Equations \par}
 \vspace{3ex}
 {\normalsize \textit{Utrecht University} \par}
 \vspace{9ex}
-{\normalsize December 22, 2024 \par}
+{\normalsize December 10, 2024 \par}
 \vspace{3ex}
-{\normalsize Word count: 728 \par}
+{\normalsize Word count: 2500/2500 \par}
 \vspace{9ex}
 {\normalsize FETC-approved: 24-2003 \par}
 \vspace{9ex}
@@ -370,12 +370,7 @@ details of the generative models are described below. We follow the
 notation of Qian et al. (\citeproc{ref-qian2020}{2020}) to allow for
 direct comparison, but rewrite the equations into within- and
 between-person models (see \citeproc{ref-raudenbush2002}{Raudenbush \&
-Bryk, 2002}). We accompany the equations of the GMs with graphical
-representations, where random effects are represented by grey circles,
-observed variables by squares and relationships across variables by
-arrows. The path diagrams of the three data generating models shows the
-discrepancies between the different generative models---especially
-concerning the interaction effects---more clearly than DAGs.
+Bryk, 2002}).
 
 \subsubsection{Generative Model 1}\label{generative-model-1}
 
@@ -429,20 +424,8 @@ constant at \(1/2\). Thus, \(A_{it} \sim \text{Bernoulli}(0.5)\) for
 \(i = 1, \ldots, N\) and \(t = 1, \ldots, T\). The exogenous noise is
 \(\epsilon_{it+1} \sim \mathcal{N}(0, \sigma_\epsilon^2)\).
 
-Figure~\ref{fig-GM1_path} shows the path diagram for GM1.
-
-\begin{figure}[H]
-
-\caption{\label{fig-GM1_path}Path diagram for Generative Model 1
-(\(t = 1, 2, 3\))}
-
-\centering{
-
-\includegraphics{research-report_files/figure-pdf/fig-GM1_path-1.pdf}
-
-}
-
-\end{figure}%
+Figure~\ref{fig-GM1_path} shows the path diagram for the first couple
+observations of GM1.
 
 \subsubsection{Generative Model 2}\label{generative-model-2}
 
@@ -505,20 +488,8 @@ probability of receiving the treatment \(p_t\) is 0.7; otherwise, it is
 \(i = 1, \ldots, N\) and \(t = 1, \ldots, T\). The exogenous noise is
 \(\epsilon_{it+1} \sim \mathcal{N}(0, \sigma_\epsilon^2)\).
 
-Figure~\ref{fig-GM2_path} shows the path diagram for GM2.
-
-\begin{figure}[H]
-
-\caption{\label{fig-GM2_path}Path diagram for Generative Model 2
-(\(t = 1, 2, 3\))}
-
-\centering{
-
-\includegraphics{research-report_files/figure-pdf/fig-GM2_path-1.pdf}
-
-}
-
-\end{figure}%
+Figure~\ref{fig-GM2_path} shows the path diagram for the first couple
+observations of GM2.
 
 \subsubsection{Generative Model 3}\label{generative-model-3}
 
@@ -529,65 +500,28 @@ directly on \(b_{i0}\):
 X_{i1} \sim \mathcal{N}(b_{i0}, 1), \quad X_{it} = Y_{it} + \mathcal{N}(b_{i0}, 1) \text{ for } t \geq 2.
 \]
 
-Figure~\ref{fig-GM3_path} shows the path diagram for GM3.
-
-\begin{figure}[H]
-
-\caption{\label{fig-GM3_path}Path diagram for Generative Model 3
-(\(t = 1, 2, 3\))}
-
-\centering{
-
-\includegraphics{research-report_files/figure-pdf/fig-GM3_path-1.pdf}
-
-}
-
-\end{figure}%
+Figure~\ref{fig-GM3_path} shows the path diagram for the first couple
+observations of GM3.
 
 \subsubsection{Generative Model 3A}\label{generative-model-3a}
 
 GM3A is the same as GM3, except that the random slope \(b_{i2}\) for the
-treatment \(A_{it}\) is removed. The single equation model then becomes:
+treatment \(A_{it}\) is removed (see Figure~\ref{fig-GM3A_path}). The
+single equation model then becomes:
 
 \[
 Y_{it+1} = \alpha_0 + \alpha_1 X_{it} + b_{i0} + A_{it} (\beta_0 + \beta_1 X_{it}) + \epsilon_{it+1}.
 \]
 
-\begin{figure}[H]
-
-\caption{\label{fig-GM3A_path}Path diagram for Generative Model 3A
-(\(t = 1, 2, 3\))}
-
-\centering{
-
-\includegraphics{research-report_files/figure-pdf/fig-GM3A_path-1.pdf}
-
-}
-
-\end{figure}%
-
 \subsubsection{Generative Model 3B}\label{generative-model-3b}
 
 GM3B is the same as GM3, except that the interaction term
-\(\beta_1 A_{it} X_{it}\) is removed. The single equation model then
-becomes:
+\(\beta_1 A_{it} X_{it}\) is removed (see Figure~\ref{fig-GM3B_path}).
+The single equation model then becomes:
 
 \[
 Y_{it+1} = \alpha_0 + \alpha_1 X_{it} + b_{i0} + A_{it} (\beta_0 + b_{i2}) + \epsilon_{it+1}.
 \]
-
-\begin{figure}[H]
-
-\caption{\label{fig-GM3B_path}Path diagram for Generative Model 3B
-(\(t = 1, 2, 3\))}
-
-\centering{
-
-\includegraphics{research-report_files/figure-pdf/fig-GM3B_path-1.pdf}
-
-}
-
-\end{figure}%
 
 \subsubsection{Parameter Values}\label{parameter-values}
 
@@ -602,8 +536,8 @@ The following parameter values were adapted from Qian et al.
 \sigma_{b0}^2 = 4, \quad \sigma_{b1}^2 = \frac{1}{4}, \quad \sigma_{b2}^2 = 1, \quad \sigma_{b3}^2 = \frac{1}{4}, \quad \sigma_\epsilon^2 = 1.
 \]
 
-\subsection{Path Diagrams and Conditional
-Independence}\label{path-diagrams-and-conditional-independence}
+\subsection{Conditional Independence and Path
+Diagrams}\label{conditional-independence-and-path-diagrams}
 
 Qian et al. (\citeproc{ref-qian2020}{2020}) proposes the use of the
 conditional independence assumption to identify whether bias may occur,
@@ -619,36 +553,133 @@ effects through variables observed prior to \(X_{it}\). If the only
 endogenous covariates are functions of prior treatments and prior
 outcomes, then the assumption automatically holds.
 
+To make the application of the assumption more insightful, we accompany
+the equations of the GMs with path diagrams of the first three
+observations \(t\) for each generative model (see
+Figure~\ref{fig-Pathdiagrams}). The path diagrams of the three data
+generating models shows the discrepancies between the different
+generative models---especially concerning the interaction effects---more
+clearly than DAGS.
+
 When inspecting Figure~\ref{fig-GM1_path} and Figure~\ref{fig-GM2_path},
 we may notice that \(X_{it}\) becomes independent of the random effects
 after conditioning on \(Y_{it}\). On the other hand, we can see that
-this assumption is violated in GM3/3A/3B, as \(X_{it}\) depends directly
-on \(b_{i0}\) and can thus not be made independent of the random effects
-by conditioning on prior variables such as \(Y_{it}\) (see
-Figure~\ref{fig-GM3_path}, Figure~\ref{fig-GM3A_path} and
-Figure~\ref{fig-GM3B_path}). Thus, we would expect biased estimates of
-the treatment effect for GM3/3A/3B.
+this assumption is violated only in GM3/3A/3B, as \(X_{it}\) depends
+directly on \(b_{i0}\) and can thus not be made independent of the
+random effects by conditioning on prior variables such as \(Y_{it}\)
+(see Figure~\ref{fig-GM3_path}, Figure~\ref{fig-GM3A_path} and
+Figure~\ref{fig-GM3B_path}). Thus, all things considered, we would
+expect biased estimates of the treatment effect for GM3/3A/3B but not
+for GM1/2.
+
+\begin{figure}[H]
+
+\caption{\label{fig-Pathdiagrams}Path Diagrams for Generative Models 1,
+2, 3, 3A, 3B (t = 1, 2, 3)}
+
+\begin{minipage}{0.50\linewidth}
+
+\subcaption{\label{fig-GM1_path}GM1}
+
+\centering{
+
+\includegraphics[width=0.9\textwidth,height=\textheight]{research-report_files/figure-pdf/fig-GM1_path-1.pdf}
+
+}
+
+\end{minipage}%
+%
+\begin{minipage}{0.50\linewidth}
+
+\subcaption{\label{fig-GM2_path}GM2}
+
+\centering{
+
+\includegraphics[width=0.9\textwidth,height=\textheight]{research-report_files/figure-pdf/fig-GM2_path-1.pdf}
+
+}
+
+\end{minipage}%
+\newline
+\begin{minipage}{0.50\linewidth}
+
+\subcaption{\label{fig-GM3_path}GM3}
+
+\centering{
+
+\includegraphics[width=0.9\textwidth,height=\textheight]{research-report_files/figure-pdf/fig-GM3_path-1.pdf}
+
+}
+
+\end{minipage}%
+%
+\begin{minipage}{0.50\linewidth}
+
+\subcaption{\label{fig-GM3A_path}GM3A}
+
+\centering{
+
+\includegraphics[width=0.9\textwidth,height=\textheight]{research-report_files/figure-pdf/fig-GM3A_path-1.pdf}
+
+}
+
+\end{minipage}%
+\newline
+\begin{minipage}{0.50\linewidth}
+
+\subcaption{\label{fig-GM3B_path}GM3B}
+
+\centering{
+
+\includegraphics[width=0.9\textwidth,height=\textheight]{research-report_files/figure-pdf/fig-GM3B_path-1.pdf}
+
+}
+
+\end{minipage}%
+%
+\begin{minipage}{0.50\linewidth}
+\emph{Note.} Random effects are represented by grey circles, observed
+variables by squares and relationships across variables by arrows, where
+dashed lines are reserved for random slopes.\end{minipage}%
+
+\end{figure}%
 
 \subsection{Backdoor Criterion and
 DAGs}\label{backdoor-criterion-and-dags}
 
-DAGs are a useful tool for representing causal relationships between
-variables and to evaluate the assumptions needed for causal
-identification. According to the backdoor criterion
-(\citeproc{ref-pearl1988}{Pearl, 1988}, \citeproc{ref-pearl2009}{2009}),
-a requirement for causal identification, causal effects can be
-identified by blocking non-causal paths through conditioning on
-intermediate variables (e.g., controlling or matching). If any
-non-causal paths cannot be blocked due to omitted variables or
-measurement error, treatment and outcome remain linked via backdoor
-paths, leading to biased estimates of the treatment effect
+According to the backdoor criterion (\citeproc{ref-pearl1988}{Pearl,
+1988}, \citeproc{ref-pearl2009}{2009}), a requirement for causal
+identification, causal effects can be identified by blocking non-causal
+paths through conditioning on intermediate variables (e.g., controlling
+or matching). If any non-causal paths cannot be blocked due to omitted
+variables or measurement error, treatment and outcome remain linked via
+backdoor paths, leading to biased estimates of the treatment effect
 (\citeproc{ref-Kim2021a}{Kim \& Steiner, 2021}).
 
-We formulated the DAGs in \texttt{dagitty}, where the random disturbance
+DAGs are a useful tool for representing causal relationships between
+variables and to evaluate the assumptions needed for causal
+identification (see \citeproc{ref-elwert2014}{Elwert \& Winship, 2014}
+for a psychological example). We formulated the DAGs for the first three
+observations of each generative model, where the random disturbance
 \(b_{0i}\) was represented by the node U (e.g.,
-\citeproc{ref-Kim2021a}{Kim \& Steiner, 2021}). The DAGs for the first
-three observations of the three data generating models are presented in
-Figure~\ref{fig-DAGs}.
+\citeproc{ref-Kim2021a}{Kim \& Steiner, 2021}, see
+Figure~\ref{fig-DAGs}).
+
+When applying Pearl's backdoor criterion to GM1/3/3A/3B, it may be
+observed that there exists no backdoor path in the treatment effect
+\(A_{it} \to Y_{it+1}\), as \(A_{it}\) does not have any parents. While
+we need not control for covariate \(X_{it}\) to obtain an unbiased total
+effect, doing so should not introduce bias. On the other hand, in GM2,
+there is a backdoor path in the treatment effect:
+\(A_{it} \leftarrow X_{it} \rightarrow Y_{it+1}\) (see
+Figure~\ref{fig-GM2_DAG}). More specifically, \(X_{it}\) is a confounder
+in the relationship between \(A_{it}\) and \(Y_{it+1}\). However,
+controlling for \(X_{it}\) blocks this backdoor path, making the
+treatment effect unbiased. In other words, the history of covariate
+\(X_{it}\) is a sufficient adjustment set for the treatment effect. All
+things considered, according to the backdoor criterion, controlling for
+the covariate \(X_{it}\) should not result in biased estimates of the
+treatment effect for any of the generative models.
 
 \begin{figure}[H]
 
@@ -697,24 +728,6 @@ treatment efffect (before controlling for \(X_{it}\)).\end{minipage}%
 
 \end{figure}%
 
-When applying Pearl's backdoor criterion to GM1/3/3A/3B, it may be
-observed that there exists no backdoor path in the treatment effect
-\(A_{it} \to Y_{it+1}\), as \(A_{it}\) does not have any parents. While
-we need not control for covariate \(X_{it}\) to obtain an unbiased total
-effect, doing so should not introduce bias.
-
-On the other hand, in GM2, there is a backdoor path in the treatment
-effect: \(A_{it} \leftarrow X_{it} \rightarrow Y_{it+1}\) (see
-Figure~\ref{fig-GM2_DAG}). More specifically, \(X_{it}\) is a confounder
-in the relationship between \(A_{it}\) and \(Y_{it+1}\). However,
-controlling for \(X_{it}\) blocks this backdoor path, making the
-treatment effect unbiased. In other words, the history of covariate
-\(X_{it}\) is a sufficient adjustment set for the treatment effect.
-
-All things considered, according to the backdoor criterion, controlling
-for the covariate \(X_{it}\) should not result in biased estimates of
-the treatment effect for any of the generative models.
-
 \subsection{Data Analysis}\label{data-analysis}
 
 We evaluated the performance of the models across a total of 30
@@ -737,27 +750,31 @@ fit the standard MLM, the \texttt{lmer} function from the R-package
 \texttt{lme4} (\citeproc{ref-bates2015}{Bates et al., 2015}) was
 employed with restricted maximum likelihood estimation. For the MLM, the
 analytical models were equivalent to each of the respective
-data-generating models. To fit the GEE with the ``exchangeable'',
-``independent'' and ``AR(1)'' working correlation structures, the
-\texttt{geeglm} function from the R-package \texttt{geepack}
-(\citeproc{ref-halekoh2006}{Halekoh et al., 2006}) was employed with the
-identity link function. Since the random effects are not explicitly
-modelled in GEE, the analytical GEE models simply contain only the fixed
-effects of the generative model at hand.
+data-generating models. To fit the GEE with the independent working
+correlation structure, the \texttt{geeglm} function from the R-package
+\texttt{geepack} (\citeproc{ref-halekoh2006}{Halekoh et al., 2006}) was
+employed with the identity link function. Since the random effects are
+not explicitly modelled in GEE, the analytical GEE models simply contain
+only the fixed effects of the generative model at hand.
 
 \section{Results}\label{results}
 
 Table~\ref{tbl-simulation-results} presents the simulation results for
 each of the generative and analytical models. The estimates for the
-analytical MLM may be interpreted in terms of bias. Here we find that
-there is little to no bias for GM1/2/3A/3B and substantial bias for GM3.
-Thus, once we remove either the dependency of the random intercept with
-the covariate (GM1), the random slope \(b_{i2}\) (GM3A) or the
-interaction \(\beta_1\) (GM3B) from GM3, the bias dissapears or becomes
-extremely small. The bias in GM3 decreases as the number of timepoints
-\(T\) increases from 10 to 30. Note that the MLM model fitting success
-rates are particularly poor for GM2, where in the worst case, only 87 of
-the 1000 models were fitted.
+analytical MLM may be interpreted in terms of bias, where given the
+value of the treatment effect \(\beta_0 = 1\), absolute bias of .05
+would imply \(5\%\) relative bias. Here we find the greatest absolute
+bias of \(.02-.06\) for GM3, \(\leq .015\) for GM1/2, \(\leq .010\) for
+GM3B and , \(\leq .005\) for GM3A. While the bias found for the original
+GMs 1, 2 and 3 was slightly larger here compared to Qian et al.
+(\citeproc{ref-qian2020}{2020}), the overall pattern remained the same.
+To conclude, once we remove either the dependency of the random
+intercept with the covariate (GM1), the random slope \(b_{i2}\) (GM3A)
+or the interaction \(\beta_1\) (GM3B) from GM3, the bias dissapears or
+becomes very small. The bias in GM3 decreases as the number of
+timepoints \(T\) increases from 10 to 30. Note that the MLM model
+fitting success rates are particularly poor for GM2, where in the worst
+case, only 87 of the 1000 models were fitted.
 
 For the GEE with independence, the values refer to the difference
 between the estimated marginal effect---which should be unbiased under
@@ -765,9 +782,10 @@ endogenous covariates (see \citeproc{ref-pepe1994}{Pepe \& Anderson,
 1994})---and the specified conditional effect. Here we find that there
 is a enormous difference between these effects for GM2, which increases
 along with an increase in \(T\) and \(N\), up to a difference of more
-than 6,000. This is followed by a difference of around .07-.09 for GM1,
-.02-.04 for GM3, \(\leq 0.015\) for GM3B and close to zero for GM3A. The
-GEE models fitted succesfully for all settings.
+than \(6,000\). This is followed by a difference of around \(.07-.09\)
+for GM1, \(.02-.04\) for GM3, \(\leq .015\) for GM3B and close to zero
+(\(\leq .005\)) for GM3A. The GEE models fitted succesfully for all
+settings.
 
 \begin{table}
 
@@ -857,9 +875,11 @@ estimates across replications.
 \section{Discussion}\label{discussion}
 
 This report employed both graphical methods and data simulations to
-understand and explain the issue of endogenous covariates. Now we will
-discuss the findings relating to the two research questions, while
-excluding GM2 due to model fitting issues.
+understand and explain the issue of endogenous covariates. Now we first
+discuss the expected results based on the backdoor criterion Pearl
+(\citeproc{ref-pearl2009}{2009}) and the conditional independence
+assumption (\citeproc{ref-qian2020}{Qian et al., 2020}), whereafter we
+discuss the findings relating to the two research questions.
 
 Using the conditional independence assumption of Qian et al.
 (\citeproc{ref-qian2020}{2020}), we would expect, based on the path
@@ -869,19 +889,15 @@ for all generative models. While Qian et al.
 (\citeproc{ref-qian2020}{2020}) show that GM3 is the only model with
 bias in the treatment effect, the backdoor criterion failed to identify
 this bias, as there is no backdoor path in the treatment effect. This
-may be explained by the fact that the DAG does not impose restrictions
-based on (a) the random slopes and (b) interaction effects. Concerns
-regarding the use of Pearl's backdoor criterion in situations with
-interaction effects have been voiced by several people (see Weinberg
-(\citeproc{ref-weinberg2007}{2007}); Attia et al.
-(\citeproc{ref-attia2022}{2022})).
+may be explained by the fact that the classic DAG does not impose
+restrictions based on (a) the random slopes and (b) interaction effects.
 
 The first research question---pertaining to the extent of treatment
 effect bias in MLM estimates of generative model that were nested in
 GM3---was investigated using the analytical multilevel model. First, we
 reproduced the findings by Qian et al. (\citeproc{ref-qian2020}{2020})
-that the estimators are consistent for GM1 and GM2, but inconsistent for
-GM3. Using additional generative models, we found that bias became
+who found consistent estimators for GM1 and GM2 and inconsistent ones
+for GM3. Using additional generative models, we found that bias became
 indiscernable when removing from GM3 either the dependency between the
 random intercept and covariate (GM1), the random slope for treatment
 (GM3A) or the interaction effect (GM3B). This finding is in sharp
@@ -925,6 +941,42 @@ covariate and outcome were also extremely great, often exceeding a
 million. All things considered, this suggests that GM2 may be a poorly
 specified model.
 
+The current research report leaves several avenues unexplored. First, it
+is unclear whether the simulation findings pertaining the generative
+models in Qian et al. (\citeproc{ref-qian2020}{2020}) and here
+generalize to other generative models. For instance, we found here that
+removal of a random slope or interaction from GM3 got rid of most if not
+all of the treatment effect bias. Thus, it is important to establish how
+this generalizes, so that practical recommendations can be formulated.
+This is particularly important, since while violations of model
+assumptions are never desired, the robustness against and the practical
+implications of a violation is what matters. Second, it is unclear how
+exactly the divide between the literatures pertaining to the focus of
+the MLM on different centering methods and within- and between-person
+interpretations and the focus of the GEE on marginal and conditional
+interpretations may be bridged. Consequently, future research could
+assess the implications of centering methods in MLMs on the extent to
+which the marginal interpretation of MLM breaks down. Third, we found
+that the classical DAG may not be sufficient to identify bias in the
+treatment effect for GM3, especially due to its lack of specification of
+interaction effects. Concerns regarding the use of Pearl's backdoor
+criterion in situations with interaction effects have been voiced by
+several people (see Weinberg (\citeproc{ref-weinberg2007}{2007}); Attia
+et al. (\citeproc{ref-attia2022}{2022})). Future research could explore
+to what extent proposed extensions of the DAG may be useful in
+identifying bias in the treatment effect for GM3. Finally, it may be
+interesting to investigate the implications of endogenous covariates in
+MLMs for other types of longitudinal data analysis methods, such as
+dynamic structural equation modelling (DSEM; a widely used framework in
+the social sciences based on MLM).
+
+Third, since the issue extends to all longitudinal data analysis methods
+according to Diggle (\citeproc{ref-diggle2002}{2002}), in future
+research it may be interesting to investigate the implications of
+endogenous covariates in MLMs for other types of longitudinal data
+analysis methods, such as dynamic structural equation modelling (DSEM; a
+widely used framework in the social sciences based on MLM).
+
 \newpage
 
 \section{References}\label{references}
@@ -945,6 +997,12 @@ Software}, \emph{67}(1), 148.
 
 \bibitem[\citeproctext]{ref-diggle2002}
 Diggle, P. (2002). \emph{Analysis of Longitudinal Data}. OUP Oxford.
+
+\bibitem[\citeproctext]{ref-elwert2014}
+Elwert, F., \& Winship, C. (2014). Endogenous selection bias: The
+problem of conditioning on a collider variable. \emph{Annual Review of
+Sociology}, \emph{40}, 31--53.
+\url{https://doi.org/10.1146/annurev-soc-071913-043455}
 
 \bibitem[\citeproctext]{ref-halekoh2006}
 Halekoh, U., Højsgaard, S., \& Yan, J. (2006). The r package geepack for
