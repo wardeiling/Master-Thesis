@@ -1,0 +1,1791 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.5.57">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>research-report</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for citations */
+div.csl-bib-body { }
+div.csl-entry {
+  clear: both;
+}
+.hanging-indent div.csl-entry {
+  margin-left:2em;
+  text-indent:-2em;
+}
+div.csl-left-margin {
+  min-width:2em;
+  float:left;
+}
+div.csl-right-inline {
+  margin-left:2em;
+  padding-left:1em;
+}
+div.csl-indent {
+  margin-left: 2em;
+}</style>
+
+
+<script src="research-report_files/libs/clipboard/clipboard.min.js"></script>
+<script src="research-report_files/libs/quarto-html/quarto.js"></script>
+<script src="research-report_files/libs/quarto-html/popper.min.js"></script>
+<script src="research-report_files/libs/quarto-html/tippy.umd.min.js"></script>
+<script src="research-report_files/libs/quarto-html/anchor.min.js"></script>
+<link href="research-report_files/libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="research-report_files/libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="research-report_files/libs/bootstrap/bootstrap.min.js"></script>
+<link href="research-report_files/libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="research-report_files/libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script src="research-report_files/libs/kePrint-0.0.1/kePrint.js"></script>
+
+<link href="research-report_files/libs/lightable-0.0.1/lightable.css" rel="stylesheet">
+
+
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN") {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+</head>
+
+<body class="fullcontent">
+
+<div id="quarto-content" class="page-columns page-rows-contents page-layout-article">
+
+<main class="content" id="quarto-document-content">
+
+
+
+
+`— title: “Estimation of Effects of Endogenous Time-Varying Covariates: A Comparison Of Multilevel Linear Modeling and Generalized Estimating Equations” subtitle: “Research Report” author: - name: “Ward B. Eiling (9294163)” orcid: “0009-0007-8114-9497” affiliation: - name: “Utrecht University” - department: “Methodology and Statistics” date: last-modified # deadline: “Dec 22, 2024” date-format: long format: # docx pdf: papersize: a4 fig-pos: ‘H’ tbl-pos: ‘H’ keep-tex: true # toc: true number-sections: true colorlinks: true indent: true header-includes: -
+<ul>
+<li><ul>
+<li><ul>
+<li># -
+# -
+# -
+geometry:
+<ul>
+<li>top=2.5cm</li>
+<li>bottom=2.5cm</li>
+<li>left=2.5cm</li>
+<li>right=2.5cm mainfont: Latin Modern Roman sansfont: Latin Modern Roman linestretch: 2 fontsize: 12pt template-partials:</li>
+<li>“before-body.tex” bibliography: references.bib link-citations: true csl: apa.csl execute: message: false warning: false fig-cap-location: top</li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul>
+<hr>
+<div class="cell">
+<div class="cell-output cell-output-stderr">
+<pre><code>Loading required package: tinylabels</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>here() starts at C:/Users/Primary/Documents/GitHub/Master-Thesis</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>── Attaching core tidyverse packages ──────────────────────── tidyverse 2.0.0 ──
+✔ dplyr     1.1.4     ✔ readr     2.1.5
+✔ forcats   1.0.0     ✔ stringr   1.5.1
+✔ ggplot2   3.5.1     ✔ tibble    3.2.1
+✔ lubridate 1.9.3     ✔ tidyr     1.3.1
+✔ purrr     1.0.2     
+── Conflicts ────────────────────────────────────────── tidyverse_conflicts() ──
+✖ purrr::%@%()         masks rlang::%@%()
+✖ dplyr::filter()      masks stats::filter()
+✖ purrr::flatten()     masks rlang::flatten()
+✖ purrr::flatten_chr() masks rlang::flatten_chr()
+✖ purrr::flatten_dbl() masks rlang::flatten_dbl()
+✖ purrr::flatten_int() masks rlang::flatten_int()
+✖ purrr::flatten_lgl() masks rlang::flatten_lgl()
+✖ purrr::flatten_raw() masks rlang::flatten_raw()
+✖ dplyr::group_rows()  masks kableExtra::group_rows()
+✖ purrr::invoke()      masks rlang::invoke()
+✖ dplyr::lag()         masks stats::lag()
+✖ purrr::splice()      masks rlang::splice()
+ℹ Use the conflicted package (&lt;http://conflicted.r-lib.org/&gt;) to force all conflicts to become errors
+Loading required package: Matrix
+
+
+Attaching package: 'Matrix'
+
+
+The following objects are masked from 'package:tidyr':
+
+    expand, pack, unpack
+
+
+
+Attaching package: 'ggdag'
+
+
+The following object is masked from 'package:stats':
+
+    filter
+
+
+Linking to ImageMagick 6.9.12.98
+Enabled features: cairo, freetype, fftw, ghostscript, heic, lcms, pango, raw, rsvg, webp
+Disabled features: fontconfig, x11
+
+Using poppler version 23.08.0</code></pre>
+</div>
+</div>
+<div style="page-break-after: always;"></div>
+<section id="introduction" class="level1">
+<h1>Introduction</h1>
+<!-- -   Start with a paragraph describing a problem in the real-life world (so that a BoS member not familiar with statistics understands why you are pursuing research in this direction); -->
+<p>Across a wide range of disciplines, researchers analyze clustered longitudinal, observational data to investigate prospective causal relationships between variables. When analyzing such data, the psychological sciences most commonly resort to the multilevel linear model <span class="citation" data-cites="mcneish2017">[MLM, @mcneish2017]</span>, which—in the context of longitudinal data analysis—separates observed variance into stable between-person differences and within-person fluctuations <span class="citation" data-cites="hamaker2020">[@hamaker2020]</span>. Conversely, other fields, such as biostatistics and econometrics often favour generalized estimating equations (GEE) for the analysis of longitudinal data <span class="citation" data-cites="mcneish2017">[@mcneish2017]</span>. Despite some cross-disciplinary efforts to compare these methods <span class="citation" data-cites="muth2016 mcneish2017 yan2013">[@muth2016; @mcneish2017; @yan2013]</span>, their scarcity may leave researchers with limited guidance in choosing the most suitable approach for their application.</p>
+<!-- -   Then, add a paragraph describing what is known in the literature; -->
+<!-- -   Also, describe what is not known and which gap you will address in your thesis; End with a clear research question and, if applicable, your hypothesis (for confirmatory research questions – it should be a testable hypothesis) or expectations (for exploratory research questions – can be much vaguer because of the explorative nature of the question). -->
+<p>A recent study by <span class="citation" data-cites="qian2020">@qian2020</span> highlighted an issue present in both methods—except for GEE with working independence—where controlling for <em>time-varying endogenous covariates</em> may lead to biased causal estimates. A time-varying covariate is <em>endogenous</em> if it is directly or indirectly influenced by prior treatment or outcome, meaning its value may be determined by earlier stages of the process <span class="citation" data-cites="qian2020">[@qian2020]</span>. As a result of including these covariates in these models, ordinary interpretations of the coefficients are no longer valid <span class="citation" data-cites="qian2020">[@qian2020, p. 3]</span>. According to <span class="citation" data-cites="diggle2002">@diggle2002</span>, this issue not only pertains GEE and MLM, but <em>all</em> longitudinal data analysis methods.</p>
+<!-- The issues described in @qian2020 can be categorized into two main problems: (1) model interpretation and (2) model fitting. In this investigation, we focus on the latter issue of model fitting of the MLM  -->
+<p>However, due to a divide between the disciplines that employ these methods, such critiques of the MLM appear to have largely failed to reach the applied researcher in psychology. One specific reason might be that the technical jargon in other disciplines makes it difficult for researchers to recognize when and how these issues emerge. Therefore, this report aims to understand and explain the issue of including endogenous covariates in analyses involving GEE and MLM in a psychological context. To achieve this aim, the current investigation employs (a) graphical tools such as the directed acyclic graph (DAG) and path diagram to assess potentially relevant assumptions, as well as (b) data simulations with additional scenarios to pinpoint the issue. Accordingly, the following research question will be addressed: <em>When does the inclusion of endogenous variables in multilevel linear models result in biased estimates of the treatment effect?</em></p>
+<!-- -   Also, describe what is not known and which gap you will address in your thesis; End with a clear research question and, if applicable, your hypothesis (for confirmatory research questions – it should be a testable hypothesis) or expectations (for exploratory research questions – can be much vaguer because of the explorative nature of the question). -->
+</section>
+<section id="methods" class="level1">
+<h1>Methods</h1>
+<p>To obtain a better understanding of the issue exposed by <span class="citation" data-cites="qian2020">@qian2020</span>, two methods were employed. First, graphical methods were used provide insight into the presence and extent of bias with potential violation of assumptions: (a) path diagrams were used to evaluate the conditional independence assumption and (b) directed acyclic graphs (DAGs) were used to evaluate the backdoor criterion <span class="citation" data-cites="pearl1988 pearl2009">[@pearl1988; @pearl2009]</span>. Second, a simulation study was performed to reproduce the results for the generative models (GMs) from <span class="citation" data-cites="qian2020">@qian2020</span> and to further isolate the issue using additional GMs. In this simulation, bias in the treatment effect (RQ 1) was assessed with analytical multilevel models. The discrepancy between conditional and marginal interpretations of the treatment effect (RQ 2) was assessed with GEE with working independence.</p>
+<section id="data-generation" class="level2">
+<h2 class="anchored" data-anchor-id="data-generation">Data Generation</h2>
+<p>In the simulation <span class="citation" data-cites="qian2020">@qian2020</span> considered three generative models (GMs), all of which have an endogenous time-varying covariate. In GM1, the endogenous covariate <span class="math inline">\(X_{it}\)</span> equals the previous outcome <span class="math inline">\(Y_{it}\)</span> plus some random noise, so the <em>conditional independence</em> assumption is valid. In GM3, the endogenous covariate depends directly on <span class="math inline">\(b_{i0}\)</span>, violating the assumption. To isolate the issue in GM3, we consider two variations on this model: GM3A, where the random slope <span class="math inline">\(b_{i2}\)</span> for the treatment <span class="math inline">\(A_{it}\)</span> is removed; GM3B, where the interaction term <span class="math inline">\(\beta_1 A_{it} X_{it}\)</span> is removed. Note that the conditional independence assumption is violated in either of these variations. The details of the generative models are described below. We follow the notation of <span class="citation" data-cites="qian2020">@qian2020</span> to allow for direct comparison, but rewrite the equations into within- and between-person models <span class="citation" data-cites="raudenbush2002">[see @raudenbush2002]</span>.</p>
+<section id="generative-model-1" class="level3">
+<h3 class="anchored" data-anchor-id="generative-model-1">Generative Model 1</h3>
+<p>In GM1, we considered a simple case with only a random intercept and a random slope for <span class="math inline">\(X_{it}\)</span>. The outcome is generated according to the following repeated-observations or within-person model (level 1):</p>
+<p><span class="math display">\[
+Y_{it+1} = \pi_{0i} + \pi_{1i} X_{it} + \pi_{2i} A_{it} + \pi_{3i} A_{it} X_{it} + \epsilon_{it+1}
+\]</span></p>
+<p>with the person-level or between-person model (level 2):</p>
+<p><span class="math display">\[
+\pi_{0i} = \alpha_0 + b_{i0}, \quad b_{i0} \sim \mathcal{N}(0, \sigma_{b0}^2),
+\]</span></p>
+<p><span class="math display">\[
+\pi_{1i} = \alpha_1,
+\]</span></p>
+<p><span class="math display">\[
+\pi_{2i} = \beta_0 + b_{i2}, \quad b_{i2} \sim \mathcal{N}(0, \sigma_{b2}^2),
+\]</span></p>
+<p><span class="math display">\[
+\pi_{3i} = \beta_1.
+\]</span></p>
+<p>By substitution, we get the single equation model:</p>
+<p><span class="math display">\[
+\begin{aligned}
+Y_{it+1} &amp;= \pi_{0i} + \pi_{1i} X_{it} + \pi_{2i} A_{it} + \pi_{3i} A_{it} X_{it} + \epsilon_{it+1} \\
+&amp;= (\alpha_0 + b_{i0}) + \alpha_1 X_{it} + (\beta_0 + b_{i2}) A_{it} + \beta_1 A_{it} X_{it} + \epsilon_{it+1} \\
+&amp;= \alpha_0 + \alpha_1 X_{it} + b_{i0} + A_{it} (\beta_0 + \beta_1 X_{it} + b_{i2}) + \epsilon_{it+1}.
+\end{aligned}
+\]</span></p>
+<p>The random effects <span class="math inline">\(b_{i0} \sim \mathcal{N}(0, \sigma_{b0}^2)\)</span> and <span class="math inline">\(b_{i2} \sim \mathcal{N}(0, \sigma_{b2}^2)\)</span> are independent of each other. The covariate is generated as <span class="math inline">\(X_{i1} \sim \mathcal{N}(0, 1)\)</span>, and for <span class="math inline">\(t \geq 2\)</span>,</p>
+<p><span class="math display">\[
+X_{it} = Y_{it} + \mathcal{N}(0, 1).
+\]</span></p>
+<p>The randomization probability <span class="math inline">\(p_t = P(A_{it} = 1 \mid H_{it})\)</span> is constant at <span class="math inline">\(1/2\)</span>. Thus, <span class="math inline">\(A_{it} \sim \text{Bernoulli}(0.5)\)</span> for <span class="math inline">\(i = 1, \ldots, N\)</span> and <span class="math inline">\(t = 1, \ldots, T\)</span>. The exogenous noise is <span class="math inline">\(\epsilon_{it+1} \sim \mathcal{N}(0, \sigma_\epsilon^2)\)</span>.</p>
+<p><a href="#fig-GM1_path" class="quarto-xref">Figure&nbsp;1 (a)</a> shows the path diagram for the first couple observations of GM1.</p>
+</section>
+<section id="generative-model-3" class="level3">
+<h3 class="anchored" data-anchor-id="generative-model-3">Generative Model 3</h3>
+<p>GM3 is the same as GM1, except that the covariate <span class="math inline">\(X_{it}\)</span> depends directly on <span class="math inline">\(b_{i0}\)</span>:</p>
+<p><span class="math display">\[
+X_{i1} \sim \mathcal{N}(b_{i0}, 1), \quad X_{it} = Y_{it} + \mathcal{N}(b_{i0}, 1) \text{ for } t \geq 2.
+\]</span></p>
+<p><a href="#fig-GM3_path" class="quarto-xref">Figure&nbsp;1 (b)</a> shows the path diagram for the first couple observations of GM3.</p>
+</section>
+<section id="generative-model-3a" class="level3">
+<h3 class="anchored" data-anchor-id="generative-model-3a">Generative Model 3A</h3>
+<p>GM3A is the same as GM3, except that the random slope <span class="math inline">\(b_{i2}\)</span> for the treatment <span class="math inline">\(A_{it}\)</span> is removed (see <a href="#fig-GM3A_path" class="quarto-xref">Figure&nbsp;1 (c)</a>). The single equation model then becomes:</p>
+<p><span class="math display">\[
+Y_{it+1} = \alpha_0 + \alpha_1 X_{it} + b_{i0} + A_{it} (\beta_0 + \beta_1 X_{it}) + \epsilon_{it+1}.
+\]</span></p>
+</section>
+<section id="generative-model-3b" class="level3">
+<h3 class="anchored" data-anchor-id="generative-model-3b">Generative Model 3B</h3>
+<p>GM3B is the same as GM3, except that the interaction term <span class="math inline">\(\beta_1 A_{it} X_{it}\)</span> is removed (see <a href="#fig-GM3B_path" class="quarto-xref">Figure&nbsp;1 (d)</a>). The single equation model then becomes:</p>
+<p><span class="math display">\[
+Y_{it+1} = \alpha_0 + \alpha_1 X_{it} + b_{i0} + A_{it} (\beta_0 + b_{i2}) + \epsilon_{it+1}.
+\]</span></p>
+</section>
+<section id="parameter-values" class="level3">
+<h3 class="anchored" data-anchor-id="parameter-values">Parameter Values</h3>
+<p>The following parameter values were adapted from <span class="citation" data-cites="qian2020">@qian2020</span>:</p>
+<p><span class="math display">\[
+\alpha_0 = -2, \quad \alpha_1 = -0.3, \quad \beta_0 = 1, \quad \beta_1 = 0.3,
+\]</span></p>
+<p><span class="math display">\[
+\sigma_{b0}^2 = 4, \quad \sigma_{b2}^2 = 1, \quad \sigma_\epsilon^2 = 1.
+\]</span></p>
+</section>
+</section>
+<section id="conditional-independence-and-path-diagrams" class="level2">
+<h2 class="anchored" data-anchor-id="conditional-independence-and-path-diagrams">Conditional Independence and Path Diagrams</h2>
+<p><span class="citation" data-cites="qian2020">@qian2020</span> proposes the use of the conditional independence assumption to identify whether bias may occur, which is given by:</p>
+<p><span class="math display">\[ X_{it} \perp (b_{i0}, b_{i1}) \mid H_{it-1}, A_{it-1}, Y_{it}. \]</span></p>
+<p>where <span class="math inline">\(H_{it-1}\)</span> refers to the history of the set of covariates, which in this case are all observations of covariate <span class="math inline">\(X_{it}\)</span> prior to the current timepoint <span class="math inline">\(t\)</span>. This allows <span class="math inline">\(X_{it}\)</span> to be endogenous, but the endogenous covariate <span class="math inline">\(X_{it}\)</span> can only depend on the random effects through variables observed prior to <span class="math inline">\(X_{it}\)</span>. If the only endogenous covariates are functions of prior treatments and prior outcomes, then the assumption automatically holds.</p>
+<p>To make the application of the assumption more insightful, we accompany the equations of the GMs with path diagrams of the first three observations <span class="math inline">\(t\)</span> for each generative model (see <a href="#fig-Pathdiagrams" class="quarto-xref">Figure&nbsp;1</a>). The path diagrams of the three data generating models shows the discrepancies between the different generative models—especially concerning the interaction effects—more clearly than DAGS.</p>
+<p>When inspecting <a href="#fig-GM1_path" class="quarto-xref">Figure&nbsp;1 (a)</a>, we may notice that <span class="math inline">\(X_{it}\)</span> becomes independent of the random effects after conditioning on <span class="math inline">\(Y_{it}\)</span>. On the other hand, we can see that this assumption is violated only in GM3/3A/3B, as <span class="math inline">\(X_{it}\)</span> depends directly on <span class="math inline">\(b_{i0}\)</span> and can thus not be made independent of the random effects by conditioning on prior variables such as <span class="math inline">\(Y_{it}\)</span> (see <a href="#fig-GM3_path" class="quarto-xref">Figure&nbsp;1 (b)</a>, <a href="#fig-GM3A_path" class="quarto-xref">Figure&nbsp;1 (c)</a> and <a href="#fig-GM3B_path" class="quarto-xref">Figure&nbsp;1 (d)</a>). Thus, all things considered, we would expect biased estimates of the treatment effect for GM3/3A/3B but not for GM1.</p>
+<div id="fig-Pathdiagrams" class="quarto-layout-panel">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-Pathdiagrams-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="quarto-layout-row">
+<div class="cell quarto-layout-cell-subref quarto-layout-cell" data-ref-parent="fig-Pathdiagrams" style="flex-basis: 50.0%;justify-content: flex-start;">
+<div class="cell-output-display quarto-layout-cell-subref" data-ref-parent="fig-Pathdiagrams">
+<div id="fig-GM1_path" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-subfloat-fig figure">
+<div aria-describedby="fig-GM1_path-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="research-report_files/figure-html/fig-GM1_path-1.png" class="img-fluid figure-img" style="width:90.0%" data-ref-parent="fig-Pathdiagrams">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-subfloat-caption quarto-subfloat-fig" id="fig-GM1_path-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+(a) GM1
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<div class="cell quarto-layout-cell-subref quarto-layout-cell" data-ref-parent="fig-Pathdiagrams" style="flex-basis: 50.0%;justify-content: flex-start;">
+<div class="cell-output-display quarto-layout-cell-subref" data-ref-parent="fig-Pathdiagrams">
+<div id="fig-GM3_path" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-subfloat-fig figure">
+<div aria-describedby="fig-GM3_path-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="research-report_files/figure-html/fig-GM3_path-1.png" class="img-fluid figure-img" style="width:90.0%" data-ref-parent="fig-Pathdiagrams">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-subfloat-caption quarto-subfloat-fig" id="fig-GM3_path-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+(b) GM3
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+</div>
+<div class="quarto-layout-row">
+<div class="cell quarto-layout-cell-subref quarto-layout-cell" data-ref-parent="fig-Pathdiagrams" style="flex-basis: 50.0%;justify-content: flex-start;">
+<div class="cell-output-display quarto-layout-cell-subref" data-ref-parent="fig-Pathdiagrams">
+<div id="fig-GM3A_path" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-subfloat-fig figure">
+<div aria-describedby="fig-GM3A_path-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="research-report_files/figure-html/fig-GM3A_path-1.png" class="img-fluid figure-img" style="width:90.0%" data-ref-parent="fig-Pathdiagrams">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-subfloat-caption quarto-subfloat-fig" id="fig-GM3A_path-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+(c) GM3A
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<div class="cell quarto-layout-cell-subref quarto-layout-cell" data-ref-parent="fig-Pathdiagrams" style="flex-basis: 50.0%;justify-content: flex-start;">
+<div class="cell-output-display quarto-layout-cell-subref" data-ref-parent="fig-Pathdiagrams">
+<div id="fig-GM3B_path" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-subfloat-fig figure">
+<div aria-describedby="fig-GM3B_path-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="research-report_files/figure-html/fig-GM3B_path-1.png" class="img-fluid figure-img" style="width:90.0%" data-ref-parent="fig-Pathdiagrams">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-subfloat-caption quarto-subfloat-fig" id="fig-GM3B_path-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+(d) GM3B
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+</div>
+<div class="quarto-layout-row">
+<div class="quarto-layout-cell" style="flex-basis: 50.0%;justify-content: flex-start;">
+<p><em>Note.</em> Random effects are represented by grey circles, observed variables by squares and relationships across variables by arrows, where dashed lines are reserved for random slopes.</p>
+</div>
+</div>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-Pathdiagrams-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;1: Path Diagrams for Generative Models 1, 3, 3A, 3B (t = 1, 2, 3)
+</figcaption>
+</figure>
+</div>
+</section>
+<section id="backdoor-criterion-and-dags" class="level2">
+<h2 class="anchored" data-anchor-id="backdoor-criterion-and-dags">Backdoor Criterion and DAGs</h2>
+<p>According to the backdoor criterion <span class="citation" data-cites="pearl1988 pearl2009">[@pearl1988; @pearl2009]</span>, a requirement for causal identification, causal effects can be identified by blocking non-causal paths through conditioning on intermediate variables (e.g., controlling or matching). If any non-causal paths cannot be blocked due to omitted variables or measurement error, treatment and outcome remain linked via backdoor paths, leading to biased estimates of the treatment effect <span class="citation" data-cites="Kim2021a">[@Kim2021a]</span>.</p>
+<p>DAGs are a useful tool for representing causal relationships between variables and to evaluate the assumptions needed for causal identification <span class="citation" data-cites="elwert2014">[see @elwert2014 for a psychological example]</span>. We formulated the DAGs for the first three observations of each generative model, where the random disturbance <span class="math inline">\(b_{0i}\)</span> was represented by the node U <span class="citation" data-cites="Kim2021a">[e.g., @Kim2021a, see @fig-DAGs]</span>.</p>
+<p>When applying Pearl’s backdoor criterion to GM1/3/3A/3B, it may be observed that there exists no backdoor path in the treatment effect <span class="math inline">\(A_{it} \to Y_{it+1}\)</span>, as <span class="math inline">\(A_{it}\)</span> does not have any parents. While we need not control for covariate <span class="math inline">\(X_{it}\)</span> to obtain an unbiased total effect, doing so should not introduce bias. All things considered, according to the backdoor criterion, controlling for the covariate <span class="math inline">\(X_{it}\)</span> should not result in biased estimates of the treatment effect for any of the generative models.</p>
+<div id="fig-DAGs" class="quarto-layout-panel">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-DAGs-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="quarto-layout-row">
+<div class="cell quarto-layout-cell-subref quarto-layout-cell" data-ref-parent="fig-DAGs" style="flex-basis: 50.0%;justify-content: flex-start;">
+<div class="cell-output-display quarto-layout-cell-subref" data-ref-parent="fig-DAGs">
+<div id="fig-GM1_DAG" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-subfloat-fig figure">
+<div aria-describedby="fig-GM1_DAG-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="research-report_files/figure-html/fig-GM1_DAG-1.png" class="img-fluid figure-img" data-ref-parent="fig-DAGs" width="672">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-subfloat-caption quarto-subfloat-fig" id="fig-GM1_DAG-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+(a) GM 1
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<div class="cell quarto-layout-cell-subref quarto-layout-cell" data-ref-parent="fig-DAGs" style="flex-basis: 50.0%;justify-content: flex-start;">
+<div class="cell-output-display quarto-layout-cell-subref" data-ref-parent="fig-DAGs">
+<div id="fig-GM3_DAG" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-subfloat-fig figure">
+<div aria-describedby="fig-GM3_DAG-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="research-report_files/figure-html/fig-GM3_DAG-1.png" class="img-fluid figure-img" data-ref-parent="fig-DAGs" width="672">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-subfloat-caption quarto-subfloat-fig" id="fig-GM3_DAG-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+(b) GM 3, 3A, 3B
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+</div>
+<div class="quarto-layout-row">
+<div class="quarto-layout-cell" style="flex-basis: 50.0%;justify-content: flex-start;">
+<p><em>Note.</em> The red arrows show the biased backdoor path(s) in the treatment efffect (before controlling for <span class="math inline">\(X_{it}\)</span>).</p>
+</div>
+</div>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-DAGs-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;2: DAGs for Generative Models 1, 3, 3A, 3B (t = 1, 2, 3)
+</figcaption>
+</figure>
+</div>
+<!-- Visually, we may notice from @fig-GM3_DAG that when we control for $X_{it}$ in GM3, we block the backdoor path from $X_{ti}$ to $Y_{it+1}$ through $X_{it}$, which is the path that would be biased if we did not control for $X_{it}$. -->
+<!-- Alternatively, we can display the data generating models as a path diagram, where latent variables are represented by circles, observed variables by squares and relationships across variables by arrows. The path diagrams of the three data generating models is presented in @fig-pathdiagrams (GM1 in @fig-GM1_pd, GM2 in @fig-GM2_pd, and GM3 in @fig-GM3_pd), which shows the discrepancies between the different generative models more clearly than the DAGs. -->
+<!-- SEE TEXT -->
+<!-- We can make a couple observations from this path diagram: -->
+<!-- -   Contrary to the DAG, this path diagram shows the moderation effect (1) of $X_{it}$ on the relationship between $X_{ti}$ and $Y_{it+1}$ and (2) of $u_{2i}$ on the relationship between $X_{it}$ and $Y_{it+1}$. -->
+<!-- -   Similar to the example without treatment in section 2.2, the covariate $X_{it}$ is determined by the previous value of the outcome $Y_{ti}$---which makes it an endogenous time-varying covariate. -->
+<!-- -   The path diagram does not display the difference in the randomized treatment assignment probabilities between GM1 and GM2. -->
+</section>
+<section id="data-analysis" class="level2">
+<h2 class="anchored" data-anchor-id="data-analysis">Data Analysis</h2>
+<p>We evaluated the performance of the models across a total of 24 different settings, each replicated 1,000 times, by systematically varying the following factors:`</p>
+<ul>
+<li><p><strong>Generative Models (GM):</strong> 1, 3, 3A, 3B</p></li>
+<li><p><strong>Number of timepoints (T):</strong> 10, 30</p></li>
+<li><p><strong>Sample size (N):</strong> 30, 100, 200</p></li>
+</ul>
+<p>All data generation and estimation was performed in <code>R</code>, version 4.4.2 <span class="citation" data-cites="rcoreteam2024">[@rcoreteam2024]</span>. After the generation of data generation for any given setting, several models were fit. To fit the standard MLM, the <code>lmer</code> function from the R-package <code>lme4</code> <span class="citation" data-cites="bates2015">[@bates2015]</span> was employed with restricted maximum likelihood estimation. For the MLM, the analytical models were equivalent to each of the respective data-generating models. To fit the GEE with the independent working correlation structure, the <code>geeglm</code> function from the R-package <code>geepack</code> <span class="citation" data-cites="halekoh2006">[@halekoh2006]</span> was employed with the identity link function. Since the random effects are not explicitly modelled in GEE, the analytical GEE models simply contain only the fixed effects of the generative model at hand.</p>
+<!-- the specification of the analytical GEE models is different from their MLM counterparts. More specifically, the analytical models simply contain only the fixed effects of the generative model hand.  -->
+<!-- Since the fixed effects modeled in GM1, GM2, GM3, GM3a are the same (the only differences pertains to the modeling of random effects), the analytical *GEE model* is identical across these conditions: -->
+<!-- $$ -->
+<!-- Y_{it+1} = \alpha_0 + \alpha_1 X_{it} + \beta_0 A_{it} + \beta_1 A_{it} X_{it} + \epsilon_{it+1}. -->
+<!-- $$ -->
+<!-- In GM3b, the fixed interaction effect is removed, so the analytical *GEE model* is given by: -->
+<!-- $$ -->
+<!-- Y_{it+1} = \alpha_0 + \alpha_1 X_{it} + \beta_0 A_{it} + \epsilon_{it+1}. -->
+<!-- $$ -->
+<!-- As a reminder, the analytical *multilevel model* for GM1 and GM3 is given by: -->
+<!-- $$ -->
+<!-- Y_{it+1} = (\alpha_0 + b_{i0}) + \alpha_1 X_{it} + (\beta_0 + b_{i2}) A_{it} + \beta_1 A_{it} X_{it} + \epsilon_{it+1}. -->
+<!-- $$ -->
+<!-- which is fitted as `lmer(Y ~ X * A + (1 + A | id), data = data)` in R. -->
+<!-- The analytical *multilevel model* for GM2 is given by: -->
+<!-- $$ -->
+<!-- Y_{it+1} = (\alpha_0 + b_{i0}) + (\alpha_1 + b_{i1}) X_{it} + (\beta_0 + b_{i2}) A_{it} + (\beta_1 + b_{i3}) A_{it} X_{it} + \epsilon_{it+1}. -->
+<!-- $$ -->
+<!-- which is fitted as `lmer(Y ~ X * A + (X * A | id), data = data)` in R. -->
+<!-- The analytical *multilevel model* for GM1A, GM2A, and GM3A is given by: -->
+<!-- $$ -->
+<!-- Y_{it+1} = \alpha_0 + b_{i0} + \alpha_1 X_{it} + \beta_0 A_{it} + \beta_1 A_{it} X_{it} + \epsilon_{it+1}. -->
+<!-- $$ -->
+<!-- which is fitted as `lmer(Y ~ X * A + (1 | id), data = data)` in R. -->
+<!-- The analytical *multilevel model* for GM1B, GM2B, and GM3B is given by: -->
+<!-- $$ -->
+<!-- Y_{it+1} = \alpha_0 + b_{i0} + \alpha_1 X_{it} + \beta_0 A_{it} + \epsilon_{it+1}. -->
+<!-- $$ -->
+<!-- which is fitted as `lmer(Y ~ X + A + (1 | id), data = data)` in R. -->
+<!-- The specification of the GEE models related to each of the generative models is unsurprisingly different considering that GEE does not explicitly model random effects. For each of the generative models, we will fit three GEE models: one with an exchangeable correlation structure, one with an independent correlation structure, and one with an AR(1) correlation structure. The GEE models were fitted using the `geeglm` function in R. Since the fixed effects modeled in GM1, GM1a, GM2, GM2a, GM3, GM3a are the same (the only differences pertain to the modeling of random effects), the analytical *GEE model* is identical across these three conditions. The analytical *GEE model* is given by: -->
+<!-- $$ -->
+<!-- Y_{it+1} = \alpha_0 + \alpha_1 X_{it} + \beta_0 A_{it} + \beta_1 A_{it} X_{it} + \epsilon_{it+1}. -->
+<!-- $$ -->
+<!-- The GEE models were fitted as `geeglm(Y ~ X * A, id = id, data = data, family = gaussian, corstr = "exchangeable")`, `geeglm(Y ~ X * A, id = id, data = data, family = gaussian, corstr = "independence")`, and `geeglm(Y ~ X * A, id = id, data = data, family = gaussian, corstr = "ar1")` in R. -->
+<!-- In GM1b, GM2b, GM3b, the fixed interaction effect is removed, so the analytical *GEE model* is given by: -->
+<!-- $$ -->
+<!-- Y_{it+1} = \alpha_0 + \alpha_1 X_{it} + \beta_0 A_{it} + \epsilon_{it+1}. -->
+<!-- $$ -->
+<!-- The GEE models were fitted as `geeglm(Y ~ X + A, id = id, data = data, family = gaussian, corstr = "exchangeable")`, `geeglm(Y ~ X + A, id = id, data = data, family = gaussian, corstr = "independence")`, and `geeglm(Y ~ X + A, id = id, data = data, family = gaussian, corstr = "ar1")` in R. -->
+</section>
+</section>
+<section id="results" class="level1">
+<h1>Results</h1>
+<p><a href="#tbl-simulation-results" class="quarto-xref">Table&nbsp;1</a> presents the simulation results for each of the generative and analytical models. The estimates for the analytical MLM may be interpreted in terms of bias, where given the value of the treatment effect <span class="math inline">\(\beta_0 = 1\)</span>, absolute bias of .05 would imply <span class="math inline">\(5\%\)</span> relative bias. Here we find the greatest absolute bias of <span class="math inline">\(.02-.06\)</span> for GM3, <span class="math inline">\(\leq .015\)</span> for GM1/2, <span class="math inline">\(\leq .010\)</span> for GM3B and , <span class="math inline">\(\leq .005\)</span> for GM3A. While the bias found for the original GMs 1, 2 and 3 was slightly larger here compared to <span class="citation" data-cites="qian2020">@qian2020</span>, the overall pattern remained the same. To conclude, once we remove either the dependency of the random intercept with the covariate (GM1), the random slope <span class="math inline">\(b_{i2}\)</span> (GM3A) or the interaction <span class="math inline">\(\beta_1\)</span> (GM3B) from GM3, the bias dissapears or becomes very small. The bias in GM3 decreases as the number of timepoints <span class="math inline">\(T\)</span> increases from 10 to 30. Note that the MLM model fitting success rates are particularly poor for GM2, where in the worst case, only 87 of the 1000 models were fitted.</p>
+<p>For the GEE with independence, the values refer to the difference between the estimated marginal effect—which should be unbiased under endogenous covariates <span class="citation" data-cites="pepe1994">[see @pepe1994]</span>—and the specified conditional effect. Here we find that there is a enormous difference between these effects for GM2, which increases along with an increase in <span class="math inline">\(T\)</span> and <span class="math inline">\(N\)</span>, up to a difference of more than <span class="math inline">\(6,000\)</span>. This is followed by a difference of around <span class="math inline">\(.07-.09\)</span> for GM1, <span class="math inline">\(.02-.04\)</span> for GM3, <span class="math inline">\(\leq .015\)</span> for GM3B and close to zero (<span class="math inline">\(\leq .005\)</span>) for GM3A. The GEE models fitted succesfully for all settings.</p>
+<div id="tbl-simulation-results" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-tbl figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-simulation-results-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Table&nbsp;1: Simulation results for Generative Models 1, 2, 3, 3A and 3B over 1000 replications
+</figcaption>
+<div aria-describedby="tbl-simulation-results-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="cell" data-escape="false">
+<div class="cell-output-display">
+<table class="table lightable-classic-2 caption-top table-sm table-striped small" data-quarto-postprocess="true">
+<colgroup>
+<col style="width: 11%">
+<col style="width: 11%">
+<col style="width: 11%">
+<col style="width: 11%">
+<col style="width: 11%">
+<col style="width: 11%">
+<col style="width: 11%">
+<col style="width: 11%">
+<col style="width: 11%">
+</colgroup>
+<thead>
+<tr class="header">
+<th colspan="3" data-quarto-table-cell-role="th" style="text-align: left; empty-cells: hide; border-bottom: hidden;"></th>
+<th colspan="3" data-quarto-table-cell-role="th" style="text-align: center; border-bottom: hidden; padding-bottom: 0; padding-left: 3px; padding-right: 3px;"><div style="border-bottom: 1px solid #ddd; padding-bottom: 5px; ">
+MLM
+</div></th>
+<th colspan="3" data-quarto-table-cell-role="th" style="text-align: center; border-bottom: hidden; padding-bottom: 0; padding-left: 3px; padding-right: 3px;"><div style="border-bottom: 1px solid #ddd; padding-bottom: 5px; ">
+GEE-IND
+</div></th>
+</tr>
+<tr class="odd">
+<th style="text-align: left;" data-quarto-table-cell-role="th">GM</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">T</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">N</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">Bias</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">SD</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">SR</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">Difference</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">SD</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">SR</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td rowspan="6" style="text-align: left; width: 5em; vertical-align: middle !important;">1</td>
+<td rowspan="3" style="text-align: right; vertical-align: middle !important;">10</td>
+<td style="text-align: right;">30</td>
+<td style="text-align: right;">0.000</td>
+<td style="text-align: right;">0.238</td>
+<td style="text-align: right;">0.998</td>
+<td style="text-align: right;">0.071</td>
+<td style="text-align: right;">0.296</td>
+<td style="text-align: right;">1</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">100</td>
+<td style="text-align: right;">-0.012</td>
+<td style="text-align: right;">0.129</td>
+<td style="text-align: right;">1.000</td>
+<td style="text-align: right;">0.074</td>
+<td style="text-align: right;">0.169</td>
+<td style="text-align: right;">1</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">200</td>
+<td style="text-align: right;">0.003</td>
+<td style="text-align: right;">0.093</td>
+<td style="text-align: right;">0.999</td>
+<td style="text-align: right;">0.085</td>
+<td style="text-align: right;">0.116</td>
+<td style="text-align: right;">1</td>
+</tr>
+<tr class="even">
+<td rowspan="3" style="text-align: right; vertical-align: middle !important;">30</td>
+<td style="text-align: right;">30</td>
+<td style="text-align: right;">-0.001</td>
+<td style="text-align: right;">0.203</td>
+<td style="text-align: right;">0.998</td>
+<td style="text-align: right;">0.085</td>
+<td style="text-align: right;">0.224</td>
+<td style="text-align: right;">1</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">100</td>
+<td style="text-align: right;">-0.007</td>
+<td style="text-align: right;">0.107</td>
+<td style="text-align: right;">0.996</td>
+<td style="text-align: right;">0.083</td>
+<td style="text-align: right;">0.123</td>
+<td style="text-align: right;">1</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">200</td>
+<td style="text-align: right;">0.001</td>
+<td style="text-align: right;">0.079</td>
+<td style="text-align: right;">0.996</td>
+<td style="text-align: right;">0.094</td>
+<td style="text-align: right;">0.088</td>
+<td style="text-align: right;">1</td>
+</tr>
+<tr class="odd">
+<td rowspan="6" style="text-align: left; width: 5em; vertical-align: middle !important;">2</td>
+<td rowspan="3" style="text-align: right; vertical-align: middle !important;">10</td>
+<td style="text-align: right;">30</td>
+<td style="text-align: right;">0.011</td>
+<td style="text-align: right;">0.282</td>
+<td style="text-align: right;">0.925</td>
+<td style="text-align: right;">0.306</td>
+<td style="text-align: right;">1.630</td>
+<td style="text-align: right;">1</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">100</td>
+<td style="text-align: right;">0.005</td>
+<td style="text-align: right;">0.147</td>
+<td style="text-align: right;">0.881</td>
+<td style="text-align: right;">0.565</td>
+<td style="text-align: right;">1.836</td>
+<td style="text-align: right;">1</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">200</td>
+<td style="text-align: right;">0.008</td>
+<td style="text-align: right;">0.103</td>
+<td style="text-align: right;">0.844</td>
+<td style="text-align: right;">0.935</td>
+<td style="text-align: right;">1.887</td>
+<td style="text-align: right;">1</td>
+</tr>
+<tr class="even">
+<td rowspan="3" style="text-align: right; vertical-align: middle !important;">30</td>
+<td style="text-align: right;">30</td>
+<td style="text-align: right;">0.000</td>
+<td style="text-align: right;">0.220</td>
+<td style="text-align: right;">0.603</td>
+<td style="text-align: right;">182.565</td>
+<td style="text-align: right;">4751.387</td>
+<td style="text-align: right;">1</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">100</td>
+<td style="text-align: right;">-0.014</td>
+<td style="text-align: right;">0.114</td>
+<td style="text-align: right;">0.247</td>
+<td style="text-align: right;">-356.412</td>
+<td style="text-align: right;">39799.388</td>
+<td style="text-align: right;">1</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">200</td>
+<td style="text-align: right;">-0.013</td>
+<td style="text-align: right;">0.087</td>
+<td style="text-align: right;">0.087</td>
+<td style="text-align: right;">6319.792</td>
+<td style="text-align: right;">136201.790</td>
+<td style="text-align: right;">1</td>
+</tr>
+<tr class="odd">
+<td rowspan="6" style="text-align: left; width: 5em; vertical-align: middle !important;">3</td>
+<td rowspan="3" style="text-align: right; vertical-align: middle !important;">10</td>
+<td style="text-align: right;">30</td>
+<td style="text-align: right;">-0.052</td>
+<td style="text-align: right;">0.245</td>
+<td style="text-align: right;">0.999</td>
+<td style="text-align: right;">0.020</td>
+<td style="text-align: right;">0.249</td>
+<td style="text-align: right;">1</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">100</td>
+<td style="text-align: right;">-0.064</td>
+<td style="text-align: right;">0.134</td>
+<td style="text-align: right;">1.000</td>
+<td style="text-align: right;">0.024</td>
+<td style="text-align: right;">0.141</td>
+<td style="text-align: right;">1</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">200</td>
+<td style="text-align: right;">-0.051</td>
+<td style="text-align: right;">0.096</td>
+<td style="text-align: right;">1.000</td>
+<td style="text-align: right;">0.035</td>
+<td style="text-align: right;">0.097</td>
+<td style="text-align: right;">1</td>
+</tr>
+<tr class="even">
+<td rowspan="3" style="text-align: right; vertical-align: middle !important;">30</td>
+<td style="text-align: right;">30</td>
+<td style="text-align: right;">-0.024</td>
+<td style="text-align: right;">0.206</td>
+<td style="text-align: right;">0.997</td>
+<td style="text-align: right;">0.030</td>
+<td style="text-align: right;">0.208</td>
+<td style="text-align: right;">1</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">100</td>
+<td style="text-align: right;">-0.030</td>
+<td style="text-align: right;">0.108</td>
+<td style="text-align: right;">0.996</td>
+<td style="text-align: right;">0.027</td>
+<td style="text-align: right;">0.112</td>
+<td style="text-align: right;">1</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">200</td>
+<td style="text-align: right;">-0.023</td>
+<td style="text-align: right;">0.080</td>
+<td style="text-align: right;">0.997</td>
+<td style="text-align: right;">0.037</td>
+<td style="text-align: right;">0.081</td>
+<td style="text-align: right;">1</td>
+</tr>
+<tr class="odd">
+<td rowspan="6" style="text-align: left; width: 5em; vertical-align: middle !important;">3A</td>
+<td rowspan="3" style="text-align: right; vertical-align: middle !important;">10</td>
+<td style="text-align: right;">30</td>
+<td style="text-align: right;">0.000</td>
+<td style="text-align: right;">0.126</td>
+<td style="text-align: right;">1.000</td>
+<td style="text-align: right;">-0.004</td>
+<td style="text-align: right;">0.157</td>
+<td style="text-align: right;">1</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">100</td>
+<td style="text-align: right;">0.004</td>
+<td style="text-align: right;">0.073</td>
+<td style="text-align: right;">1.000</td>
+<td style="text-align: right;">0.001</td>
+<td style="text-align: right;">0.090</td>
+<td style="text-align: right;">1</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">200</td>
+<td style="text-align: right;">0.002</td>
+<td style="text-align: right;">0.048</td>
+<td style="text-align: right;">1.000</td>
+<td style="text-align: right;">-0.001</td>
+<td style="text-align: right;">0.062</td>
+<td style="text-align: right;">1</td>
+</tr>
+<tr class="even">
+<td rowspan="3" style="text-align: right; vertical-align: middle !important;">30</td>
+<td style="text-align: right;">30</td>
+<td style="text-align: right;">-0.001</td>
+<td style="text-align: right;">0.071</td>
+<td style="text-align: right;">1.000</td>
+<td style="text-align: right;">-0.003</td>
+<td style="text-align: right;">0.090</td>
+<td style="text-align: right;">1</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">100</td>
+<td style="text-align: right;">0.000</td>
+<td style="text-align: right;">0.040</td>
+<td style="text-align: right;">1.000</td>
+<td style="text-align: right;">-0.001</td>
+<td style="text-align: right;">0.051</td>
+<td style="text-align: right;">1</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">200</td>
+<td style="text-align: right;">0.000</td>
+<td style="text-align: right;">0.028</td>
+<td style="text-align: right;">1.000</td>
+<td style="text-align: right;">0.000</td>
+<td style="text-align: right;">0.036</td>
+<td style="text-align: right;">1</td>
+</tr>
+<tr class="odd">
+<td rowspan="6" style="text-align: left; width: 5em; vertical-align: middle !important;">3B</td>
+<td rowspan="3" style="text-align: right; vertical-align: middle !important;">10</td>
+<td style="text-align: right;">30</td>
+<td style="text-align: right;">0.001</td>
+<td style="text-align: right;">0.217</td>
+<td style="text-align: right;">0.999</td>
+<td style="text-align: right;">-0.013</td>
+<td style="text-align: right;">0.241</td>
+<td style="text-align: right;">1</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">100</td>
+<td style="text-align: right;">-0.008</td>
+<td style="text-align: right;">0.121</td>
+<td style="text-align: right;">1.000</td>
+<td style="text-align: right;">-0.008</td>
+<td style="text-align: right;">0.138</td>
+<td style="text-align: right;">1</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">200</td>
+<td style="text-align: right;">0.005</td>
+<td style="text-align: right;">0.087</td>
+<td style="text-align: right;">1.000</td>
+<td style="text-align: right;">0.003</td>
+<td style="text-align: right;">0.097</td>
+<td style="text-align: right;">1</td>
+</tr>
+<tr class="even">
+<td rowspan="3" style="text-align: right; vertical-align: middle !important;">30</td>
+<td style="text-align: right;">30</td>
+<td style="text-align: right;">0.000</td>
+<td style="text-align: right;">0.193</td>
+<td style="text-align: right;">1.000</td>
+<td style="text-align: right;">-0.004</td>
+<td style="text-align: right;">0.200</td>
+<td style="text-align: right;">1</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">100</td>
+<td style="text-align: right;">-0.008</td>
+<td style="text-align: right;">0.103</td>
+<td style="text-align: right;">0.997</td>
+<td style="text-align: right;">-0.007</td>
+<td style="text-align: right;">0.108</td>
+<td style="text-align: right;">1</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">200</td>
+<td style="text-align: right;">0.001</td>
+<td style="text-align: right;">0.075</td>
+<td style="text-align: right;">0.999</td>
+<td style="text-align: right;">0.001</td>
+<td style="text-align: right;">0.080</td>
+<td style="text-align: right;">1</td>
+</tr>
+</tbody>
+</table>
+
+
+</div>
+</div>
+<p><em>Note.</em> SR: model fitting success rate. Bias: <span class="math inline">\(\hat{\beta}_{0,MLM} - \beta_{0,MLM}\)</span>. Difference: <span class="math inline">\(\hat{\beta}_{0,GEE} - \beta_{0,MLM}\)</span>. SD: standard deviation of estimates across replications.</p>
+</div>
+</figure>
+</div>
+</section>
+<section id="discussion" class="level1">
+<h1>Discussion</h1>
+<p>This report employed both graphical methods and data simulations to understand and explain the issue of endogenous covariates. Now we first discuss the expected results based on the backdoor criterion <span class="citation" data-cites="pearl1988">[@pearl1988, @pearl2009]</span> and the conditional independence assumption <span class="citation" data-cites="qian2020">[@qian2020]</span>, whereafter we discuss the findings relating to the two research questions.</p>
+<p>Using the conditional independence assumption of <span class="citation" data-cites="qian2020">@qian2020</span>, we would expect, based on the path diagrams, that the treatment effect would be biased for GM3, 3A and 3B. On the other hand, the backdoor criterion suggested the absence of bias for all generative models. While <span class="citation" data-cites="qian2020">@qian2020</span> show that GM3 is the only model with bias in the treatment effect, the backdoor criterion failed to identify this bias, as there is no backdoor path in the treatment effect. This may be explained by the fact that the classic DAG does not impose restrictions based on (a) the random slopes and (b) interaction effects.</p>
+<!-- (1) When does the inclusion of endogenous variables in multilevel linear models result in biased estimates of the treatment effect? -->
+<!--     (a) How is the bias in the treatment effect affected by the removal of the interaction $\beta_1$ from generative model 3? -->
+<!--     (b) How is the bias in the treatment effect affected by the removal of the random slope $b_{i2}$ from generative model 3? -->
+<p>The first research question—pertaining to the extent of treatment effect bias in MLM estimates of generative model that were nested in GM3—was investigated using the analytical multilevel model. First, we reproduced the findings by <span class="citation" data-cites="qian2020">@qian2020</span> who found consistent estimators for GM1 and GM2 and inconsistent ones for GM3. Using additional generative models, we found that bias became indiscernable when removing from GM3 either the dependency between the random intercept and covariate (GM1), the random slope for treatment (GM3A) or the interaction effect (GM3B). This finding is in sharp contrast to the suggestion of the conditional independence assumption that the treatment effect would be biased for GM3, 3A and 3B.</p>
+<!-- (2) When does the inclusion of of endogenous covariates in multilevel linear models result in a discrepancy between conditional and marginal interpretations of the treatment effect? -->
+<!--     (a) When removing the interaction $\beta_1$ from generative model 3, is there a difference between the marginal and conditional estimates of the treatment effect? -->
+<!--     (b) When removing the random slope $b_{i2}$ from generative model 3, is there a difference between the marginal and conditional estimates of the treatment effect? -->
+<p>The second research question—related to the discrepancy between marginal and conditional interpretations of the treatment effect—was assessed with analytical GEE with working independence. Here we found extreme differences between the estimated marginal and specified conditional effect for GM2, suggesting that the marginal interpretation breaks down the most for this generative model<a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a>. Hence, for this GM, a false interpretation of the MLM parameters as marginal, would potentially have great inferential consequences. For GM1 and GM3, there smaller but still noticeable differences between the marginal and conditional effect. This suggests that the marginal interpretation of the treatment effect may be recovered for GM3, 3A and 3B, but not for GM2. Especially for GM3A, this difference was practically indescernable, suggesting that the marginal interpretation of the treatment effect may be recovered. Conversely, <span class="citation" data-cites="qian2020">@qian2020</span> notes that if the random effect in the model does not interact with the treatment variable, the interaction recovers its marginal interpretation but the treatment effect does not (p.&nbsp;382). This difference in conclusions may be explained through the difference in approach: while <span class="citation" data-cites="qian2020">@qian2020</span> provides an analytical answer, the current study provides approximations through simulations.</p>
+<!-- Issues with GM2 -->
+<p>For the GM2 setting of <span class="citation" data-cites="qian2020">@qian2020</span>, we found several issues, which were most pronounced for <span class="math inline">\(T = 30\)</span>. First, we noticed extreme model fitting issues for the MLM, due to, among other things, a lack of convergence and singularity. It should be noted that unlike the script used here, <span class="citation" data-cites="qian2020">@qian2020</span> deals only with errors of the <code>lmer()</code> function, but not with warnings (e.g., pertaining to non-convergence) in their script. This discrepancy may explain the slightly different estimates of MLM bias for GM2. Second, we found extremely large GEE estimates of the treatment effect. This may be explained by the fact that the values of the covariate and outcome were also extremely great, often exceeding a million. All things considered, this suggests that GM2 may be a poorly specified model.</p>
+<!-- This may imply the presence of a non-stationary process (e.g., unit root). -->
+<!-- What next -->
+<p>The current research report leaves several avenues unexplored. First, it is unclear whether the simulation findings pertaining the generative models in <span class="citation" data-cites="qian2020">@qian2020</span> and here generalize to other generative models. For instance, we found here that removal of a random slope or interaction from GM3 got rid of most if not all of the treatment effect bias. Thus, it is important to establish how this generalizes, so that practical recommendations can be formulated. This is particularly important, since while violations of model assumptions are never desired, the robustness against and the practical implications of a violation is what matters. Second, it is unclear how exactly the divide between the literatures pertaining to the focus of the MLM on different centering methods and within- and between-person interpretations and the focus of the GEE on marginal and conditional interpretations may be bridged. Consequently, future research could assess the implications of centering methods in MLMs on the extent to which the marginal interpretation of MLM breaks down. Third, we found that the classical DAG may not be sufficient to identify bias in the treatment effect for GM3, especially due to its lack of specification of interaction effects. Concerns regarding the use of Pearl’s backdoor criterion in situations with interaction effects have been voiced by several people (see <span class="citation" data-cites="weinberg2007">@weinberg2007</span>; <span class="citation" data-cites="attia2022">@attia2022</span>). Future research could explore to what extent proposed extensions of the DAG may be useful in identifying bias in the treatment effect for GM3. Finally, it may be interesting to investigate the implications of endogenous covariates in MLMs for other types of longitudinal data analysis methods, such as dynamic structural equation modelling (DSEM; a widely used framework in the social sciences based on MLM).</p>
+<p>Third, since the issue extends to all longitudinal data analysis methods according to <span class="citation" data-cites="diggle2002">@diggle2002</span>, in future research it may be interesting to investigate the implications of endogenous covariates in MLMs for other types of longitudinal data analysis methods, such as dynamic structural equation modelling (DSEM; a widely used framework in the social sciences based on MLM).</p>
+<!-- # Other ideas -->
+<!-- -   Initially, it seemed that the issue of endogenous covariates meant that, for unbiased estimation of the treatment effect, we should rely on GEE with independence. However, it is important not to conflate the issues mentioned by @qian2020. The first issue pertains to model interpretation: should we expect covariates to be endogenous and be primarily interested in marginal interpretations of the parameters rather than the person-specific (conditional-on-the-random-effect) interpretation, we should indeed employ GEE with working independence (OR STRUCTURAL MARGINAL MODELS??? CHECK THIS OUT IN ZOTERO). The second issue pertains to model fitting: once we conclude that person-specific interpretation aligns with our interest but we fear the presence of endogenous covariates, we have to assess the conditional independence assumption. -->
+<!-- -   Across all generative model, we generally found that the estimated fixed treatment effect differed more from the specified MLM effect for the analytical GEE models than for the analytical MLM model. This is rather unsurprising, considering that the MLM is analyzing the exact same model as was specified, thereby putting it at an advantage over the GEE. -->
+<!-- -   While GEE with independence may indeed yield unbiased estimators of the marginal effect as mentioned by @qian2020, they do not reflect the value of the model parameter. And since the endogeneity of a covariate implies that it is determined by the random effect, thereby making the marginal relationship between any given $X_{it}$ and $Y_{it+1}$ different as shown by @qian2020 (section 2.2), it is unclear what utility the combined marginal effect may serve in this context. -->
+<!-- -   They set the same seed for every setting, potentially making the first dataset the same for every setting. Nevertheless, properly randomizing does not seem to drastically impact the results. The settings with GM2, $T = 30$ and $N \geq 100$ of @qian2020 results in very implausible values for the covariate $X_{it}$ and outcome $Y_{it+1}$, often exceeding a million. This may imply the presence of a non-stationary process (e.g., unit root). In the case of GEE analytical models, these settings result in very large estimates. -->
+<!-- -   wasn't working exchangeability in GEE equivalent to MLM? then use this to argue why using this GEE variation. Because for the difference of GEE with independence from the actual specified conditional parameter estimates should indicate a difference between the marginal and conditional effect, but this is not bias. Can we speak of bias with exchangeability? -->
+<!--     -   no it depends on the random effects, and it was compound symmetry. Leave this for next time. -->
+<div style="page-break-after: always;"></div>
+</section>
+<section id="references" class="level1">
+<h1>References</h1>
+<div id="refs" role="list">
+
+</div>
+<!-- --- -->
+<!-- nocite: | -->
+<!--   @* -->
+<!-- --- -->
+<!-- # Appendix -->
+<!-- ## Original Section from Qian et al. (2020): "4. Simulation" -->
+<!-- In the simulation, we considered three generative models (GMs), all of which have an endogenous covariate. In the first two GMs, the endogenous covariate $X_{it}$ equals the previous outcome $Y_{it}$ plus some random noise, so the conditional independence assumption (10) is valid. In GM 3, the endogenous covariate depends directly on $b_i$, violating assumption (10). The details of the generative models are described below. -->
+<!-- In GM1, we considered a simple case with only a random intercept and a random slope for $A_{it}$, so that $Z_{i(t_0)} = Z_{i(t_2)} = 1$ in model (7). The outcome is generated as: -->
+<!-- $$ -->
+<!-- Y_{it+1} = \alpha_0 + \alpha_1 X_{it} + b_{i0} + A_{it} (\beta_0 + \beta_1 X_{it} + b_{i2}) + \epsilon_{it+1}. -->
+<!-- $$ -->
+<!-- The random effects $b_{i0} \sim N(0, \sigma_{b0}^2)$ and $b_{i2} \sim N(0, \sigma_{b2}^2)$ are independent of each other. The covariate is generated as $X_{i1} \sim N(0, 1)$, and for $t \geq 2$, -->
+<!-- $$ -->
+<!-- X_{it} = Y_{it} + N(0, 1). -->
+<!-- $$ -->
+<!-- The randomization probability $p_t$ is constant at $1/2$. The exogenous noise is $\epsilon_{it+1} \sim N(0, \sigma_\epsilon^2)$. -->
+<!-- In GM2, we considered the case where $Z_{i(t_0)} = Z_{i(t_2)} = 1$, with time-varying randomization probability. The outcome is generated as: -->
+<!-- $$ -->
+<!-- Y_{it+1} = \alpha_0 + \alpha_1 X_{it} + b_{i0} + b_{i1} X_{it} + A_{it} (\beta_0 + \beta_1 X_{it} + b_{i2} + b_{i3} X_{it}) + \epsilon_{it+1}. -->
+<!-- $$ -->
+<!-- The random effects $b_{ij} \sim N(0, \sigma_{b_j}^2)$, for $0 \leq j \leq 3$, are independent of each other. The covariate is generated as $X_{i1} \sim N(0, 1)$, and for $t \geq 2$, -->
+<!-- $$ -->
+<!-- X_{it} = Y_{it} + N(0, 1). -->
+<!-- $$ -->
+<!-- The randomization probability depends on $X_{it}$: -->
+<!-- $$ -->
+<!-- p_t = 0.7 \cdot 1(X_{it} > -1.27) + 0.3 \cdot 1(X_{it} \leq -1.27), -->
+<!-- $$ -->
+<!-- where $1(\cdot)$ represents the indicator function, and the cutoff $-1.27$ was chosen so that $p_t$ equals 0.7 or 0.3 for about half of the time. The exogenous noise is $\epsilon_{it+1} \sim N(0, \sigma_\epsilon^2)$. -->
+<!-- GM3 is the same as GM 1, except that the covariate $X_{it}$ depends directly on $b_i$: -->
+<!-- $$ -->
+<!-- X_{i1} \sim N(b_{i0}, 1), \quad X_{it} = Y_{it} + N(b_{i0}, 1) \text{ for } t \geq 2. -->
+<!-- $$ -->
+<!-- We chose the following parameter values: -->
+<!-- $$ -->
+<!-- \alpha_0 = -2, \quad \alpha_1 = -0.3, \quad \beta_0 = 1, \quad \beta_1 = 0.3, -->
+<!-- $$ -->
+<!-- $$ -->
+<!-- \sigma_{b0}^2 = 4, \quad \sigma_{b1}^2 = \frac{1}{4}, \quad \sigma_{b2}^2 = 1, \quad \sigma_{b3}^2 = \frac{1}{4}, \quad \sigma_\epsilon^2 = 1. -->
+<!-- $$ -->
+<!-- \newpage -->
+<!-- ## Overview of Variations on Generative Model 3 -->
+<!-- |  |  |  |  |  | -->
+<!-- |---------------|---------------|---------------|---------------|---------------| -->
+<!-- | Generative Model | random slope treatment $b_{i2}$ | interactie $\beta_1$ | fixed slope covariate $\alpha_1$ | bias | -->
+<!-- | 3 | yes | yes | yes | yes, negative | -->
+<!-- | 3a | no | yes | yes | no | -->
+<!-- | 3d | yes | no | yes | no | -->
+<!-- | 3h | yes | yes | no | yes, positive | -->
+<!-- : Models with 1 Parameter Less -->
+<!-- |  |  |  |  |  | -->
+<!-- |---------------|---------------|---------------|---------------|---------------| -->
+<!-- | Generative Model | random slope treatment $b_{i2}$ | interactie $\beta_1$ | fixed slope covariate $\alpha_1$ | bias | -->
+<!-- | 3 | yes | yes | yes | yes, negative | -->
+<!-- | 3b | no | no | yes | no | -->
+<!-- | 3i | no | yes | no |  | -->
+<!-- | 3j | yes | no | no |  | -->
+<!-- ## Simulation Plan Proposal -->
+<!-- To uncover the undesirable effects of endogenous covariates and investigate robustness against these effects, we will carry out simulations in which data will be generated according to several increasingly complex scenarios. These scenarios will be visually represented using directed acyclic graphs and analyzed using GEE, MLM and DSEM. We will start out with a scenario of the basic MLM---where a time-varying outcome $Y$ is regressed on a single time-varying predictor $X$ and in the presence of stable between person differences in the intercept---and increase the complexity until we reach the scenario that includes a time-varying endogenous covariate. The primary interest of this simulation study is the comparative performance of different specifications of the MLM and GEE in terms of bias in the estimation of the effect of $X$ to $Y$. The secondary interest is the efficiency in mean squared error (MSE). We consider settings with timepoints $T = 10,30$ and sample size $N = 30, 100, 200$. -->
+<!-- Statistical analyses pertaining to the GEE and basic MLM will be performed in `R`, version 4.4.2 [@rcoreteam2024]. To fit the GEE, the R-package `geepack` [@halekoh2006] will evaluate several different working correlation structures, including independent, exchangeable, AR(1) and unstructured. To fit the basic MLM, the R-package `lme4` [@bates2015] will be employed, where we will use restricted maximum likelihood estimation. -->
+<!-- ## Trash -->
+<!-- ```{=tex} -->
+<!-- \begin{table} -->
+<!-- \centering -->
+<!-- %\renewcommand{\arraystretch}{0.65} % Decrease row height -->
+<!-- \begin{tabular}{@{}lcccccccc@{}} -->
+<!-- \toprule -->
+<!-- GM & T & N & \multicolumn{2}{c}{MLM} & \multicolumn{2}{c}{GEE-Ind} & MLM\_success \\ -->
+<!-- \cmidrule(lr){4-5} \cmidrule(lr){6-7} -->
+<!--    &   &   & Bias & SD & Bias & SD &   \\ \midrule -->
+<!-- \multirow{6}{*}{1} & 10 & 30 & 0.000 & 0.238 & 0.071 & 0.296 & 0.998 \\  -->
+<!--    & 10 & 100 & -0.012 & 0.129 & 0.074 & 0.169 & 1.000 \\  -->
+<!--    & 10 & 200 & 0.003 & 0.093 & 0.085 & 0.116 & 0.999 \\  -->
+<!--    & 30 & 30 & -0.001 & 0.203 & 0.085 & 0.224 & 0.998 \\  -->
+<!--    & 30 & 100 & -0.007 & 0.107 & 0.083 & 0.123 & 0.996 \\  -->
+<!--    & 30 & 200 & 0.001 & 0.079 & 0.094 & 0.088 & 0.996 \\  -->
+<!-- \midrule -->
+<!-- \multirow{6}{*}{2} & 10 & 30 & 0.011 & 0.282 & 0.306 & 1.630 & 0.925 \\  -->
+<!--    & 10 & 100 & 0.005 & 0.147 & 0.565 & 1.836 & 0.881 \\  -->
+<!--    & 10 & 200 & 0.008 & 0.103 & 0.935 & 1.887 & 0.844 \\  -->
+<!--    & 30 & 30 & 0.000 & 0.220 & 182.565 & 4751.387 & 0.603 \\  -->
+<!--    & 30 & 100 & -0.014 & 0.114 & -356.412 & 39799.388 & 0.247 \\  -->
+<!--    & 30 & 200 & -0.013 & 0.087 & 6319.792 & 136201.790 & 0.087 \\  -->
+<!-- \midrule -->
+<!-- \multirow{6}{*}{3} & 10 & 30 & -0.052 & 0.245 & 0.020 & 0.249 & 0.999 \\  -->
+<!--    & 10 & 100 & -0.064 & 0.134 & 0.024 & 0.141 & 1.000 \\  -->
+<!--    & 10 & 200 & -0.051 & 0.096 & 0.035 & 0.097 & 1.000 \\  -->
+<!--    & 30 & 30 & -0.024 & 0.206 & 0.030 & 0.208 & 0.997 \\  -->
+<!--    & 30 & 100 & -0.030 & 0.108 & 0.027 & 0.112 & 0.996 \\  -->
+<!--    & 30 & 200 & -0.023 & 0.080 & 0.037 & 0.081 & 0.997 \\  -->
+<!-- \midrule -->
+<!-- \multirow{6}{*}{3A} & 10 & 30 & 0.000 & 0.126 & -0.004 & 0.157 & 1.000 \\  -->
+<!--    & 10 & 100 & 0.004 & 0.073 & 0.001 & 0.090 & 1.000 \\  -->
+<!--    & 10 & 200 & 0.002 & 0.048 & -0.001 & 0.062 & 1.000 \\  -->
+<!--    & 30 & 30 & -0.001 & 0.071 & -0.003 & 0.090 & 1.000 \\  -->
+<!--    & 30 & 100 & 0.000 & 0.040 & -0.001 & 0.051 & 1.000 \\  -->
+<!--    & 30 & 200 & -0.000 & 0.028 & -0.000 & 0.036 & 1.000 \\  -->
+<!-- \midrule -->
+<!-- \multirow{6}{*}{3B} & 10 & 30 & 0.001 & 0.217 & -0.013 & 0.241 & 0.999 \\  -->
+<!--    & 10 & 100 & -0.008 & 0.121 & -0.008 & 0.138 & 1.000 \\  -->
+<!--    & 10 & 200 & 0.005 & 0.087 & 0.003 & 0.097 & 1.000 \\  -->
+<!--    & 30 & 30 & 0.000 & 0.193 & -0.004 & 0.200 & 1.000 \\  -->
+<!--    & 30 & 100 & -0.008 & 0.103 & -0.007 & 0.108 & 0.997 \\  -->
+<!--    & 30 & 200 & 0.001 & 0.075 & 0.001 & 0.080 & 0.999 \\  -->
+<!-- \bottomrule -->
+<!-- \end{tabular} -->
+<!-- \end{table} -->
+<!-- ``` -->
+<!-- ::: {#tbl-simulation-summary} -->
+<!-- ```{=tex} -->
+<!-- \begin{table} -->
+<!--     \centering -->
+<!--     \begin{tabular}{@{}p{1.5cm} p{5cm} cc cc@{}} -->
+<!--         \toprule -->
+<!--         GM & Characteristics & \multicolumn{2}{c}{$\hat{\beta}_{0,MLM}-\beta_{0,MLM}$} & \multicolumn{2}{c}{$\hat{\beta}_{0,GEE-ind}-\beta_{0,MLM}$} \\  -->
+<!--         \cmidrule(lr){3-4} \cmidrule(lr){5-6} -->
+<!--            &                 & \( T = 10 \) & \( T = 30 \) & \( T = 10 \) & \( T = 30 \) \\ \midrule -->
+<!--         1  & Includes random intercept and random slope for treatment & 0.003 & 0.001 & 0.086 & 0.090 \\ -->
+<!--         3  & Model 1 with dependency random intercept and covariate       & -0.051 & -0.023 & 0.033 & 0.032 \\ -->
+<!--         3A & Model 3 without random slope $b_{2i}$           & 0.002 & -0.000 & -0.001 & -0.000 \\ -->
+<!--         3B & Model 3 without interaction effect $\beta_1$ (between treatment and covariate) & 0.005 & 0.001 & 0.003 & 0.001 \\ -->
+<!--         \bottomrule -->
+<!--     \end{tabular} -->
+<!-- \end{table} -->
+<!-- ``` -->
+<!-- Simulation results for $N=200$ and $\beta_{0,MLM} = 1$ over $1000$ replications, with $T=10$ and $T=30$. -->
+<!-- ::: -->
+<!-- ```{r} -->
+<!-- #| label: fig-DAGs -->
+<!-- #| fig-cap: "DAG for Generative Models" -->
+<!-- #| layout-ncol: 2 -->
+<!-- #| fig-subcap: -->
+<!-- #|  - "Generative Model 1" -->
+<!-- #|  - "Generative Model 2" -->
+<!-- #|  - "Generative Model 3, 3A and 3B" -->
+<!-- #| echo: false -->
+<!-- #| eval: false -->
+<!-- #| cache: true -->
+<!-- GM1_DAG <- dagitty('dag { -->
+<!-- bb="0,0,1,1" -->
+<!-- U [latent,pos="0.500,0.200"] -->
+<!-- A_1 [exposure,pos="0.200,0.600"] -->
+<!-- A_2 [exposure,pos="0.400,0.600"] -->
+<!-- Y_2 [outcome,pos="0.450,0.450"] -->
+<!-- Y_3 [outcome,pos="0.650,0.450"] -->
+<!-- X_1 [adjusted,pos="0.200,0.300"] -->
+<!-- X_2 [adjusted,pos="0.400,0.300"] -->
+<!-- X_3 [pos="0.600,0.300"] -->
+<!-- U -> Y_2 -->
+<!-- U -> Y_3 -->
+<!-- A_1 -> Y_2 -->
+<!-- A_2 -> Y_3 -->
+<!-- Y_2 -> X_2 -->
+<!-- Y_3 -> X_3 -->
+<!-- X_1 -> Y_2 -->
+<!-- X_2 -> Y_3 -->
+<!-- }') -->
+<!-- GM2_DAG <- dagitty('dag { -->
+<!-- bb="0,0,1,1" -->
+<!-- U [latent,pos="0.500,0.200"] -->
+<!-- A_1 [exposure,pos="0.200,0.600"] -->
+<!-- A_2 [exposure,pos="0.400,0.600"] -->
+<!-- Y_2 [outcome,pos="0.450,0.450"] -->
+<!-- Y_3 [outcome,pos="0.650,0.450"] -->
+<!-- X_1 [adjusted,pos="0.200,0.300"] -->
+<!-- X_2 [adjusted,pos="0.400,0.300"] -->
+<!-- X_3 [pos="0.600,0.300"] -->
+<!-- U -> Y_2 -->
+<!-- U -> Y_3 -->
+<!-- A_1 -> Y_2 -->
+<!-- A_2 -> Y_3 -->
+<!-- Y_2 -> X_2 -->
+<!-- Y_3 -> X_3 -->
+<!-- X_1 -> A_1 -->
+<!-- X_1 -> Y_2 -->
+<!-- X_2 -> A_2 -->
+<!-- X_2 -> Y_3 -->
+<!-- } -->
+<!-- ') -->
+<!-- GM3ab_DAG <- dagitty('dag { -->
+<!-- bb="0,0,1,1" -->
+<!-- U [latent,pos="0.500,0.200"] -->
+<!-- A_1 [exposure,pos="0.200,0.600"] -->
+<!-- A_2 [exposure,pos="0.400,0.600"] -->
+<!-- Y_2 [outcome,pos="0.450,0.450"] -->
+<!-- Y_3 [outcome,pos="0.650,0.450"] -->
+<!-- X_1 [adjusted,pos="0.200,0.300"] -->
+<!-- X_2 [adjusted,pos="0.400,0.300"] -->
+<!-- X_3 [pos="0.600,0.300"] -->
+<!-- U -> Y_2 -->
+<!-- U -> Y_3 -->
+<!-- U -> X_1 -->
+<!-- U -> X_2 -->
+<!-- U -> X_3 -->
+<!-- A_1 -> Y_2 -->
+<!-- A_2 -> Y_3 -->
+<!-- Y_2 -> X_2 -->
+<!-- Y_3 -> X_3 -->
+<!-- X_1 -> Y_2 -->
+<!-- X_2 -> Y_3 -->
+<!-- }') -->
+<!-- ggdag::ggdag_status(GM1_DAG) + ggdag::theme_dag() -->
+<!-- ggdag::ggdag_status(GM2_DAG) + ggdag::theme_dag() -->
+<!-- ggdag::ggdag_status(GM3ab_DAG) + ggdag::theme_dag() -->
+<!-- ``` -->
+<!-- ```{=tex} -->
+<!-- % latex table generated in R 4.4.2 by xtable 1.8-4 package -->
+<!-- % Mon Dec  9 11:20:44 2024 -->
+<!-- \begin{table}[H] -->
+<!-- \centering -->
+<!-- \caption{Results for beta0 bias with Standard deviation and success rate, 1000 replications}  -->
+<!-- \renewcommand{\arraystretch}{0.7} % Decrease row height -->
+<!-- \resizebox{\textwidth}{!}{ -->
+<!-- \begin{tabular}{lrrrrrrr} -->
+<!-- \toprule -->
+<!-- GM & T & N & MLM\_bias & MLM\_sd & GEE-Ind\_bias & GEE-Ind\_sd & MLM\_success \\  -->
+<!-- \midrule -->
+<!-- \multirow{6}{*}{1} & 10 & 30 & 0.000 & 0.238 & 0.071 & 0.296 & 0.998 \\  -->
+<!--    & 10 & 100 & -0.012 & 0.129 & 0.074 & 0.169 & 1.000 \\  -->
+<!--    & 10 & 200 & 0.003 & 0.093 & 0.085 & 0.116 & 0.999 \\  -->
+<!--    & 30 & 30 & -0.001 & 0.203 & 0.085 & 0.224 & 0.998 \\  -->
+<!--    & 30 & 100 & -0.007 & 0.107 & 0.083 & 0.123 & 0.996 \\  -->
+<!--    & 30 & 200 & 0.001 & 0.079 & 0.094 & 0.088 & 0.996 \\  -->
+<!-- \midrule -->
+<!-- \multirow{6}{*}{2} & 10 & 30 & 0.011 & 0.282 & 0.306 & 1.630 & 0.925 \\  -->
+<!--    & 10 & 100 & 0.005 & 0.147 & 0.565 & 1.836 & 0.881 \\  -->
+<!--    & 10 & 200 & 0.008 & 0.103 & 0.935 & 1.887 & 0.844 \\  -->
+<!--    & 30 & 30 & 0.000 & 0.220 & 182.565 & 4751.387 & 0.603 \\  -->
+<!--    & 30 & 100 & -0.014 & 0.114 & -356.412 & 39799.388 & 0.247 \\  -->
+<!--    & 30 & 200 & -0.013 & 0.087 & 6319.792 & 136201.790 & 0.087 \\  -->
+<!-- \midrule -->
+<!-- \multirow{6}{*}{3} & 10 & 30 & -0.052 & 0.245 & 0.020 & 0.249 & 0.999 \\  -->
+<!--    & 10 & 100 & -0.064 & 0.134 & 0.024 & 0.141 & 1.000 \\  -->
+<!--    & 10 & 200 & -0.051 & 0.096 & 0.035 & 0.097 & 1.000 \\  -->
+<!--    & 30 & 30 & -0.024 & 0.206 & 0.030 & 0.208 & 0.997 \\  -->
+<!--    & 30 & 100 & -0.030 & 0.108 & 0.027 & 0.112 & 0.996 \\  -->
+<!--    & 30 & 200 & -0.023 & 0.080 & 0.037 & 0.081 & 0.997 \\  -->
+<!-- \midrule -->
+<!-- \multirow{6}{*}{3A} & 10 & 30 & 0.000 & 0.126 & -0.004 & 0.157 & 1.000 \\  -->
+<!--    & 10 & 100 & 0.004 & 0.073 & 0.001 & 0.090 & 1.000 \\  -->
+<!--    & 10 & 200 & 0.002 & 0.048 & -0.001 & 0.062 & 1.000 \\  -->
+<!--    & 30 & 30 & -0.001 & 0.071 & -0.003 & 0.090 & 1.000 \\  -->
+<!--    & 30 & 100 & 0.000 & 0.040 & -0.001 & 0.051 & 1.000 \\  -->
+<!--    & 30 & 200 & -0.000 & 0.028 & -0.000 & 0.036 & 1.000 \\  -->
+<!-- \midrule -->
+<!-- \multirow{6}{*}{3B} & 10 & 30 & 0.001 & 0.217 & -0.013 & 0.241 & 0.999 \\  -->
+<!--    & 10 & 100 & -0.008 & 0.121 & -0.008 & 0.138 & 1.000 \\  -->
+<!--    & 10 & 200 & 0.005 & 0.087 & 0.003 & 0.097 & 1.000 \\  -->
+<!--    & 30 & 30 & 0.000 & 0.193 & -0.004 & 0.200 & 1.000 \\  -->
+<!--    & 30 & 100 & -0.008 & 0.103 & -0.007 & 0.108 & 0.997 \\  -->
+<!--    & 30 & 200 & 0.001 & 0.075 & 0.001 & 0.080 & 0.999 \\  -->
+<!-- \bottomrule -->
+<!-- \end{tabular} -->
+<!-- } -->
+<!-- \label{tab:beta0_bias_sd_success} -->
+<!-- \end{table} -->
+<!-- ``` -->
+<!-- ::: {layout-ncol=2} -->
+<!-- ```{r} -->
+<!-- #| label: fig-GM1_DAG -->
+<!-- #| engine: 'tikz' -->
+<!-- #| echo: false -->
+<!-- #| cache: true -->
+<!-- #| fig-cap: "GM 1" -->
+<!-- #| eval: true -->
+<!-- \begin{tikzpicture} -->
+<!--   % Nodes for observed variables (squares) -->
+<!--   \node[draw, rectangle] (X1) at (0, -2) {$X_{1}$}; -->
+<!--   \node[draw, rectangle] (A1) at (0, 2) {$A_{1}$}; -->
+<!--   \node[draw, rectangle] (Y2) at (3, 0) {$Y_{2}$}; -->
+<!--   \node[draw, rectangle] (X2) at (3, -2) {$X_{2}$}; -->
+<!--   \node[draw, rectangle] (A2) at (3, 2) {$A_{2}$}; -->
+<!--   \node[draw, rectangle] (Y3) at (8, 0) {$Y_{3}$}; -->
+<!--   \node[draw, rectangle] (X3) at (8, -2) {$X_{3}$}; -->
+<!--   % Node for latent variable (circle) -->
+<!--   \node[draw, circle, fill=gray!20] (U) at (6, 4) {$U$}; -->
+<!--   % Directed edges -->
+<!--   \draw [->] (U) -- (Y2); -->
+<!--   \draw [->] (U) -- (Y3); -->
+<!--   \draw [->] (A2) -- (Y3); -->
+<!--   \draw [->] (X2) -- (Y3); -->
+<!--   \draw [->] (Y2) -- (X2); -->
+<!--   \draw [->] (A1) -- (Y2); -->
+<!--   \draw [->] (X1) -- (Y2); -->
+<!--   \draw [->] (Y3) -- (X3); -->
+<!-- \end{tikzpicture} -->
+<!-- ``` -->
+<!-- ```{r} -->
+<!-- #| label: fig-GM2_DAG -->
+<!-- #| engine: 'tikz' -->
+<!-- #| echo: false -->
+<!-- #| cache: true -->
+<!-- #| fig-cap: "GM 2 ($t = 1, 2, 3$)" -->
+<!-- #| eval: true -->
+<!-- \begin{tikzpicture} -->
+<!--   % Nodes for observed variables (squares) -->
+<!--   \node[draw, rectangle] (X1) at (0, -2) {$X_{1}$}; -->
+<!--   \node[draw, rectangle] (A1) at (0, 2) {$A_{1}$}; -->
+<!--   \node[draw, rectangle] (Y2) at (3, 0) {$Y_{2}$}; -->
+<!--   \node[draw, rectangle] (X2) at (3, -2) {$X_{2}$}; -->
+<!--   \node[draw, rectangle] (A2) at (3, 2) {$A_{2}$}; -->
+<!--   \node[draw, rectangle] (Y3) at (8, 0) {$Y_{3}$}; -->
+<!--   \node[draw, rectangle] (X3) at (8, -2) {$X_{3}$}; -->
+<!--   % Node for latent variable (circle) -->
+<!--   \node[draw, circle, fill=gray!20] (U) at (6, 4) {$U$}; -->
+<!--   % Directed edges -->
+<!--   \draw [->] (U) -- (Y2); -->
+<!--   \draw [->] (U) -- (Y3); -->
+<!--   \draw [->] (A2) -- (Y3); -->
+<!--   \draw [->] (X2) -- (Y3); -->
+<!--   \draw [->] (Y2) -- (X2); -->
+<!--   \draw [->] (A1) -- (Y2); -->
+<!--   \draw [->] (X1) -- (Y2); -->
+<!--   \draw [->] (Y3) -- (X3); -->
+<!--   % Curved edges for X1 -> A1 and X2 -> A2 -->
+<!--   \draw [->, bend left=40] (X1) to (A1); -->
+<!--   \draw [->, bend left=40] (X2) to (A2); -->
+<!-- \end{tikzpicture} -->
+<!-- ``` -->
+<!-- ```{r} -->
+<!-- #| label: fig-GM3_DAG -->
+<!-- #| engine: 'tikz' -->
+<!-- #| echo: false -->
+<!-- #| cache: true -->
+<!-- #| fig-cap: "GM 3, 3A, 3B" -->
+<!-- #| eval: true -->
+<!-- \begin{tikzpicture} -->
+<!--   % Nodes for observed variables -->
+<!--   \node[draw, rectangle] (X1) at (0, -2) {$X_1$}; -->
+<!--   \node[draw, rectangle] (A1) at (0, 2) {$A_1$}; -->
+<!--   \node[draw, rectangle] (Y2) at (3, 0) {$Y_2$}; -->
+<!--   \node[draw, rectangle] (X2) at (3, -2) {$X_2$}; -->
+<!--   \node[draw, rectangle] (A2) at (3, 2) {$A_2$}; -->
+<!--   \node[draw, rectangle] (Y3) at (8, 0) {$Y_3$}; -->
+<!--   \node[draw, rectangle] (X3) at (8, -2) {$X_3$}; -->
+<!--   % Latent variable -->
+<!--   \node[draw, circle, fill=gray!20] (U) at (6, 4) {$U$}; -->
+<!--   % Edges -->
+<!--   \draw [->] (U) -- (Y2); -->
+<!--   \draw [->] (U) -- (Y3); -->
+<!--   \draw [->] (U) -- (X1); -->
+<!--   \draw [->] (U) -- (X2); -->
+<!--   \draw [->] (U) -- (X3); -->
+<!--   \draw [->] (A1) -- (Y2); -->
+<!--   \draw [->] (X1) -- (Y2); -->
+<!--   \draw [->] (Y2) -- (X2); -->
+<!--   \draw [->] (A2) -- (Y3); -->
+<!--   \draw [->] (X2) -- (Y3); -->
+<!--   \draw [->] (Y3) -- (X3); -->
+<!-- \end{tikzpicture} -->
+<!-- ``` -->
+<!-- DAGs for Generative Models 1, 2, and 3.  -->
+<!-- The red arrows indicate the biased paths after controlling for the covariate $X_{it}$. -->
+<!-- ::: -->
+<!-- ```{r} -->
+<!-- #| label: fig-GM_DAG -->
+<!-- #| engine: 'tikz' -->
+<!-- #| echo: false -->
+<!-- #| cache: true -->
+<!-- #| fig-cap: "DAGs for Generative Models 1, 2, and 3.  ($t = 1, 2, 3$)" -->
+<!-- #| ncols: 2 -->
+<!-- #| fig-subcap:  -->
+<!-- #|  - "GM1" -->
+<!-- #|  - "GM2" -->
+<!-- #|  - "GM3" -->
+<!-- #| eval: true -->
+<!-- \begin{tikzpicture} -->
+<!--   % Nodes for observed variables (squares) -->
+<!--   \node[draw, rectangle] (X1) at (0, -2) {$X_{1}$}; -->
+<!--   \node[draw, rectangle] (A1) at (0, 2) {$A_{1}$}; -->
+<!--   \node[draw, rectangle] (Y2) at (3, 0) {$Y_{2}$}; -->
+<!--   \node[draw, rectangle] (X2) at (3, -2) {$X_{2}$}; -->
+<!--   \node[draw, rectangle] (A2) at (3, 2) {$A_{2}$}; -->
+<!--   \node[draw, rectangle] (Y3) at (8, 0) {$Y_{3}$}; -->
+<!--   \node[draw, rectangle] (X3) at (8, -2) {$X_{3}$}; -->
+<!--   % Node for latent variable (circle) -->
+<!--   \node[draw, circle, fill=gray!20] (U) at (6, 4) {$U$}; -->
+<!--   % Directed edges -->
+<!--   \draw [->] (U) -- (Y2); -->
+<!--   \draw [->] (U) -- (Y3); -->
+<!--   \draw [->] (A2) -- (Y3); -->
+<!--   \draw [->] (X2) -- (Y3); -->
+<!--   \draw [->] (Y2) -- (X2); -->
+<!--   \draw [->] (A1) -- (Y2); -->
+<!--   \draw [->] (X1) -- (Y2); -->
+<!--   \draw [->] (Y3) -- (X3); -->
+<!-- \end{tikzpicture} -->
+<!-- \begin{tikzpicture} -->
+<!--   % Nodes for observed variables (squares) -->
+<!--   \node[draw, rectangle] (X1) at (0, -2) {$X_{1}$}; -->
+<!--   \node[draw, rectangle] (A1) at (0, 2) {$A_{1}$}; -->
+<!--   \node[draw, rectangle] (Y2) at (3, 0) {$Y_{2}$}; -->
+<!--   \node[draw, rectangle] (X2) at (3, -2) {$X_{2}$}; -->
+<!--   \node[draw, rectangle] (A2) at (3, 2) {$A_{2}$}; -->
+<!--   \node[draw, rectangle] (Y3) at (8, 0) {$Y_{3}$}; -->
+<!--   \node[draw, rectangle] (X3) at (8, -2) {$X_{3}$}; -->
+<!--   % Node for latent variable (circle) -->
+<!--   \node[draw, circle, fill=gray!20] (U) at (6, 4) {$U$}; -->
+<!--   % Directed edges -->
+<!--   \draw [->] (U) -- (Y2); -->
+<!--   \draw [->] (U) -- (Y3); -->
+<!--   \draw [->] (A2) -- (Y3); -->
+<!--   \draw [->] (X2) -- (Y3); -->
+<!--   \draw [->] (Y2) -- (X2); -->
+<!--   \draw [->] (A1) -- (Y2); -->
+<!--   \draw [->] (X1) -- (Y2); -->
+<!--   \draw [->] (Y3) -- (X3); -->
+<!--   % Curved edges for X1 -> A1 and X2 -> A2 -->
+<!--   \draw [->, bend left=40] (X1) to (A1); -->
+<!--   \draw [->, bend left=40] (X2) to (A2); -->
+<!-- \end{tikzpicture} -->
+<!-- \begin{tikzpicture} -->
+<!--   % Nodes for observed variables -->
+<!--   \node[draw, rectangle] (X1) at (0, -2) {$X_1$}; -->
+<!--   \node[draw, rectangle] (A1) at (0, 2) {$A_1$}; -->
+<!--   \node[draw, rectangle] (Y2) at (3, 0) {$Y_2$}; -->
+<!--   \node[draw, rectangle] (X2) at (3, -2) {$X_2$}; -->
+<!--   \node[draw, rectangle] (A2) at (3, 2) {$A_2$}; -->
+<!--   \node[draw, rectangle] (Y3) at (8, 0) {$Y_3$}; -->
+<!--   \node[draw, rectangle] (X3) at (8, -2) {$X_3$}; -->
+<!--   % Latent variable -->
+<!--   \node[draw, circle, fill=gray!20] (U) at (6, 4) {$U$}; -->
+<!--   % Edges -->
+<!--   \draw [->] (U) -- (Y2); -->
+<!--   \draw [->] (U) -- (Y3); -->
+<!--   \draw [->] (U) -- (X1); -->
+<!--   \draw [->] (U) -- (X2); -->
+<!--   \draw [->] (U) -- (X3); -->
+<!--   \draw [->] (A1) -- (Y2); -->
+<!--   \draw [->] (X1) -- (Y2); -->
+<!--   \draw [->] (Y2) -- (X2); -->
+<!--   \draw [->] (A2) -- (Y3); -->
+<!--   \draw [->] (X2) -- (Y3); -->
+<!--   \draw [->] (Y3) -- (X3); -->
+<!-- \end{tikzpicture} -->
+<!-- ``` -->
+<!-- a -->
+<!-- ```{=tex} -->
+<!-- \begin{figure}[htbp] -->
+<!--     % Subfigure 1 -->
+<!--     \begin{subfigure}[t]{0.48\textwidth} -->
+<!--         \centering -->
+<!--         \begin{tikzpicture} -->
+<!--           % Nodes for observed variables (squares) -->
+<!--           \node[draw, rectangle] (X1) at (0, -2) {$X_{1}$}; -->
+<!--           \node[draw, rectangle] (A1) at (0, 2) {$A_{1}$}; -->
+<!--           \node[draw, rectangle] (Y2) at (3, 0) {$Y_{2}$}; -->
+<!--           \node[draw, rectangle] (X2) at (3, -2) {$X_{2}$}; -->
+<!--           \node[draw, rectangle] (A2) at (3, 2) {$A_{2}$}; -->
+<!--           \node[draw, rectangle] (Y3) at (8, 0) {$Y_{3}$}; -->
+<!--           \node[draw, rectangle] (X3) at (8, -2) {$X_{3}$}; -->
+<!--           % Node for latent variable (circle) -->
+<!--           \node[draw, circle, fill=gray!20] (U) at (6, 4) {$U$}; -->
+<!--           % Directed edges -->
+<!--           \draw [->] (U) -- (Y2); -->
+<!--           \draw [->] (U) -- (Y3); -->
+<!--           \draw [->] (A2) -- (Y3); -->
+<!--           \draw [->] (X2) -- (Y3); -->
+<!--           \draw [->] (Y2) -- (X2); -->
+<!--           \draw [->] (A1) -- (Y2); -->
+<!--           \draw [->] (X1) -- (Y2); -->
+<!--           \draw [->] (Y3) -- (X3); -->
+<!--         \end{tikzpicture} -->
+<!--         \caption{Generative Model 1} -->
+<!--         \label{fig:GM1_DAG} -->
+<!--     \end{subfigure} -->
+<!--     \hfill -->
+<!--     % Subfigure 2 -->
+<!--     \begin{subfigure}[t]{0.48\textwidth} -->
+<!--         \centering -->
+<!--         \begin{tikzpicture} -->
+<!--           % Nodes for observed variables (squares) -->
+<!--           \node[draw, rectangle] (X1) at (0, -2) {$X_{1}$}; -->
+<!--           \node[draw, rectangle] (A1) at (0, 2) {$A_{1}$}; -->
+<!--           \node[draw, rectangle] (Y2) at (3, 0) {$Y_{2}$}; -->
+<!--           \node[draw, rectangle] (X2) at (3, -2) {$X_{2}$}; -->
+<!--           \node[draw, rectangle] (A2) at (3, 2) {$A_{2}$}; -->
+<!--           \node[draw, rectangle] (Y3) at (8, 0) {$Y_{3}$}; -->
+<!--           \node[draw, rectangle] (X3) at (8, -2) {$X_{3}$}; -->
+<!--           % Node for latent variable (circle) -->
+<!--           \node[draw, circle, fill=gray!20] (U) at (6, 4) {$U$}; -->
+<!--           % Directed edges -->
+<!--           \draw [->] (U) -- (Y2); -->
+<!--           \draw [->] (U) -- (Y3); -->
+<!--           \draw [->] (A2) -- (Y3); -->
+<!--           \draw [->] (X2) -- (Y3); -->
+<!--           \draw [->] (Y2) -- (X2); -->
+<!--           \draw [->] (A1) -- (Y2); -->
+<!--           \draw [->] (X1) -- (Y2); -->
+<!--           \draw [->] (Y3) -- (X3); -->
+<!--           % Curved edges for X1 -> A1 and X2 -> A2 -->
+<!--           \draw [->, bend left=40] (X1) to (A1); -->
+<!--           \draw [->, bend right=40] (X2) to (A2); -->
+<!--         \end{tikzpicture} -->
+<!--         \caption{Generative Model 2} -->
+<!--         \label{fig:GM2_DAG} -->
+<!--     \end{subfigure} -->
+<!--     \vspace{1em} -->
+<!--     % Subfigure 3 -->
+<!--     \begin{subfigure}[t]{0.48\textwidth} -->
+<!--         \centering -->
+<!--         \begin{tikzpicture} -->
+<!--           % Nodes for observed variables -->
+<!--           \node[draw, rectangle] (X1) at (0, -2) {$X_1$}; -->
+<!--           \node[draw, rectangle] (A1) at (0, 2) {$A_1$}; -->
+<!--           \node[draw, rectangle] (Y2) at (3, 0) {$Y_2$}; -->
+<!--           \node[draw, rectangle] (X2) at (3, -2) {$X_2$}; -->
+<!--           \node[draw, rectangle] (A2) at (3, 2) {$A_2$}; -->
+<!--           \node[draw, rectangle] (Y3) at (8, 0) {$Y_3$}; -->
+<!--           \node[draw, rectangle] (X3) at (8, -2) {$X_3$}; -->
+<!--           % Latent variable -->
+<!--           \node[draw, circle, fill=gray!20] (U) at (6, 4) {$U$}; -->
+<!--           % Edges -->
+<!--           \draw [->] (U) -- (Y2); -->
+<!--           \draw [->] (U) -- (Y3); -->
+<!--           \draw [->] (U) -- (X1); -->
+<!--           \draw [->] (U) -- (X2); -->
+<!--           \draw [->] (U) -- (X3); -->
+<!--           \draw [->] (A1) -- (Y2); -->
+<!--           \draw [->] (X1) -- (Y2); -->
+<!--           \draw [->] (Y2) -- (X2); -->
+<!--           \draw [->] (A2) -- (Y3); -->
+<!--           \draw [->] (X2) -- (Y3); -->
+<!--           \draw [->] (Y3) -- (X3); -->
+<!--         \end{tikzpicture} -->
+<!--         \caption{Generative Model 3} -->
+<!--         \label{fig:GM3_DAG} -->
+<!--     \end{subfigure} -->
+<!--     \caption{DAGs for Generative Models 1, 2, and 3. Each subfigure corresponds to a distinct model configuration.} -->
+<!--     \label{fig:combined_DAGs} -->
+<!-- \end{figure} -->
+<!-- ``` -->
+</section>
+
+
+<div id="quarto-appendix" class="default"><section id="footnotes" class="footnotes footnotes-end-of-document" role="doc-endnotes"><h2 class="anchored quarto-appendix-heading">Footnotes</h2>
+
+<ol>
+<li id="fn1"><p>Note, however, that this generative model may not be plausible given the extreme spread across the covariate and treatment variables.<a href="#fnref1" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+</ol>
+</section></div></main>
+<!-- /main column -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const onCopySuccess = function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  }
+  const getTextToCopy = function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+    text: getTextToCopy
+  });
+  clipboard.on('success', onCopySuccess);
+  if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+    // For code content inside modals, clipBoardJS needs to be initialized with a container option
+    // TODO: Check when it could be a function (https://github.com/zenorocha/clipboard.js/issues/860)
+    const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+      text: getTextToCopy,
+      container: window.document.getElementById('quarto-embedded-source-code-modal')
+    });
+    clipboardModal.on('success', onCopySuccess);
+  }
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+    var mailtoRegex = new RegExp(/^mailto:/);
+      var filterRegex = new RegExp('/' + window.location.host + '/');
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+    }
+    // Inspect non-navigation links and adorn them if external
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+        // undo the damage that might have been done by quarto-nav.js in the case of
+        // links that we want to consider external
+        if (link.dataset.originalHref !== undefined) {
+          link.href = link.dataset.originalHref;
+        }
+      }
+    }
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+    const config = {
+      allowHTML: true,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start',
+    };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      if (note) {
+        return note.innerHTML;
+      } else {
+        return "";
+      }
+    });
+  }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
+        return container.innerHTML
+      } else {
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      // TODO in 1.5, we should make sure this works without a callout special case
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
+      }
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
+      }
+    }, function(instance) {
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            div.style.left = 0;
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+
+</body></html>
