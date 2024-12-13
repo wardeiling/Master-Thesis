@@ -36,7 +36,7 @@ format:
     mainfont: Latin Modern Roman
     sansfont: Latin Modern Roman
     linestretch: 2
-    fontsize: 12pt
+    fontsize: 11pt
     template-partials:
       - "before-body.tex"
 bibliography: references.bib
@@ -78,27 +78,29 @@ library(pdftools)
 
 <!-- -   Start with a paragraph describing a problem in the real-life world (so that a BoS member not familiar with statistics understands why you are pursuing research in this direction); -->
 
-Across a wide range of disciplines, researchers analyze clustered longitudinal, observational data to investigate prospective causal relationships between variables. When analyzing such data, the psychological sciences most commonly resort to the multilevel linear model [MLM, @mcneish2017], which---in the context of longitudinal data analysis---separates observed variance into stable between-person differences and within-person fluctuations [@hamaker2020]. Conversely, other fields, such as biostatistics and econometrics often favour generalized estimating equations (GEE) for the analysis of longitudinal data [@mcneish2017]. Despite some cross-disciplinary efforts to compare these methods [@muth2016; @mcneish2017; @yan2013], their scarcity may leave researchers with limited guidance in choosing the most suitable approach for their application.
+Across a wide range of disciplines, researchers analyze clustered longitudinal, observational data to investigate prospective causal relationships between variables. When analyzing such data, psychological researchers most commonly use the multilevel linear model[^1] [MLM, @bauer2011], which—in the context of longitudinal data analysis—partitions observed variance into stable between-person differences and within-person fluctuations [@hamaker2020]. In the application of the MLM, time invariant and time-varying covariates, the latter measured repeatedly over time, are often available. Including these covariates is often beneficial, as it may improve the precision of parameter estimates and mitigate bias caused by confounders [@daniel2013]. However, in some cases, the inclusion of covariates can introduce bias into estimates of the treatment effect, for instance, when conditioning on a covariate that acts as a collider in the causal pathway [@elwert2014].
+
+[^1]: The MLM is known by various names, including: linear mixed model, hierarchical linear model, random-effect model and mixed-effects model.
 
 <!-- -   Then, add a paragraph describing what is known in the literature; -->
 
 <!-- -   Also, describe what is not known and which gap you will address in your thesis; End with a clear research question and, if applicable, your hypothesis (for confirmatory research questions – it should be a testable hypothesis) or expectations (for exploratory research questions – can be much vaguer because of the explorative nature of the question). -->
 
-A recent study by @qian2020 highlighted an issue present in both methods---except for GEE with working independence---where controlling for *time-varying endogenous covariates* may lead to biased causal estimates. A time-varying covariate is *endogenous* if it is directly or indirectly influenced by prior treatment or outcome, meaning its value may be determined by earlier stages of the process [@qian2020]. As a result of including these covariates in these models, ordinary interpretations of the coefficients are no longer valid [@qian2020, p. 3]. According to @diggle2002, this issue not only pertains GEE and MLM, but *all* longitudinal data analysis methods.
+A recent paper by @qian2020 highlighted a potential issue with the inclusion of covariates in the MLM that has not yet been widely recognized in the psychological literature. In their paper, the authors considered the appropriateness of the MLM for estimating the causal effect of a time-varying exposure/treatment, when this exposure is *randomly assigned* at each occasion within each person, on an outcome. While randomized assignment may seem to ensure that the presence or absence of a causal effect can be easily determined, @qian2020 showed that model fitting issues and parameter bias can arise in the presence of a *time-varying endogenous covariate*. A time-varying covariate is *endogenous* if it is directly or indirectly determined by prior treatment or outcome [@qian2020].
 
 <!-- The issues described in @qian2020 can be categorized into two main problems: (1) model interpretation and (2) model fitting. In this investigation, we focus on the latter issue of model fitting of the MLM  -->
 
-However, due to a divide between the disciplines that employ these methods, such critiques of the MLM appear to have largely failed to reach the applied researcher in psychology. One specific reason might be that the technical jargon in other disciplines makes it difficult for researchers to recognize when and how these issues emerge. Therefore, this report aims to understand and explain the issue of including endogenous covariates in analyses involving GEE and MLM in a psychological context. To achieve this aim, the current investigation employs (a) graphical tools such as the directed acyclic graph (DAG) and path diagram to assess potentially relevant assumptions, as well as (b) data simulations with additional scenarios to pinpoint the issue. Accordingly, the following research question will be addressed: *When does the inclusion of endogenous variables in multilevel linear models result in biased estimates of the treatment effect?*
+However, due to a divide between the disciplines that employ the MLM, such critiques appear to have largely failed to reach the applied researcher in psychology. One specific reason might be that the technical jargon in other disciplines makes it difficult for researchers to recognize when and how these issues emerge. Therefore, this report aims to understand why @qian2020 found biased estimates of the treatment effect for some generative models containing endogenous covariates and not for others; and to explain this issue to an audience of psychologists. To achieve this aim, the current investigation employs (a) graphical tools to evaluate key assumptions and (b) data simulations with additional scenarios to pinpoint the issue. Accordingly, the following research question will be addressed: *When does the inclusion of endogenous variables in multilevel linear models result in biased estimates of the treatment effect?*
 
 <!-- -   Also, describe what is not known and which gap you will address in your thesis; End with a clear research question and, if applicable, your hypothesis (for confirmatory research questions – it should be a testable hypothesis) or expectations (for exploratory research questions – can be much vaguer because of the explorative nature of the question). -->
 
 # Methods
 
-To obtain a better understanding of the issue exposed by @qian2020, two methods were employed. First, graphical methods were used provide insight into the presence and extent of bias with potential violation of assumptions: (a) path diagrams were used to evaluate the conditional independence assumption and (b) directed acyclic graphs (DAGs) were used to evaluate the backdoor criterion [@pearl1988; @pearl2009]. Second, a simulation study was performed to reproduce the results for the generative models (GMs) from @qian2020 and to further isolate the issue using additional GMs. In this simulation, bias in the treatment effect was assessed with analytical multilevel models. 
+To obtain a better understanding of the issue exposed by @qian2020, two methods were employed. First, graphical methods were used provide insight into the presence and extent of bias with potential violation of assumptions: (a) path diagrams were used to evaluate the conditional independence assumption and (b) directed acyclic graphs (DAGs) were used to evaluate the backdoor criterion [@pearl1988; @pearl2009]. Second, a simulation study was performed to reproduce the results for the generative models (GMs) from @qian2020 and to further isolate the issue using additional GMs. In this simulation, bias in the treatment effect was quantified using analytical multilevel models identical to the generative models.
 
 ## Data Generation
 
-We consider 2 generative models (GMs) from @qian2020, where one was a special case of the general model for which bias was found. On top of that, we add 2 GMs, which are also a special case of this general model. We refer to the general model as GM G and the special cases of this model as GM A, B and C. @tbl-gm-differences summarizes the differences between the generative models. Compared to the general model, GM A is not directly determined by the random intercept $b_{i0}$; GM B is does not have a random slope $b_{i2}$ for treatment; and GM C does not have a fixed interaction effect $\beta_1$ between covariate and treatment.
+We consider 2 generative models (GMs) from @qian2020, one (GM A) being a special case of the general model (GM G) where bias was detected. To further isolate the source of bias, we introduce two additional special cases, labeled GM B and C. @tbl-gm-differences summarizes the differences between the generative models. Compared to the general model G, GM A is not directly determined by the random intercept $b_{i0}$; GM B is does not have a random slope $b_{i2}$ for treatment; and GM C does not have a fixed interaction effect $\beta_1$ between covariate and treatment.
 
 | Generative Model | Name in @qian2020 | dependency $b_{i0}$ and $X_{it}$ | random slope treatment $b_{i2}$ | interaction $\beta_1$ |
 |---------------|---------------|---------------|---------------|---------------|
@@ -109,7 +111,7 @@ We consider 2 generative models (GMs) from @qian2020, where one was a special ca
 
 : Generative Models: Summary of Differences {#tbl-gm-differences}
 
-The details of the generative models are described below. We follow the symbol notation of @qian2020 to allow for direct comparison, but rewrite the equations into within- and between-person models [see @raudenbush2002].
+The details of the generative models are described below. We follow the symbol notation of @qian2020 to allow for direct comparison, but rewrite the equations into within- and between-person models [see @raudenbush2002; @Schoot2017].
 
 ### Generative Model G
 
@@ -119,45 +121,72 @@ $$
 Y_{it+1} = \alpha_0 + \alpha_1 X_{it} + b_{i0} + A_{it} (\beta_0 + \beta_1 X_{it} + b_{i2}) + \epsilon_{it+1}
 $$
 
-where $Y_{it+1}$ is the outcome at time $t+1$, $X_{it}$ is the covariate at time $t$, $A_{it}$ is the treatment at time $t$, $b_{i0}$ is the random intercept, $b_{i2}$ is the random slope for the treatment, and $\epsilon_{it+1}$ is the error term. We may rewrite this model into the repeated-observations or within-person model:
+where $Y_{it+1}$ is the outcome at time $t+1$, $X_{it}$ is the covariate at time $t$, $A_{it}$ is the treatment at time $t$, $b_{i0}$ is the random intercept, $b_{i2}$ is the random slope for the treatment, and $\epsilon_{it+1}$ is the error term. We may rewrite this model into the repeated-observations or within-person model in the following steps:
 
-$$ \begin{aligned} Y_{it+1} &= \alpha_0 + \alpha_1 X_{it} + b_{i0} + A_{it} (\beta_0 + \beta_1 X_{it} + b_{i2}) + \epsilon_{it+1} \\ &= \alpha_0 + \alpha_1 X_{it} + b_{i0} + \beta_0 A_{it} +  \beta_1 A_{it} X_{it} + A_{it} b_{i2} + \epsilon_{it+1} \\ &= \alpha_0 + b_{i0} + \alpha_1 X_{it} + \beta_0 A_{it} + A_{it} b_{i2} + \beta_1 A_{it} X_{it} + \epsilon_{it+1} \\ &= (\alpha_0 + b_{i0}) + \alpha_1 X_{it} + (\beta_0 + b_{i2}) A_{it} + \beta_1 A_{it} X_{it} + \epsilon_{it+1} \\ &= \pi_{0i} + \pi_{1i} X_{it} + \pi_{2i} A_{it} + \pi_{3i} A_{it} X_{it} + \epsilon_{it+1}. \end{aligned}$$
+$$ 
+\begin{aligned} Y_{it+1} &= \alpha_0 + \alpha_1 X_{it} + b_{i0} + A_{it} (\beta_0 + \beta_1 X_{it} + b_{i2}) + \epsilon_{it+1} \\ &= \alpha_0 + \alpha_1 X_{it} + b_{i0} + \beta_0 A_{it} +  \beta_1 A_{it} X_{it} + A_{it} b_{i2} + \epsilon_{it+1} \\ &= \alpha_0 + b_{i0} + \alpha_1 X_{it} + \beta_0 A_{it} + A_{it} b_{i2} + \beta_1 A_{it} X_{it} + \epsilon_{it+1} \\ &= (\alpha_0 + b_{i0}) + \alpha_1 X_{it} + (\beta_0 + b_{i2}) A_{it} + \beta_1 A_{it} X_{it} + \epsilon_{it+1} \\ &= \pi_{0i} + \pi_{1i} X_{it} + \pi_{2i} A_{it} + \pi_{3i} A_{it} X_{it} + \epsilon_{it+1}. \end{aligned}
+$$
 
 with the person-level or between-person model (level 2):
 
-$$ \pi_{0i} = \alpha_0 + b_{i0}, \quad b_{i0} \sim \mathcal{N}(0, \sigma_{b0}^2), $$
+$$
+\begin{aligned}
+\pi_{0i} &= \alpha_0 + b_{i0}, & \text{where} \quad b_{i0} &\sim \mathcal{N}(0, \sigma_{b0}^2), \\
+\pi_{1i} &= \alpha_1, \\
+\pi_{2i} &= \beta_0 + b_{i2}, & \text{where} \quad b_{i2} &\sim \mathcal{N}(0, \sigma_{b2}^2), \\
+\pi_{3i} &= \beta_1.
+\end{aligned}
+$$
 
-$$ \pi_{1i} = \alpha_1, $$
+We model fixed effects $\alpha_0$, $\alpha_1$, $\beta_0$, and $\beta_1$ as constants across individuals, while random effects $b_{i0}$ and $b_{i2}$ capture individual-specific deviations. Specifically, $b_{i0}$ represents deviations from the population intercept $\alpha_0$, and $b_{i2}$ represents deviations from the population slope $\beta_0$. Compared to the population average, a higher $b_{i0}$ indicates a higher initial outcome, while a higher $b_{i2}$ indicates a stronger treatment effect. Following @qian2020, the random effects $b_{i0}$ and $b_{i2}$ are modeled independent of each other.
 
-$$ \pi_{2i} = \beta_0 + b_{i2}, \quad b_{i2} \sim \mathcal{N}(0, \sigma_{b2}^2), $$
+The covariate is generated as:
 
-$$ \pi_{3i} = \beta_1. $$
+$$
+X_{it} = 
+\begin{cases} 
+b_{i0} + \epsilon_{X_{it}}, & \text{if } t = 1, \\
+b_{i0} + Y_{it} + \epsilon_{X_{it}}, & \text{if } t \geq 2,
+\end{cases}
+\quad \text{where} \quad \epsilon_{X_{it}} \sim \mathcal{N}(0, 1)
+$$
 
-The random effects $b_{i0} \sim \mathcal{N}(0, \sigma_{b0}^2)$ and $b_{i2} \sim \mathcal{N}(0, \sigma_{b2}^2)$ are independent of each other. The covariate is generated as 
-
-$$ X_{i1} \sim \mathcal{N}(b_{i0}, 1), \quad X_{it} = Y_{it} + \mathcal{N}(b_{i0}, 1) \text{ for } t \geq 2. $$
-
-The randomization probability $p_t = P(A_{it} = 1 \mid H_{it})$ is constant at $1/2$. Thus, $A_{it} \sim \text{Bernoulli}(0.5)$ for $i = 1, \ldots, N$ and $t = 1, \ldots, T$. The exogenous noise is $\epsilon_{it+1} \sim \mathcal{N}(0, \sigma_\epsilon^2)$.
+The randomization probability of treatment $p_t = P(A_{it} = 1 \mid H_{it})$ is constant at $1/2$. Thus, $A_{it} \sim \text{Bernoulli}(0.5)$ for $i = 1, \ldots, N$ and $t = 1, \ldots, T$. In other words, for every given person $i$ and every timepoint $t$, the probability that treatment is assigned is equivalent to a fair coinflip. The exogenous noise is $\epsilon_{it+1} \sim \mathcal{N}(0, \sigma_\epsilon^2)$.
 
 @fig-GMG_path shows the path diagram for the first couple observations of GM G.
 
 ### Generative Model A
 
-GM A is the same as GM G, except that the covariate $X_{it}$ is not directly determined by the random intercept $b_{i0}$ (see @fig-GMA_path):
+GM A is a special case of GM G, where the covariate $X_{it}$ is not directly determined by the random intercept $b_{i0}$ (see @fig-GMA_path). Instead, the endogenous covariate $X_{it}$ equals the previous outcome $Y_{it}$ plus some random noise:
 
-$$X_{i1} \sim \mathcal{N}(0, 1), \quad X_{it} = Y_{it} + \mathcal{N}(0, 1) \text{ for } t \geq 2. $$
+$$
+X_{it} = 
+\begin{cases} 
+\epsilon_{X_{it}}, & \text{if } t = 1, \\
+Y_{it} + \epsilon_{X_{it}}, & \text{if } t \geq 2,
+\end{cases}
+\quad \text{where} \quad \epsilon_{X_{it}} \sim \mathcal{N}(0, 1)
+$$
 
 ### Generative Model B
 
-GM B is the same as GM G, except that the random slope $b_{i2}$ for the treatment $A_{it}$ is removed (see @fig-GMB_path). The single equation model then becomes:
+GM B is a special case of GM G, where the random slope $b_{i2}$ for the treatment $A_{it}$ is removed (see @fig-GMB_path). While the within-person model is the same as GM G, there is a slight alteration in the between-person model:
+
+$$ \pi_{2i} = \beta_0. $$
+
+The single equation model then becomes:
 
 $$
-Y_{it+1} = \alpha_0 + \alpha_1 X_{it} + b_{i0} + A_{it} (\beta_0 + \beta_1 X_{it}) + \epsilon_{it+1}.
+Y_{it+1} = (\alpha_0 + b_{i0}) + \alpha_1 X_{it} + \beta_0 A_{it} + \beta_1 A_{it} X_{it} + \epsilon_{it+1}
 $$
 
 ### Generative Model C
 
-GM C is the same as GM G, except that the interaction term $\beta_1 A_{it} X_{it}$ is removed (see @fig-GMC_path). The single equation model then becomes:
+GM C is a special case of GM G, where the interaction term $\beta_1 A_{it} X_{it}$ is removed (see @fig-GMC_path). Accordingly, due to the removal of $\pi_{3i}$, the within-person model of GM C differs from GM G:
+
+$$Y_{it+1} = \pi_{0i} + \pi_{1i} X_{it} + \pi_{2i} A_{it} + \epsilon_{it+1}.$$
+
+Nevertheless, the between-person model of $\pi_{0i}$, $\pi_{1i}$ and $\pi_{2i}$ remains the same as GM G. The single equation model then becomes:
 
 $$
 Y_{it+1} = \alpha_0 + \alpha_1 X_{it} + b_{i0} + A_{it} (\beta_0 + b_{i2}) + \epsilon_{it+1}.
@@ -175,22 +204,35 @@ $$
 \sigma_{b0}^2 = 4, \quad \sigma_{b2}^2 = 1, \quad \sigma_\epsilon^2 = 1.
 $$
 
+## Data Analysis
+
+In the simulation study, we evaluated the performance of the models across a total of `r 4*2*3` different settings, each replicated 1,000 times, by systematically varying the following factors:
+
+-   **Generative Models (GM):** G, A, B, C
+
+-   **Number of timepoints (T):** 10, 30
+
+-   **Sample size (N):** 30, 100, 200
+
+All data generation and estimation was performed in `R`, version 4.4.2 [@rcoreteam2024]. After the generation of data generation for any given setting, analytical multilevel linear models were fit that are equivalent to each of the respective data-generating models. To fit the standard MLM, the `lmer` function from the R-package `lme4` [@bates2015] was employed with restricted maximum likelihood estimation.
+
+# Results
+
 ## Conditional Independence and Path Diagrams
 
-@qian2020 proposes the use of the conditional independence assumption to identify whether bias may occur, which is given by:
+@qian2020 proposes the use of the conditional independence assumption to identify whether estimators of the treatment effect are consistent and unbiased under randomized treatment, which is given by:
 
 $$ X_{it} \perp (b_{i0}, b_{i1}) \mid H_{it-1}, A_{it-1}, Y_{it}. $$
 
-where $H_{it-1}$ refers to the history of the set of covariates, which in this case are all observations of covariate $X_{it}$ prior to the current timepoint $t$. This allows $X_{it}$ to be endogenous, but the endogenous covariate $X_{it}$ can only depend on the random effects through variables observed prior to $X_{it}$. If the only endogenous covariates are functions of prior treatments and prior outcomes, then the assumption automatically holds.
+where $H_{it-1}$ refers to the history of the set of covariates, which in this case are all observations of covariate $X_{it}$ prior to the current timepoint $t$. This allows $X_{it}$ to be endogenous, but the endogenous covariate $X_{it}$ can only depend on the random effects through variables observed prior to $X_{it}$. If the only endogenous covariates are functions of prior treatments and prior outcomes, then the assumption automatically holds. According to @qian2020, this assumption must be verified based on theory and domain knowledge.
 
-To make the application of the assumption more insightful, we accompany the equations of the GMs with path diagrams of the first three observations $t$ for each generative model (see @fig-Pathdiagrams). The path diagrams of the three data generating models shows the discrepancies between the different generative models---especially concerning the interaction effects---more clearly than DAGS.
+To make the application of the assumption more insightful, we accompany the equations of the GMs with path diagrams of the first three observations $t$ for each generative model (see @fig-Pathdiagrams).
 
 **In GM1, the endogenous covariate** $X_{it}$ **equals the previous outcome** $Y_{it}$ **plus some random noiseo isolate the issue. In GM3, the endogenous covariate depends directly on** $b_{i0}$**, violating the assumption.** **We consider two variations on this model: GM3A, where the random slope** $b_{i2}$ **for the treatment** $A_{it}$ **is removed; GM3B, where the interaction term** $\beta_1 A_{it} X_{it}$ **is removed. Note that the conditional independence assumption is violated in either of these variations,**
 
 When inspecting @fig-GMA_path, we may notice that $X_{it}$ becomes independent of the random effects after conditioning on $Y_{it}$. On the other hand, we can see that this assumption is violated only in GM G/B/C, as $X_{it}$ depends directly on $b_{i0}$ and can thus not be made independent of the random effects by conditioning on prior variables such as $Y_{it}$ (see @fig-GMG_path, @fig-GMB_path and @fig-GMC_path). Thus, all things considered, we would expect biased estimates of the treatment effect for GM G/B/C but not for GM A.
 
 ::: {#fig-Pathdiagrams layout-ncol="2"}
-
 ```{r}
 #| label: fig-GMG_path
 #| engine: 'tikz'
@@ -435,8 +477,9 @@ DAGs are a useful tool for representing causal relationships between variables a
 
 When applying Pearl's backdoor criterion to the GMs, it may be observed that there exists no backdoor path in the treatment effect $A_{it} \to Y_{it+1}$, as $A_{it}$ does not have any parents. While we need not control for covariate $X_{it}$ to obtain an unbiased total effect, doing so should not introduce bias. All things considered, according to the backdoor criterion, controlling for the covariate $X_{it}$ should not result in biased estimates of the treatment effect for any of the generative models.
 
-::: {#fig-DAGs layout-ncol="2"}
+**Note that these limitations of the DAG (not random effects or interactions explicit) would have prevented us from evaluating the conditional independence assumption.**
 
+::: {#fig-DAGs layout-ncol="2"}
 ```{r}
 #| label: fig-GMG_DAG
 #| engine: 'tikz'
@@ -521,19 +564,7 @@ DAGs for Generative Models G, A, B and C (t = 1, 2, 3)
 
 <!-- -   The path diagram does not display the difference in the randomized treatment assignment probabilities between GM1 and GM2. -->
 
-## Data Analysis
-
-We evaluated the performance of the models across a total of `r 4*2*3` different settings, each replicated 1,000 times, by systematically varying the following factors:
-
--   **Generative Models (GM):** G, A, B, C
-
--   **Number of timepoints (T):** 10, 30
-
--   **Sample size (N):** 30, 100, 200
-
-All data generation and estimation was performed in `R`, version 4.4.2 [@rcoreteam2024]. After the generation of data generation for any given setting, analytical multilevel linear models were fit that are equivalent to each of the respective data-generating models. To fit the standard MLM, the `lmer` function from the R-package `lme4` [@bates2015] was employed with restricted maximum likelihood estimation.
-
-# Results
+## Simulation Study
 
 @tbl-simulation-results presents the simulation results for each of the generative and analytical models. The estimates for the analytical MLM may be interpreted in terms of bias, where given the value of the treatment effect $\beta_0 = 1$, absolute bias of .05 would imply $5\%$ relative bias. Here we find the greatest absolute bias of $.02-.06$ for GM3, $\leq .015$ for GM1/2, $\leq .010$ for GM3B and , $\leq .005$ for GM3A. While the bias found for the original GMs 1, 2 and 3 was slightly larger here compared to @qian2020, the overall pattern remained the same. To conclude, once we remove either the dependency of the random intercept with the covariate (GM1), the random slope $b_{i2}$ (GM3A) or the interaction $\beta_1$ (GM3B) from GM3, the bias dissapears or becomes very small. The bias in GM3 decreases as the number of timepoints $T$ increases from 10 to 30. Note that the MLM model fitting success rates are particularly poor for GM2, where in the worst case, only 87 of the 1000 models were fitted.
 
@@ -571,10 +602,122 @@ kableExtra::kbl(results, "latex", booktabs = T,  escape = F, digits = c(0, 0, 0,
   kableExtra::kable_classic_2()
 ```
 
-*Note.* GM: generative model. T: number of timepoints. N: sample size. SD: standard deviation of estimates across replications. SR: model fitting success rate. Bias: $\hat{\beta}_{0,MLM} - \beta_{0,MLM}$. 
+*Note.* GM: generative model. T: number of timepoints. N: sample size. SD: standard deviation of estimates across replications. SR: model fitting success rate. Bias: $\hat{\beta}_{0,MLM} - \beta_{0,MLM}$.
 
 Treatment effect bias for Generative Models G, A, B and C over 1000 replications
 :::
+
+```{r}
+#| label: fig-simulation-results
+#| cache: true
+#| echo: false
+#| fig-cap: "Estimation bias for the fixed treatment effect $\\beta_0$ of each generative model for different combinations of sample size N and number of timepoints T over 1000 simulation replications"
+#| fig-subcap: 
+#| - "T=10, N=30"
+#| - "T=10, N=100"
+#| - "T=10, N=200"
+#| - "T=30, N=30"
+#| - "T=30, N=100"
+#| - "T=30, N=200"
+#| warning: false
+#| layout-ncol: 2
+#| fig-height: 4.8
+#| escape: false
+
+runname <- "GM123ad-1000reps-researchreport-cleanscript" # set a runname
+
+# set the number of simulations
+nsim <- 1000
+
+# simulation for Research Report
+design <- expand.grid(sample_size = c(30, 100, 200), total_T = c(10, 30), dgm_type = c(1,2,3,"3a","3d"))
+
+# make sure dgm_type is not a factor
+design$dgm_type <- as.character(design$dgm_type)
+
+# create dataframe to store results
+design$mlm_beta_0_bias <- rep(list(numeric(1000)), nrow(design))
+
+for (idesign in 1:nrow(design)) {
+  
+    results_list <- readRDS(here(paste0("simulation_results/", runname, "/", idesign, ".RDS")))
+    
+    dgm_type <- design$dgm_type[idesign]
+    
+    ### Restate the true values of the parameters ###
+    
+    beta_0_true <- 1 # was originallly 0.5 in the code but is 1 in the paper
+    
+    result_lmm <- results_list[grep("solution_lmm", names(results_list))]
+    
+    ### Extract the Results ###
+    
+    mlm_beta_0 <- sapply(result_lmm, function(l) l$coef["A", "Estimate"])
+    design$mlm_beta_0_bias[[idesign]] <- mlm_beta_0 - beta_0_true
+    
+}
+
+# remove dgm_type = 2
+design <- design[design$dgm_type != 2, ]
+
+# rename dgm_type = 3 to "G", dgm_type = 1 to "A", dgm_type = 3a to "B" and dgm_type = 3d to "C"
+design$dgm_type <- ifelse(design$dgm_type == 3, "G", 
+                          ifelse(design$dgm_type == 1, "A", 
+                                 ifelse(design$dgm_type == "3a", "B", 
+                                        ifelse(design$dgm_type == "3d", "C", NA))))
+
+# Convert T and N to factors if they are numeric
+design$total_T <- as.factor(design$total_T)
+design$sample_size <- as.factor(design$sample_size)
+
+data_t10_n30 <- design[design$total_T == 10 & design$sample_size == 30, ]
+data_t10_n100 <- design[design$total_T == 10 & design$sample_size == 100, ]
+data_t10_n200 <- design[design$total_T == 10 & design$sample_size == 200, ]
+data_t30_n30 <- design[design$total_T == 30 & design$sample_size == 30, ]
+data_t30_n100 <- design[design$total_T == 30 & design$sample_size == 100, ]
+data_t30_n200 <- design[design$total_T == 30 & design$sample_size == 200, ]
+
+# Function to unnest and plot
+plot_boxplot <- function(data, dataset_name) {
+  # Unnest the bias values (assuming mlm_beta_0_bias is the list column)
+  data_long <- data %>%
+    unnest(mlm_beta_0_bias) %>%
+    mutate(T_N = interaction(total_T, sample_size))  # Create combined T-N factor
+  
+  # Reorder the levels of dgm_type so that "G" comes first
+  data_long$dgm_type <- factor(data_long$dgm_type, levels = c("G", "A", "B", "C"))
+  
+  # Create the boxplot
+  p <- ggplot(data_long, aes(x = dgm_type, y = mlm_beta_0_bias, col = dgm_type)) + 
+    geom_boxplot() +
+    geom_hline(yintercept = 0, linetype = "dashed") +  # Dashed horizontal line at 0
+    labs(x = "Generative Model", # title = paste("Boxplot for", dataset_name), 
+         y = "Bias") +
+    theme(
+      axis.text.x = element_text(size = 14, vjust = -0.8),  # Increase font size of x-axis category labels
+      axis.text.y = element_text(size = 14),
+      axis.title.x = element_text(size = 16, vjust = -0.8),  # Increase font size of x-axis label
+      axis.title.y = element_text(size = 16),  # Increase font size of y-axis label
+      legend.position = "none",   # Remove legend
+      panel.border = element_rect(colour = "black", fill = NA, size = 1),  # Add black border
+      plot.margin = margin(5, 5, 12, 5),  # Add space around the plot
+      panel.background = element_rect(fill = "white"),  # White background instead of light grey
+      panel.grid.major = element_blank(),  # Remove major gridlines
+      panel.grid.minor = element_blank(),  # Remove minor gridlines
+      axis.line = element_line(colour = "black"),  # Black axis lines
+      axis.ticks = element_line(size = 1, color = "black") # Black ticks
+    ) 
+  print(p)
+}
+
+# Example for each dataset:
+plot_boxplot(data_t10_n30, "T=10, N=30")
+plot_boxplot(data_t10_n100, "T=10, N=100")
+plot_boxplot(data_t10_n200, "T=10, N=200")
+plot_boxplot(data_t30_n30, "T=30, N=30")
+plot_boxplot(data_t30_n100, "T=30, N=100")
+plot_boxplot(data_t30_n200, "T=30, N=200")
+```
 
 # Discussion
 
@@ -626,4 +769,3 @@ Third, since the issue extends to all longitudinal data analysis methods accordi
 <!-- --- -->
 
 <!-- # Appendix -->
-

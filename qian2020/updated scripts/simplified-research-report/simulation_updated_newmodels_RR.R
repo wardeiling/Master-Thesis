@@ -194,7 +194,7 @@ for (idesign in 1:nrow(design)) {
 ### collect results ---------------------------------------------------------
 
 # create dataframe to store results
-design$mlm_alpha_0_bias <- design$gee_ind_beta_0_bias <- design$gee_ex_beta_0_bias <- design$gee_ar1_beta_0_bias <-
+design$mlm_beta_0_bias <- design$gee_ind_beta_0_bias <- design$gee_ex_beta_0_bias <- design$gee_ar1_beta_0_bias <-
   design$mlm_success <- design$gee_ind_success <- design$gee_ex_success <- design$gee_ar1_success <- NA
 
 for (idesign in 1:nrow(design)) {

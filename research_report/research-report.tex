@@ -4,7 +4,7 @@
 \PassOptionsToPackage{dvipsnames,svgnames,x11names}{xcolor}
 %
 \documentclass[
-  12pt,
+  11pt,
   a4paper,
 ]{article}
 
@@ -209,7 +209,7 @@ Equations}
 \makeatother
 \subtitle{Research Report}
 \author{Ward B. Eiling (9294163)}
-\date{December 12, 2024}
+\date{December 13, 2024}
 
 \begin{document}
 \cleardoublepage
@@ -234,7 +234,7 @@ Estimating Equations \par}
 \vspace{3ex}
 {\normalsize \textit{Utrecht University} \par}
 \vspace{9ex}
-{\normalsize December 12, 2024 \par}
+{\normalsize December 13, 2024 \par}
 \vspace{3ex}
 {\normalsize Word count: 2500/2500 \par}
 \vspace{9ex}
@@ -266,47 +266,51 @@ Estimating Equations \par}
 
 Across a wide range of disciplines, researchers analyze clustered
 longitudinal, observational data to investigate prospective causal
-relationships between variables. When analyzing such data, the
-psychological sciences most commonly resort to the multilevel linear
-model (MLM, \citeproc{ref-mcneish2017}{McNeish et al., 2017}),
-which---in the context of longitudinal data analysis---separates
+relationships between variables. When analyzing such data, psychological
+researchers most commonly use the multilevel linear model\footnote{The
+  MLM is known by various names, including: linear mixed model,
+  hierarchical linear model, random-effect model and mixed-effects
+  model.} (MLM, \citeproc{ref-bauer2011}{Bauer \& Sterba, 2011}),
+which---in the context of longitudinal data analysis---partitions
 observed variance into stable between-person differences and
 within-person fluctuations (\citeproc{ref-hamaker2020}{Hamaker \&
-Muthén, 2020}). Conversely, other fields, such as biostatistics and
-econometrics often favour generalized estimating equations (GEE) for the
-analysis of longitudinal data (\citeproc{ref-mcneish2017}{McNeish et
-al., 2017}). Despite some cross-disciplinary efforts to compare these
-methods (\citeproc{ref-mcneish2017}{McNeish et al., 2017};
-\citeproc{ref-muth2016}{Muth et al., 2016}; \citeproc{ref-yan2013}{Yan
-et al., 2013}), their scarcity may leave researchers with limited
-guidance in choosing the most suitable approach for their application.
+Muthén, 2020}). In the application of the MLM, time invariant and
+time-varying covariates, the latter measured repeatedly over time, are
+often available. Including these covariates is often beneficial, as it
+may improve the precision of parameter estimates and mitigate bias
+caused by confounders (\citeproc{ref-daniel2013}{Daniel et al., 2013}).
+However, in some cases, the inclusion of covariates can introduce bias
+into estimates of the treatment effect, for instance, when conditioning
+on a covariate that acts as a collider in the causal pathway
+(\citeproc{ref-elwert2014}{Elwert \& Winship, 2014}).
 
-A recent study by Qian et al. (\citeproc{ref-qian2020}{2020})
-highlighted an issue present in both methods---except for GEE with
-working independence---where controlling for \emph{time-varying
-endogenous covariates} may lead to biased causal estimates. A
-time-varying covariate is \emph{endogenous} if it is directly or
-indirectly influenced by prior treatment or outcome, meaning its value
-may be determined by earlier stages of the process
-(\citeproc{ref-qian2020}{Qian et al., 2020}). As a result of including
-these covariates in these models, ordinary interpretations of the
-coefficients are no longer valid (\citeproc{ref-qian2020}{Qian et al.,
-2020, p. 3}). According to Diggle (\citeproc{ref-diggle2002}{2002}),
-this issue not only pertains GEE and MLM, but \emph{all} longitudinal
-data analysis methods.
+A recent paper by Qian et al. (\citeproc{ref-qian2020}{2020})
+highlighted a potential issue with the inclusion of covariates in the
+MLM that has not yet been widely recognized in the psychological
+literature. In their paper, the authors considered the appropriateness
+of the MLM for estimating the causal effect of a time-varying
+exposure/treatment, when this exposure is \emph{randomly assigned} at
+each occasion within each person, on an outcome. While randomized
+assignment may seem to ensure that the presence or absence of a causal
+effect can be easily determined, Qian et al.
+(\citeproc{ref-qian2020}{2020}) showed that model fitting issues and
+parameter bias can arise in the presence of a \emph{time-varying
+endogenous covariate}. A time-varying covariate is \emph{endogenous} if
+it is directly or indirectly determined by prior treatment or outcome
+(\citeproc{ref-qian2020}{Qian et al., 2020}).
 
-However, due to a divide between the disciplines that employ these
-methods, such critiques of the MLM appear to have largely failed to
-reach the applied researcher in psychology. One specific reason might be
-that the technical jargon in other disciplines makes it difficult for
-researchers to recognize when and how these issues emerge. Therefore,
-this report aims to understand and explain the issue of including
-endogenous covariates in analyses involving GEE and MLM in a
-psychological context. To achieve this aim, the current investigation
-employs (a) graphical tools such as the directed acyclic graph (DAG) and
-path diagram to assess potentially relevant assumptions, as well as (b)
-data simulations with additional scenarios to pinpoint the issue.
-Accordingly, the following research question will be addressed:
+However, due to a divide between the disciplines that employ the MLM,
+such critiques appear to have largely failed to reach the applied
+researcher in psychology. One specific reason might be that the
+technical jargon in other disciplines makes it difficult for researchers
+to recognize when and how these issues emerge. Therefore, this report
+aims to understand why Qian et al. (\citeproc{ref-qian2020}{2020}) found
+biased estimates of the treatment effect for some generative models
+containing endogenous covariates and not for others; and to explain this
+issue to an audience of psychologists. To achieve this aim, the current
+investigation employs (a) graphical tools to evaluate key assumptions
+and (b) data simulations with additional scenarios to pinpoint the
+issue. Accordingly, the following research question will be addressed:
 \emph{When does the inclusion of endogenous variables in multilevel
 linear models result in biased estimates of the treatment effect?}
 
@@ -323,20 +327,20 @@ criterion (\citeproc{ref-pearl1988}{Pearl, 1988},
 performed to reproduce the results for the generative models (GMs) from
 Qian et al. (\citeproc{ref-qian2020}{2020}) and to further isolate the
 issue using additional GMs. In this simulation, bias in the treatment
-effect was assessed with analytical multilevel models.
+effect was quantified using analytical multilevel models identical to
+the generative models.
 
 \subsection{Data Generation}\label{data-generation}
 
 We consider 2 generative models (GMs) from Qian et al.
-(\citeproc{ref-qian2020}{2020}), where one was a special case of the
-general model for which bias was found. On top of that, we add 2 GMs,
-which are also a special case of this general model. We refer to the
-general model as GM G and the special cases of this model as GM A, B and
-C. Table~\ref{tbl-gm-differences} summarizes the differences between the
-generative models. Compared to the general model, GM A is not directly
-determined by the random intercept \(b_{i0}\); GM B is does not have a
-random slope \(b_{i2}\) for treatment; and GM C does not have a fixed
-interaction effect \(\beta_1\) between covariate and treatment.
+(\citeproc{ref-qian2020}{2020}), one (GM A) being a special case of the
+general model (GM G) where bias was detected. To further isolate the
+source of bias, we introduce two additional special cases, labeled GM B
+and C. Table~\ref{tbl-gm-differences} summarizes the differences between
+the generative models. Compared to the general model G, GM A is not
+directly determined by the random intercept \(b_{i0}\); GM B is does not
+have a random slope \(b_{i2}\) for treatment; and GM C does not have a
+fixed interaction effect \(\beta_1\) between covariate and treatment.
 
 \begin{longtable}[]{@{}
   >{\raggedright\arraybackslash}p{(\columnwidth - 8\tabcolsep) * \real{0.2000}}
@@ -386,7 +390,7 @@ The details of the generative models are described below. We follow the
 symbol notation of Qian et al. (\citeproc{ref-qian2020}{2020}) to allow
 for direct comparison, but rewrite the equations into within- and
 between-person models (see \citeproc{ref-raudenbush2002}{Raudenbush \&
-Bryk, 2002}).
+Bryk, 2002}; \citeproc{ref-Schoot2017}{Schoot, 2017}).
 
 \subsubsection{Generative Model G}\label{generative-model-g}
 
@@ -402,29 +406,52 @@ where \(Y_{it+1}\) is the outcome at time \(t+1\), \(X_{it}\) is the
 covariate at time \(t\), \(A_{it}\) is the treatment at time \(t\),
 \(b_{i0}\) is the random intercept, \(b_{i2}\) is the random slope for
 the treatment, and \(\epsilon_{it+1}\) is the error term. We may rewrite
-this model into the repeated-observations or within-person model:
+this model into the repeated-observations or within-person model in the
+following steps:
 
-\[ \begin{aligned} Y_{it+1} &= \alpha_0 + \alpha_1 X_{it} + b_{i0} + A_{it} (\beta_0 + \beta_1 X_{it} + b_{i2}) + \epsilon_{it+1} \\ &= \alpha_0 + \alpha_1 X_{it} + b_{i0} + \beta_0 A_{it} +  \beta_1 A_{it} X_{it} + A_{it} b_{i2} + \epsilon_{it+1} \\ &= \alpha_0 + b_{i0} + \alpha_1 X_{it} + \beta_0 A_{it} + A_{it} b_{i2} + \beta_1 A_{it} X_{it} + \epsilon_{it+1} \\ &= (\alpha_0 + b_{i0}) + \alpha_1 X_{it} + (\beta_0 + b_{i2}) A_{it} + \beta_1 A_{it} X_{it} + \epsilon_{it+1} \\ &= \pi_{0i} + \pi_{1i} X_{it} + \pi_{2i} A_{it} + \pi_{3i} A_{it} X_{it} + \epsilon_{it+1}. \end{aligned}\]
+\[ 
+\begin{aligned} Y_{it+1} &= \alpha_0 + \alpha_1 X_{it} + b_{i0} + A_{it} (\beta_0 + \beta_1 X_{it} + b_{i2}) + \epsilon_{it+1} \\ &= \alpha_0 + \alpha_1 X_{it} + b_{i0} + \beta_0 A_{it} +  \beta_1 A_{it} X_{it} + A_{it} b_{i2} + \epsilon_{it+1} \\ &= \alpha_0 + b_{i0} + \alpha_1 X_{it} + \beta_0 A_{it} + A_{it} b_{i2} + \beta_1 A_{it} X_{it} + \epsilon_{it+1} \\ &= (\alpha_0 + b_{i0}) + \alpha_1 X_{it} + (\beta_0 + b_{i2}) A_{it} + \beta_1 A_{it} X_{it} + \epsilon_{it+1} \\ &= \pi_{0i} + \pi_{1i} X_{it} + \pi_{2i} A_{it} + \pi_{3i} A_{it} X_{it} + \epsilon_{it+1}. \end{aligned}
+\]
 
 with the person-level or between-person model (level 2):
 
-\[ \pi_{0i} = \alpha_0 + b_{i0}, \quad b_{i0} \sim \mathcal{N}(0, \sigma_{b0}^2), \]
+\[
+\begin{aligned}
+\pi_{0i} &= \alpha_0 + b_{i0}, & \text{where} \quad b_{i0} &\sim \mathcal{N}(0, \sigma_{b0}^2), \\
+\pi_{1i} &= \alpha_1, \\
+\pi_{2i} &= \beta_0 + b_{i2}, & \text{where} \quad b_{i2} &\sim \mathcal{N}(0, \sigma_{b2}^2), \\
+\pi_{3i} &= \beta_1.
+\end{aligned}
+\]
 
-\[ \pi_{1i} = \alpha_1, \]
+We model fixed effects \(\alpha_0\), \(\alpha_1\), \(\beta_0\), and
+\(\beta_1\) as constants across individuals, while random effects
+\(b_{i0}\) and \(b_{i2}\) capture individual-specific deviations.
+Specifically, \(b_{i0}\) represents deviations from the population
+intercept \(\alpha_0\), and \(b_{i2}\) represents deviations from the
+population slope \(\beta_0\). Compared to the population average, a
+higher \(b_{i0}\) indicates a higher initial outcome, while a higher
+\(b_{i2}\) indicates a stronger treatment effect. Following Qian et al.
+(\citeproc{ref-qian2020}{2020}), the random effects \(b_{i0}\) and
+\(b_{i2}\) are modeled independent of each other.
 
-\[ \pi_{2i} = \beta_0 + b_{i2}, \quad b_{i2} \sim \mathcal{N}(0, \sigma_{b2}^2), \]
+The covariate is generated as:
 
-\[ \pi_{3i} = \beta_1. \]
+\[
+X_{it} = 
+\begin{cases} 
+b_{i0} + \epsilon_{X_{it}}, & \text{if } t = 1, \\
+b_{i0} + Y_{it} + \epsilon_{X_{it}}, & \text{if } t \geq 2,
+\end{cases}
+\quad \text{where} \quad \epsilon_{X_{it}} \sim \mathcal{N}(0, 1)
+\]
 
-The random effects \(b_{i0} \sim \mathcal{N}(0, \sigma_{b0}^2)\) and
-\(b_{i2} \sim \mathcal{N}(0, \sigma_{b2}^2)\) are independent of each
-other. The covariate is generated as
-
-\[ X_{i1} \sim \mathcal{N}(b_{i0}, 1), \quad X_{it} = Y_{it} + \mathcal{N}(b_{i0}, 1) \text{ for } t \geq 2. \]
-
-The randomization probability \(p_t = P(A_{it} = 1 \mid H_{it})\) is
-constant at \(1/2\). Thus, \(A_{it} \sim \text{Bernoulli}(0.5)\) for
-\(i = 1, \ldots, N\) and \(t = 1, \ldots, T\). The exogenous noise is
+The randomization probability of treatment
+\(p_t = P(A_{it} = 1 \mid H_{it})\) is constant at \(1/2\). Thus,
+\(A_{it} \sim \text{Bernoulli}(0.5)\) for \(i = 1, \ldots, N\) and
+\(t = 1, \ldots, T\). In other words, for every given person \(i\) and
+every timepoint \(t\), the probability that treatment is assigned is
+equivalent to a fair coinflip. The exogenous noise is
 \(\epsilon_{it+1} \sim \mathcal{N}(0, \sigma_\epsilon^2)\).
 
 Figure~\ref{fig-GMG_path} shows the path diagram for the first couple
@@ -432,27 +459,47 @@ observations of GM G.
 
 \subsubsection{Generative Model A}\label{generative-model-a}
 
-GM A is the same as GM G, except that the covariate \(X_{it}\) is not
+GM A is a special case of GM G, where the covariate \(X_{it}\) is not
 directly determined by the random intercept \(b_{i0}\) (see
-Figure~\ref{fig-GMA_path}):
+Figure~\ref{fig-GMA_path}). Instead, the endogenous covariate \(X_{it}\)
+equals the previous outcome \(Y_{it}\) plus some random noise:
 
-\[X_{i1} \sim \mathcal{N}(0, 1), \quad X_{it} = Y_{it} + \mathcal{N}(0, 1) \text{ for } t \geq 2. \]
+\[
+X_{it} = 
+\begin{cases} 
+\epsilon_{X_{it}}, & \text{if } t = 1, \\
+Y_{it} + \epsilon_{X_{it}}, & \text{if } t \geq 2,
+\end{cases}
+\quad \text{where} \quad \epsilon_{X_{it}} \sim \mathcal{N}(0, 1)
+\]
 
 \subsubsection{Generative Model B}\label{generative-model-b}
 
-GM B is the same as GM G, except that the random slope \(b_{i2}\) for
-the treatment \(A_{it}\) is removed (see Figure~\ref{fig-GMB_path}). The
-single equation model then becomes:
+GM B is a special case of GM G, where the random slope \(b_{i2}\) for
+the treatment \(A_{it}\) is removed (see Figure~\ref{fig-GMB_path}).
+While the within-person model is the same as GM G, there is a slight
+alteration in the between-person model:
+
+\[ \pi_{2i} = \beta_0. \]
+
+The single equation model then becomes:
 
 \[
-Y_{it+1} = \alpha_0 + \alpha_1 X_{it} + b_{i0} + A_{it} (\beta_0 + \beta_1 X_{it}) + \epsilon_{it+1}.
+Y_{it+1} = (\alpha_0 + b_{i0}) + \alpha_1 X_{it} + \beta_0 A_{it} + \beta_1 A_{it} X_{it} + \epsilon_{it+1}
 \]
 
 \subsubsection{Generative Model C}\label{generative-model-c}
 
-GM C is the same as GM G, except that the interaction term
+GM C is a special case of GM G, where the interaction term
 \(\beta_1 A_{it} X_{it}\) is removed (see Figure~\ref{fig-GMC_path}).
-The single equation model then becomes:
+Accordingly, due to the removal of \(\pi_{3i}\), the within-person model
+of GM C differs from GM G:
+
+\[Y_{it+1} = \pi_{0i} + \pi_{1i} X_{it} + \pi_{2i} A_{it} + \epsilon_{it+1}.\]
+
+Nevertheless, the between-person model of \(\pi_{0i}\), \(\pi_{1i}\) and
+\(\pi_{2i}\) remains the same as GM G. The single equation model then
+becomes:
 
 \[
 Y_{it+1} = \alpha_0 + \alpha_1 X_{it} + b_{i0} + A_{it} (\beta_0 + b_{i2}) + \epsilon_{it+1}.
@@ -471,12 +518,39 @@ The following parameter values were adapted from Qian et al.
 \sigma_{b0}^2 = 4, \quad \sigma_{b2}^2 = 1, \quad \sigma_\epsilon^2 = 1.
 \]
 
+\subsection{Data Analysis}\label{data-analysis}
+
+In the simulation study, we evaluated the performance of the models
+across a total of 24 different settings, each replicated 1,000 times, by
+systematically varying the following factors:
+
+\begin{itemize}
+\item
+  \textbf{Generative Models (GM):} G, A, B, C
+\item
+  \textbf{Number of timepoints (T):} 10, 30
+\item
+  \textbf{Sample size (N):} 30, 100, 200
+\end{itemize}
+
+All data generation and estimation was performed in \texttt{R}, version
+4.4.2 (\citeproc{ref-rcoreteam2024}{Team, 2024}). After the generation
+of data generation for any given setting, analytical multilevel linear
+models were fit that are equivalent to each of the respective
+data-generating models. To fit the standard MLM, the \texttt{lmer}
+function from the R-package \texttt{lme4}
+(\citeproc{ref-bates2015}{Bates et al., 2015}) was employed with
+restricted maximum likelihood estimation.
+
+\section{Results}\label{results}
+
 \subsection{Conditional Independence and Path
 Diagrams}\label{conditional-independence-and-path-diagrams}
 
 Qian et al. (\citeproc{ref-qian2020}{2020}) proposes the use of the
-conditional independence assumption to identify whether bias may occur,
-which is given by:
+conditional independence assumption to identify whether estimators of
+the treatment effect are consistent and unbiased under randomized
+treatment, which is given by:
 
 \[ X_{it} \perp (b_{i0}, b_{i1}) \mid H_{it-1}, A_{it-1}, Y_{it}. \]
 
@@ -486,15 +560,14 @@ current timepoint \(t\). This allows \(X_{it}\) to be endogenous, but
 the endogenous covariate \(X_{it}\) can only depend on the random
 effects through variables observed prior to \(X_{it}\). If the only
 endogenous covariates are functions of prior treatments and prior
-outcomes, then the assumption automatically holds.
+outcomes, then the assumption automatically holds. According to Qian et
+al. (\citeproc{ref-qian2020}{2020}), this assumption must be verified
+based on theory and domain knowledge.
 
 To make the application of the assumption more insightful, we accompany
 the equations of the GMs with path diagrams of the first three
 observations \(t\) for each generative model (see
-Figure~\ref{fig-Pathdiagrams}). The path diagrams of the three data
-generating models shows the discrepancies between the different
-generative models---especially concerning the interaction effects---more
-clearly than DAGS.
+Figure~\ref{fig-Pathdiagrams}).
 
 \textbf{In GM1, the endogenous covariate} \(X_{it}\) \textbf{equals the
 previous outcome} \(Y_{it}\) \textbf{plus some random noiseo isolate the
@@ -606,6 +679,10 @@ according to the backdoor criterion, controlling for the covariate
 \(X_{it}\) should not result in biased estimates of the treatment effect
 for any of the generative models.
 
+\textbf{Note that these limitations of the DAG (not random effects or
+interactions explicit) would have prevented us from evaluating the
+conditional independence assumption.}
+
 \begin{figure}[H]
 
 \caption{\label{fig-DAGs}DAGs for Generative Models G, A, B and C (t =
@@ -641,31 +718,7 @@ treatment efffect (before controlling for \(X_{it}\)).\end{minipage}%
 
 \end{figure}%
 
-\subsection{Data Analysis}\label{data-analysis}
-
-We evaluated the performance of the models across a total of 24
-different settings, each replicated 1,000 times, by systematically
-varying the following factors:
-
-\begin{itemize}
-\item
-  \textbf{Generative Models (GM):} G, A, B, C
-\item
-  \textbf{Number of timepoints (T):} 10, 30
-\item
-  \textbf{Sample size (N):} 30, 100, 200
-\end{itemize}
-
-All data generation and estimation was performed in \texttt{R}, version
-4.4.2 (\citeproc{ref-rcoreteam2024}{Team, 2024}). After the generation
-of data generation for any given setting, analytical multilevel linear
-models were fit that are equivalent to each of the respective
-data-generating models. To fit the standard MLM, the \texttt{lmer}
-function from the R-package \texttt{lme4}
-(\citeproc{ref-bates2015}{Bates et al., 2015}) was employed with
-restricted maximum likelihood estimation.
-
-\section{Results}\label{results}
+\subsection{Simulation Study}\label{simulation-study}
 
 Table~\ref{tbl-simulation-results} presents the simulation results for
 each of the generative and analytical models. The estimates for the
@@ -755,6 +808,87 @@ fitting success rate. Bias: \(\hat{\beta}_{0,MLM} - \beta_{0,MLM}\).
 
 \end{table}%
 
+\begin{figure}[H]
+
+\caption{\label{fig-simulation-results}Estimation bias for the fixed
+treatment effect \(\beta_0\) of each generative model for different
+combinations of sample size N and number of timepoints T over 1000
+simulation replications}
+
+\begin{minipage}{0.50\linewidth}
+
+\subcaption{\label{fig-simulation-results-1}T=10, N=30}
+
+\centering{
+
+\includegraphics{research-report_files/figure-pdf/fig-simulation-results-1.pdf}
+
+}
+
+\end{minipage}%
+%
+\begin{minipage}{0.50\linewidth}
+
+\subcaption{\label{fig-simulation-results-2}T=10, N=100}
+
+\centering{
+
+\includegraphics{research-report_files/figure-pdf/fig-simulation-results-2.pdf}
+
+}
+
+\end{minipage}%
+\newline
+\begin{minipage}{0.50\linewidth}
+
+\subcaption{\label{fig-simulation-results-3}T=10, N=200}
+
+\centering{
+
+\includegraphics{research-report_files/figure-pdf/fig-simulation-results-3.pdf}
+
+}
+
+\end{minipage}%
+%
+\begin{minipage}{0.50\linewidth}
+
+\subcaption{\label{fig-simulation-results-4}T=30, N=30}
+
+\centering{
+
+\includegraphics{research-report_files/figure-pdf/fig-simulation-results-4.pdf}
+
+}
+
+\end{minipage}%
+\newline
+\begin{minipage}{0.50\linewidth}
+
+\subcaption{\label{fig-simulation-results-5}T=30, N=100}
+
+\centering{
+
+\includegraphics{research-report_files/figure-pdf/fig-simulation-results-5.pdf}
+
+}
+
+\end{minipage}%
+%
+\begin{minipage}{0.50\linewidth}
+
+\subcaption{\label{fig-simulation-results-6}T=30, N=200}
+
+\centering{
+
+\includegraphics{research-report_files/figure-pdf/fig-simulation-results-6.pdf}
+
+}
+
+\end{minipage}%
+
+\end{figure}%
+
 \section{Discussion}\label{discussion}
 
 This report employed both graphical methods and data simulations to
@@ -841,6 +975,18 @@ mixed-effects models using {lme4}. \emph{Journal of Statistical
 Software}, \emph{67}(1), 148.
 \url{https://doi.org/10.18637/jss.v067.i01}
 
+\bibitem[\citeproctext]{ref-bauer2011}
+Bauer, D. J., \& Sterba, S. K. (2011). Fitting multilevel models with
+ordinal outcomes: Performance of alternative specifications and methods
+of estimation. \emph{Psychological Methods}, \emph{16}(4), 373--390.
+\url{https://doi.org/10.1037/a0025813}
+
+\bibitem[\citeproctext]{ref-daniel2013}
+Daniel, R. m., Cousens, S. n., De Stavola, B. l., Kenward, M. G., \&
+Sterne, J. a. C. (2013). Methods for dealing with time-dependent
+confounding. \emph{Statistics in Medicine}, \emph{32}(9), 1584--1618.
+\url{https://doi.org/10.1002/sim.5686}
+
 \bibitem[\citeproctext]{ref-diggle2002}
 Diggle, P. (2002). \emph{Analysis of Longitudinal Data}. OUP Oxford.
 
@@ -862,20 +1008,6 @@ effects and random effects models. \emph{British Journal of Mathematical
 and Statistical Psychology}, \emph{74}(2), 165--183.
 \url{https://doi.org/10.1111/bmsp.12217}
 
-\bibitem[\citeproctext]{ref-mcneish2017}
-McNeish, D., Stapleton, L. M., \& Silverman, R. D. (2017). On the
-unnecessary ubiquity of hierarchical linear modeling.
-\emph{Psychological Methods}, \emph{22}(1), 114--140.
-\url{https://doi.org/10.1037/met0000078}
-
-\bibitem[\citeproctext]{ref-muth2016}
-Muth, C., Bales, K. L., Hinde, K., Maninger, N., Mendoza, S. P., \&
-Ferrer, E. (2016). Alternative Models for Small Samples in Psychological
-Research: Applying Linear Mixed Effects Models and Generalized
-Estimating Equations to Repeated Measures Data. \emph{Educational and
-Psychological Measurement}, \emph{76}(1), 64--87.
-\url{https://doi.org/10.1177/0013164415580432}
-
 \bibitem[\citeproctext]{ref-pearl1988}
 Pearl, J. (1988). \emph{Probabilistic Reasoning in Intelligent Systems:
 Networks of Plausible Inference}. Morgan Kaufmann.
@@ -895,6 +1027,11 @@ Review Journal of the Institute of Mathematical Statistics},
 Raudenbush, S. W., \& Bryk, A. S. (2002). \emph{Hierarchical Linear
 Models: Applications and Data Analysis Methods} (2nd ed.). SAGE.
 
+\bibitem[\citeproctext]{ref-Schoot2017}
+Schoot, J. H. M. M. R. van de. (2017). \emph{Multilevel analysis:
+Techniques and applications, third edition} (3rd ed.). Routledge.
+\url{https://doi.org/10.4324/9781315650982}
+
 \bibitem[\citeproctext]{ref-rcoreteam2024}
 Team, R. C. (2024). \emph{R: A language and environment for statistical
 computing}. R Foundation for Statistical Computing.
@@ -904,13 +1041,6 @@ computing}. R Foundation for Statistical Computing.
 Weinberg, C. R. (2007). Commentary: Can DAGs clarify effect
 modification? \emph{Epidemiology}, \emph{18}(5), 569--572.
 \url{https://www.jstor.org/stable/20486428}
-
-\bibitem[\citeproctext]{ref-yan2013}
-Yan, J., Aseltine, R. H., \& Harel, O. (2013). Comparing Regression
-Coefficients Between Nested Linear Models for Clustered Data With
-Generalized Estimating Equations. \emph{Journal of Educational and
-Behavioral Statistics}, \emph{38}(2), 172--189.
-\url{https://doi.org/10.3102/1076998611432175}
 
 \end{CSLReferences}
 
