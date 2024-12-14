@@ -209,7 +209,7 @@ Equations}
 \makeatother
 \subtitle{Research Report}
 \author{Ward B. Eiling (9294163)}
-\date{December 13, 2024}
+\date{December 14, 2024}
 
 \begin{document}
 \cleardoublepage
@@ -234,7 +234,7 @@ Estimating Equations \par}
 \vspace{3ex}
 {\normalsize \textit{Utrecht University} \par}
 \vspace{9ex}
-{\normalsize December 13, 2024 \par}
+{\normalsize December 14, 2024 \par}
 \vspace{3ex}
 {\normalsize Word count: 2500/2500 \par}
 \vspace{9ex}
@@ -276,21 +276,25 @@ observed variance into stable between-person differences and
 within-person fluctuations (\citeproc{ref-hamaker2020}{Hamaker \&
 Muthén, 2020}). In the application of the MLM, time invariant and
 time-varying covariates, the latter measured repeatedly over time, are
-often available. Including these covariates is often beneficial, as it
-may improve the precision of parameter estimates and mitigate bias
-caused by confounders (\citeproc{ref-daniel2013}{Daniel et al., 2013}).
-However, in some cases, the inclusion of covariates can introduce bias
-into estimates of the treatment effect, for instance, when conditioning
-on a covariate that acts as a collider in the causal pathway
-(\citeproc{ref-elwert2014}{Elwert \& Winship, 2014}).
+often available. The inclusion of covariates is a common strategy to
+improve parameter precision and address bias introduced by time-varying
+confounders (\citeproc{ref-daniel2013}{Daniel et al., 2013};
+\citeproc{ref-Wodtke2020}{Wodtke, 2020}). Nevertheless, it is well-known
+that this approach is not universally beneficial, as conditioning on
+variables like colliders within the causal pathway can distort treatment
+effect estimates (\citeproc{ref-elwert2014}{Elwert \& Winship, 2014}).
 
 A recent paper by Qian et al. (\citeproc{ref-qian2020}{2020})
-highlighted a potential issue with the inclusion of covariates in the
-MLM that has not yet been widely recognized in the psychological
+highlighted another potential issue with the inclusion of covariates in
+the MLM that has not yet been widely recognized in the psychological
 literature. In their paper, the authors considered the appropriateness
 of the MLM for estimating the causal effect of a time-varying
 exposure/treatment, when this exposure is \emph{randomly assigned} at
-each occasion within each person, on an outcome. While randomized
+each occasion within each person, on an outcome. These randomized
+exposures may, for instance, entail prompts delivered through push
+notifications to remind participants of cognitive or mindfulness-based
+strategies (\citeproc{ref-nahum-shani2021}{Nahum-Shani et al., 2021};
+\citeproc{ref-walton2018}{Walton et al., 2018}). While randomized
 assignment may seem to ensure that the presence or absence of a causal
 effect can be easily determined, Qian et al.
 (\citeproc{ref-qian2020}{2020}) showed that model fitting issues and
@@ -429,11 +433,11 @@ We model fixed effects \(\alpha_0\), \(\alpha_1\), \(\beta_0\), and
 \(b_{i0}\) and \(b_{i2}\) capture individual-specific deviations.
 Specifically, \(b_{i0}\) represents deviations from the population
 intercept \(\alpha_0\), and \(b_{i2}\) represents deviations from the
-population slope \(\beta_0\). Compared to the population average, a
-higher \(b_{i0}\) indicates a higher initial outcome, while a higher
-\(b_{i2}\) indicates a stronger treatment effect. Following Qian et al.
-(\citeproc{ref-qian2020}{2020}), the random effects \(b_{i0}\) and
-\(b_{i2}\) are modeled independent of each other.
+population slope \(\beta_0\). A higher \(b_{i0}\) indicates a higher
+initial outcome, while a higher \(b_{i2}\) indicates a stronger
+treatment effect. Following Qian et al. (\citeproc{ref-qian2020}{2020}),
+the random effects \(b_{i0}\) and \(b_{i2}\) are modeled independent of
+each other.
 
 The covariate is generated as:
 
@@ -552,42 +556,61 @@ conditional independence assumption to identify whether estimators of
 the treatment effect are consistent and unbiased under randomized
 treatment, which is given by:
 
-\[ X_{it} \perp (b_{i0}, b_{i1}) \mid H_{it-1}, A_{it-1}, Y_{it}. \]
+\[ X_{it} \perp (b_{i0}, b_{i1}) \mid H_{it-1}, A_{it-1}, Y_{it}.\] In
+other words, the covariate at time \(t\) (\(X_{it}\)) must be
+independent of the individual's random effects (\(b_{i0}\) and
+\(b_{i1}\)) once we account for their history of covariates
+(\(H_{it-1}\)), previous treatments (\(A_{it-1}\)), and prior outcomes
+(\(Y_{it}\)). In the current case of a single covariate \(X_{it}\),
+\(H_{it-1}\) comprises all observations of that covariate before
+timepoint \(t\).
 
-where \(H_{it-1}\) refers to the history of the set of covariates, which
-in this case are all observations of covariate \(X_{it}\) prior to the
-current timepoint \(t\). This allows \(X_{it}\) to be endogenous, but
-the endogenous covariate \(X_{it}\) can only depend on the random
-effects through variables observed prior to \(X_{it}\). If the only
-endogenous covariates are functions of prior treatments and prior
-outcomes, then the assumption automatically holds. According to Qian et
-al. (\citeproc{ref-qian2020}{2020}), this assumption must be verified
-based on theory and domain knowledge.
+This assumption allows for \(X_{it}\) to be influenced by earlier
+variables (e.g., outcomes or treatments) but not directly by unobserved
+individual characteristics (i.e., random effects). If the included
+endogenous covariates are only affected by prior outcomes and
+treatments, the assumption is automatically satisfied. However, as Qian
+et al. (\citeproc{ref-qian2020}{2020}) highlights, ensuring this
+assumption holds requires careful consideration of theory and domain
+knowledge.
 
-To make the application of the assumption more insightful, we accompany
-the equations of the GMs with path diagrams of the first three
-observations \(t\) for each generative model (see
-Figure~\ref{fig-Pathdiagrams}).
+To clarify the application of the conditional independence assumption,
+we pair the equations of the generative models (GMs) with path diagrams
+illustrating the first three timepoints (\(t\)) for each model (see
+Figure~\ref{fig-Pathdiagrams}). Let's begin with the general model, GM G
+(Figure~\ref{fig-GMG_path}), which Qian et al.
+(\citeproc{ref-qian2020}{2020}) identified as prone to bias. In GM G,
+the covariate \(X_{it}\) is directly influenced by unobserved individual
+factors (represented by the random effects, \(b_{i0}\)). Consequently,
+conditioning on prior variables, such as the outcome at the previous
+timepoint \(Y_{it}\), does not fully block or eliminate the influence of
+these unobserved factors. As a result, \(X_{it}\) remains dependent on
+the random effects, violating the assumption that \(X_{it}\) should be
+independent of these unobserved factors once we account for prior
+variables. This violation of the conditional independence assumption
+explains the biased estimates of the treatment effect observed in GM G,
+as identified by Qian et al. (\citeproc{ref-qian2020}{2020}).
 
-\textbf{In GM1, the endogenous covariate} \(X_{it}\) \textbf{equals the
-previous outcome} \(Y_{it}\) \textbf{plus some random noiseo isolate the
-issue. In GM3, the endogenous covariate depends directly on}
-\(b_{i0}\)\textbf{, violating the assumption.} \textbf{We consider two
-variations on this model: GM3A, where the random slope} \(b_{i2}\)
-\textbf{for the treatment} \(A_{it}\) \textbf{is removed; GM3B, where
-the interaction term} \(\beta_1 A_{it} X_{it}\) \textbf{is removed. Note
-that the conditional independence assumption is violated in either of
-these variations,}
+In contrast, GM A, a special case of GM G where no bias was found by
+Qian et al. (\citeproc{ref-qian2020}{2020}), removes the direct link
+between \(X_{it}\) and the random effects \(b_{i0}\). In this case,
+\(X_{it}\) is simply the previous outcome \(Y_{it}\) plus some random
+noise. While there remains an indirect connection between \(X_{it}\) and
+\(b_{i0}\) through \(Y_{it}\), conditioning on \(Y_{it}\) effectively
+``breaks the link'' between \(X_{it}\) and the random effects,
+satisfying the conditional independence assumption. This explains the
+unbiased treatment effect estimates found by Qian et al.
+(\citeproc{ref-qian2020}{2020}).
 
-When inspecting Figure~\ref{fig-GMA_path}, we may notice that \(X_{it}\)
-becomes independent of the random effects after conditioning on
-\(Y_{it}\). On the other hand, we can see that this assumption is
-violated only in GM G/B/C, as \(X_{it}\) depends directly on \(b_{i0}\)
-and can thus not be made independent of the random effects by
-conditioning on prior variables such as \(Y_{it}\) (see
-Figure~\ref{fig-GMG_path}, Figure~\ref{fig-GMB_path} and
-Figure~\ref{fig-GMC_path}). Thus, all things considered, we would expect
-biased estimates of the treatment effect for GM G/B/C but not for GM A.
+For the additional special cases, GM B and GM C, the direct link between
+the random effects and \(X_{it}\) remains, as in GM G. As a result,
+these models also violate the conditional independence assumption,
+leading to biased estimates of the treatment effect.
+
+In summary, GM G, B, and C violate the conditional independence
+assumption, which suggests that we would expect biased treatment effect
+estimates for these models. In contrast, GM A satisfies the assumption,
+supporting unbiased estimates of the treatment effect.
 
 \begin{figure}[H]
 
@@ -1008,6 +1031,14 @@ effects and random effects models. \emph{British Journal of Mathematical
 and Statistical Psychology}, \emph{74}(2), 165--183.
 \url{https://doi.org/10.1111/bmsp.12217}
 
+\bibitem[\citeproctext]{ref-nahum-shani2021}
+Nahum-Shani, I., Potter, L. N., Lam, C. Y., Yap, J., Moreno, A.,
+Stoffel, R., Wu, Z., Wan, N., Dempsey, W., Kumar, S., \& al., et.
+(2021). The mobile assistance for regulating smoking (MARS)
+micro-randomized trial design protocol. \emph{Contemporary Clinical
+Trials}, \emph{110}, 106513.
+\url{https://doi.org/10.1016/j.cct.2021.106513}
+
 \bibitem[\citeproctext]{ref-pearl1988}
 Pearl, J. (1988). \emph{Probabilistic Reasoning in Intelligent Systems:
 Networks of Plausible Inference}. Morgan Kaufmann.
@@ -1037,10 +1068,21 @@ Team, R. C. (2024). \emph{R: A language and environment for statistical
 computing}. R Foundation for Statistical Computing.
 \url{https://www.R-project.org/}
 
+\bibitem[\citeproctext]{ref-walton2018}
+Walton, A., Nahum-Shani, I., Crosby, L., Klasnja, P., \& Murphy, S.
+(2018). Optimizing digital integrated care via micro-randomized trials.
+\emph{Clinical Pharmacology \& Therapeutics}, \emph{104}(1), 53--58.
+\url{https://doi.org/10.1002/cpt.1079}
+
 \bibitem[\citeproctext]{ref-weinberg2007}
 Weinberg, C. R. (2007). Commentary: Can DAGs clarify effect
 modification? \emph{Epidemiology}, \emph{18}(5), 569--572.
 \url{https://www.jstor.org/stable/20486428}
+
+\bibitem[\citeproctext]{ref-Wodtke2020}
+Wodtke, G. T. (2020). Regression-based adjustment for time-varying
+confounders. \emph{Sociological Methods \& Research}, \emph{49}(4),
+906--946. \url{https://doi.org/10.1177/0049124118769087}
 
 \end{CSLReferences}
 
