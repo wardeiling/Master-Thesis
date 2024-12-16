@@ -564,12 +564,6 @@ We now apply the backdoor criterion to these DAGs to assess potential bias in th
 
 @tbl-simulation-results and @fig-simulation-results present the simulation results for each of the generative models. The $\beta_0$ bias in @tbl-simulation-results refers to $\bar{\hat{\beta}}_{0} - \beta_{0}$, representing the difference between the mean of the estimated parameter values $\bar{\hat{\beta}}_{0}$ and the prespecified treatment effect $\beta_{0} = 1$. Thus, an absolute bias of 0.05 implies a $5\%$ relative bias.
 
-In this reproduction of @qian2020, the overall pattern was consistent with the original study (see @fig-simulation-results): we observed substantial absolute bias ranging from $0.02$ to $0.06$ for the most general generative model (GM G), and much smaller bias of $\leq 0.015$ for GM A. These results align with expectations based on the conditional independence assumption, which predicts that the treatment effect would be unbiased for GM A and biased for GM G. However, the findings contradict the backdoor criterion, which predicts no bias for any of the generative models (GMs). Notably, we found greater treatment effect bias for GM A than reported by @qian2020, with a maximum bias of $-0.012$ in the scenario with $T = 10$ and $N = 100$ (see @tbl-simulation-results), compared to $-0.003$ found by @qian2020 for the same scenario. For GM G, the bias was most pronounced in this scenario as well, reaching $-0.064$. Furthermore, the size of the bias decreased as the number of time points increased.
-
-For the two additional special cases of GM G, namely GM B and GM C, we observed even smaller absolute bias than for GM A: $\leq 0.010$ for GM C and $\leq 0.005$ for GM B (see @tbl-simulation-results). These findings align with the backdoor criterion’s prediction of no bias but contradict the expectations based on the conditional independence assumption, which suggests the presence of bias. Additionally, GM B exhibited the smallest absolute bias overall and showed much smaller variability across simulation replications compared to all other GMs. In contrast, the remaining models exhibited comparable levels of variability (see @fig-simulation-results and @tbl-simulation-results).
-
-In summary, these findings suggest that once we modify the most general model G by removing either the dependency of the random intercept on the covariate (GM A), the random slope $b_{i2}$ (GM B), or the interaction term $\beta_1$ (GM C), the bias either disappears or becomes negligible. However, neither the backdoor criterion nor the conditional independence assumption provided consistent predictions of treatment effect bias across all models.
-
 ::: {#tbl-simulation-results}
 ```{r}
 #| label: simulation-results
@@ -722,6 +716,12 @@ plot_boxplot(data_t30_n30, "T=30, N=30")
 plot_boxplot(data_t30_n100, "T=30, N=100")
 plot_boxplot(data_t30_n200, "T=30, N=200")
 ```
+
+In this reproduction of @qian2020, the overall pattern was consistent with the original study (see @fig-simulation-results): we observed substantial absolute bias ranging from $0.02$ to $0.06$ for the most general generative model (GM G), and much smaller bias of $\leq 0.015$ for GM A. These results align with expectations based on the conditional independence assumption, which predicts that the treatment effect would be unbiased for GM A and biased for GM G. However, the findings contradict the backdoor criterion, which predicts no bias for any of the generative models (GMs). Notably, we found greater treatment effect bias for GM A than reported by @qian2020, with a maximum bias of $-0.012$ in the scenario with $T = 10$ and $N = 100$ (see @tbl-simulation-results), compared to $-0.003$ found by @qian2020 for the same scenario. For GM G, the bias was most pronounced in this scenario as well, reaching $-0.064$. Furthermore, the size of the bias decreased as the number of time points increased.
+
+For the two additional special cases of GM G, namely GM B and GM C, we observed even smaller absolute bias than for GM A: $\leq 0.010$ for GM C and $\leq 0.005$ for GM B (see @tbl-simulation-results). These findings align with the backdoor criterion’s prediction of no bias but contradict the expectations based on the conditional independence assumption, which suggests the presence of bias. Additionally, GM B exhibited the smallest absolute bias overall and showed much smaller variability across simulation replications compared to all other GMs. In contrast, the remaining models exhibited comparable levels of variability (see @fig-simulation-results and @tbl-simulation-results).
+
+In summary, these findings suggest that once we modify the most general model G by removing either the dependency of the random intercept on the covariate (GM A), the random slope $b_{i2}$ (GM B), or the interaction term $\beta_1$ (GM C), the bias either disappears or becomes negligible. However, neither the backdoor criterion nor the conditional independence assumption provided consistent predictions of treatment effect bias across all models.
 
 # Discussion
 
