@@ -277,15 +277,15 @@ within-person fluctuations (\citeproc{ref-hamaker2020}{Hamaker \&
 Muthén, 2020}). In the application of the MLM, time invariant and
 time-varying covariates, the latter measured repeatedly over time, are
 often available. The inclusion of covariates is a common strategy to
-improve parameter precision and address bias introduced by
-(time-varying) confounders (\citeproc{ref-daniel2013}{Daniel et al.,
-2013}; \citeproc{ref-Wodtke2020}{Wodtke, 2020}). Nevertheless, it is
-well-known that this approach is not universally beneficial, as
-conditioning on variables like colliders within the causal pathway can
-distort treatment effect estimates (\citeproc{ref-elwert2014}{Elwert \&
-Winship, 2014}).
+improve parameter precision (\citeproc{ref-boruvka2018}{Boruvka et al.,
+2018}) and address bias introduced by (time-varying) confounders
+(\citeproc{ref-daniel2013}{Daniel et al., 2013};
+\citeproc{ref-Wodtke2020}{Wodtke, 2020}). Nevertheless, it is well-known
+that this approach is not universally beneficial, as conditioning on
+variables like colliders within the causal pathway can distort treatment
+effect estimates (\citeproc{ref-elwert2014}{Elwert \& Winship, 2014}).
 
-Dating back to the work of Pepe and Anderson (1994), it has been
+Dating back to the work of Pepe and Anderson (1994), it has also been
 well-established that including endogenous time-varying
 covariates---those directly or indirectly influenced by prior
 exposure/treatment or outcome---in longitudinal studies without
@@ -999,15 +999,26 @@ effect bias across all models.
 
 \section{Discussion}\label{discussion}
 
-This report employed both graphical methods and data simulations to
-understand and explain the issue of endogenous covariates.
+\subsection{Main Findings}\label{main-findings}
 
-While Qian et al. (\citeproc{ref-qian2020}{2020}) show that GM3 is the
-only model with bias in the treatment effect, the backdoor criterion
-failed to identify this bias, as there is no backdoor path in the
-treatment effect. This may be explained by the fact that the classic DAG
-does not impose restrictions based on (a) the random slopes and (b)
-interaction effects.
+In this research report, we evaluated several generative models to
+investigate when endogenous time-varying covariates lead to biased
+treatment effect estimates in multilevel linear models under randomized
+treatment. Additionally, we assessed the conditional independence
+assumption and the backdoor criterion in their ability to predict bias
+in treatment effect estimates for these models. Consistent with Qian et
+al. (\citeproc{ref-qian2020}{2020}) and the conditional independence
+assumption, we observed substantial bias in the most general model (GM
+G) and smaller bias in a special case (GM A), where the direct effect of
+the random intercept on the covariate was removed. The two additional
+special cases of GM G, where the random slope for treatment (GM B) or
+the interaction term between treatment and covariate (GM C) was removed,
+showed even smaller bias in the treatment effect, despite violation of
+the conditional independence assumption. both the backdoor criterion and
+the conditional independence assumption failed to consistently predict
+treatment effect bias across all models.
+
+\textbf{OLD VERSION SO INTEGRATE}
 
 The research question pertained to the extent of treatment effect bias
 of generative models GM B and C that are special cases of GM G. First,
@@ -1021,44 +1032,107 @@ finding is in sharp contrast to the suggestion of the conditional
 independence assumption that the treatment effect would be biased for
 GM3, 3A and 3B.
 
-The current research report leaves several avenues unexplored. First, it
-is unclear whether the simulation findings pertaining the generative
-models in Qian et al. (\citeproc{ref-qian2020}{2020}) and here
-generalize to other generative models. For instance, we found here that
-removal of a random slope or interaction from GM3 got rid of most if not
-all of the treatment effect bias. Thus, it is important to establish how
-this generalizes, so that practical recommendations can be formulated.
-This is particularly important, since while violations of model
-assumptions are never desired, the robustness against and the practical
-implications of a violation is what matters. Second, it is unclear how
-exactly the divide between the literatures pertaining to the focus of
-the MLM on different centering methods and within- and between-person
-interpretations and the focus of the GEE on marginal and conditional
-interpretations may be bridged. Consequently, future research could
-assess the implications of centering methods in MLMs on the extent to
-which the marginal interpretation of MLM breaks down. Third, we found
-that the classical DAG may not be sufficient to identify bias in the
-treatment effect for GM3, especially due to its lack of specification of
-interaction effects. Concerns regarding the use of Pearl's backdoor
-criterion in situations with interaction effects have been voiced by
-several people (see Weinberg (\citeproc{ref-weinberg2007}{2007}); Attia
-et al. (\citeproc{ref-attia2022}{2022})). Future research could explore
-to what extent proposed extensions of the DAG may be useful in
-identifying bias in the treatment effect for GM3. Finally, it may be
-interesting to investigate the implications of endogenous covariates in
-MLMs for other types of longitudinal data analysis methods, such as
-dynamic structural equation modelling (DSEM; a widely used framework in
-the social sciences based on MLM).
+\subsection{Implications}\label{implications}
 
-Third, since the issue extends to all longitudinal data analysis methods
-according to Diggle (\citeproc{ref-diggle2002}{2002}), in future
-research it may be interesting to investigate the implications of
+\textbf{WHY NO BIAS GM B, C?}
+
+These findings tell us that---at least in this particular instance---the
+dependency between covariate and treatment, the random slope for
+treatment and the interaction effect are all essential for the absolute
+bias to approach the \(5\%\). Following these main findings, the
+question naturally arises why no bias is present in the additional
+special cases of the general model, as was suggested by the conditional
+independence assumption.
+
+\begin{itemize}
+\item
+  For the special case without a random slope for treatment (GM B), it
+\item
+  For the special case without an interaction term between treatment and
+  covariate (GM C), these findings may indeed generalize where the
+  covariate must be a moderator of the treatment effect. Namely, in the
+  abstract of Qian et al. (\citeproc{ref-qian2020}{2020}), it is
+  mentioned that applying the MLM can be problematic because
+  \emph{moderators} of the treatment effect may be endogenous. Thus, it
+  may be that the covariate being a moderator is a prerequisite for
+  bias. However, if so, it would be strange that Qian et al.
+  (\citeproc{ref-qian2020}{2020}) does not state this explicitly.
+\end{itemize}
+
+\textbf{WHY FAILURE TO PREDICT / WHY DISCREPANCY BETWEEN TWO CRITERIA?}
+
+The failure to predict treatment effect bias is especially surprising
+for the conditional independence assumption, as it was designed to
+identify bias in this setting (\citeproc{ref-qian2020}{Qian et al.,
+2020}).
+
+\begin{itemize}
+\tightlist
+\item
+  DAG is non-parametric: limited. So unsuitable for this purpose. Still
+  surprising. the classic DAG does not impose restrictions based on (a)
+  the random slopes and (b) interaction effects.
+\end{itemize}
+
+\textbf{OTHER THINGS?}
+
+Notably, GM A showed larger bias than reported by Qian et al.
+(\citeproc{ref-qian2020}{2020}). As the generative models were specified
+in an identical manner, this is likely due to a discrepancy in the
+simulation set-up (e.g., random number generation or warning/error
+handling).
+
+\subsection{Limitations and Future
+Directions}\label{limitations-and-future-directions}
+
+The current research report leaves several avenues unexplored.
+
+First, it is unclear whether the simulation findings pertaining the
+generative models in Qian et al. (\citeproc{ref-qian2020}{2020}) and
+here generalize to other generative models. For instance, we found here
+that removal of a random slope or interaction from GM3 got rid of most
+if not all of the treatment effect bias. It is important to establish
+how the findings of this research generalize, so that practical
+recommendations can be formulated with regard to the use of multilevel
+linear models in the presence of endogenous covariates. This is
+particularly important, since while violations of model assumptions are
+never desired, the robustness against and the practical implications of
+a violation is what matters.
+
+\textbf{Maar bij GEE kun je ook centreren per persoon, en dan krijg je
+ook weer iets anders, dus ik zou het iets anders opschrijven hier}
+Second, it is unclear how exactly the divide between the literatures
+pertaining to the focus of the MLM on different centering methods and
+within- and between-person interpretations and the focus of the GEE on
+marginal and conditional interpretations may be bridged. Consequently,
+future research could assess the implications of centering methods in
+MLMs on the extent to which the marginal interpretation of MLM breaks
+down.
+
+Third, we found that the classical DAG may not be sufficient to identify
+bias in the treatment effect for GM3, especially due to its lack of
+specification of interaction effects. Concerns regarding the use of
+Pearl's backdoor criterion in situations with interaction effects have
+been voiced by several people (see Weinberg
+(\citeproc{ref-weinberg2007}{2007}); Attia et al.
+(\citeproc{ref-attia2022}{2022})). Future research could explore to what
+extent proposed extensions of the DAG may be useful in identifying bias
+in the treatment effect for GM3.
+
+Finally, it may be interesting to investigate the implications of
 endogenous covariates in MLMs for other types of longitudinal data
 analysis methods, such as dynamic structural equation modelling (DSEM; a
 widely used framework in the social sciences based on MLM).
 
-\textbf{to recognize and understand precisely when and why endogenous
-covariates may trouble an empirical investigation.}
+\textbf{WHAT WOULD HAPPEN WHEN WE CORRELATE RANDOM EFFECTS? MORE
+PLAUSIBLE?}
+
+\subsection{Conclusion}\label{conclusion}
+
+This report is a first step towards understanding the implications of
+endogenous covariates in multilevel linear models. However, to recognize
+and understand completely when and why endogenous covariates may trouble
+an empirical investigation, further research is needed.
 
 \newpage
 
@@ -1084,14 +1158,17 @@ ordinal outcomes: Performance of alternative specifications and methods
 of estimation. \emph{Psychological Methods}, \emph{16}(4), 373--390.
 \url{https://doi.org/10.1037/a0025813}
 
+\bibitem[\citeproctext]{ref-boruvka2018}
+Boruvka, A., Almirall, D., Witkiewitz, K., \& Murphy, S. A. (2018).
+Assessing time-varying causal effect moderation in mobile health.
+\emph{Journal of the American Statistical Association}, \emph{113}(523),
+1112--1121. \url{https://doi.org/10.1080/01621459.2017.1305274}
+
 \bibitem[\citeproctext]{ref-daniel2013}
 Daniel, R. m., Cousens, S. n., De Stavola, B. l., Kenward, M. G., \&
 Sterne, J. a. C. (2013). Methods for dealing with time-dependent
 confounding. \emph{Statistics in Medicine}, \emph{32}(9), 1584--1618.
 \url{https://doi.org/10.1002/sim.5686}
-
-\bibitem[\citeproctext]{ref-diggle2002}
-Diggle, P. (2002). \emph{Analysis of Longitudinal Data}. OUP Oxford.
 
 \bibitem[\citeproctext]{ref-duncan1966}
 Duncan, O. D. (1966). Path analysis: Sociological examples.
