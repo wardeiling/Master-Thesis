@@ -80,7 +80,7 @@ library(pdftools)
 
 Across a wide range of disciplines, researchers analyze clustered longitudinal, observational data to investigate prospective causal relationships between variables. When analyzing such data, psychological researchers most commonly use the multilevel linear model[^1] [MLM, @bauer2011], which—in the context of longitudinal data analysis—partitions observed variance into stable between-person differences and within-person fluctuations [@hamaker2020]. In the application of the MLM, time invariant and time-varying covariates, the latter measured repeatedly over time, are often available. The inclusion of covariates is a common strategy to improve parameter precision [@boruvka2018] and address bias introduced by (time-varying) confounders [@daniel2013; @Wodtke2020]. Nevertheless, it is well-known that this approach is not universally beneficial, as conditioning on variables like colliders within the causal pathway can distort treatment effect estimates [@elwert2014].
 
-[^1]: The MLM is known by various names, including: linear mixed model, hierarchical linear model, random-effect model and mixed-effects model.
+[^1]: The MLM is known by various names in different substantive fields, including: linear mixed model, hierarchical linear model, random-effect model and mixed-effects model.
 
 <!-- -   Then, add a paragraph describing what is known in the literature; -->
 
@@ -96,11 +96,11 @@ However, due to a divide between the disciplines that employ the MLM, such criti
 
 # Methods
 
-To obtain a better understanding of the issue exposed by @qian2020, two methods were employed. First, graphical methods were used provide insight into the presence and extent of bias with potential violation of criteria: (a) path diagrams were used to evaluate the conditional independence assumption [@qian2020] and (b) directed acyclic graphs (DAGs) were used to evaluate the backdoor criterion [@pearl1988; @pearl2009]. Second, a simulation study was performed to reproduce the results for the generative models (GMs) from @qian2020 and to further isolate the issue using additional GMs. In this simulation, bias in the treatment effect was quantified using analytical multilevel models identical to the generative models.
+To obtain a better understanding of the issue exposed by @qian2020, two methods were employed. First, graphical methods were used provide insight into the presence and extent of bias with potential violation of criteria: (a) path diagrams were used to evaluate the conditional independence assumption [@qian2020] and (b) directed acyclic graphs (DAGs) were used to evaluate the backdoor criterion [@pearl1988; @pearl2009]. Second, a simulation study was performed to reproduce the results for the generative models (GMs) from @qian2020 and to further isolate the issue using additional GMs. In this simulation, bias in the treatment effect was quantified using analytical multilevel models identical to the generative models. In this section, the GMs will be formulated and specifications will be defined for the simulation study.
 
 ## Data Generation
 
-We consider 2 generative models (GMs) from @qian2020, one (GM A) being a special case of the general model (GM G) where bias was detected. To further isolate the source of bias, we introduce two additional special cases, labeled GM B and C. @tbl-gm-differences summarizes the differences between the generative models. Compared to the general model G, GM A is not directly determined by the random intercept $b_{i0}$; GM B is does not have a random slope $b_{i2}$ for treatment; and GM C does not have a fixed interaction effect $\beta_1$ between covariate and treatment.
+We consider 2 GMs from @qian2020, one (GM A) being a special case of the general model (GM G) where bias was detected. To further isolate the source of bias, we introduce two additional special cases, labeled GM B and C. @tbl-gm-differences summarizes the differences between the generative models. Compared to the general model G, GM A is not directly determined by the random intercept $b_{i0}$; GM B is does not have a random slope $b_{i2}$ for treatment; and GM C does not have a fixed interaction effect $\beta_1$ between covariate and treatment.
 
 | Generative Model | Name in @qian2020 | dependency $b_{i0}$ and $X_{it}$ | random slope treatment $b_{i2}$ | interaction $\beta_1$ |
 |---------------|---------------|---------------|---------------|---------------|
@@ -138,7 +138,7 @@ $$
 \end{aligned}
 $$
 
-We model fixed effects $\alpha_0$, $\alpha_1$, $\beta_0$, and $\beta_1$ as constants across individuals, while random effects $b_{i0}$ and $b_{i2}$ capture individual-specific deviations. Specifically, $b_{i0}$ represents deviations from the population intercept $\alpha_0$, and $b_{i2}$ represents deviations from the population slope $\beta_0$. A higher $b_{i0}$ indicates a higher initial outcome, while a higher $b_{i2}$ indicates a stronger treatment effect. Following @qian2020, the random effects $b_{i0}$ and $b_{i2}$ are modeled independent of each other.
+We model fixed effects $\alpha_0$, $\alpha_1$, $\beta_0$, and $\beta_1$ as constants across individuals, while random effects $b_{i0}$ and $b_{i2}$ capture individual-specific deviations. The presence of the interaction term $\beta_1$ implies treatment heterogeneity: the effect of the treatment $A_{it}$ on the outcome depends on the value of the covariate $X_{it}$. $b_{i0}$ represents deviations from the population intercept $\alpha_0$, and $b_{i2}$ represents deviations from the population slope $\beta_0$. A higher $b_{i0}$ indicates a higher initial outcome, while a higher $b_{i2}$ indicates a stronger treatment effect. Following @qian2020, the random effects $b_{i0}$ and $b_{i2}$ are modeled independent of each other.
 
 The covariate is generated as:
 
@@ -220,7 +220,7 @@ All data generation and estimation was performed in `R`, version 4.4.2 [@rcorete
 
 ## Conditional Independence and Path Diagrams
 
-The first criterion to evaluate the presence of bias in the treatment effect estimates is the *conditional independence assumption*. According to @qian2020, this assumption should identify whether estimators of the treatment effect are consistent and unbiased under randomized treatment assignment. The conditional independence assumption states that the covariate at time $t$ ($X_{it}$) should be independent of the individual’s random effects ($b_{i0}$ and $b_{i1}$) once we account for their history of covariates ($H_{it-1}$), previous treatments ($A_{it-1}$), and prior outcomes ($Y_{it}$). This is implied from the following notation:
+The first criterion for evaluating the presence of bias in treatment effect estimates is the *conditional independence assumption*, introduced by @qian2020 and based on the work of @sitlani2012. According to @qian2020, this assumption should identify whether estimators of the treatment effect are consistent and unbiased under randomized treatment assignment. The conditional independence assumption states that the covariate at time $t$ ($X_{it}$) should be independent of the individual’s random effects ($b_{i0}$ and $b_{i1}$) once we account for their history of covariates ($H_{it-1}$), previous treatments ($A_{it-1}$), and prior outcomes ($Y_{it}$). This is implied from the following notation:
 
 $$ 
 X_{it} \perp (b_{i0}, b_{i1}) \mid H_{it-1}, A_{it-1}, Y_{it}.
@@ -262,8 +262,8 @@ To clarify the application of the conditional independence assumption, we pair t
   \node[draw, circle, fill=gray!20] (b2) at (3, -4) {$b_{i2}$}; % Adjusted to align with middle row
 
   % Arrows with path coefficients
-  \draw [->] (b0) -- node[right] {$+$} (Y2);
-  \draw [->] (b0) -- node[right] {$+$} (Y3);
+  \draw [->] (b0) -- (Y2);
+  \draw [->] (b0) -- (Y3);
   \draw [->] (A2) edge node[above left] {$\beta_0$} (Y3);
   \draw [->] (X2) edge node[above] {$\alpha_1$} (Y3);
   \draw [->] (Y2) edge node[right] {$1$} (X2);
@@ -323,8 +323,8 @@ To clarify the application of the conditional independence assumption, we pair t
   \node[draw, circle, fill=gray!20] (b2) at (3, -4) {$b_{i2}$}; % Adjusted to align with middle row
 
   % Arrows with path coefficients
-  \draw [->] (b0) -- node[right] {$+$} (Y2);
-  \draw [->] (b0) -- node[right] {$+$} (Y3);
+  \draw [->] (b0) -- (Y2);
+  \draw [->] (b0) -- (Y3);
   \draw [->] (A2) edge node[above left] {$\beta_0$} (Y3);
   \draw [->] (X2) edge node[above] {$\alpha_1$} (Y3);
   \draw [->] (Y2) edge node[right] {$1$} (X2);
@@ -380,8 +380,8 @@ To clarify the application of the conditional independence assumption, we pair t
   \node[draw, circle, fill=gray!20] (b0) at (6, 4) {$b_{i0}$}; % Increased x-coordinate
 
   % Arrows with path coefficients
-  \draw [->] (b0) -- node[right] {$+$} (Y2);
-  \draw [->] (b0) -- node[right] {$+$} (Y3);
+  \draw [->] (b0) -- (Y2);
+  \draw [->] (b0) -- (Y3);
   \draw [->] (A2) edge node[above left] {$\beta_0$} (Y3);
   \draw [->] (X2) edge node[above] {$\alpha_1$} (Y3);
   \draw [->] (Y2) edge node[right] {$1$} (X2);
@@ -434,8 +434,8 @@ To clarify the application of the conditional independence assumption, we pair t
   \node[draw, circle, fill=gray!20] (b2) at (3, -4) {$b_{i2}$}; % Adjusted to align with middle row
 
   % Arrows with path coefficients
-  \draw [->] (b0) -- node[right] {$+$} (Y2);
-  \draw [->] (b0) -- node[right] {$+$} (Y3);
+  \draw [->] (b0) -- (Y2);
+  \draw [->] (b0) -- (Y3);
   \draw [->] (A2) edge node[above left] {$\beta_0$} (Y3);
   \draw [->] (X2) edge node[above] {$\alpha_1$} (Y3);
   \draw [->] (Y2) edge node[right] {$1$} (X2);
@@ -717,61 +717,45 @@ plot_boxplot(data_t30_n100, "T=30, N=100")
 plot_boxplot(data_t30_n200, "T=30, N=200")
 ```
 
-In this reproduction of @qian2020, the overall pattern was consistent with the original study (see @fig-simulation-results): we observed substantial absolute bias ranging from $0.02$ to $0.06$ for the most general generative model (GM G), and much smaller bias of $\leq 0.015$ for GM A. These results align with expectations based on the conditional independence assumption, which predicts that the treatment effect would be unbiased for GM A and biased for GM G. However, the findings contradict the backdoor criterion, which predicts no bias for any of the generative models (GMs). Notably, we found greater treatment effect bias for GM A than reported by @qian2020, with a maximum bias of $-0.012$ in the scenario with $T = 10$ and $N = 100$ (see @tbl-simulation-results), compared to $-0.003$ found by @qian2020 for the same scenario. For GM G, the bias was most pronounced in this scenario as well, reaching $-0.064$. Furthermore, the size of the bias decreased as the number of time points increased.
+In this reproduction of @qian2020, the overall pattern was consistent with the original study (see @fig-simulation-results): we observed substantial absolute bias ranging from $0.023$ ($2.3\%$) to $0.064$ ($6.4\%$) for the most general generative model (GM G), and much smaller bias of $\leq 0.015$ ($1.5\%$) for GM A. These results align with expectations based on the conditional independence assumption, which predicts that the treatment effect would be unbiased for GM A and biased for GM G. However, the findings contradict the backdoor criterion, which predicts no bias for any of the generative models (GMs). Notably, we found 4 times greater treatment effect bias for GM A in the scenario with $T = 10$ and $N = 100$ than reported by @qian2020, with a maximum bias of $-0.012$ ($1.2\%$; (see @tbl-simulation-results), compared to $-0.003$ ($0.3\%$) found by @qian2020. For GM G, the size of the bias decreased as the number of time points increased.
 
-For the two additional special cases of GM G, namely GM B and GM C, we observed even smaller absolute bias than for GM A: $\leq 0.010$ for GM C and $\leq 0.005$ for GM B (see @tbl-simulation-results). These findings align with the backdoor criterion’s prediction of no bias but contradict the expectations based on the conditional independence assumption, which suggests the presence of bias. Additionally, GM B exhibited the smallest absolute bias overall and showed much smaller variability across simulation replications compared to all other GMs. In contrast, the remaining models exhibited comparable levels of variability (see @fig-simulation-results and @tbl-simulation-results).
+For the two additional special cases of GM G, namely GM B and GM C, we observed even smaller absolute bias than for GM A: $\leq 0.010$ ($1\%$) for GM C and $\leq 0.005$ ($0.5\%$) for GM B (see @tbl-simulation-results). These findings align with the backdoor criterion’s prediction of no bias but contradict the expectations based on the conditional independence assumption, which suggests the presence of bias. Additionally, GM B exhibited the smallest absolute bias overall and showed much smaller variability across simulation replications compared to all other GMs. In contrast, the remaining models exhibited comparable levels of variability (see @fig-simulation-results and @tbl-simulation-results).
 
 In summary, these findings suggest that once we modify the most general model G by removing either the dependency of the random intercept on the covariate (GM A), the random slope $b_{i2}$ (GM B), or the interaction term $\beta_1$ (GM C), the bias either disappears or becomes negligible. However, neither the backdoor criterion nor the conditional independence assumption provided consistent predictions of treatment effect bias across all models.
 
 # Discussion
 
-## Main Findings
+In this research report, we evaluated several GMs to investigate when endogenous time-varying covariates bias treatment effect estimates in MLMs under randomized treatment. We also assessed the ability of the conditional independence assumption and the backdoor criterion to predict this bias. Consistent with @qian2020 and the conditional independence assumption, we observed substantially greater bias in the most general model (GM G) compared to a special case (GM A), where the direct effect of the random intercept on the covariate was removed. However, one unexpected result was the fourfold increase in maximum bias for GM A compared to @qian2020. This discrepancy may stem from differences in the simulation setup (e.g., random number generation or handling of warnings/errors). The two additional special cases of GM G, where the random slope for treatment (GM B) or the interaction term between treatment and covariate (GM C) was removed, exhibited even smaller bias in the treatment effect---despite violations of the conditional independence assumption. These findings tell us that—at least in this particular instance---the dependency between the covariate and treatment, the random slope for treatment, and the interaction effect are all essential for bias to exceed $5%$.
 
-In this research report, we evaluated several generative models to investigate when endogenous time-varying covariates lead to biased treatment effect estimates in multilevel linear models under randomized treatment. Additionally, we assessed the conditional independence assumption and the backdoor criterion in their ability to predict bias in treatment effect estimates for these models. Consistent with @qian2020 and the conditional independence assumption, we observed substantial bias in the most general model (GM G) and smaller bias in a special case (GM A), where the direct effect of the random intercept on the covariate was removed. The two additional special cases of GM G, where the random slope for treatment (GM B) or the interaction term between treatment and covariate (GM C) was removed, showed even smaller bias in the treatment effect, despite violation of the conditional independence assumption. both the backdoor criterion and the conditional independence assumption failed to consistently predict treatment effect bias across all models.
+This naturally raises important questions: why was no discernible bias observed in GM B and GM C, as predicted by the conditional independence assumption, and can this pattern generalize beyond the current generative models? One possibility is that, while bias may exist as predicted, it was canceled out by parameter removal in these specific models. Alternatively, heterogeneity in the treatment effect---whether unexplained via the random slope or explained via the covariate---may be necessary for bias to occur. This explanation aligns with the statement by @qian2020 that "applying linear mixed models is problematic because potential moderators of the treatment effect are frequently endogenous" (p. 375). If treatment effect moderation by a covariate is indeed a prerequisite for bias, it could explain the absence of bias in GM C, where no interaction term was included. However, it remains unclear why @qian2020 does not explicitly mention this condition (e.g., when introducing the conditional independence assumption). Further research is needed to determine whether these findings generalize or are model-specific and to provide practical guidance on using MLMs with endogenous covariates.
 
-<!-- (1) When does the inclusion of endogenous variables in multilevel linear models result in biased estimates of the treatment effect? -->
+These findings tell us that—at least in this particular instance—the dependency between covariate and treatment, the random slope for treatment and the interaction effect are all essential for the absolute bias to exceed the $5\%$. Following this, the question naturally arises why no discernable bias was present in the additional special cases of the general model, as was suggested by the conditional independence assumption; and whether this pattern generalizes or is limited to the current generative models. One possible general explanation could be that, as predicted by the conditional independence assumption, bias was present in one or both scenarios, but that—in the current GMs—it was cancelled out by the removal of a parameter. Conversely, it could also be argued that some form of heterogeneity in the treatment effect—either unexplained through the random slope or explained through the covariate—is necessary for the bias to occur. While @qian2020 mentions that applying the MLM can be problematic because *moderators* of the treatment effect may be endogenous, it may be that the covariate being a moderator in the treatment effect is a prerequisite for bias. This could explain why no discernable bias was found for the special case without an interaction term between treatment and covariate (GM C) and why the conditional independence assumption failed to predict this bias. However, if this were the case, it would be strange that @qian2020 does not state this requirement explicitly. Future research is needed to establish whether this pattern is an anomaly or generalizes, so that practical recommendations can be formulated with regard to the use of multilevel linear models in the presence of endogenous covariates. Furthermore, additional research is also needed to further explore this issue and establish why the added heterogeneity in the treatment effect may be necessary for bias to occur.
 
-**OLD VERSION SO INTEGRATE**
+Concerning the backdoor criterion and DAG [@pearl1988; @pearl2009], we found that the classical non-parametric DAG may not be sufficient to identify bias in the treatment effect for GM G, as its arrows indicate direct causal effects that may vary in size across individuals or depend on the values of other variables. As a result, the DAG does not impose restrictions based on random slopes and interaction effects, thereby being excluded from being useful in considering the conditional independence assumption, which contains specific restrictions based on random slope(s). Concerns regarding the use of Pearl's backdoor criterion in situations with interaction effects[^2] have been voiced by several people (see @weinberg2007; @attia2022). Future research could explore to what extent proposed extensions of the DAG---that include interaction effects---may be useful in identifying bias in the treatment effect for generative models.
 
-The research question pertained to the extent of treatment effect bias of generative models GM B and C that are special cases of GM G. First, we reproduced the findings by @qian2020 who found consistent estimators for GM1 and and inconsistent ones for GM3. Using additional generative models, we found that bias became indiscernable when removing from GM3 either the dependency between the random intercept and covariate (GM1), the random slope for treatment (GM3A) or the interaction effect (GM3B). This finding is in sharp contrast to the suggestion of the conditional independence assumption that the treatment effect would be biased for GM3, 3A and 3B.
+[^2]: Note that the term "effect modification", while often used interchangeably with "interaction", has a distinct definition in the counterfactual framework [@vanderweele2009].
 
-## Implications
+It should also be noted that the current investigation takes for granted that estimators of the MLM may not be marginal estimators, but instead conditional-on-the-random-effect estimators, as argued by . This is a common assumption in the social sciences, where the focus is often on the person-specific interpretation of the parameters. However, the marginal interpretation of the parameters may be of interest in other fields, such as epidemiology, where the focus is on the population average effect. When we aim to estimate the average causal effect of a treatment, we may be more interested in the marginal interpretation of the parameters . Future work is needed to fully incorperate the literature on marginal effects and causal inference into the current issue.
 
-**WHY NO BIAS GM B, C?**
+It would also be interesting to see how treatment effect bias would be affected by centering approaches (see @hamaker2020). @antonakis2021 notes that the assumption of uncorrelatedness between the random effects and level 1 covariates can be relaxed by using Mundlak's contextual model[^3] [@mundlak1978]: adding the cluster means of each covariate as predictor of the random intercept. As argued by @bell2015, the source of endogeneity is often interesting and worthy of explicit modelling. Hence, it would be interesting to see how this affects the treatment effect bias of GM G.
 
-These findings tell us that—at least in this particular instance—the dependency between covariate and treatment, the random slope for treatment and the interaction effect are all essential for the absolute bias to approach the $5\%$. Following these main findings, the question naturally arises why no bias is present in the additional special cases of the general model, as was suggested by the conditional independence assumption.
+[^3]: This is referred to as the Correlated Random Effects (CRE) approach by @wooldridge2002.
 
--   For the special case without a random slope for treatment (GM B), it
+The study by @qian2020 only considered a situation with uncorrelated random effects, which may be restrictive and often violated in practice. Thus, another interesting avenue for future research would be to investigate what would happen if the random effects were correlated, which is possible in the structural equation modeling format [@rovine2000]. Following this, we could
 
--   For the special case without an interaction term between treatment and covariate (GM C), these findings may indeed generalize where the covariate must be a moderator of the treatment effect. Namely, in the abstract of @qian2020, it is mentioned that applying the MLM can be problematic because *moderators* of the treatment effect may be endogenous. Thus, it may be that the covariate being a moderator is a prerequisite for bias. However, if so, it would be strange that @qian2020 does not state this explicitly.
-
-**WHY FAILURE TO PREDICT / WHY DISCREPANCY BETWEEN TWO CRITERIA?**
-
-The failure to predict treatment effect bias is especially surprising for the conditional independence assumption, as it was designed to identify bias in this setting [@qian2020].
-
--   DAG is non-parametric: limited. So unsuitable for this purpose. Still surprising. the classic DAG does not impose restrictions based on (a) the random slopes and (b) interaction effects.
-
-**OTHER THINGS?**
-
-Notably, GM A showed larger bias than reported by @qian2020. As the generative models were specified in an identical manner, this is likely due to a discrepancy in the simulation set-up (e.g., random number generation or warning/error handling).
-
-## Limitations and Future Directions
-
-The current research report leaves several avenues unexplored.
-
-First, it is unclear whether the simulation findings pertaining the generative models in @qian2020 and here generalize to other generative models. For instance, we found here that removal of a random slope or interaction from GM3 got rid of most if not all of the treatment effect bias. It is important to establish how the findings of this research generalize, so that practical recommendations can be formulated with regard to the use of multilevel linear models in the presence of endogenous covariates. This is particularly important, since while violations of model assumptions are never desired, the robustness against and the practical implications of a violation is what matters.
-
-**Maar bij GEE kun je ook centreren per persoon, en dan krijg je ook weer iets anders, dus ik zou het iets anders opschrijven hier** Second, it is unclear how exactly the divide between the literatures pertaining to the focus of the MLM on different centering methods and within- and between-person interpretations and the focus of the GEE on marginal and conditional interpretations may be bridged. Consequently, future research could assess the implications of centering methods in MLMs on the extent to which the marginal interpretation of MLM breaks down.
-
-Third, we found that the classical DAG may not be sufficient to identify bias in the treatment effect for GM3, especially due to its lack of specification of interaction effects. Concerns regarding the use of Pearl's backdoor criterion in situations with interaction effects have been voiced by several people (see @weinberg2007; @attia2022). Future research could explore to what extent proposed extensions of the DAG may be useful in identifying bias in the treatment effect for GM3.
-
-Finally, it may be interesting to investigate the implications of endogenous covariates in MLMs for other types of longitudinal data analysis methods, such as dynamic structural equation modelling (DSEM; a widely used framework in the social sciences based on MLM).
-
-**WHAT WOULD HAPPEN WHEN WE CORRELATE RANDOM EFFECTS? MORE PLAUSIBLE?**
+It may be interesting to investigate the implications of endogenous covariates in MLMs for other types of longitudinal data analysis methods, such as dynamic structural equation modelling (DSEM; a widely used framework in the social sciences based on MLM).
 
 ## Conclusion
 
 This report is a first step towards understanding the implications of endogenous covariates in multilevel linear models. However, to recognize and understand completely when and why endogenous covariates may trouble an empirical investigation, further research is needed.
+
+<!-- With regard to the special case without random slope for treatment, the bias, as well as the variability across simulations, was noticably smaller compared to the other GMs. -->
+
+<!-- The current research report leaves several avenues unexplored. -->
+
+<!-- **Maar bij GEE kun je ook centreren per persoon, en dan krijg je ook weer iets anders, dus ik zou het iets anders opschrijven hier** Second, it is unclear how exactly the divide between the literatures pertaining to the focus of the MLM on different centering methods and within- and between-person interpretations and the focus of the GEE on marginal and conditional interpretations may be bridged. Consequently, future research could assess the implications of centering methods in MLMs on the extent to which the marginal interpretation of MLM breaks down. -->
+
+
 
 <!-- # Other ideas -->
 
