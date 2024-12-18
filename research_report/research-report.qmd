@@ -1,5 +1,8 @@
 ---
-title: "Estimation of Effects of Endogenous Time-Varying Covariates: A Comparison Of Multilevel Linear Modeling and Generalized Estimating Equations"
+title: "Untangling Bias in Multilevel Linear Models: The Role of Endogenous Time-Varying Covariates"
+
+# "The Dangers of Including Time-Varying Endogenous Covariates in the Multilevel Linear Model"
+# Estimation of Effects of Endogenous Time-Varying Covariates: A Comparison Of Multilevel Linear Modeling and Generalized Estimating Equations"
 subtitle: "Research Report" 
 author: 
   - name: "Ward B. Eiling (9294163)"
@@ -76,7 +79,7 @@ library(pdftools)
 
 <!-- -   Start with a paragraph describing a problem in the real-life world (so that a BoS member not familiar with statistics understands why you are pursuing research in this direction); -->
 
-Across a wide range of disciplines, researchers analyze clustered longitudinal, observational data to investigate prospective causal relationships between variables. When analyzing such data, psychological researchers most commonly use the multilevel linear model[^1] [MLM, @bauer2011], which—in the context of longitudinal data analysis—partitions observed variance into stable between-person differences and within-person fluctuations [@hamaker2020]. In the application of the MLM, time invariant and time-varying covariates, the latter measured repeatedly over time, are often available. The inclusion of covariates is a common strategy to improve parameter precision [@boruvka2018] and address bias introduced by (time-varying) confounders [@daniel2013; @Wodtke2020]. Nevertheless, it is well-known that this approach is not universally beneficial, as conditioning on variables like colliders within the causal pathway can distort treatment effect estimates [@elwert2014].
+Across a wide range of disciplines, researchers analyze clustered longitudinal, observational data to investigate prospective causal relationships between variables. When analyzing such data, psychological researchers most commonly use the multilevel linear model[^1] [MLM, @bauer2011], which—in the context of longitudinal data analysis—partitions observed variance into stable between-person differences and within-person fluctuations [@hamaker2020]. Research questions explored with the MLM commonly lead to the availability of time invariant and/or time-varying covariates, the latter measured repeatedly over time. The inclusion of covariates is a common strategy to improve parameter precision [@boruvka2018] and address bias introduced by (time-varying) confounders [@daniel2013; @Wodtke2020; @Robins2000]. Nevertheless, this approach is not universally beneficial, as conditioning on endogenous covariates—those influenced by (prior) treatment/exposure or outcome—can create challenges for standard methods like MLMs, which implicitly assume the exogeneity of covariates [@Erler2019].
 
 [^1]: The MLM is known by various names in different substantive fields, including: linear mixed model, hierarchical linear model, random-effect model and mixed-effects model.
 
@@ -84,21 +87,21 @@ Across a wide range of disciplines, researchers analyze clustered longitudinal, 
 
 <!-- -   Also, describe what is not known and which gap you will address in your thesis; End with a clear research question and, if applicable, your hypothesis (for confirmatory research questions – it should be a testable hypothesis) or expectations (for exploratory research questions – can be much vaguer because of the explorative nature of the question). -->
 
-Dating back to the work of @pepe1994, it has also been well-established that including endogenous time-varying covariates—those directly or indirectly influenced by prior exposure/treatment or outcome—in longitudinal studies without treatment can result in biased estimates of treatment effects. Despite its significance, this issue has received little attention in psychological research. Building on this foundation, a recent paper by @qian2020 examined the suitability of MLM for estimating the causal effect of a time-varying exposure or treatment. Specifically, they focused on settings where the exposure is randomly assigned at each occasion within individuals. Such randomized exposures may include, for example, prompts delivered through push notifications to remind participants of cognitive or mindfulness-based strategies [@nahum-shani2021; @walton2018]. While random assignment with a constant probability might seem sufficient to identify (the presence and absence of) causal effects, @qian2020 showed that model fitting issues and parameter bias can arise when a *time-varying endogenous covariate* is present.
+Dating back to the work of @pepe1994, this assumption has proven to be non-trivial when endogenous covariates vary over time. In fact, their inclusion in longitudinal studies can lead to biased treatment effect estimates, an issue that, despite its significance, has received limited attention in psychological research. Building on this foundation, a recent paper by @qian2020 examined the suitability of MLM for estimating the causal effect of a time-varying exposure or treatment. Specifically, they focused on settings where the exposure is randomly assigned at each occasion within individuals. Such randomized exposures may include, for example, prompts delivered through push notifications to remind participants of cognitive or mindfulness-based strategies [@nahum-shani2021; @walton2018]. While random assignment with a constant probability might seem sufficient to identify (the presence and absence of) causal effects, @qian2020 showed that model fitting issues and parameter bias can arise when a *time-varying endogenous covariate* is present.
 
 <!-- The issues described in @qian2020 can be categorized into two main problems: (1) model interpretation and (2) model fitting. In this investigation, we focus on the latter issue of model fitting of the MLM  -->
 
-However, due to a divide between the disciplines that employ the MLM, such critiques appear to have largely failed to reach the applied researcher in psychology. One specific reason might be that the technical jargon in other disciplines makes it difficult for researchers to recognize when and how these issues emerge. Therefore, this report aims to understand why @qian2020 found biased estimates of the treatment effect for some generative models containing endogenous covariates and not for others; and to explain this issue to an audience of psychologists. To achieve this aim, the study will first use graphical diagrams to evaluate relevant criteria, ensuring accessibility and rigor through a reliance on graphical rules rather than algebra. Next, data simulations, based on the original scenarios of @qian2020 as well as additional scenarios, will be conducted to pinpoint the issue and to assess whether these criteria effectively identify bias. Accordingly, the following research question will be addressed: *When does the inclusion of endogenous variables in multilevel linear models result in biased estimates of the treatment effect?*
+However, due to a divide between the disciplines that employ the MLM, such critiques appear to have largely failed to reach the applied researcher in psychology. One specific reason might be that the technical jargon in other disciplines makes it difficult for researchers to recognize when and how these issues emerge. This report aims to explore why @qian2020 observed biased estimates of the treatment effect in certain data-generating mechanisms containing endogenous covariates, while not for others. Additionally, it seeks to explain this issue to an audience of psychologists. The study will first employ graphical diagrams to assess two criteria across various scenarios involving an endogenous time-varying covariate and randomized treatment: (a) path diagrams to evaluate the conditional independence assumption introduced by @qian2020 and (b) directed acyclic graphs (DAGs) to assess the backdoor criterion [@pearl1988; @pearl2009]. Subsequently, data simulations based on @qian2020's original scenarios, along with additional ones, will be performed to reproduce and isolate the underlying issue and evaluate whether these criteria can effectively detect bias in the treatment effect. The following research question will be addressed: *When does the inclusion of endogenous variables in multilevel linear models result in biased estimates of the treatment effect?*
 
 <!-- -   Also, describe what is not known and which gap you will address in your thesis; End with a clear research question and, if applicable, your hypothesis (for confirmatory research questions – it should be a testable hypothesis) or expectations (for exploratory research questions – can be much vaguer because of the explorative nature of the question). -->
 
 # Methods
 
-To obtain a better understanding of the issue exposed by @qian2020, two methods were employed. First, graphical methods were used provide insight into the presence and extent of bias with potential violation of criteria: (a) path diagrams were used to evaluate the conditional independence assumption [@qian2020] and (b) directed acyclic graphs (DAGs) were used to evaluate the backdoor criterion [@pearl1988; @pearl2009]. Second, a simulation study was performed to reproduce the results for the generative models (GMs) from @qian2020 and to further isolate the issue using additional GMs. In this section, the GMs will be formulated and specifications will be defined for the simulation study.
+In this section, the GMs will be formulated and specifications will be defined for the simulation study.
 
 ## Data Generation
 
-We consider 2 GMs from @qian2020, one (GM A) being a special case of the general model (GM G) where bias was detected. To further isolate the source of bias, we introduce two additional special cases, labeled GM B and C. @tbl-gm-differences summarizes the differences between the generative models. Compared to the general model G, GM A is not directly determined by the random intercept $b_{i0}$; GM B is does not have a random slope $b_{i2}$ for treatment; and GM C does not have a fixed interaction effect $\beta_1$ between covariate and treatment.
+We consider two GMs from @qian2020, one (GM A) being a special case of the general model (GM G) where bias was detected. To further isolate the source of bias, we introduce two additional special cases, labeled GM B and C. @tbl-gm-differences summarizes the differences between the generative models. Compared to the general model G, GM A is not directly determined by the random intercept $b_{i0}$; GM B is does not have a random slope $b_{i2}$ for treatment; and GM C does not have a fixed interaction effect $\beta_1$ between covariate and treatment.
 
 | Generative Model | Name in @qian2020 | dependency $b_{i0}$ and $X_{it}$ | random slope treatment $b_{i2}$ | interaction $\beta_1$ |
 |---------------|---------------|---------------|---------------|---------------|
@@ -109,23 +112,23 @@ We consider 2 GMs from @qian2020, one (GM A) being a special case of the general
 
 : Generative Models: Summary of Differences {#tbl-gm-differences}
 
-The details of the generative models are described below. We follow the symbol notation of @qian2020 to allow for direct comparison, but rewrite the equations into within- and between-person models [see @raudenbush2002; @Schoot2017].
+The details of the generative models are described below.
 
-### Generative Model G
+### General Generative Model
 
-Following the original notation of @qian2020, the outcome of GM G was generated according to the following model:
+Following the original notation of @qian2020, the outcome of GM G was generated as:
 
 $$
 Y_{it+1} = \alpha_0 + \alpha_1 X_{it} + b_{i0} + A_{it} (\beta_0 + \beta_1 X_{it} + b_{i2}) + \epsilon_{it+1}
 $$
 
-where $Y_{it+1}$ is the outcome at time $t+1$, $X_{it}$ is the covariate at time $t$, $A_{it}$ is the treatment at time $t$, $b_{i0}$ is the random intercept, $b_{i2}$ is the random slope for the treatment, and $\epsilon_{it+1}$ is the error term. We may rewrite this model into the repeated-observations or within-person model in the following steps:
+where $Y_{it+1}$ is the outcome for person $i$ at time $t+1$, $X_{it}$ is the covariate for person $i$ at time $t$, $A_{it}$ is the treatment for person $i$ at time $t$, $b_{i0}$ is the random intercept, $b_{i2}$ is the random slope for the treatment, and $\epsilon_{it+1}$ is the error term. Alternatively, the model can be represented in the multilevel notation of @raudenbush2002 with at the within-person level (level 1)
 
 $$ 
-\begin{aligned} Y_{it+1} &= \alpha_0 + \alpha_1 X_{it} + b_{i0} + A_{it} (\beta_0 + \beta_1 X_{it} + b_{i2}) + \epsilon_{it+1} \\ &= \alpha_0 + \alpha_1 X_{it} + b_{i0} + \beta_0 A_{it} +  \beta_1 A_{it} X_{it} + A_{it} b_{i2} + \epsilon_{it+1} \\ &= \alpha_0 + b_{i0} + \alpha_1 X_{it} + \beta_0 A_{it} + A_{it} b_{i2} + \beta_1 A_{it} X_{it} + \epsilon_{it+1} \\ &= (\alpha_0 + b_{i0}) + \alpha_1 X_{it} + (\beta_0 + b_{i2}) A_{it} + \beta_1 A_{it} X_{it} + \epsilon_{it+1} \\ &= \pi_{0i} + \pi_{1i} X_{it} + \pi_{2i} A_{it} + \pi_{3i} A_{it} X_{it} + \epsilon_{it+1}. \end{aligned}
+Y_{it+1} = \pi_{0i} + \pi_{1i} X_{it} + \pi_{2i} A_{it} + \pi_{3i} A_{it} X_{it} + \epsilon_{it+1}
 $$
 
-with the person-level or between-person model (level 2):
+and at the between-person level (level 2)
 
 $$
 \begin{aligned}
@@ -136,7 +139,7 @@ $$
 \end{aligned}
 $$
 
-We model fixed effects $\alpha_0$, $\alpha_1$, $\beta_0$, and $\beta_1$ as constants across individuals, while random effects $b_{i0}$ and $b_{i2}$ capture individual-specific deviations. The presence of the interaction term $\beta_1$ implies treatment heterogeneity: the effect of the treatment $A_{it}$ on the outcome depends on the value of the covariate $X_{it}$. $b_{i0}$ represents deviations from the population intercept $\alpha_0$, and $b_{i2}$ represents deviations from the population slope $\beta_0$. A higher $b_{i0}$ indicates a higher initial outcome, while a higher $b_{i2}$ indicates a stronger treatment effect. Following @qian2020, the random effects $b_{i0}$ and $b_{i2}$ are modeled independent of each other.
+The parameters $\alpha_0$, $\alpha_1$, $\beta_0$, and $\beta_1$ are fixed effects that are constant across individuals, while $b_{i0}$ and $b_{i2}$ are independent random effects that capture individual-specific deviations from population parameters. The presence of the interaction term $\beta_1$ implies treatment heterogeneity: the effect of the treatment $A_{it}$ on the outcome depends on the value of the covariate $X_{it}$. $b_{i0}$ represents deviations from the population intercept $\alpha_0$, and $b_{i2}$ represents deviations from the population slope $\beta_0$.
 
 The covariate is generated as:
 
@@ -153,7 +156,13 @@ The treatment randomization probability is constant at $p_t = 0.5$, so $A_{it} \
 
 @fig-GMG_path shows the path diagram for GM G.
 
-### Generative Model A
+The following parameter values were adapted from @qian2020:
+
+$$ \alpha_0 = -2, \quad \alpha_1 = -0.3, \quad \beta_0 = 1, \quad \beta_1 = 0.3, $$
+
+$$ \sigma_{b0}^2 = 4, \quad \sigma_{b2}^2 = 1, \quad \sigma_\epsilon^2 = 1. $$
+
+### Special Cases
 
 GM A is a special case of GM G, where the effect of the random intercept $b_{i0}$ on the covariate $X_{it}$ is set to zero. This results in a model where the covariate $X_{it}$ is not directly determined by the random intercept $b_{i0}$ (see @fig-GMA_path). Instead, the endogenous covariate $X_{it}$ equals the previous outcome $Y_{it}$ plus some random noise:
 
@@ -166,21 +175,17 @@ Y_{it} + \epsilon_{X_{it}} & \text{if } t \geq 2,
 \quad \text{where} \quad \epsilon_{X_{it}} \sim \mathcal{N}(0, 1)
 $$
 
-### Generative Model B
-
-GM B is a special case of GM G, where the variance for the random slope $b_{i2}$ is set to zero: $\sigma_{b2}^2$ = 0. Consequently, the random slope $b_{i2}$ for the treatment $A_{it}$ is removed (see @fig-GMB_path). While the within-person model is the same as GM G, there is a slight alteration in the between-person model:
+GM B is a special case of GM G in which the random slope $b_{i2}$ was removed (see @fig-GMB_path) by setting the random slope variance $\sigma_{b2}^2$ to zero. While the within-person model is the same as GM G, there is a slight alteration in the between-person model:
 
 $$ \pi_{2i} = \beta_0. $$
 
-The single equation model then becomes:
+The composite model then becomes:
 
 $$
 Y_{it+1} = (\alpha_0 + b_{i0}) + \alpha_1 X_{it} + \beta_0 A_{it} + \beta_1 A_{it} X_{it} + \epsilon_{it+1}
 $$
 
-### Generative Model C
-
-GM C is a special case of GM G, where the fixed interaction parameter $\beta_1 = 0$, which implies the removal of the interaction term $\beta_1 A_{it} X_{it}$ (see @fig-GMC_path). This, in turn, removed $\pi_{3i}$, thereby creating a discrepancy in within-person model of GM C and GM G:
+GM C is a special case of GM G, where the fixed interaction parameter $\beta_1$ is set to zero, which implies the removal of the interaction term $\beta_1 A_{it} X_{it}$ (see @fig-GMC_path). This, in turn, removed $\pi_{3i}$, thereby creating a discrepancy in within-person model of GM C and GM G:
 
 $$Y_{it+1} = \pi_{0i} + \pi_{1i} X_{it} + \pi_{2i} A_{it} + \epsilon_{it+1}.$$
 
@@ -190,21 +195,11 @@ $$
 Y_{it+1} = \alpha_0 + \alpha_1 X_{it} + b_{i0} + A_{it} (\beta_0 + b_{i2}) + \epsilon_{it+1}.
 $$
 
-### Parameter Values
-
-The following parameter values were adapted from @qian2020:
-
-$$
-\alpha_0 = -2, \quad \alpha_1 = -0.3, \quad \beta_0 = 1, \quad \beta_1 = 0.3,
-$$
-
-$$
-\sigma_{b0}^2 = 4, \quad \sigma_{b2}^2 = 1, \quad \sigma_\epsilon^2 = 1.
-$$
-
 ## Data Analysis
 
-In the simulation study, we evaluated the performance of the models across a total of `r 4*2*3` different settings, each replicated 1,000 times, by systematically varying the following factors:
+All data generation and estimation was performed in `R`, version 4.4.2 [@rcoreteam2024]. After the generation of data generation for any given setting, analytical MLMs were fit that contain all the fixed and random parameters present in each of the respective data generating models. To fit the MLM, the `lmer` function from the R-package `lme4` [@bates2015] was employed with restricted maximum likelihood estimation.
+
+In the simulation study, we evaluated the performance of the analytical models across a total of `r 4*2*3` different settings, each replicated 1,000 times, by systematically varying the following factors:
 
 -   **Generative Models (GM):** G, A, B, C
 
@@ -212,13 +207,11 @@ In the simulation study, we evaluated the performance of the models across a tot
 
 -   **Sample size (N):** 30, 100, 200
 
-All data generation and estimation was performed in `R`, version 4.4.2 [@rcoreteam2024]. After the generation of data generation for any given setting, analytical multilevel linear models were fit that are equivalent to each of the respective data-generating models. To fit the standard MLM, the `lmer` function from the R-package `lme4` [@bates2015] was employed with restricted maximum likelihood estimation.
-
 # Results
 
 ## Conditional Independence and Path Diagrams
 
-The first criterion for evaluating the presence of bias in treatment effect estimates is the *conditional independence assumption*, introduced by @qian2020 and based on the work of @sitlani2012. According to @qian2020, this assumption should identify whether estimators of the treatment effect are consistent and unbiased under randomized treatment assignment. The conditional independence assumption states that the covariate at time $t$ ($X_{it}$) should be independent of the individual’s random effects (intercept $b_{i0}$ and slope(s) $b_{i1}$) once we account for their history of covariates ($H_{it-1}$), previous treatments ($A_{it-1}$), and prior outcomes ($Y_{it}$).
+The first criterion for evaluating the presence of bias in treatment effect estimates is the *conditional independence assumption*, introduced by @qian2020 and based on the work of @sitlani2012. According to @qian2020, this assumption should identify whether estimators of the treatment effect are consistent and unbiased under randomized treatment assignment. The conditional independence assumption states that the covariate at time $t$ ($X_{it}$) should be independent of the individual’s random effects (intercept $b_{i0}$ and slope(s) $b_{i1}$) once we account for their history of covariates up to timepoint $t-1$ ($H_{it-1}$), previous treatments ($A_{it-1}$), and prior outcomes ($Y_{it}$).
 
 $$
 X_{it} \perp (b_{i0}, b_{i1}) \mid H_{it-1}, A_{it-1}, Y_{it}.
@@ -227,7 +220,6 @@ $$
 <!-- where $b_{i0}$ and $b_{i1}$ represent the random intercept and random slope(s), respectively, and $H_{it-1}$ comprises all observations of that covariate before timepoint $t$.  -->
 
 This assumption allows for $X_{it}$ to be influenced by earlier variables (e.g., outcomes or treatments) but not directly by unobserved individual characteristics (i.e., random effects). However, as @qian2020 highlights, ensuring this assumption holds requires careful consideration of theory and domain knowledge. To clarify the application of the conditional independence assumption, we pair the equations of the generative models (GMs) with path diagrams [@duncan1966; @wright1934a] illustrating the first three timepoints ($t$) for each model (see @fig-Pathdiagrams).
-
 
 <!-- If the included endogenous covariates are only affected by prior outcomes and treatments, the assumption is automatically satisfied.  -->
 
@@ -470,13 +462,13 @@ Path Diagrams for Generative Models G, A, B and C (t = 1, 2, 3)
 
 \vspace{2em}
 
-Let’s begin with the general model, GM G (@fig-GMG_path), which @qian2020 identified as prone to bias. In GM G, the covariate $X_{it}$ is directly influenced by unobserved individual factors (represented by the random effects, $b_{i0}$). Consequently, conditioning on prior variables, such as the outcome at the previous timepoint $Y_{it}$, does not fully block or eliminate the influence of these unobserved factors. As a result, $X_{it}$ remains dependent on the random effects, violating the assumption. This violation of the conditional independence assumption aligns with the biased estimates of the treatment effect observed in GM G, as identified by @qian2020.
+In GM G, the covariate $X_{it}$ is directly influenced by unobserved individual factors (represented by the random effects, $b_{i0}$). Consequently, conditioning on prior variables, such as the outcome at the previous timepoint $Y_{it}$, does not fully block or eliminate the influence of these unobserved factors. As a result, $X_{it}$ remains dependent on the random effects, violating the assumption. This violation of the conditional independence assumption aligns with the biased estimates of the treatment effect observed in GM G, as identified by @qian2020.
 
 <!-- that $X_{it}$ should be independent of these unobserved factors once we account for prior variables -->
 
-In contrast, GM A, a special case of GM G where no bias was found by @qian2020, removes the direct link between $X_{it}$ and the random effects $b_{i0}$. In this case, $X_{it}$ is simply the previous outcome $Y_{it}$ plus some random noise. While there remains an indirect connection between $X_{it}$ and $b_{i0}$ through $Y_{it}$, conditioning on $Y_{it}$ effectively "breaks the link" between $X_{it}$ and the random effects, satisfying the conditional independence assumption. This aligns with the unbiased treatment effect estimates found by @qian2020.
+In contrast, GM A, a special case of GM G where no bias was found by @qian2020, removes the direct link between $X_{it}$ and the random effects $b_{i0}$. In this case, $X_{it}$ is simply the previous outcome $Y_{it}$ plus some random noise. While there remains an indirect connection between $X_{it}$ and $b_{i0}$ through $Y_{it}$, conditioning on $Y_{it}$ effectively "breaks the link" between $X_{it}$ and the random effects, satisfying the conditional independence assumption.
 
-For the additional special cases, GM B and GM C, the direct link between the random effects and $X_{it}$ remains, as in GM G. As a result, these models also violate the conditional independence assumption, suggesting the presence of bias in treatment effect estimates.
+For GM B and GM C, the direct link between the random effects and $X_{it}$ remains, as in GM G. As a result, these models also violate the conditional independence assumption, suggesting the presence of bias in treatment effect estimates.
 
 <!-- In summary, GM G, B, and C violate the conditional independence assumption, which suggests that we would expect biased treatment effect estimates for these models. In contrast, GM A satisfies the assumption, supporting unbiased estimates of the treatment effect. -->
 
@@ -565,7 +557,7 @@ DAGs for Generative Models G, A, B and C (t = 1, 2, 3)
 
 \vspace{2em}
 
-We now apply the backdoor criterion to these DAGs to assess potential bias in the treatment effect. For all GMs, there are no backdoor paths in the treatment effect $A_t \to Y_{t+1}$, as $A_t$ lacks any parent nodes. Consequently, covariate $X_t$ need not be controlled to obtain an unbiased total effect. Importantly, including $X_{it}$ does not introduce identification issues, as it is neither a mediator (i.e., on the pathway from $A_t$ to $Y_{t+1}$) nor a collider (i.e., a common effect of $A_t$ and $Y_{t+1}$) in the treatment effect. Therefore, according to the backdoor criterion, controlling for $X_{it}$ should not result in biased estimates of the treatment effect in any of the generative models.
+We now apply the backdoor criterion to these DAGs to assess potential bias in the treatment effect. For all GMs, there are no backdoor paths in the treatment effect $A_t \to Y_{t+1}$, as $A_t$ lacks any parent nodes. Consequently, covariate $X_t$ need not be controlled to obtain an unbiased total effect. Importantly, including $X_{it}$ does not introduce identification issues, as it is neither a mediator (i.e., on the pathway from $A_t$ to $Y_{t+1}$) nor a collider (i.e., a common effect of $A_t$ and $Y_{t+1}$) in the treatment effect. Therefore, according to the backdoor criterion, the inclusion of the time-varying covariate $X_{it}$ should not result in biased estimates of the treatment effect in any of the generative models.
 
 ## Simulation Study
 
@@ -728,13 +720,13 @@ In this reproduction of @qian2020, the overall pattern was consistent with the o
 
 For the two additional special cases of GM G, namely GM B and GM C, we observed even smaller absolute bias than for GM A: $\leq 0.010$ ($1\%$) for GM C and $\leq 0.005$ ($0.5\%$) for GM B (see @tbl-simulation-results). These findings align with the backdoor criterion’s prediction of no bias but contradict the expectations based on the conditional independence assumption, which suggests the presence of bias. Additionally, GM B exhibited the smallest absolute bias overall and showed much smaller variability across simulation replications compared to all other GMs. In contrast, the remaining models exhibited comparable levels of variability (see @fig-simulation-results and @tbl-simulation-results).
 
-In summary, these findings suggest that once we modify the most general model G by removing either the dependency of the random intercept on the covariate (GM A), the random slope $b_{i2}$ (GM B), or the interaction term $\beta_1$ (GM C), the bias either disappears or becomes negligible. However, neither the backdoor criterion nor the conditional independence assumption provided consistent predictions of treatment effect bias across all models.
+In summary, these findings suggest that if the underlying GM did not include the direct dependency of the random intercept on the covariate (GM A), the random slope $b_{i2}$ (GM B), or the interaction term $\beta_1$ (GM C), as in GM G, the bias either disappears or becomes negligible. However, neither the backdoor criterion nor the conditional independence assumption provided consistent predictions of treatment effect bias across all models.
 
 # Discussion
 
 ## Main Findings
 
-In this research report, we evaluated several GMs to investigate when endogenous time-varying covariates bias treatment effect estimates in MLMs under randomized treatment. We also assessed the ability of the conditional independence assumption and the backdoor criterion to predict this bias. Consistent with @qian2020 and the conditional independence assumption, we observed substantially greater bias in the most general model (GM G) compared to a special case (GM A), where the direct effect of the random intercept on the covariate was removed. However, one unexpected result was the fourfold increase in maximum bias for GM A compared to @qian2020. This discrepancy may stem from differences in the simulation setup (e.g., random number generation or handling of warnings/errors). The two additional special cases of GM G, where the random slope for treatment (GM B) or the interaction term between treatment and covariate (GM C) was removed, exhibited even smaller bias in the treatment effect---despite violations of the conditional independence assumption. These findings tell us that—at least in this particular instance---the dependency between the covariate and treatment, the random slope for treatment, and the interaction effect are all essential for bias to exceed $5\%$.
+In this research report, we evaluated several GMs to investigate when endogenous time-varying covariates bias treatment effect estimates in MLMs under randomized treatment. We also assessed the ability of the conditional independence assumption and the backdoor criterion to predict this bias. Consistent with @qian2020 and the conditional independence assumption, we observed substantially greater bias in the most general model (GM G) compared to a special case (GM A), where the direct effect of the random intercept on the covariate was removed. However, one unexpected result was the fourfold increase in maximum bias for GM A compared to @qian2020. This discrepancy may stem from differences in the simulation setup (e.g., random number generation or handling of warnings/errors). The two additional special cases of GM G, where the random slope for treatment (GM B) or the interaction term between treatment and covariate (GM C) was removed, exhibited even smaller bias in the treatment effect---despite violations of the conditional independence assumption. These findings tell us that—at least in this particular instance---the dependency between the covariate and treatment, the random slope for treatment, and the interaction effect are all essential for bias to occur.
 
 This naturally raises important questions: why was no discernible bias observed in GM B and GM C, as predicted by the conditional independence assumption, and can this pattern generalize beyond the current generative models? One possibility is that, while bias may exist as predicted, it was canceled out by parameter removal in these specific models. Alternatively, heterogeneity in the treatment effect---whether unexplained via the random slope or explained via the covariate---may both be necessary for bias to occur. This explanation aligns with the statement by @qian2020 that "applying linear mixed models is problematic because potential moderators of the treatment effect are frequently endogenous" (p. 375). If treatment effect moderation by a covariate is indeed a prerequisite for bias, it could explain the absence of bias in GM C, where no interaction term was included. However, it remains unclear why @qian2020 does not explicitly mention this condition (e.g., when introducing the conditional independence assumption). Further research is needed to determine whether these findings generalize or are specific to the evaluated GMs, thereby informing practical recommendations for using MLMs with endogenous time-varying covariates.
 
@@ -748,13 +740,13 @@ Another avenue for future investigation is the role of centering approaches (see
 
 [^3]: This is referred to as the Correlated Random Effects (CRE) approach by @wooldridge2002.
 
-Finally, @qian2020 only considered independent random effects, a restrictive assumption that may be violated in practice. Exploring correlated random effects using structural equation modeling frameworks [@rovine2000] could provide further insight. 
+Finally, @qian2020 only considered independent random effects, a restrictive assumption that may be violated in practice. Exploring correlated random effects using structural equation modeling frameworks [@rovine2000] could provide further insight.
 
 <!-- Similarly, it would be valuable to examine the implications of endogenous covariates for other longitudinal data analysis methods, such as dynamic structural equation modeling (DSEM; a widely used approach in the social sciences based on the MLM). -->
 
 ## Conclusion
 
-This report is a first step towards understanding the implications of endogenous covariates in multilevel linear models.  However, to recognize and understand completely when and why endogenous covariates may trouble an empirical investigation, further research is needed. 
+This report is a first step towards understanding the implications of endogenous covariates in multilevel linear models. However, to recognize and understand completely when and why endogenous covariates may trouble an empirical investigation, further research is needed.
 
 <!-- Future studies should aim to generalize these findings, clarify the role of treatment effect moderation, and explore solutions such as DAG extensions, centering approaches, and alternative longitudinal modeling frameworks.  -->
 
@@ -763,8 +755,6 @@ This report is a first step towards understanding the implications of endogenous
 <!-- The current research report leaves several avenues unexplored. -->
 
 <!-- **Maar bij GEE kun je ook centreren per persoon, en dan krijg je ook weer iets anders, dus ik zou het iets anders opschrijven hier** Second, it is unclear how exactly the divide between the literatures pertaining to the focus of the MLM on different centering methods and within- and between-person interpretations and the focus of the GEE on marginal and conditional interpretations may be bridged. Consequently, future research could assess the implications of centering methods in MLMs on the extent to which the marginal interpretation of MLM breaks down. -->
-
-
 
 <!-- # Other ideas -->
 
