@@ -104,7 +104,7 @@ In this section, the GMs will be formulated and specifications will be defined f
 We consider two GMs from @qian2020, one (GM A) being a special case of the general model (GM G) where bias was detected. To further isolate the source of bias, we introduce two additional special cases, labeled GM B and C. @tbl-gm-differences summarizes the differences between the generative models. Compared to the general model G, GM A is not directly determined by the random intercept $b_{i0}$; GM B is does not have a random slope $b_{i2}$ for treatment; and GM C does not have a fixed interaction effect $\beta_1$ between covariate and treatment.
 
 | Generative Model | Name in @qian2020 | dependency $b_{i0}$ and $X_{it}$ | random slope treatment $b_{i2}$ | interaction $\beta_1$ |
-|---------------|---------------|---------------|---------------|---------------|
+|----|----|----|----|----|
 | G(eneral) | 3 | $\checkmark$ | $\checkmark$ | $\checkmark$ |
 | A | 1 | $\times$ | $\checkmark$ | $\checkmark$ |
 | B | NA | $\checkmark$ | $\times$ | $\checkmark$ |

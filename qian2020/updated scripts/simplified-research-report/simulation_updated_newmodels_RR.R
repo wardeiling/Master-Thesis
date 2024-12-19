@@ -9,7 +9,7 @@
 rm(list = ls())
 
 set.seed(123) # set global seed
-runname <- "GM123ad-1000reps-researchreport-cleanscript" # set a runname
+runname <- "GM123ad-1000reps-researchreport-cleanscript-seed123" # set a runname
 
 # make a directory in simulation_results based on runname
 dir.create(paste0("simulation_results/", runname), showWarnings = FALSE)
@@ -71,7 +71,7 @@ for (idesign in 1:nrow(design)) {
     }
     
     result <- foreach(isim = 1:nsim, .combine = "c", .errorhandling = "remove", 
-                      .packages = c("geepack", "lme4"), .options.RNG=120) %dorng% {
+                      .packages = c("geepack", "lme4"), .options.RNG=123) %dorng% {
         if (isim %% 10 == 0) {
             cat(paste("Starting iteration",isim, ", GM", dgm_type, ", N =", sample_size, ", T =", total_T, "\n"))
         }
@@ -223,8 +223,6 @@ for (idesign in 1:nrow(design)) {
     ### Linear Mixed Model
     
     mlm_beta_0 <- sapply(result_lmm, function(l) l$coef["A", "Estimate"])
-    mlm_beta_0_sd <- sapply(result_lmm, function(l) l$coef["A", "Std. Error"])
-    
     design$mlm_beta_0_bias[idesign] <- mean(mlm_beta_0, na.rm = T) - beta_0_true
     design$mlm_beta_0_sd[idesign] <- sd(mlm_beta_0, na.rm = T)
     
@@ -235,8 +233,6 @@ for (idesign in 1:nrow(design)) {
     ### GEE with independence
     
     gee_ind_beta_0 <- sapply(result_gee_ind, function(l) l$coef["A", "Estimate"])
-    gee_ind_beta_0_sd <- sapply(result_gee_ind, function(l) l$coef["A", "Std.err"])
-    
     design$gee_ind_beta_0_bias[idesign] <- mean(gee_ind_beta_0, na.rm = T) - beta_0_true
     design$gee_ind_beta_0_sd[idesign] <- sd(gee_ind_beta_0, na.rm = T)
     
@@ -246,8 +242,6 @@ for (idesign in 1:nrow(design)) {
     ### GEE with exchangeable
     
     gee_ex_beta_0 <- sapply(result_gee_ex, function(l) l$coef["A", "Estimate"])
-    gee_ex_beta_0_sd <- sapply(result_gee_ex, function(l) l$coef["A", "Std.err"])
-    
     design$gee_ex_beta_0_bias[idesign] <- mean(gee_ex_beta_0, na.rm = T) - beta_0_true
     design$gee_ex_beta_0_sd[idesign] <- sd(gee_ex_beta_0, na.rm = T)
     
@@ -257,8 +251,6 @@ for (idesign in 1:nrow(design)) {
     ### GEE with AR(1)
 
     gee_ar1_beta_0 <- sapply(result_gee_ar1, function(l) l$coef["A", "Estimate"])
-    gee_ar1_beta_0_sd <- sapply(result_gee_ar1, function(l) l$coef["A", "Std.err"])
-    
     design$gee_ar1_beta_0_bias[idesign] <- mean(gee_ar1_beta_0, na.rm = T) - beta_0_true
     design$gee_ar1_beta_0_sd[idesign] <- sd(gee_ar1_beta_0, na.rm = T)
     
