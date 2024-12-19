@@ -1,6 +1,7 @@
 ---
-title: "Untangling Bias in Multilevel Linear Models: The Role of Endogenous Time-Varying Covariates"
-
+title: "Treatment Effect Bias in Multilevel Linear Models under Time-Varying Endogeneity: A New Look at Qian et al. (2020)"
+# The Impact of Endogenous Time-Varying Covariates on Treatment Effect Estimates in Multilevel Linear Models: Revisiting Qian et al. (2020)
+# "Untangling Bias in Multilevel Linear Models: The Role of Endogenous Time-Varying Covariates"
 # "The Dangers of Including Time-Varying Endogenous Covariates in the Multilevel Linear Model"
 # Estimation of Effects of Endogenous Time-Varying Covariates: A Comparison Of Multilevel Linear Modeling and Generalized Estimating Equations"
 subtitle: "Research Report" 
@@ -87,7 +88,7 @@ Across a wide range of disciplines, researchers analyze clustered longitudinal, 
 
 <!-- -   Also, describe what is not known and which gap you will address in your thesis; End with a clear research question and, if applicable, your hypothesis (for confirmatory research questions – it should be a testable hypothesis) or expectations (for exploratory research questions – can be much vaguer because of the explorative nature of the question). -->
 
-Dating back to the work of @pepe1994, this assumption has proven to be non-trivial when endogenous covariates vary over time. In fact, their inclusion in longitudinal studies can lead to biased treatment effect estimates, an issue that, despite its significance, has received limited attention in psychological research. Building on this foundation, a recent paper by @qian2020 examined the suitability of MLM for estimating the causal effect of a time-varying exposure or treatment. Specifically, they focused on settings where the exposure is randomly assigned at each occasion within individuals. Such randomized exposures may include, for example, prompts delivered through push notifications to remind participants of cognitive or mindfulness-based strategies [@nahum-shani2021; @walton2018]. While random assignment with a constant probability might seem sufficient to identify (the presence and absence of) causal effects, @qian2020 showed that model fitting issues and parameter bias can arise when a *time-varying endogenous covariate* is present.
+Originating from the biostatistics literature and dating back to the work of @pepe1994, this assumption has been shown to be non-trivial when endogenous covariates vary over time. In fact, their inclusion in longitudinal studies can lead to biased treatment effect estimates, an issue that, despite its significance, has received limited attention in psychological research. Building on this foundation, a recent paper by @qian2020 examined the suitability of MLM for estimating the causal effect of a time-varying exposure or treatment. Specifically, they focused on settings where the exposure is randomly assigned at each occasion within individuals. Such randomized exposures may include, for example, prompts delivered through push notifications to remind participants of cognitive or mindfulness-based strategies [@nahum-shani2021; @walton2018]. While random assignment with a constant probability might seem sufficient to identify (the presence and absence of) causal effects, @qian2020 showed that model fitting issues and parameter bias can arise when a *time-varying endogenous covariate* is present.
 
 <!-- The issues described in @qian2020 can be categorized into two main problems: (1) model interpretation and (2) model fitting. In this investigation, we focus on the latter issue of model fitting of the MLM  -->
 
@@ -97,24 +98,13 @@ However, due to a divide between the disciplines that employ the MLM, such criti
 
 # Methods
 
-In this section, the GMs will be formulated and specifications will be defined for the simulation study.
+In this section, we formulate several generative models (GMs) and define specifications for the simulation study.
 
 ## Data Generation
 
-We consider two GMs from @qian2020, one (GM A) being a special case of the general model (GM G) where bias was detected. To further isolate the source of bias, we introduce two additional special cases, labeled GM B and C. @tbl-gm-differences summarizes the differences between the generative models. Compared to the general model G, GM A is not directly determined by the random intercept $b_{i0}$; GM B is does not have a random slope $b_{i2}$ for treatment; and GM C does not have a fixed interaction effect $\beta_1$ between covariate and treatment.
+We consider two GMs from @qian2020, one (GM A) being a special case of the general model (GM G) where bias was detected. To further isolate the source of bias, we introduce two additional special cases, labeled GM B and C. We first describe the details of the general generative model (GM G) and then move on to its three special cases GM A, B and C.
 
-| Generative Model | Name in @qian2020 | dependency $b_{i0}$ and $X_{it}$ | random slope treatment $b_{i2}$ | interaction $\beta_1$ |
-|---------------|---------------|---------------|---------------|---------------|
-| G(eneral)        | 3                 | $\checkmark$                     | $\checkmark$                    | $\checkmark$          |
-| A                | 1                 | $\times$                         | $\checkmark$                    | $\checkmark$          |
-| B                | NA                | $\checkmark$                     | $\times$                        | $\checkmark$          |
-| C                | NA                | $\checkmark$                     | $\checkmark$                    | $\times$              |
-
-: Generative Models: Summary of Differences {#tbl-gm-differences}
-
-The details of the generative models are described below.
-
-### General Generative Model
+### General Model: Generative Model G
 
 Following the original notation of @qian2020, the outcome of GM G was generated as:
 
@@ -122,11 +112,11 @@ $$
 Y_{it+1} = \alpha_0 + \alpha_1 X_{it} + b_{i0} + A_{it} (\beta_0 + \beta_1 X_{it} + b_{i2}) + \epsilon_{it+1}
 $$
 
-where $Y_{it+1}$ is the outcome for person $i$ at time $t+1$, $X_{it}$ is the covariate for person $i$ at time $t$, $A_{it}$ is the treatment for person $i$ at time $t$, $b_{i0}$ is the random intercept, $b_{i2}$ is the random slope for the treatment, and $\epsilon_{it+1}$ is the error term. Alternatively, the model can be represented in the multilevel notation of @raudenbush2002 with at the within-person level (level 1)
+where $Y_{it+1}$ is the outcome for person $i$ at time $t+1$, $X_{it}$ is the covariate for person $i$ at time $t$, $A_{it}$ is the treatment for person $i$ at time $t$, $b_{i0}$ is the random intercept, $b_{i2}$ is the random slope for the treatment, and $\epsilon_{it+1}$ is the error term. Alternatively, the model can be rewritten in the multilevel notation of @raudenbush2002 with at the within-person level (level 1) in the following steps
 
 $$ 
-Y_{it+1} = \pi_{0i} + \pi_{1i} X_{it} + \pi_{2i} A_{it} + \pi_{3i} A_{it} X_{it} + \epsilon_{it+1}
-$$
+\begin{aligned} Y_{it+1} &= \alpha_0 + \alpha_1 X_{it} + b_{i0} + A_{it} (\beta_0 + \beta_1 X_{it} + b_{i2}) + \epsilon_{it+1} \\ &= (\alpha_0 + b_{i0}) + \alpha_1 X_{it} + (\beta_0 + b_{i2}) A_{it} + \beta_1 A_{it} X_{it} + \epsilon_{it+1} \\ &= \pi_{0i} + \pi_{1i} X_{it} + \pi_{2i} A_{it} + \pi_{3i} A_{it} X_{it} + \epsilon_{it+1}. \end{aligned}
+$$ {#eq-black-scholes}
 
 and at the between-person level (level 2)
 
@@ -139,7 +129,7 @@ $$
 \end{aligned}
 $$
 
-The parameters $\alpha_0$, $\alpha_1$, $\beta_0$, and $\beta_1$ are fixed effects that are constant across individuals, while $b_{i0}$ and $b_{i2}$ are independent random effects that capture individual-specific deviations from population parameters. The presence of the interaction term $\beta_1$ implies treatment heterogeneity: the effect of the treatment $A_{it}$ on the outcome depends on the value of the covariate $X_{it}$. $b_{i0}$ represents deviations from the population intercept $\alpha_0$, and $b_{i2}$ represents deviations from the population slope $\beta_0$.
+The parameters $\alpha_0 = -2$, $\alpha_1 = -0.3$, $\beta_0 = 1$, and $\beta_1 = 0.3$ are fixed effects that are constant across individuals, while $b_{i0}$ and $b_{i2}$ are independent random effects that capture individual-specific deviations from population parameters. The presence of the interaction term $\beta_1$ implies treatment heterogeneity: the effect of the treatment $A_{it}$ on the outcome depends on the value of the covariate $X_{it}$. The random intercept $b_{i0}$ and random slope $b_{i2}$ are assumed to be normally distributed with mean zero and variance $\sigma_{b0}^2 = 4$ and $\sigma_{b2}^2 = 1$, respectively. $b_{i0}$ represents deviations from the population intercept $\alpha_0$, and $b_{i2}$ represents deviations from the population slope $\beta_0$. The exogenous noise $\epsilon_{it+1}$ in the outcome is normally distributed with mean zero and variance $\sigma_\epsilon^2 = 1$.
 
 The covariate is generated as:
 
@@ -152,17 +142,22 @@ b_{i0} + Y_{it} + \epsilon_{X_{it}} & \text{if } t \geq 2,
 \quad \text{where} \quad \epsilon_{X_{it}} \sim \mathcal{N}(0, 1)
 $$
 
-The treatment randomization probability is constant at $p_t = 0.5$, so $A_{it} \sim \text{Bernoulli}(0.5)$ for all $i$ and $t$. In other words, for every given person $i$ and every timepoint $t$, the probability that treatment is assigned is equivalent to a fair coinflip. The exogenous noise is $\epsilon_{it+1} \sim \mathcal{N}(0, \sigma_\epsilon^2)$.
+The treatment randomization probability is constant at $p_t = 0.5$, so $A_{it} \sim \text{Bernoulli}(0.5)$ for all $i$ and $t$. In other words, for every given person $i$ and every timepoint $t$, the probability that treatment is assigned is equivalent to a fair coinflip. Relationships between the (observed and latent) variables are illustrated in @fig-GMG_path.
 
-@fig-GMG_path shows the path diagram for GM G.
+### Special Cases: Generative Model A, B and C
 
-The following parameter values were adapted from @qian2020:
+We consider three special cases of GM G, namely GM A, B and C. The relation of each special case to GM G is summarized in @tbl-gm-differences. The specifics of each special case are described below.
 
-$$ \alpha_0 = -2, \quad \alpha_1 = -0.3, \quad \beta_0 = 1, \quad \beta_1 = 0.3, $$
+<!-- Compared to the general model G, GM A is not directly determined by the random intercept $b_{i0}$; GM B does not have a random slope $b_{i2}$ for treatment; and GM C does not have a fixed interaction effect $\beta_1$ between covariate and treatment. Below we discuss the specifics of each special case. -->
 
-$$ \sigma_{b0}^2 = 4, \quad \sigma_{b2}^2 = 1, \quad \sigma_\epsilon^2 = 1. $$
+| Generative Model | Name in @qian2020 | dependency $b_{i0}$ and $X_{it}$ | random slope treatment $b_{i2}$ | interaction $\beta_1$ |
+|---------------|---------------|---------------|---------------|---------------|
+| G(eneral) | 3 | $\checkmark$ | $\checkmark$ | $\checkmark$ |
+| A | 1 | $\times$ | $\checkmark$ | $\checkmark$ |
+| B | NA | $\checkmark$ | $\times$ | $\checkmark$ |
+| C | NA | $\checkmark$ | $\checkmark$ | $\times$ |
 
-### Special Cases
+: Summary of Differences Between Generative Models {#tbl-gm-differences}
 
 GM A is a special case of GM G, where the effect of the random intercept $b_{i0}$ on the covariate $X_{it}$ is set to zero. This results in a model where the covariate $X_{it}$ is not directly determined by the random intercept $b_{i0}$ (see @fig-GMA_path). Instead, the endogenous covariate $X_{it}$ equals the previous outcome $Y_{it}$ plus some random noise:
 
@@ -199,13 +194,12 @@ $$
 
 All data generation and estimation was performed in `R`, version 4.4.2 [@rcoreteam2024]. After the generation of data generation for any given setting, analytical MLMs were fit that contain all the fixed and random parameters present in each of the respective data generating models. To fit the MLM, the `lmer` function from the R-package `lme4` [@bates2015] was employed with restricted maximum likelihood estimation.
 
-In the simulation study, we evaluated the performance of the analytical models across a total of `r 4*2*3` different settings, each replicated 1,000 times, by systematically varying the following factors:
+In the simulation study, we evaluated the performance of the analytical models across different settings by systematically varying the following 3 factors: Generative Model (GM) with the levels G, A, B, and C; Number of timepoints (T) with the levels 10 and 30; and Sample size (N) with the levels 30, 100, and 200. By varying these factors, we created a total of 24 unique settings, each of which was replicated 10,000 times.
 
--   **Generative Models (GM):** G, A, B, C
+The performance of the models was assessed based on bias through 
 
--   **Number of timepoints (T):** 10, 30
+The performance of the models was assessed based on the bias and mean squared error (MSE) of the treatment effect estimates. The bias was calculated as the difference between the estimated treatment effect and the true treatment effect, while the MSE was calculated as the squared difference between the estimated treatment effect and the true treatment effect. The bias and MSE were averaged across the 10,000 replications for each setting.
 
--   **Sample size (N):** 30, 100, 200
 
 # Results
 
@@ -563,6 +557,47 @@ We now apply the backdoor criterion to these DAGs to assess potential bias in th
 
 @tbl-simulation-results and @fig-simulation-results present the simulation results for each of the generative models. The bias in @tbl-simulation-results refers to the difference between the mean of the estimated parameter values $\bar{\hat{\beta}}_{0}$ and the prespecified treatment effect $\beta_{0}$. As $\beta_{0} = 1$, an absolute bias of 0.05 implies a $5\%$ relative bias.
 
+::: {#tbl-simulation-results}
+```{r}
+#| label: simulation-results
+#| echo: false
+#| cache: true
+#| escape: false
+
+results <- readRDS(here("simulation_results/GM123ad-1000reps-researchreport-cleanscript/results_beta0_bias_sd_success.rds"))
+
+# remove gee_ex and gee_ar1 and gee_ind
+results <- results[, !grepl("gee_ex|gee_ar1|gee_ind", colnames(results))]
+# remove GM2
+results <- results[results$GM != 2, ]
+# rename GM = 3 to "G", GM = 1 to "A", GM = 3a to "B" and GM = 3d to "C"
+results$GM <- ifelse(results$GM == 3, "G", 
+                     ifelse(results$GM == 1, "A", 
+                            ifelse(results$GM == "3a", "B", 
+                                   ifelse(results$GM == "3d", "C", NA))))
+
+# reset row numbers
+rownames(results) <- NULL
+# reorder so that model GM is in the order G, A, B, C
+
+results <- results[c(7:12, 1:6, 13:24), ]
+
+# Create a kableExtra table with a second header
+kableExtra::kbl(results, "latex", booktabs = T,  escape = F, digits = c(0, 0, 0, 3, 3, 3), col.names = c("GM", "T", "N", "Bias", "SD", "SR"), row.names = FALSE) %>%
+  add_header_above(c(" " = 3, '$\\\\beta_0$' = 2, " " = 1), escape = F) %>%
+  kable_styling(full_width = TRUE) %>%
+  column_spec(1, width = "5em") %>%
+  collapse_rows(columns = 1:2, valign = "middle") %>%
+  kableExtra::kable_classic_2()
+```
+
+\vspace{2em}
+
+*Note.* GM: generative model. T: number of timepoints. N: sample size. SD: standard deviation of estimates across replications. SR: model fitting success rate. Bias: $\bar{\hat{\beta}}_{0} - \beta_{0}$, which represents the difference between the mean of the estimated parameter values $\hat{\beta}_{0}$ and the prespecified treatment effect $\beta_{0} = 1$
+
+Treatment effect bias for Generative Models G, A, B and C over 1000 replications
+:::
+
 ```{r}
 #| label: fig-simulation-results
 #| cache: true
@@ -646,7 +681,6 @@ plot_boxplot <- function(data, dataset_name) {
   # Create the boxplot
   p <- ggplot(data_long, aes(x = dgm_type, y = mlm_beta_0_bias, col = dgm_type)) + 
     geom_boxplot() +
-    ylim(-1.0, 0.7) + # Set y-axis limits to match each subfigure
     geom_hline(yintercept = 0, linetype = "dashed") +  # Dashed horizontal line at 0
     labs(x = "Generative Model", # title = paste("Boxplot for", dataset_name), 
          y = "Bias") +
@@ -745,52 +779,4 @@ This report is a first step towards understanding the implications of endogenous
 
 <!-- --- -->
 
-# Appendix (MAAK SUPPLEMTAL MATERIALS AAN!!!)
-
-::: {#tbl-simulation-results}
-```{r}
-#| label: simulation-results
-#| echo: false
-#| cache: true
-#| escape: false
-
-results <- readRDS(here("simulation_results/GM123ad-1000reps-researchreport-cleanscript/results_beta0_bias_sd_success.rds"))
-
-# remove gee_ex and gee_ar1 and gee_ind
-results <- results[, !grepl("gee_ex|gee_ar1|gee_ind", colnames(results))]
-# remove GM2
-results <- results[results$GM != 2, ]
-# rename GM = 3 to "G", GM = 1 to "A", GM = 3a to "B" and GM = 3d to "C"
-results$GM <- ifelse(results$GM == 3, "G", 
-                     ifelse(results$GM == 1, "A", 
-                            ifelse(results$GM == "3a", "B", 
-                                   ifelse(results$GM == "3d", "C", NA))))
-
-# compute MC-SE
-results <- results %>%
-  mutate(mc_se = mlm_beta0_sd / sqrt(1000))
-
-# reorder columns
-results <- results[, c(1:5,7,6)]
-
-# reset row numbers
-rownames(results) <- NULL
-# reorder so that model GM is in the order G, A, B, C
-
-results <- results[c(7:12, 1:6, 13:24), ]
-
-# Create a kableExtra table with a second header
-kableExtra::kbl(results, "latex", booktabs = T,  escape = F, digits = c(0, 0, 0, 3, 3, 3, 3), col.names = c("GM", "T", "N", "Bias", "SD", "MC-SE", "SR"), row.names = FALSE) %>%
-  add_header_above(c(" " = 3, '$\\\\beta_0$' = 3, " " = 1), escape = F) %>%
-  kable_styling(full_width = TRUE) %>%
-  column_spec(1, width = "5em") %>%
-  collapse_rows(columns = 1:2, valign = "middle") %>%
-  kableExtra::kable_classic_2()
-```
-
-\vspace{2em}
-
-*Note.* GM: generative model. T: number of timepoints. N: sample size. SD: $\sqrt{\frac{1}{(n_{\text{sim}} - 1)} \sum\limits_{i=1}^{n_{\text{sim}}} \left(\hat{\beta}_{0i} - \bar{\beta}_{0}\right)^2}$, which is the standard deviation of estimates across replications. SR: model fitting success rate. Bias: $\frac{1}{n_{\text{sim}}} \sum\limits_{i = 1}^{n_{\text{sim}}} \hat{\beta}_{0i} - \beta_{0}$ [@morris2019], which represents the difference between the mean of the estimated parameter values $\hat{\beta}_{0}$ and the prespecified treatment effect $\beta_{0} = 1$. MC-SE: $\sqrt{\frac{1}{n_{\text{sim}}(n_{\text{sim}}-1)} \sum\limits_{i = 1}^{n_{\text{sim}}} \left(\hat{\beta}_{0i} - \bar{\beta}_{0}\right)^2} = \frac{\text{SD}}{\sqrt{n_{\text{sim}}}}$, which represents the Monte Carlo SE of bias [@morris2019].
-
-Treatment effect bias for Generative Models G, A, B and C over 1000 replications
-:::
+<!-- # Appendix -->

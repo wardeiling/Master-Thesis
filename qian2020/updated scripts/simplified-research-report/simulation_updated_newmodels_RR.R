@@ -9,7 +9,7 @@
 rm(list = ls())
 
 set.seed(123) # set global seed
-runname <- "GM123ad-1000reps-researchreport-cleanscript-seed123" # set a runname
+runname <- "GM123ad-1000reps-researchreport-cleanscript_nrep10000" # set a runname
 
 # make a directory in simulation_results based on runname
 dir.create(paste0("simulation_results/", runname), showWarnings = FALSE)
@@ -32,7 +32,7 @@ cl <- makeCluster(cores - 1, outfile = paste0("simulation_results/", runname, "/
 registerDoParallel(cl)
 
 # set the number of simulations
-nsim <- 1000
+nsim <- 10000
 
 # simulation for Research Report
 design <- expand.grid(sample_size = c(30, 100, 200), total_T = c(10, 30), dgm_type = c(1,2,3,"3a","3d"))
@@ -71,7 +71,7 @@ for (idesign in 1:nrow(design)) {
     }
     
     result <- foreach(isim = 1:nsim, .combine = "c", .errorhandling = "remove", 
-                      .packages = c("geepack", "lme4"), .options.RNG=123) %dorng% {
+                      .packages = c("geepack", "lme4"), .options.RNG=120) %dorng% {
         if (isim %% 10 == 0) {
             cat(paste("Starting iteration",isim, ", GM", dgm_type, ", N =", sample_size, ", T =", total_T, "\n"))
         }
