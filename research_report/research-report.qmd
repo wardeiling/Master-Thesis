@@ -534,7 +534,7 @@ DAGs for Generative Models G, A, B and C (t = 1, 2, 3)
 
 Application of the backdoor criterion begins by identifying all paths that connect $A_t$ to $Y_{t+1}$, excluding the direct treatment effect $A_t \to Y_{t+1}$ itself. Next, we determine whether these paths can transmit association by applying the d-separation rules[^4]. A path that contains an arrow pointing to the treatment $A_t$ is considered a *backdoor path*.
 
-[^4]: For an accessible introduction to d-separation, see [@hayduk2003].
+[^4]: For an accessible introduction to d-separation, see @hayduk2003.
 
 In the DAGs presented in @fig-DAGs, no paths connect $A_t$ to $Y_{t+1}$ except the treatment effect $A_t \to Y_{t+1}$ itself. Thus, $A_t$ has no parent nodes, which implies that no backdoor paths exist[^5]. Therefore, $X_t$ need not be controlled for to obtain an unbiased causal effect. However, including $X_t$ does not introduce bias as it lies outside the pathways connecting $A_t$ and $Y_{t+1}$[^6].
 
@@ -546,7 +546,7 @@ In the DAGs presented in @fig-DAGs, no paths connect $A_t$ to $Y_{t+1}$ except t
 
 @fig-simulation-results present the bias estimates in $\beta_0$ for each of the GMs[^7]. In this reproduction of @qian2020, we observed results consistent with the original study: GM-G exhibited bias ($0.023-0.056$ or $2.3\%-5.6\%$), while GM-A showed none ($\leq 0.002$ or $0.2\%$). These findings align with the conditional independence assumption but contradict the backdoor criterion, which predicted no bias for any GM. As shown in @fig-simulation-results, GM-G bias decreased with increasing $T$ but remained stable across varying $N$, indicating inconsistency (i.e., estimates do not converge to the true value as $N$ increases).
 
-Similarl to GM-A, no discernible bias was observed for GM-B ($\leq 0.005$ or $0.5\%$) and GM-C ($\leq 0.003$ or $0.3\%$). These results align with the backdoor criterion, but contradict the conditional independence assumption, which predicted bias for both GMs. GM-B also exhibited much lower variability across simulations compared to the other GMs.
+Similar to GM-A, no discernible bias was observed for GM-B ($\leq 0.005$ or $0.5\%$) and GM-C ($\leq 0.003$ or $0.3\%$). These results align with the backdoor criterion, but contradict the conditional independence assumption, which predicted bias for both GMs. GM-B also exhibited much lower variability across simulations compared to the other GMs.
 
 [^7]: The supplemental table with additional information can be found at the OSF repository: <https://osf.io/8xawt/?view_only=aad6a13b7a4a4d36aed76ed8aac584c4>
 
@@ -702,3 +702,56 @@ Finally, @qian2020 assumed independence between the random intercept and slope a
 <!--   @* -->
 
 <!-- --- -->
+
+# Appendix
+
+::: {#tbl-simulation-results}
+```{r}
+#| label: simulation-results
+#| echo: false
+#| cache: true
+#| escape: false
+
+results <- readRDS(here("simulation_results/GM123ad-1000reps-researchreport-cleanscript_nrep10000/results_beta0_bias_sd_success.rds"))
+
+# remove gee_ex and gee_ar1 and gee_ind
+results <- results[, !grepl("gee_ex|gee_ar1|gee_ind", colnames(results))]
+# remove GM2
+results <- results[results$GM != 2, ]
+# rename GM = 3 to "G", GM = 1 to "A", GM = 3a to "B" and GM = 3d to "C"
+results$GM <- ifelse(results$GM == 3, "G", 
+                     ifelse(results$GM == 1, "A", 
+                            ifelse(results$GM == "3a", "B", 
+                                   ifelse(results$GM == "3d", "C", NA))))
+
+# compute MC-SE
+results <- results %>%
+  mutate(mc_se = mlm_beta0_sd / sqrt(10000))
+
+# reorder columns
+results <- results[, c(1:5,7,6)]
+
+# reset row numbers
+rownames(results) <- NULL
+# reorder so that model GM is in the order G, A, B, C
+
+results <- results[c(7:12, 1:6, 13:24), ]
+
+# Create a kableExtra table with a second header
+kableExtra::kbl(results, "latex", booktabs = T,  escape = F, digits = c(0, 0, 0, 3, 3, 3, 3), col.names = c("GM", "T", "N", "Bias", "SD", "MC-SE", "SR"), row.names = FALSE) %>%
+  add_header_above(c(" " = 3, '$\\\\beta_0$' = 3, " " = 1), escape = F) %>%
+  kable_styling(full_width = TRUE) %>%
+  column_spec(1, width = "5em") %>%
+  collapse_rows(columns = 1:2, valign = "middle") %>%
+  kableExtra::kable_classic_2()
+```
+
+<!-- \vspace{2em} -->
+
+*Note.* GM: generative model. T: number of timepoints. N: sample size. Bias: $\frac{1}{n_{\text{sim}}} \sum\limits_{i = 1}^{n_{\text{sim}}} \hat{\beta}_{0i} - \beta_{0}$, which represents the difference between the mean of the estimated parameter values $\hat{\beta}_{0}$ and the prespecified treatment effect $\beta_{0} = 1$. SD: $\sqrt{\frac{1}{(n_{\text{sim}} - 1)} \sum\limits_{i=1}^{n_{\text{sim}}} \left(\hat{\beta}_{0i} - \bar{\beta}_{0}\right)^2}$, which is the standard deviation of estimates across replications. MC-SE: $\frac{\text{SD}}{\sqrt{n_{\text{sim}}}}$, which represents the Monte Carlo SE of bias. SR: model fitting success rate. 
+
+
+Treatment effect bias for Generative Models G, A, B and C over 10,000 replications
+:::
+
+
