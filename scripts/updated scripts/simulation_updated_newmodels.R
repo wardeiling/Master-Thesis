@@ -24,7 +24,7 @@ library(doParallel) # NEW
 library(doRNG)
 
 # source the generative model
-source("qian2020/updated scripts/generative_model_updated_newmodels.R")
+source("scripts/updated scripts/generative_model_updated_newmodels.R")
 
 ### Simulation -----------------------------------------
 
