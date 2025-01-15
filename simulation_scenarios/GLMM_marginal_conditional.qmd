@@ -14,7 +14,7 @@ $$
 log \frac{\pi_{it}}{1-\pi_{it}} = \alpha_0 + \alpha_1 X_{it} + b_{0i} + \epsilon_{it} \quad b_{0i} \sim \mathcal{N}(0,\sigma_{b0}^2)
 $$
 
-Where $\pi_{it} = Pr(Y_{it} = 1)$ the probability of a positive response for subject $i$ at time $t$, $Y_{it}$ is the binary response variable, $X_{it}$ is the continuous covariate, $A_{it}$ is the binary treatment indicator, and $b_{0i}$ is the random intercept. The fixed effects are $\alpha_0$ and $\alpha_1$ for the intercept and the continuous covariate. The random intercept $b_{0i}$ is assumed to be normally distributed with mean zero and variance $\sigma_{b0}^2$. 
+Where $\pi_{it} = Pr(Y_{it} = 1)$ the probability of a positive response for subject $i$ at time $t$, $Y_{it}$ is the binary response variable, $X_{it}$ is the continuous covariate, $A_{it}$ is the binary treatment indicator, and $b_{0i}$ is the random intercept. The fixed effects are $\alpha_0$ and $\alpha_1$ for the intercept and the continuous covariate. The random intercept $b_{0i}$ is assumed to be normally distributed with mean zero and variance $\sigma_{b0}^2$.
 
 We specify the following parameter values
 
@@ -81,7 +81,3 @@ dev.off()
 ```{r}
 
 ```
-
-
-
-
