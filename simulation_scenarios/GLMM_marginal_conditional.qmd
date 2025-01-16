@@ -10,15 +10,15 @@ bibliography: GLMM_references.bib
 In this document, we will reproduce the figure made by Dimitri Rizopoulos in de course "CE08", where the generalized mixed linear model (GLMM) with a non-linear logit function results in a discrepancy between the marginal and conditional relationships (see also @Zeger1988 for the similar and original treatment). Let us consider the following GLMM
 
 $$
-log \frac{\pi_{it}}{1-\pi_{it}} = \alpha_0 + \alpha_1 X_{it} + b_{0i} + \epsilon_{it} \quad b_{0i} \sim \mathcal{N}(0,\sigma_{b0}^2)
+log \frac{\pi_{it}}{1-\pi_{it}} = \beta_0 + \beta_1 X_{it} + b_{0i} + \epsilon_{it} \quad b_{0i} \sim \mathcal{N}(0,\sigma_{b0}^2)
 $$
 
-Where $\pi_{it} = Pr(Y_{it} = 1)$ the probability of a positive response for subject $i$ at time $t$, $Y_{it}$ is the binary response variable, $X_{it}$ is the continuous covariate, $A_{it}$ is the binary treatment indicator, and $b_{0i}$ is the random intercept. The fixed effects are $\alpha_0$ and $\alpha_1$ for the intercept and the continuous covariate. The random intercept $b_{0i}$ is assumed to be normally distributed with mean zero and variance $\sigma_{b0}^2$.
+Where $\pi_{it} = Pr(Y_{it} = 1)$ the probability of a positive response for subject $i$ at time $t$, $Y_{it}$ is the binary response variable, $X_{it}$ is the continuous covariate, $A_{it}$ is the binary treatment indicator, and $b_{0i}$ is the random intercept. The fixed effects are $\beta_0$ and $\beta_1$ for the intercept and the continuous covariate. The random intercept $b_{0i}$ is assumed to be normally distributed with mean zero and variance $\sigma_{b0}^2$.
 
 We specify the following parameter values
 
--   $\alpha_0 = 0$
--   $\alpha_1 = 0.5$
+-   $\beta_0 = 0$
+-   $\beta_1 = 0.5$
 -   $\sigma_{b0}^2 = 0.5$
 
 For simplicity, this model does not include a treatment effect $A_{it}$ nor exogenous noise $\epsilon_{it}$. Now we will simulate data from this model and directly infer the relationships between the continuous covariate $X_{it}$ and the probability of a positive response $\pi_{it}$.
@@ -31,8 +31,8 @@ For simplicity, this model does not include a treatment effect $A_{it}$ nor exog
 set.seed(123) # For reproducibility
 
 # Parameters
-alpha_0 <- 0 # for simplicity
-alpha_1 <- 0.9
+beta_0 <- 0 # for simplicity
+beta_1 <- 0.9
 sigma_b0 <- sqrt(4)
 
 n_individuals <- 20 # Number of individuals to plot
@@ -42,11 +42,11 @@ X_grid <- seq(-5, 5, length.out = 10000) # Values for X_it
 b0 <- rnorm(n_individuals, mean = 0, sd = sigma_b0)
 
 # Conditional-level logit and probability: the mean individual (b0 = 0)
-logit_conditional <- alpha_0 + alpha_1 * X_grid + 0
+logit_conditional <- beta_0 + beta_1 * X_grid + 0
 pi_conditional <- 1 / (1 + exp(-logit_conditional))
 
 # Individual-specific logits and probabilities
-logit_individuals <- sapply(b0, function(b) alpha_0 + alpha_1 * X_grid + b)
+logit_individuals <- sapply(b0, function(b) beta_0 + beta_1 * X_grid + b)
 pi_individuals <- 1 / (1 + exp(-logit_individuals))
 
 # Population-level logit and probability: average probabilities across individuals
@@ -85,8 +85,8 @@ Let's now take the scenario where the predictor $X_{it}$ is a binary variable.
 set.seed(123) # For reproducibility
 
 # Parameters
-alpha_0 <- 0
-alpha_1 <- 5
+beta_0 <- 0
+beta_1 <- 5
 sigma_b0 <- sqrt(4)
 
 n_individuals <- 20 # Number of individuals to plot
@@ -101,16 +101,16 @@ X_grid_bin <- c(0, 1)
 b0 <- rnorm(n_individuals, mean = 0, sd = sigma_b0)
 
 # Continuous predictor: Compute conditional and individual probabilities
-logit_conditional <- alpha_0 + alpha_1 * X_grid_cont
+logit_conditional <- beta_0 + beta_1 * X_grid_cont
 pi_conditional <- 1 / (1 + exp(-logit_conditional))
 
-logit_individuals_cont <- sapply(b0, function(b) alpha_0 + alpha_1 * X_grid_cont + b)
+logit_individuals_cont <- sapply(b0, function(b) beta_0 + beta_1 * X_grid_cont + b)
 pi_individuals_cont <- 1 / (1 + exp(-logit_individuals_cont))
 
 pi_population_cont <- rowMeans(pi_individuals_cont)
 
 # Binary predictor: Compute probabilities
-logit_individuals_bin <- sapply(b0, function(b) outer(alpha_0 + alpha_1 * X_grid_bin, b, "+"))
+logit_individuals_bin <- sapply(b0, function(b) outer(beta_0 + beta_1 * X_grid_bin, b, "+"))
 pi_individuals_bin <- 1 / (1 + exp(-logit_individuals_bin))
 
 pi_population_bin <- rowMeans(pi_individuals_bin)
@@ -118,7 +118,7 @@ pi_population_bin <- rowMeans(pi_individuals_bin)
 # Plot the continuous logistic curve
 plot(X_grid_cont, pi_conditional, type = "l", lwd = 4, col = "black",
      ylim = c(0, 1), xlim = c(0, 1), xlab = expression(X[it]), ylab = expression(pi),
-     main = "Overlay: Continuous and Binary Logistic Curves")
+     main = "Binary Predictor with Interpolation of Logistic Curves")
 
 # Add individual curves (grey lines) for continuous logistic function
 for (i in 1:n_individuals) {
@@ -129,7 +129,7 @@ for (i in 1:n_individuals) {
 lines(X_grid_cont, pi_population_cont, col = "red", lwd = 4)
 
 # Overlay binary predictor points (black and red)
-points(X_grid_bin, 1 / (1 + exp(-(alpha_0 + alpha_1 * X_grid_bin))), col = "black", pch = 16, cex = 1.5)
+points(X_grid_bin, 1 / (1 + exp(-(beta_0 + beta_1 * X_grid_bin))), col = "black", pch = 16, cex = 1.5)
 for (i in 1:n_individuals) {
   points(X_grid_bin, pi_individuals_bin[, i], col = "grey", pch = 16, cex = 0.6)
 }
@@ -137,7 +137,7 @@ points(X_grid_bin, pi_population_bin, col = "red", pch = 16, cex = 1.5)
 
 # Add a legend
 legend("topleft", legend = c("conditional (interpolation)", "population (interpolation)", "individuals (interpolation)", 
-                             "binary conditional", "binary population", "binary individuals"),
+                             "datapoint conditional", "datapoint population", "datapoints individuals"),
        col = c("black", "red", "grey", "black", "red", "grey"), 
        lty = c(1, 1, 1, NA, NA, NA), 
        pch = c(NA, NA, NA, 16, 16, 16), 
@@ -149,5 +149,57 @@ legend("topleft", legend = c("conditional (interpolation)", "population (interpo
 ## Mixed Linear Model: Generalized Linear Mixed Model with Identity Link Function
 
 ```{r}
+#| label: fig-mixed-linear-model
+#| fig.width: 10
+#| fig.height: 8
 
+set.seed(123) # For reproducibility
+
+# Parameters
+beta_0 <- 0 # for simplicity
+beta_1 <- 0.9
+sigma_b0 <- sqrt(4)
+
+n_individuals <- 20 # Number of individuals to plot
+X_grid <- seq(-5, 5, length.out = 10000) # Values for X_it
+
+# Generate random intercepts for individuals
+b0 <- rnorm(n_individuals, mean = 0, sd = sigma_b0)
+
+# Conditional-level logit and probability: the mean individual (b0 = 0)
+logit_conditional <- beta_0 + beta_1 * X_grid + 0
+pi_conditional <- 1 / (1 + exp(-logit_conditional))
+
+# Individual-specific logits and probabilities
+logit_individuals <- sapply(b0, function(b) beta_0 + beta_1 * X_grid + b)
+pi_individuals <- 1 / (1 + exp(-logit_individuals))
+
+# Population-level logit and probability: average probabilities across individuals
+pi_population <- rowMeans(pi_individuals)
+
+# save the upcoming plot
+png("figure/fig-marginal-vs-conditional.png", width = 1200, height = 1000, res = 150)
+
+# Plot the conditional-level curve
+plot(X_grid, pi_conditional, type = "l", lwd = 4, col = "black",
+     ylim = c(0, 1), xlim = c(-5, 5), xlab = expression(X[it]), ylab = expression(pi),
+     main = "Population, Conditional and Individual Logit Curves")
+
+# Add individual curves (grey lines)
+for (i in 1:n_individuals) {
+  lines(X_grid, pi_individuals[, i], col = "grey", lwd = 1)
+}
+
+# add the population-level curve (red line)
+lines(X_grid, pi_population, col = "red", lwd = 4)
+
+# Add a legend
+legend("topleft", legend = c("conditional", "population", "individuals"),
+       col = c("black", "red",  "grey"), lty = c(1, 1, 1), lwd = c(4, 4, 1))
+
+dev.off()
 ```
+
+
+```{r}
+#| ```
