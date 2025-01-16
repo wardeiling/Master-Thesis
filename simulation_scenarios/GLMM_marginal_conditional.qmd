@@ -42,11 +42,11 @@ X_grid <- seq(-5, 5, length.out = 10000) # Values for X_it
 b0 <- rnorm(n_individuals, mean = 0, sd = sigma_b0)
 
 # Conditional-level logit and probability: the mean individual (b0 = 0)
-logit_conditional <- beta_0 + beta_1 * X_grid + 0
+logit_conditional <- beta_0 + beta_1 * X_grid + 0 # expected value
 pi_conditional <- 1 / (1 + exp(-logit_conditional))
 
 # Individual-specific logits and probabilities
-logit_individuals <- sapply(b0, function(b) beta_0 + beta_1 * X_grid + b)
+logit_individuals <- sapply(b0, function(b) beta_0 + beta_1 * X_grid + b) # expected value
 pi_individuals <- 1 / (1 + exp(-logit_individuals))
 
 # Population-level logit and probability: average probabilities across individuals
@@ -76,8 +76,6 @@ dev.off()
 ```
 
 When we estimate the GLMM with the log link function, we obtain the conditional-on-the-random effects interpretation of fixed-effects regression coefficients (i.e., the effects of covariates on changes in an individual’s transformed mean response). This is directly opposed by marginal models such as GEE, where "population averages are the targets of inference" (Rizopoulos, CE08, p. 331)
-
-## Mixed Linear Model: Generalized Linear Mixed Model with Identity Link Function
 
 Let's now take the scenario where the predictor $X_{it}$ is a binary variable.
 
@@ -151,6 +149,14 @@ legend("topleft", legend = c("conditional (interpolation)", "population (interpo
 
 ## Mixed Linear Model: Generalized Linear Mixed Model with Identity Link Function
 
+Let us now consider a simple mixed linear model with a continuous outcome variable $Y_{it}$ and a continuous covariate $X_{it}$, where the random intercept $b_{0i}$ is normally distributed with mean zero and variance $\sigma_{b0}^2$. The model is given by
+
+$$
+Y_{it} = \beta_0 + \beta_1 X_{it} + b_{0i} + \epsilon_{it} \quad b_{0i} \sim \mathcal{N}(0,\sigma_{b0}^2)
+$$
+
+Where $\epsilon_{it}$ is the error term. We will simulate data from this model and directly infer the relationships between the continuous covariate $X_{it}$ and the outcome variable $Y_{it}$.
+
 ```{r}
 #| label: fig-mixed-linear-model
 #| fig.width: 10
@@ -160,7 +166,7 @@ set.seed(123) # For reproducibility
 
 # Parameters
 beta_0 <- 0 # for simplicity
-beta_1 <- 0.9
+beta_1 <- 0.2
 sigma_b0 <- sqrt(4)
 
 n_individuals <- 20 # Number of individuals to plot
@@ -168,38 +174,226 @@ X_grid <- seq(-5, 5, length.out = 10000) # Values for X_it
 
 # Generate random intercepts for individuals
 b0 <- rnorm(n_individuals, mean = 0, sd = sigma_b0)
+expected_b0_is_zero = TRUE
+if (expected_b0_is_zero == TRUE){
+  b0 <- b0 - mean(b0)  # Centering step
+}
 
-# Conditional-level logit and probability: the mean individual (b0 = 0)
-logit_conditional <- beta_0 + beta_1 * X_grid + 0
-pi_conditional <- 1 / (1 + exp(-logit_conditional))
+# Conditional-level: the mean individual (b0 = 0)
+expected_Y_conditional <- beta_0 + beta_1 * X_grid + 0
 
-# Individual-specific logits and probabilities
-logit_individuals <- sapply(b0, function(b) beta_0 + beta_1 * X_grid + b)
-pi_individuals <- 1 / (1 + exp(-logit_individuals))
+# Individual-specific
+expected_Y_individuals <- sapply(b0, function(b) beta_0 + beta_1 * X_grid + b)
 
-# Population-level logit and probability: average probabilities across individuals
-pi_population <- rowMeans(pi_individuals)
+# Population-level: average probabilities across individuals
+expected_Y_population <- rowMeans(expected_Y_individuals) # method 1
+# expected_Y_population2 <- expected_Y_conditional + mean(b0) # method 2 (yields same result)
 
 # save the upcoming plot
-png("figure/fig-marginal-vs-conditional.png", width = 1200, height = 1000, res = 150)
+# png("figure/fig-marginal-vs-conditional.png", width = 1200, height = 1000, res = 150)
 
 # Plot the conditional-level curve
-plot(X_grid, pi_conditional, type = "l", lwd = 4, col = "black",
+plot(X_grid, expected_Y_conditional, type = "l", lwd = 4, col = "black",
      ylim = c(0, 1), xlim = c(-5, 5), xlab = expression(X[it]), ylab = expression(pi),
      main = "Population, Conditional and Individual Logit Curves")
 
 # Add individual curves (grey lines)
 for (i in 1:n_individuals) {
-  lines(X_grid, pi_individuals[, i], col = "grey", lwd = 1)
+  lines(X_grid, expected_Y_individuals[, i], col = "grey", lwd = 1)
 }
 
 # add the population-level curve (red line)
-lines(X_grid, pi_population, col = "red", lwd = 4)
+lines(X_grid, expected_Y_population, col = "red", lwd = 4)
+
+# # add the population-level curve (orange line)
+# lines(X_grid, expected_Y_population2, col = "orange", lwd = 4)
 
 # Add a legend
 legend("topleft", legend = c("conditional", "population", "individuals"),
        col = c("black", "red",  "grey"), lty = c(1, 1, 1), lwd = c(4, 4, 1))
 
-dev.off()
+# dev.off()
 ```
 
+Now, we can see that while the population-averaged and subject-specific lines are parallel to one another, they are not equivalent due to the fact that the expected value (i.e., mean) of the random intercept is not exactly zero. One way of fixing this is (1) to simulate data with a very large sample size N and only show a certain amount in the plot or (2) to simulate data with a random intercept that is exactly zero. The latter is done in the code above by centering the random intercepts.
+
+## Mixed Linear Model with Time-Varying Endogenous Covariate
+
+Laten we nu een ingewikkelder voorbeeld beschouwen van een MLM uit sectie 2.2 van Qian et al. (2020) inclusief een time-varying covariaat $X_{it}$. In dit geval wordt elk individu op 2 tijdspunten geobserveerd ($T_i = 2$), en de covariaat op het tweede tijdspunt is de lag-1 uitkomst: $X_{i2} = Y_{i2}$.
+
+> Door de uitkomst te laggen, hebben we in wezen drie tijdspunten: $X_{i1}$, $X_{i2} = Y_{i2}$, en $Y_{i3}$.
+
+Stel dat de variabelen worden gegenereerd volgens het volgende multilevel lineaire model (MLM) met een random intercept:
+
+$$
+b_i \sim N(0, \sigma_b^2),
+$$
+
+$$
+X_{i1} \sim N(0, \sigma_{X_1}^2) \text{ independently of } b_i,
+$$
+
+$$
+Y_{i2} \mid X_{i1}, b_i \sim N(\beta_0 + \beta_1 X_{i1} + b_i, \sigma_\epsilon^2),
+$$
+
+$$
+X_{i2} = Y_{i2},
+$$
+
+$$
+Y_{i3} \mid X_{i1}, Y_{i2}, X_{i2}, b_i \sim N(\beta_0 + \beta_1 X_{i2} + b_i, \sigma_\epsilon^2).
+$$
+
+Laten we nu weer data simuleren en zowel de marginale als conditionele relaties tussen de covariaat $X_{it}$ en de uitkomstvariabele $Y_{it}$ onderzoeken. Maar we zetten sigma_epsilon op 0 zodat dit niet afleidt.
+
+```{r}
+#| label: Scenario2.2_DataGeneration
+#| cache: true
+#| eval: false
+#| echo: false
+
+set.seed(123)
+
+# parameters
+sigma_b = 3
+# sigma_X1 = 1
+# sigma_epsilon = 1
+beta_0 = 0.8
+beta_1 = 2
+
+n_individuals = 20
+
+# generate random intercepts
+b0 = rnorm(n_individuals, mean = 0, sd = sigma_b)
+
+X1_grid <- seq(-5, 5, length.out = 10000) # Values for X_it
+X1 <- rnorm(n_individuals, mean = 0, sd = 1) # Values for X_i1
+
+# Conditional-level 
+expected_X2_conditional <- expected_Y2_conditional <- beta_0 + beta_1 * X1_grid + 0
+expected_Y3_conditional <- beta_0 + beta_1 * expected_X2_conditional + 0
+
+# Individual-specific 
+expected_X2_individuals <- expected_Y2_individuals <- sapply(b0, function(b) beta_0 + beta_1 * X1_grid + b)
+expected_Y3_individuals <- sapply(b0, function(b) beta_0 + beta_1 * expected_X2_conditional + b)
+
+# Population-level
+expected_X2_population <- expected_Y2_population <- rowMeans(expected_Y2_individuals) # method 1
+expected_Y3_population <- rowMeans(expected_Y3_individuals) # method 1
+
+### Plot Y2 against X1
+
+par(mfrow = c(1, 2))
+
+# plot the conditional-level curve
+plot(X1_grid, expected_Y2_conditional, type = "l", lwd = 4, col = "black",
+     ylim = c(-5, 5), xlim = c(-5, 5), xlab = expression(X[i1]), ylab = expression(Y[i2]),
+     main = "Population, Conditional and Individual Logit Curves")
+
+# add individual curves (grey lines)
+for (i in 1:n_individuals) {
+  lines(X1_grid, expected_Y2_individuals[, i], col = "grey", lwd = 1)
+}
+
+# add the population-level curve (red line)
+lines(X1_grid, expected_Y2_population, col = "red", lwd = 4)
+
+# add a legend
+legend("topleft", legend = c("conditional", "population", "individuals"),
+       col = c("black", "red",  "grey"), lty = c(1, 1, 1), lwd = c(4, 4, 1))
+
+
+### Plot Y3 against X2
+
+# plot the conditional-level curve
+plot(expected_X2_conditional, expected_Y3_conditional, type = "l", lwd = 4, col = "black",
+     ylim = c(-5, 5), xlim = c(-5, 5), xlab = expression(X[i2]), ylab = expression(Y[i3]),
+     main = "Population, Conditional and Individual Logit Curves")
+
+# add individual curves (grey lines)
+for (i in 1:n_individuals) {
+  lines(expected_X2_conditional, expected_Y3_individuals[, i], col = "grey", lwd = 1)
+}
+
+# add the population-level curve (red line)
+lines(expected_X2_conditional, expected_Y3_population, col = "red", lwd = 4)
+
+# add a legend
+legend("topleft", legend = c("conditional", "population", "individuals"),
+       col = c("black", "red",  "grey"), lty = c(1, 1, 1), lwd = c(4, 4, 1))
+```
+
+```{r}
+#| label: Scenario2.2_DataGeneration
+#| cache: true
+#| eval: false
+#| echo: false
+
+set.seed(123)
+
+# parameters
+sigma_b = 3
+sigma_X1 = 1
+# sigma_epsilon = 1
+beta_0 = 0.8
+beta_1 = 2
+
+n_individuals = 20
+
+# generate random intercepts and X1
+b0 <- rnorm(n_individuals, mean = 0, sd = sigma_b)
+X1 <- rnorm(n_individuals, mean = 0, sd = sigma_X1) # Values for X_i1
+
+# Conditional-level 
+expected_X2_conditional <- expected_Y2_conditional <- beta_0 + beta_1 * mean(X1) + 0
+expected_Y3_conditional <- beta_0 + beta_1 * expected_X2_conditional + 0
+
+# Individual-specific 
+expected_X2_individuals <- expected_Y2_individuals <- beta_0 + beta_1 * X1 + b0
+expected_Y3_individuals <- beta_0 + beta_1 * expected_X2_conditional + b0
+
+# Population-level
+expected_X2_population <- expected_Y2_population <- mean(expected_Y2_individuals) # method 1
+
+### Plot Y2 against X1
+
+par(mfrow = c(1, 2))
+
+# plot the conditional-level curve
+plot(X1, expected_Y2_conditional, type = "l", lwd = 4, col = "black",
+     ylim = c(-5, 5), xlim = c(-5, 5), xlab = expression(X[i1]), ylab = expression(Y[i2]),
+     main = "Population, Conditional and Individual Logit Curves")
+
+# add individual curves (grey lines)
+for (i in 1:n_individuals) {
+  lines(X1_grid, expected_Y2_individuals[, i], col = "grey", lwd = 1)
+}
+
+# add the population-level curve (red line)
+lines(X1_grid, expected_Y2_population, col = "red", lwd = 4)
+
+# add a legend
+legend("topleft", legend = c("conditional", "population", "individuals"),
+       col = c("black", "red",  "grey"), lty = c(1, 1, 1), lwd = c(4, 4, 1))
+
+
+### Plot Y3 against X2
+
+# plot the conditional-level curve
+plot(expected_X2_conditional, expected_Y3_conditional, type = "l", lwd = 4, col = "black",
+     ylim = c(-5, 5), xlim = c(-5, 5), xlab = expression(X[i2]), ylab = expression(Y[i3]),
+     main = "Population, Conditional and Individual Logit Curves")
+
+# add individual curves (grey lines)
+for (i in 1:n_individuals) {
+  lines(expected_X2_conditional, expected_Y3_individuals[, i], col = "grey", lwd = 1)
+}
+
+# add the population-level curve (red line)
+lines(expected_X2_conditional, expected_Y3_population, col = "red", lwd = 4)
+
+# add a legend
+legend("topleft", legend = c("conditional", "population", "individuals"),
+       col = c("black", "red",  "grey"), lty = c(1, 1, 1), lwd = c(4, 4, 1))
+```
