@@ -282,7 +282,6 @@ legend("topleft", legend = c("conditional", "population", "individuals"),
 
 ```
 
-
 ## Mixed Linear Model with Time-Varying Endogenous Covariate
 
 Laten we nu een ingewikkelder voorbeeld beschouwen van een MLM uit sectie 2.2 van Qian et al. (2020) inclusief een time-varying covariaat $X_{it}$. In dit geval wordt elk individu op 2 tijdspunten geobserveerd ($T_i = 2$), en de covariaat op het tweede tijdspunt is de lag-1 uitkomst: $X_{i2} = Y_{i2}$.
@@ -311,7 +310,23 @@ $$
 Y_{i3} \mid X_{i1}, Y_{i2}, X_{i2}, b_i \sim N(\beta_0 + \beta_1 X_{i2} + b_i, \sigma_\epsilon^2).
 $$
 
-Laten we nu weer data simuleren en zowel de marginale als conditionele relaties tussen de covariaat $X_{it}$ en de uitkomstvariabele $Y_{it}$ onderzoeken. Maar we zetten sigma_epsilon op 0 zodat dit niet afleidt.
+Dit impliceert the conditionele relatie
+
+$$
+E[Y_{it+1} \mid X_{it}] = \beta_0 + \beta_1 X_{i1} + b_i.
+$$
+
+terwijl de marginale relatie ingewikkelder is
+
+$$
+E[Y_{i2} \mid X_{i1}] = \beta_0 + \beta_1 X_{i1}.
+$$
+
+$$
+E[Y_{i3} \mid X_{i2}] = (1-\rho \zeta - \rho) \beta_0 + [(1-\rho\zeta) \beta_1+\rho] X_{i2}.
+$$
+
+waar $\rho = \frac{\sigma_b^2}{\sigma_b^2 + \sigma_\epsilon^2}$ en $\zeta = \frac{\beta_1 \sigma_{X_1}^2}{\beta_1 \sigma_{X_1}^2 + \sigma_b^2 + \sigma_\epsilon^2}$. Laten we nu weer data simuleren en zowel de marginale als conditionele relaties tussen de covariaat $X_{it}$ en de uitkomstvariabele $Y_{it}$ onderzoeken. Maar we zetten sigma_epsilon op 0 zodat dit niet afleidt.
 
 ```{r}
 #| label: Scenario2.2_DataGeneration
@@ -390,76 +405,129 @@ legend("topleft", legend = c("conditional", "population", "individuals"),
        col = c("black", "red",  "grey"), lty = c(1, 1, 1), lwd = c(4, 4, 1))
 ```
 
+Let's now simulate data from this model and directly infer the relationships between the continuous covariate $X_{it}$ and the outcome variable $Y_{it}$.
+
 ```{r}
-#| label: Scenario2.2_DataGeneration
+#| label: fig-mlm-time-varying-covariate
+#| fig-cap: "True conditional effect and estimated marginal effects for 10,000 simulated individuals in a situation with a time-varying endogenous covariate in a mixed linear model."
 #| cache: true
 #| eval: false
 #| echo: false
+#| fig.width: 10
+#| fig.height: 6
+
+
+### Data Generation 
 
 set.seed(123)
 
 # parameters
 sigma_b = 3
 sigma_X1 = 1
-# sigma_epsilon = 1
+# sigma_epsilon = 1 # let's exclude this for now
 beta_0 = 0.8
 beta_1 = 2
 
-n_individuals = 20
+n_individuals = 100000
 
-# generate random intercepts and X1
-b0 <- rnorm(n_individuals, mean = 0, sd = sigma_b)
-X1 <- rnorm(n_individuals, mean = 0, sd = sigma_X1) # Values for X_i1
+# generate random intercepts
+simdata <- data.frame(b0 = rnorm(n_individuals, mean = 0, sd = sigma_b),
+                      X1 = rnorm(n_individuals, mean = 0, sd = sigma_X1),
+                      X2 = rep(NA, n_individuals),
+                      Y2 = rep(NA, n_individuals),
+                      Y3 = rep(NA, n_individuals))
 
-# Conditional-level 
-expected_X2_conditional <- expected_Y2_conditional <- beta_0 + beta_1 * mean(X1) + 0
-expected_Y3_conditional <- beta_0 + beta_1 * expected_X2_conditional + 0
+# create a loop to compute the expected values for each individual
+for (i in 1:n_individuals) {
+  simdata$X2[i] <- simdata$Y2[i] <- beta_0 + beta_1 * simdata$X1[i] + simdata$b0[i]
+  simdata$Y3[i] <- beta_0 + beta_1 * simdata$X2[i] + simdata$b0[i]
+}
 
-# Individual-specific 
-expected_X2_individuals <- expected_Y2_individuals <- beta_0 + beta_1 * X1 + b0
-expected_Y3_individuals <- beta_0 + beta_1 * expected_X2_conditional + b0
+### Compute Marginal and Conditional Effects
 
-# Population-level
-expected_X2_population <- expected_Y2_population <- mean(expected_Y2_individuals) # method 1
+# compute rho and zeta
+rho = sigma_b^2 / (sigma_b^2 + sigma_epsilon^2) # should be 1, since sigma_epsilon = 0
+zeta = beta_1 * sigma_X1^2 / (beta_1 * sigma_X1^2 + sigma_b^2 + sigma_epsilon^2)
 
-### Plot Y2 against X1
+# compute marginal effect
+marginal_intercept_x1_y2 = beta_0
+marginal_slope_x1_y2 = beta_1
+
+marginal_intercept_x2_y3 = (1 - rho * zeta - rho) * beta_0
+marginal_slope_x2_y3 = (1 - rho * zeta) * beta_1 + rho
+
+### Estimate Marginal Effects
+# Let's confirm if we can use the formulas supplied in Qian et al. (2020) 
+# to retrieve the true marginal effect
+
+lm_y2_x1 <- lm(simdata$Y2 ~ simdata$X1)$coef
+lm_y3_x2 <- lm(simdata$Y3 ~ simdata$X2)$coef
+
+### Plot Marginal and Conditional Effects
+
+# compute expected value of b0i given Xit
+
+png("figure/fig-mlm-time-varying-covariate.png", res = 300, width = 4000, height = 2000)
 
 par(mfrow = c(1, 2))
+plot(simdata$X1, simdata$Y2, col = "blue", pch = 16, cex = 0, xlab = expression(X[i1]), ylab = expression(Y[i2]))
+abline(a = beta_0, b = beta_1, col = "blue", lty = 1, lwd = 2)
+abline(reg = lm_y2_x1, col = "red", lty = 2, , lwd = 2) 
+abline(a = marginal_intercept_x1_y2, b = marginal_slope_x1_y2, col = "red", lty = 1, lwd = 2)
 
-# plot the conditional-level curve
-plot(X1, expected_Y2_conditional, type = "l", lwd = 4, col = "black",
-     ylim = c(-5, 5), xlim = c(-5, 5), xlab = expression(X[i1]), ylab = expression(Y[i2]),
-     main = "Population, Conditional and Individual Logit Curves")
+legend("topleft", legend = c("true marginal effect", "estimated marginal effect", "true conditional effect"),
+       col = c("blue", "red", "red"), lty = c(1, 2, 1), lwd = c(2, 2, 2))
 
-# add individual curves (grey lines)
-for (i in 1:n_individuals) {
-  lines(X1_grid, expected_Y2_individuals[, i], col = "grey", lwd = 1)
-}
+plot(simdata$X2, simdata$Y3, col = "blue", pch = 16, cex = 0, xlab = expression(X[i2]), ylab = expression(Y[i3]))
+abline(a = beta_0, b = beta_1, col = "blue", lty = 1, lwd = 2)
+abline(reg = lm_y3_x2, col = "red", lty = 2, , lwd = 2) 
+abline(a = marginal_intercept_x2_y3, b = marginal_slope_x2_y3, col = "red", lty = 1, lwd = 2)
 
-# add the population-level curve (red line)
-lines(X1_grid, expected_Y2_population, col = "red", lwd = 4)
+legend("topleft", legend = c("true marginal effect", "estimated marginal effect", "true conditional effect"),
+       col = c("blue", "red", "red"), lty = c(1, 2, 1), lwd = c(2, 2, 2))
 
-# add a legend
-legend("topleft", legend = c("conditional", "population", "individuals"),
-       col = c("black", "red",  "grey"), lty = c(1, 1, 1), lwd = c(4, 4, 1))
+dev.off()
 
+### create table with overview of results
+results <- data.frame(
+  row.names = c("intercept X1 Y2", "slope X1 Y2", "intercept X2 Y3", "slope X2 Y3"),
+  conditional_effect = c(beta_0, beta_1, beta_0, beta_1),
+  true_marginal_effect = c(marginal_intercept_x1_y2, marginal_slope_x1_y2, marginal_intercept_x2_y3, marginal_slope_x2_y3),
+  estimated_marginal_effect = c(lm_y2_x1[1], lm_y2_x1[2], lm_y3_x2[1], lm_y3_x2[2])
+)
 
-### Plot Y3 against X2
-
-# plot the conditional-level curve
-plot(expected_X2_conditional, expected_Y3_conditional, type = "l", lwd = 4, col = "black",
-     ylim = c(-5, 5), xlim = c(-5, 5), xlab = expression(X[i2]), ylab = expression(Y[i3]),
-     main = "Population, Conditional and Individual Logit Curves")
-
-# add individual curves (grey lines)
-for (i in 1:n_individuals) {
-  lines(expected_X2_conditional, expected_Y3_individuals[, i], col = "grey", lwd = 1)
-}
-
-# add the population-level curve (red line)
-lines(expected_X2_conditional, expected_Y3_population, col = "red", lwd = 4)
-
-# add a legend
-legend("topleft", legend = c("conditional", "population", "individuals"),
-       col = c("black", "red",  "grey"), lty = c(1, 1, 1), lwd = c(4, 4, 1))
+saveRDS(results, "simulation_scenarios/output/summary_section2.2_results.rds")
 ```
+
+```{r}
+results <- readRDS("simulation_scenarios/output/summary_section2.2_results.rds")
+knitr::kable(results, caption = "Summary of the true conditional and estimated marginal effects for the simulated data (N = 100,000).")
+```
+
+![True conditional effect and estimated/true marginal effects for 100,000 simulated individuals in a situation with a time-varying endogenous covariate in a mixed linear model.](images/fig-mlm-time-varying-covariate.png){#fig-simulationresultssection2.2}
+
+Let us now create a second plot in which the effects of X1 on Y2 and X2 on Y3 are shown in the same plot.
+
+```{r}
+#| label: Scenario2.2_MarginalEffect
+
+png("figure/fig-mlm-time-varying-covariate-together.png", res = 300, width = 2000, height = 2000)
+
+# create empty plot
+plot(1, type = "n", xlim = c(-5, 6), ylim = c(-5, 10), xlab = "", ylab = "", main = "Marginal Effects")
+
+# now add the marginal effects
+abline(a = beta_0, b = beta_1, col = "blue", lty = 1, lwd = 2) # true conditional effect X1 Y2
+
+abline(a = marginal_intercept_x1_y2, b = marginal_slope_x1_y2, col = "red", lwd = 2) # true marginal effect X1 Y2
+abline(lm(simdata$Y2 ~ simdata$X1), col = "red", lty = 2) # estimated marginal effect X1 Y2
+abline(a = marginal_intercept_x2_y3, b = marginal_slope_x2_y3, col = "orange", lwd = 2) # true marginal effect X2 Y3
+abline(lm(simdata$Y3 ~ simdata$X2), col = "orange", lty = 2) # estimated marginal effect X2 Y3
+
+legend("topleft", legend = c("true conditional effect X1 Y2", "true marginal effect X1 Y2", "estimated marginal effect X1 Y2", "true marginal effect X2 Y3", "estimated marginal effect X2 Y3"),
+       col = c("blue", "red", "red", "orange", "orange"), lty = c(1, 1, 2, 1, 2), lwd = c(2, 2, 2, 2, 2))
+
+dev.off()
+```
+
+![True conditional effect and estimated/true marginal effects for 100,000 simulated individuals in one plot.](images/fig-mlm-time-varying-covariate-together.png){#fig-simulationresultssection2.2-together}
