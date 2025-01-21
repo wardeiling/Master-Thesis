@@ -5,12 +5,18 @@ format: html
 bibliography: GLMM_references.bib
 ---
 
+In this document, we will shed light on an issue that is well-known in the field of generalized linear mixed models (GLMMs), namely the discrepancy between population-averaged (PA; i.e., marginal) and subject-specific (SS; i.e., conditional-on-the-random-effect) interpretations of a fixed slope when the link function is non-linear. Note that subject-specific does not implicate the presence of a random slope. The main distinction between SS and PA models is whether the regression coefficients describe an individual's or the average population response to changing $x$ [@Zeger1988]. An excellent example between the two is given by @Zeger1998:
+
+> "For example, if $x_{it}$, indicates whether subject $i$ smokes at time $t$, and Yit is the presence/absence of respiratory infection, the PA model estimates the difference in infection rates between smokers and nonsmokers; the SS model estimates the expected change in an individual's probability of infection given a change in smoking status." (p. 1051)
+
+This document will explain why a discrepancy between the PA and SS interpretations of the fixed slope arises when the link function is non-linear. In this treatment, we will focus on very simple GLMMs with only one predictor and a random intercept.
+
 ## Generalized Mixed Linear Model with Non-linear Logit Function
 
-In this document, we will reproduce the figure made by Dimitri Rizopoulos in de course "CE08", where the generalized mixed linear model (GLMM) with a non-linear logit function results in a discrepancy between the marginal and conditional relationships (see also @Zeger1988 for the similar and original treatment). Let us consider the following GLMM
+In this document, we will reproduce the figure made by Dimitri Rizopoulos in de course [CE08](https://www.drizopoulos.com/courses/EMC/CE08.pdf) (slide 321), where the generalized mixed linear model (GLMM) with a non-linear logit function results in a discrepancy between the marginal and conditional relationships (see also @Zeger1988 for the similar and original treatment). Let us consider the following GLMM
 
 $$
-log \frac{\pi_{it}}{1-\pi_{it}} = \beta_0 + \beta_1 X_{it} + b_{0i} + \epsilon_{it} \quad b_{0i} \sim \mathcal{N}(0,\sigma_{b0}^2)
+\text{log} \frac{\pi_{it}}{1-\pi_{it}} = \beta_0 + \beta_1 X_{it} + b_{0i} + \epsilon_{it} \quad b_{0i} \sim \mathcal{N}(0,\sigma_{b0}^2)
 $$
 
 Where $\pi_{it} = Pr(Y_{it} = 1)$ the probability of a positive response for subject $i$ at time $t$, $Y_{it}$ is the binary response variable, $X_{it}$ is the continuous covariate, $A_{it}$ is the binary treatment indicator, and $b_{0i}$ is the random intercept. The fixed effects are $\beta_0$ and $\beta_1$ for the intercept and the continuous covariate. The random intercept $b_{0i}$ is assumed to be normally distributed with mean zero and variance $\sigma_{b0}^2$.
@@ -57,7 +63,7 @@ png("figure/fig-marginal-vs-conditional.png", width = 1200, height = 1000, res =
 
 # Plot the conditional-level curve
 plot(X_grid, pi_conditional, type = "l", lwd = 4, col = "black",
-     ylim = c(0, 1), xlim = c(-5, 5), xlab = expression(X[it]), ylab = expression(pi),
+     ylim = c(0, 1), xlim = c(-5, 5), xlab = expression(X[it]), ylab = "Probability",
      main = "Population, Conditional and Individual Logit Curves")
 
 # Add individual curves (grey lines)
@@ -119,7 +125,7 @@ pi_population_bin <- rowMeans(pi_individuals_bin)
 
 # Plot the continuous logistic curve
 plot(X_grid_cont, pi_conditional, type = "l", lwd = 4, col = "black",
-     ylim = c(0, 1), xlim = c(0, 1), xlab = expression(X[it]), ylab = expression(pi),
+     ylim = c(0, 1), xlim = c(0, 1), xlab = expression(X[it]), ylab = "Probability",
      main = "Binary Predictor with Interpolation of Logistic Curves")
 
 # Add individual curves (grey lines) for continuous logistic function
@@ -146,6 +152,8 @@ legend("topleft", legend = c("conditional (interpolation)", "population (interpo
        lwd = c(4, 4, 1, NA, NA, NA), pt.cex = c(NA, NA, NA, 1.5, 1.5, 0.6))
 
 ```
+
+When we fit a GLMM with a log-link function and the variance of the random intercept is non-zero, the fixed effects are interpreted according to the subject-specific interpretation. As a result, GLMMs are most useful when the main scientific objective is to make inferences about individuals rather than population averages.
 
 ## Mixed Linear Model: Generalized Linear Mixed Model with Identity Link Function
 
@@ -194,7 +202,7 @@ expected_Y_population <- rowMeans(expected_Y_individuals) # method 1
 
 # Plot the conditional-level curve
 plot(X_grid, expected_Y_conditional, type = "l", lwd = 4, col = "black",
-     ylim = c(0, 1), xlim = c(-5, 5), xlab = expression(X[it]), ylab = expression(pi),
+     ylim = c(0, 1), xlim = c(-5, 5), xlab = expression(X[it]), ylab = "Probability",
      main = "Population, Conditional and Individual Logit Curves")
 
 # Add individual curves (grey lines)
@@ -215,7 +223,65 @@ legend("topleft", legend = c("conditional", "population", "individuals"),
 # dev.off()
 ```
 
-Now, we can see that while the population-averaged and subject-specific lines are parallel to one another, they are not equivalent due to the fact that the expected value (i.e., mean) of the random intercept is not exactly zero. One way of fixing this is (1) to simulate data with a very large sample size N and only show a certain amount in the plot or (2) to simulate data with a random intercept that is exactly zero. The latter is done in the code above by centering the random intercepts.
+Now, we can see that while the population-averaged and subject-specific lines are parallel to one another, they are not equivalent due to the fact that the expected value (i.e., mean) of the random intercept is not exactly zero. One way of fixing this is (1) to simulate data with a very large sample size N and only show a certain amount in the plot or (2) to simulate data with a random intercept that is exactly zero. The latter is done in the code above by centering the random intercepts. However, when the expected value of the random intercept is zero, the population-averaged and subject-specific lines are equivalent, implying that both interpretations are valid.
+
+```{r}
+#| label: fig-marginal-vs-conditional-mlm
+#| fig.width: 10
+#| fig.height: 8
+
+set.seed(123) # For reproducibility
+
+# Parameters
+beta_0 <- 0 # Intercept
+beta_1 <- 0.9 # Slope
+sigma_b0 <- sqrt(4) # Standard deviation of random intercepts
+
+n_individuals <- 20 # Number of individuals to plot
+X_grid <- seq(-5, 5, length.out = 10000) # Values for X_it
+
+# Generate random intercepts for individuals
+b0 <- rnorm(n_individuals, mean = 0, sd = sigma_b0)
+
+# create centering option
+expected_b0_is_zero = TRUE
+if (expected_b0_is_zero == TRUE){
+  b0 <- b0 - mean(b0)  # Centering step
+}
+
+# Conditional-level prediction (mean individual, b0 = 0)
+y_conditional <- beta_0 + beta_1 * X_grid
+
+# Individual-specific predictions
+y_individuals <- sapply(b0, function(b) beta_0 + beta_1 * X_grid + b)
+
+# Population-level prediction (average across individuals)
+y_population <- rowMeans(y_individuals)
+
+# Save the upcoming plot
+# png("figure/fig-marginal-vs-conditional-mlm.png", width = 1200, height = 1000, res = 150)
+
+# Plot the conditional-level curve
+plot(X_grid, y_conditional, type = "l", lwd = 4, col = "black",
+     ylim = range(y_individuals), xlim = c(-5, 5), xlab = expression(X[it]), ylab = expression(Y),
+     main = "Population, Conditional, and Individual Response Curves")
+
+# Add individual curves (grey lines)
+for (i in 1:n_individuals) {
+  lines(X_grid, y_individuals[, i], col = "grey", lwd = 1)
+}
+
+# Add the population-level curve (red line)
+lines(X_grid, y_population, col = "red", lwd = 4)
+
+# Add a legend
+legend("topleft", legend = c("conditional", "population", "individuals"),
+       col = c("black", "red", "grey"), lty = c(1, 1, 1), lwd = c(4, 4, 1))
+
+# dev.off()
+
+```
+
 
 ## Mixed Linear Model with Time-Varying Endogenous Covariate
 
