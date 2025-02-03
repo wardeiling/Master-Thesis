@@ -380,7 +380,18 @@ gee_ind_y_xlag1 <- geepack::geeglm(Y ~ X_lag1, id = id, data = simdata_long, fam
 # these two estimation methods yield identical results for the parameter values (but not for SEs!)
 ```
 
-Let us now plot the marginal and conditional effect in separate and combined plots
+let us visualize the density plots for $Y_2$ and $Y_3$.
+
+```{r}
+# create density plot for Y2 and Y3 with overlay
+ggplot(simdata_long, aes(x = Y, fill = as.factor(time))) +
+  geom_density(alpha = 0.5) +
+  theme_minimal()
+```
+
+We can see that the density for $Y_3$ is slightly shifted to the right and has increased variability compared to $Y_2$. This is due to the fact that $Y_3$ not only borrows variability from $X_1$ but also from the random intercept $b_i$.
+
+Let us now plot the marginal and conditional effect in separate and combined plots.
 
 ```{r}
 #| label: fig-section2.2
@@ -542,6 +553,10 @@ marginal_Y3 <- colMeans(Y3)
 
 # Compute the conditional effect by taking the mean individual (b0 = 0)
 Y_conditional <- beta_0 + beta_1 * X1_grid + 0
+
+# compute the conditional effect for Y3
+X2_grid <- colMeans(X2) # X2_grid is the same as marginal_Y2
+Y_conditional2 <- beta_0 + beta_1 * X2_grid
 ```
 
 Let us now plot these direct simulations to illustrate the marginal and conditional effects.
@@ -563,7 +578,7 @@ par(mfrow = c(1, 2))
 
 # Plot the conditional-level curve
 plot(X1_grid, Y_conditional, type = "l", lwd = 4, col = "black",
-     ylim = range(X1_grid), xlim = c(-5, 5), xlab = expression(X[i1]), ylab = expression(Y[i2]),
+      xlim = c(-30, 30), ylim = c(-80, 80), xlab = expression(X[i1]), ylab = expression(Y[i2]),
      main = "Effect of X1 on Y2")
 
 # Add individual curves (grey lines)
@@ -573,6 +588,8 @@ for (i in 1:20) {
 
 # Add the population-level curve (red line)
 lines(X1_grid, marginal_Y2, col = "red", lwd = 4)
+
+abline(a = 0.8, b = 2, col = "blue", lwd = 4)
 
 # Add a legend
 legend("topleft", legend = c("conditional", "population", "individuals"),
@@ -586,7 +603,7 @@ legend("topleft", legend = c("conditional", "population", "individuals"),
 
 # Plot the conditional-level curve
 plot(Y_conditional, Y_conditional, type = "l", lwd = 4, col = "black",
-     ylim = range(X1_grid), xlim = c(-5, 5), xlab = expression(X[i1]), ylab = expression(Y[i3]),
+     xlim = c(-30, 30), ylim = c(-80, 80), xlab = expression(X[i1]), ylab = expression(Y[i3]),
      main = "Effect of X2 on Y3")
 # THIS IS DISTORTED BECAUSE WE ARE PLOTTING Y3 AGAINST X1 instead of X2
 
@@ -598,35 +615,49 @@ for (i in 1:20) {
 # Add the population-level curve (red line)
 lines(Y_conditional, marginal_Y3, col = "red", lwd = 4)
 
+abline(a = 0.8, b = 2, col = "blue", lwd = 4)
+
 # Add a legend
 legend("topleft", legend = c("conditional", "population", "individuals"),
        col = c("black", "red", "grey"), lty = c(1, 1, 1), lwd = c(4, 4, 1))
 
 ```
 
-```{r}
-# create empty plot
-plot(1, type = "n", xlim = c(-15, 15), ylim = c(-40, 40), xlab = expression(X[it]), ylab = expression(Y[it+1]), 
-     main = "Effect of X_t on Y_t+1")
-```
+
+Let us now create a density plot for the marginal and conditional effects.
 
 ```{r}
+#| fig-height: 7
+#| fig-width: 12
+
 # replicate all elements as many times as there are individuals.
-X1 <- matrix(rep(X1_grid, each = n_individuals), nrow = n_individuals , byrow = T)
-# or try it so that all other elements are zero.
+# X1 <- matrix(rep(X1_grid, each = n_individuals), nrow = n_individuals , byrow = T)
+
+# create a matrix with zero values of n_individuals - 1 by n_grid
+zeros_matrix <- matrix(rep(NA, (n_individuals-1) * n_grid), nrow = n_individuals - 1, byrow = T)
+# bind the two matrices together
+X1 <- rbind(X1_grid, zeros_matrix)
+Y2_marg_plot <- rbind(marginal_Y2, zeros_matrix)
+Y3_marg_plot <- rbind(marginal_Y3, zeros_matrix)
 
 par(mfrow = c(1, 2))
 
-plot(X1, Y2, col = "grey")
+plot(X1, Y2, col = "grey", pch = 16, cex = 1, xlab = expression(X[i1]), ylab = expression(Y[i2]),
+     xlim = c(-40, 40), ylim = c(-90, 90))
 
 abline(a = 0.8, b = 2, col = "black")
 
-plot(X2, Y3, col = "grey") 
+# Add the population-level curve (red line)
+points(X1, Y2_marg_plot, col = "red")
+
+plot(X2, Y3, col = "grey", pch = 16, cex = 1, xlab = expression(X[i2]), ylab = expression(Y[i3]),
+     xlim = c(-40, 40), ylim = c(-90, 90))
 
 abline(a = 0.8, b = 2, col = "black")
 
-abline(reg = lm_y3_x2, col = "red")
-
-
+# Add the population-level curve (red line)
+points(X2, Y3_marg_plot, col = "red")
 ```
+
+First of all, it becomes clear that the variability in $Y_{i3}$ is higher than in $Y_{i2}$, which is due to the added variability imposed by the random intercept: we can see that the original range from -15 to 15 in X1 changes to a range from -40 to 40 X2. It should also be noted that due to the endogeneity, people with a great value on the random intercept will tend to have greater values on both $X_{i2}$ and $Y_{i3}$. 
 
