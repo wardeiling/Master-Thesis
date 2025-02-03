@@ -506,7 +506,7 @@ set.seed(123)
 
 # Parameters
 sigma_b <- 3
-sigma_epsilon <- 0 # let's exclude this for now
+sigma_epsilon <- 1 # let's exclude this for now
 beta_0 <- 0.8
 beta_1 <- 2
 
@@ -523,11 +523,14 @@ b0 <- rnorm(n_individuals, mean = 0, sd = sigma_b)
 
 # Loop over individuals and grid values
 for (i in 1:n_individuals) {
+  epsilon_y2 <- rnorm(1, mean = 0, sd = sigma_epsilon)
+  epsilon_y3 <- rnorm(1, mean = 0, sd = sigma_epsilon)
   for (j in 1:n_grid) {
     X1 <- X1_grid[j]
-    X2 <- beta_0 + beta_1 * X1 + b0[i] + rnorm(1, mean = 0, sd = sigma_epsilon)
-    Y2 <- X2
-    Y3 <- beta_0 + beta_1 * X2 + b0[i] + rnorm(1, mean = 0, sd = sigma_epsilon)
+    Y2 <- beta_0 + beta_1 * X1 + b0[i] + epsilon_y2
+    X2 <- Y2
+    # X2_grid <- X1 <- X1_grid[j] + b0[i]
+    Y3 <- beta_0 + beta_1 * X2 + b0[i] + epsilon_y3
 
     # Save the results
     simdata[i, j, 1] <- X2
@@ -556,15 +559,15 @@ Y_conditional <- beta_0 + beta_1 * X1_grid + 0
 
 # compute the conditional effect for Y3
 X2_grid <- colMeans(X2) # X2_grid is the same as marginal_Y2
-Y_conditional2 <- beta_0 + beta_1 * X2_grid
+Y3_conditional <- beta_0 + beta_1 * X2_grid
 ```
 
 Let us now plot these direct simulations to illustrate the marginal and conditional effects.
 
 ```{r}
 #| label: fig-section2.2-grid
-#| fig-height: 7
-#| fig-width: 12
+#| fig-height: 6
+#| fig-width: 10
 
 # select 20 random individuals 
 set.seed(123)
@@ -577,7 +580,7 @@ par(mfrow = c(1, 2))
 ### Plot Y2
 
 # Plot the conditional-level curve
-plot(X1_grid, Y_conditional, type = "l", lwd = 4, col = "black",
+plot(X1_grid, Y_conditional, type = "l", lwd = 6, col = "black",
       xlim = c(-30, 30), ylim = c(-80, 80), xlab = expression(X[i1]), ylab = expression(Y[i2]),
      main = "Effect of X1 on Y2")
 
@@ -589,7 +592,7 @@ for (i in 1:20) {
 # Add the population-level curve (red line)
 lines(X1_grid, marginal_Y2, col = "red", lwd = 4)
 
-abline(a = 0.8, b = 2, col = "blue", lwd = 4)
+# abline(a = 0.8, b = 2, col = "blue", lwd = 4)
 
 # Add a legend
 legend("topleft", legend = c("conditional", "population", "individuals"),
@@ -602,25 +605,27 @@ legend("topleft", legend = c("conditional", "population", "individuals"),
 # X2_grid <- seq(min(X2_grid), max(X2_grid), length.out = 10000)
 
 # Plot the conditional-level curve
-plot(Y_conditional, Y_conditional, type = "l", lwd = 4, col = "black",
+plot(X2_grid, Y3_conditional, type = "l", lwd = 4, col = "black",
      xlim = c(-30, 30), ylim = c(-80, 80), xlab = expression(X[i1]), ylab = expression(Y[i3]),
      main = "Effect of X2 on Y3")
 # THIS IS DISTORTED BECAUSE WE ARE PLOTTING Y3 AGAINST X1 instead of X2
 
 # Add individual curves (grey lines)
 for (i in 1:20) {
-  lines(Y_conditional, Y3_individuals[i, ], col = "grey", lwd = 1)
+  lines(X2_grid, Y3_individuals[i, ], col = "grey", lwd = 1)
 }
 
 # Add the population-level curve (red line)
-lines(Y_conditional, marginal_Y3, col = "red", lwd = 4)
+lines(X2_grid, marginal_Y3, col = "red", lwd = 4)
 
-abline(a = 0.8, b = 2, col = "blue", lwd = 4)
+# abline(a = 0.8, b = 2, col = "blue", lwd = 4)
 
 # Add a legend
 legend("topleft", legend = c("conditional", "population", "individuals"),
        col = c("black", "red", "grey"), lty = c(1, 1, 1), lwd = c(4, 4, 1))
 
+# var(X1_grid)
+# plot(density(X1_grid))
 ```
 
 
