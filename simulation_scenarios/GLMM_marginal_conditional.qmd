@@ -499,8 +499,8 @@ sigma_epsilon <- 0 # let's exclude this for now
 beta_0 <- 0.8
 beta_1 <- 2
 
-n_individuals <- 1000 # Reduced for example purposes
-X1_grid <- seq(-15, 15, length.out = 10000) # Grid variable
+n_individuals <- 100 # Reduced for example purposes
+X1_grid <- seq(-15, 15, length.out = 1000) # Grid variable
 n_grid <- length(X1_grid)
 
 # Create an array to store the results: dimensions are individuals x grid points x variables
@@ -530,15 +530,15 @@ dim(simdata)  # Should be (n_individuals, n_grid, 3)
 # simdata[1, , ]  # First individual across the grid
 
 # Compute the marginal effect Y2 by taking the mean across individuals
-Y2 <- simdata[, , 2]
-dim(Y2)  # (n_individuals, n_grid)
-marginal_Y2 <- colMeans(Y2)
-
-Y3 <- simdata[, , 3]
-dim(Y3)  # (n_individuals, n_grid)
-marginal_Y3 <- colMeans(Y3)
-
 X2 <- simdata[, , 1]
+Y2 <- simdata[, , 2]
+Y3 <- simdata[, , 3]
+
+# dim(Y2)  # (n_individuals, n_grid)
+# dim(Y3)  # (n_individuals, n_grid)
+
+marginal_Y2 <- colMeans(Y2)
+marginal_Y3 <- colMeans(Y3)
 
 # Compute the conditional effect by taking the mean individual (b0 = 0)
 Y_conditional <- beta_0 + beta_1 * X1_grid + 0
@@ -581,22 +581,22 @@ legend("topleft", legend = c("conditional", "population", "individuals"),
 ### Plot Y3
 
 # Create X2_grid based on the mean of X2 across individuals
-X2_grid <- colMeans(X2)
+# X2_grid <- colMeans(X2)
 # X2_grid <- seq(min(X2_grid), max(X2_grid), length.out = 10000)
 
 # Plot the conditional-level curve
-plot(X2_grid, Y_conditional, type = "l", lwd = 4, col = "black",
+plot(Y_conditional, Y_conditional, type = "l", lwd = 4, col = "black",
      ylim = range(X1_grid), xlim = c(-5, 5), xlab = expression(X[i1]), ylab = expression(Y[i3]),
      main = "Effect of X2 on Y3")
 # THIS IS DISTORTED BECAUSE WE ARE PLOTTING Y3 AGAINST X1 instead of X2
 
 # Add individual curves (grey lines)
 for (i in 1:20) {
-  lines(X2_grid, Y3_individuals[i, ], col = "grey", lwd = 1)
+  lines(Y_conditional, Y3_individuals[i, ], col = "grey", lwd = 1)
 }
 
 # Add the population-level curve (red line)
-lines(X2_grid, marginal_Y3, col = "red", lwd = 4)
+lines(Y_conditional, marginal_Y3, col = "red", lwd = 4)
 
 # Add a legend
 legend("topleft", legend = c("conditional", "population", "individuals"),
@@ -604,4 +604,29 @@ legend("topleft", legend = c("conditional", "population", "individuals"),
 
 ```
 
+```{r}
+# create empty plot
+plot(1, type = "n", xlim = c(-15, 15), ylim = c(-40, 40), xlab = expression(X[it]), ylab = expression(Y[it+1]), 
+     main = "Effect of X_t on Y_t+1")
+```
+
+```{r}
+# replicate all elements as many times as there are individuals.
+X1 <- matrix(rep(X1_grid, each = n_individuals), nrow = n_individuals , byrow = T)
+# or try it so that all other elements are zero.
+
+par(mfrow = c(1, 2))
+
+plot(X1, Y2, col = "grey")
+
+abline(a = 0.8, b = 2, col = "black")
+
+plot(X2, Y3, col = "grey") 
+
+abline(a = 0.8, b = 2, col = "black")
+
+abline(reg = lm_y3_x2, col = "red")
+
+
+```
 
