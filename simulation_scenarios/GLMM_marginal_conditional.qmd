@@ -279,7 +279,7 @@ $$
 E[Y_{i3} \mid X_{i2}] = (1-\rho \zeta - \rho) \beta_0 + [(1-\rho\zeta) \beta_1+\rho] X_{i2}.
 $$
 
-waar $\rho = \frac{\sigma_b^2}{\sigma_b^2 + \sigma_\epsilon^2}$ en $\zeta = \frac{\beta_1 \sigma_{X_1}^2}{\beta_1 \sigma_{X_1}^2 + \sigma_b^2 + \sigma_\epsilon^2}$ (see [marginal-relationship-resource](https://bookdown.org/mike/data_analysis/linear-mixed-models.html#random-intercepts-model)). Laten we nu weer data simuleren en zowel de marginale als conditionele relaties tussen de covariaat $X_{it}$ en de uitkomstvariabele $Y_{it}$ onderzoeken, maar we zetten $\sigma^2_{\epsilon} = 0$ zodat dit niet afleidt. Let's now simulate data from this model and directly infer the relationships between the continuous covariate $X_{it}$ and the outcome variable $Y_{it}$.
+waar $\rho = \frac{\sigma_b^2}{\sigma_b^2 + \sigma_\epsilon^2}$ en $\zeta = \frac{\beta_1 \sigma_{X_1}^2}{\beta_1 \sigma_{X_1}^2 + \sigma_b^2 + \sigma_\epsilon^2}$ (see [marginal-relationship-resource](https://bookdown.org/mike/data_analysis/linear-mixed-models.html#random-intercepts-model)). Laten we nu weer data simuleren en zowel de marginale als conditionele relaties tussen de covariaat $X_{it}$ en de uitkomst variabele $Y_{it}$ onderzoeken, maar we zetten $\sigma^2_{\epsilon} = 0$ zodat dit niet afleidt. Let's now simulate data from this model and directly infer the relationships between the continuous covariate $X_{it}$ and the outcome variable $Y_{it}$.
 
 ```{r}
 #| label: dgm-section2.2
@@ -665,4 +665,38 @@ points(X2, Y3_marg_plot, col = "red")
 ```
 
 First of all, it becomes clear that the variability in $Y_{i3}$ is higher than in $Y_{i2}$, which is due to the added variability imposed by the random intercept: we can see that the original range from -15 to 15 in X1 changes to a range from -40 to 40 X2. It should also be noted that due to the endogeneity, people with a great value on the random intercept will tend to have greater values on both $X_{i2}$ and $Y_{i3}$. 
+
+Let's now see what the effect is of certain parameters in the marginal and conditional effect of example in section 2.2.
+
+```{r}
+### Compute Marginal and Conditional Effects
+
+# parameters
+sigma_b = 3
+sigma_X1 = 1
+sigma_epsilon = 0 # we excluded this term
+beta_0 = 0.8
+beta_1 = 2
+
+# compute rho and zeta
+rho = sigma_b^2 / (sigma_b^2 + sigma_epsilon^2) # should be 1, since sigma_epsilon = 0
+zeta = beta_1 * sigma_X1^2 / (beta_1 * sigma_X1^2 + sigma_b^2 + sigma_epsilon^2)
+
+# compute marginal effect
+marginal_intercept_x1_y2 = beta_0
+marginal_slope_x1_y2 = beta_1
+
+marginal_intercept_x2_y3 = (1 - rho * zeta - rho) * beta_0
+marginal_slope_x2_y3 = (1 - rho * zeta) * beta_1 + rho
+
+plot(1, type = "n", xlim = c(-15, 15), ylim = c(-40, 40), xlab = expression(X[it]), ylab = expression(Y[it+1]), 
+     main = "Effect of X_t on Y_t+1")
+
+abline(a = beta_0, b = beta_1, col = "blue", lty = 1, lwd = 4) # true conditional effect X1 Y2
+abline(a = marginal_intercept_x1_y2, b = marginal_slope_x1_y2, col = "red", lwd = 2) # true marginal effect X1 Y2
+abline(a = marginal_intercept_x2_y3, b = marginal_slope_x2_y3, col = "orange", lwd = 2) # true marginal effect X2 Y3
+
+legend("topleft", legend = c("true conditional effect", "true marginal effect X1 Y2", "true marginal effect X2 Y3"),
+       col = c("blue", "red", "orange"), lty = c(1, 1, 1), lwd = c(4, 2, 2))
+```
 
