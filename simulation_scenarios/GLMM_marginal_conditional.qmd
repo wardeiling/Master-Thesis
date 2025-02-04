@@ -294,7 +294,7 @@ set.seed(123)
 # parameters
 sigma_b = 3
 sigma_X1 = 1
-sigma_epsilon = 0 # let's exclude this for now
+sigma_epsilon = 1 # let's exclude this for now
 beta_0 = 0.8
 beta_1 = 2
 
@@ -310,11 +310,12 @@ simdata <- data.frame(id = 1:n_individuals,
 
 # create a loop to compute the expected values for each individual
 for (i in 1:n_individuals) {
-  simdata$X2[i] <- simdata$Y2[i] <- beta_0 + beta_1 * simdata$X1[i] + simdata$b0[i] + rnorm(1, mean = 0, sd = sigma_epsilon)
+  simdata$Y2[i] <- beta_0 + beta_1 * simdata$X1[i] + simdata$b0[i] + rnorm(1, mean = 0, sd = sigma_epsilon)
+  simdata$X2[i] <- simdata$Y2[i]
   simdata$Y3[i] <- beta_0 + beta_1 * simdata$X2[i] + simdata$b0[i] + rnorm(1, mean = 0, sd = sigma_epsilon)
 }
 
-saveRDS(simdata, "simulation_scenarios/output/simdata_section2.2.rds")
+saveRDS(simdata, "simulation_scenarios/output/simdata_section2.2-eps.rds")
 ```
 
 Let us check if the formulas supplied in Qian et al. (2020) can be used to retrieve the true marginal effect.
@@ -324,14 +325,14 @@ Let us check if the formulas supplied in Qian et al. (2020) can be used to retri
 #| cache: true
 
 # load the simulated data
-simdata <- readRDS(here("simulation_scenarios/output/simdata_section2.2.rds"))
+simdata <- readRDS(here("simulation_scenarios/output/simdata_section2.2-eps.rds"))
 
 ### Compute Marginal and Conditional Effects
 
 # parameters
 sigma_b = 3
 sigma_X1 = 1
-sigma_epsilon = 0 # we excluded this term
+sigma_epsilon = 1 # we excluded this term
 beta_0 = 0.8
 beta_1 = 2
 
