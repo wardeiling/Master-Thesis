@@ -375,11 +375,20 @@ simdata_long <- simdata %>%
   # Select and rename columns
   select(id, time, b0, X_lag1 = X, Y)
 
+# compute cluster means for the level 1 predictor X
+simdata_long$cluster_mean_X <- ave(simdata_long$X_lag1, simdata_long$id, FUN = mean)
+
 # estimate combined marginal effect of x on y
-lm_y_xlag1 <- lm(Y ~ X_lag1, data = simdata_long)$coef
-gee_ind_y_xlag1 <- geepack::geeglm(Y ~ X_lag1, id = id, data = simdata_long, family = gaussian, corstr = "independence")$coef
+(lm_y_xlag1 <- lm(Y ~ X_lag1, data = simdata_long)$coef)
+(gee_ind_y_xlag1 <- geepack::geeglm(Y ~ X_lag1, id = id, data = simdata_long, family = gaussian, corstr = "independence")$coef)
 # these two estimation methods yield identical results for the parameter values (but not for SEs!)
+
+# estimate effect with Mundlak's contextual model
+(lm_y_xlag1_mundlak <- lm(Y ~ X_lag1 + cluster_mean_X, data = simdata_long)$coef)
+(gee_ind_y_xlag1_mundlak <- geepack::geeglm(Y ~ X_lag1 + cluster_mean_X, id = id, data = simdata_long, family = gaussian, corstr = "independence")$coef)
 ```
+
+We can see that the within-person slope returned by Mundlak's contextual model is very similar 
 
 let us visualize the density plots for $Y_2$ and $Y_3$.
 
