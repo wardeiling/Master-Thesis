@@ -13,6 +13,7 @@ execute:
 library(tidyverse)
 library(here)
 library(geepack)
+library(lme4)
 ```
 
 
@@ -303,7 +304,7 @@ n_individuals = 100000
 # generate random intercepts
 simdata <- data.frame(id = 1:n_individuals,
                       b0 = rnorm(n_individuals, mean = 0, sd = sigma_b),
-                      X1 = rnorm(n_individuals, mean = 0, sd = sigma_X1),
+                      X1 = rnorm(n_individuals, mean = 0, sd = sigma_X1), # we have no stable between-person differences in X1
                       X2 = rep(NA, n_individuals),
                       Y2 = rep(NA, n_individuals),
                       Y3 = rep(NA, n_individuals))
@@ -378,17 +379,25 @@ simdata_long <- simdata %>%
 # compute cluster means for the level 1 predictor X
 simdata_long$cluster_mean_X <- ave(simdata_long$X_lag1, simdata_long$id, FUN = mean)
 
-# estimate combined marginal effect of x on y
+### estimate combined marginal effect of x on y
+
+# Raw X as predictor
+cat
 (lm_y_xlag1 <- lm(Y ~ X_lag1, data = simdata_long)$coef)
+(mlm_y_xlag1 <- summary(lmer(Y ~ X_lag1 + (1 | id), data = simdata_long))$coefficients[,1])
 (gee_ind_y_xlag1 <- geepack::geeglm(Y ~ X_lag1, id = id, data = simdata_long, family = gaussian, corstr = "independence")$coef)
 # these two estimation methods yield identical results for the parameter values (but not for SEs!)
 
-# estimate effect with Mundlak's contextual model
+# Mundlak's contextual model: raw X and cluster mean X as predictors
 (lm_y_xlag1_mundlak <- lm(Y ~ X_lag1 + cluster_mean_X, data = simdata_long)$coef)
+(mlm_y_xlag1_mundlak <- summary(lmer(Y ~ X_lag1 + cluster_mean_X + (1 | id), data = simdata_long))$coefficients[,1])
 (gee_ind_y_xlag1_mundlak <- geepack::geeglm(Y ~ X_lag1 + cluster_mean_X, id = id, data = simdata_long, family = gaussian, corstr = "independence")$coef)
+
 ```
 
-We can see that the within-person slope returned by Mundlak's contextual model is very similar 
+We can see that when merely including the raw predictor X into the three models, the marginal models (that assume independence: GEE indep, linear regression) yield different results to the MLM, due to violation of the endogeneity assumption.
+
+Interestingly, however, when we apply Mundlak's contextual approach to the three models, the parameter estimates are identical across the three models, since correct specification of the MLM addresses the endogeneity of the covariate.
 
 let us visualize the density plots for $Y_2$ and $Y_3$.
 
