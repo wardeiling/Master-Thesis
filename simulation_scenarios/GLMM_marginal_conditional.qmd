@@ -382,7 +382,6 @@ simdata_long$cluster_mean_X <- ave(simdata_long$X_lag1, simdata_long$id, FUN = m
 ### estimate combined marginal effect of x on y
 
 # Raw X as predictor
-cat
 (lm_y_xlag1 <- lm(Y ~ X_lag1, data = simdata_long)$coef)
 (mlm_y_xlag1 <- summary(lmer(Y ~ X_lag1 + (1 | id), data = simdata_long))$coefficients[,1])
 (gee_ind_y_xlag1 <- geepack::geeglm(Y ~ X_lag1, id = id, data = simdata_long, family = gaussian, corstr = "independence")$coef)
@@ -393,6 +392,32 @@ cat
 (mlm_y_xlag1_mundlak <- summary(lmer(Y ~ X_lag1 + cluster_mean_X + (1 | id), data = simdata_long))$coefficients[,1])
 (gee_ind_y_xlag1_mundlak <- geepack::geeglm(Y ~ X_lag1 + cluster_mean_X, id = id, data = simdata_long, family = gaussian, corstr = "independence")$coef)
 
+# store all models in a list
+all_models <- list(lm_rawx = lm_y_xlag1,
+                   mlm_rawx = mlm_y_xlag1,
+                   gee_ind_rawx = gee_ind_y_xlag1,
+                   lm_mundlak = lm_y_xlag1_mundlak,
+                   mlm_mundlak = mlm_y_xlag1_mundlak,
+                   gee_ind_mundlak = gee_ind_y_xlag1_mundlak)
+
+# create table with appropriate column names
+table <- matrix(data = NA, nrow = 6, ncol = 2, dimnames = list(c("lm_rawx", "mlm_rawx", "gee_ind_rawx",
+                                                                  "lm_mundlak", "mlm_mundlak", "gee_ind_mundlak"),
+                                                                c("X_lag1", "cluster_mean_X")))
+
+# fil table with estimates assigning to the correct row and column
+for (i in 1:length(all_models)){
+  # check coefficients in the model
+  names <- names(all_models[[i]])
+  if ("X_lag1" %in% names){
+    table[i,1] <- all_models[[i]]["X_lag1"]
+  }
+  if ("cluster_mean_X" %in% names){
+    table[i,2] <- all_models[[i]]["cluster_mean_X"]
+  }
+}
+
+table
 ```
 
 We can see that when merely including the raw predictor X into the three models, the marginal models (that assume independence: GEE indep, linear regression) yield different results to the MLM, due to violation of the endogeneity assumption.
