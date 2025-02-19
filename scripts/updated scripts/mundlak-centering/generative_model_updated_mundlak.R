@@ -109,22 +109,21 @@ dgm_with_treatment <- function(sample_size, total_T, dgm_type) {
     return(dta)
 }
 
-# # test the function
-# dta <- dgm_with_treatment(sample_size = 100000, total_T = 10, dgm_type = 3)
-# 
-# library(lme4)
-# 
-# # predict Y from X and A
-# summary(lmer(Y ~ X * A + (1 + A| userid), data = dta))$coefficients[,1]
-# summary(lmer(Y ~ X * A + cluster_mean_X + cluster_mean_A + (1 + A| userid), data = dta))$coefficients
-# summary(lmer(Y ~ X * A + cluster_mean_X + (1 + A| userid), data = dta))$coefficients[,1]
-# 
-# library(geepack)
-# 
-# # predict Y from X and A
-# summary(geeglm(Y ~ X * A, id = userid, data = dta, corstr = "independence"))
-# summary(geeglm(Y ~ X * A + cluster_mean_X + cluster_mean_A, id = userid, data = dta, corstr = "independence"))
-# 
-# # predict Y from X and A
-# summary(geeglm(Y ~ X * A, id = userid, data = dta, corstr = "exchangeable"))
-# summary(geeglm(Y ~ X * A + cluster_mean_X + cluster_mean_A, id = userid, data = dta, corstr = "exchangeable"))
+# test the function
+dta <- dgm_with_treatment(sample_size = 1000, total_T = 10, dgm_type = "3d")
+
+library(lme4)
+
+# predict Y from X and A
+summary(lmer(Y ~ X + A + (1 | userid), data = dta))$coefficients[,1]
+summary(lmer(Y ~ X + A + cluster_mean_X + cluster_mean_A + (1 | userid), data = dta))$coefficients[,1]
+
+library(geepack)
+
+# predict Y from X and A
+summary(geeglm(Y ~ X * A, id = userid, data = dta, corstr = "independence"))
+summary(geeglm(Y ~ X * A + cluster_mean_X + cluster_mean_A, id = userid, data = dta, corstr = "independence"))
+
+# predict Y from X and A
+summary(geeglm(Y ~ X * A, id = userid, data = dta, corstr = "exchangeable"))
+summary(geeglm(Y ~ X * A + cluster_mean_X + cluster_mean_A, id = userid, data = dta, corstr = "exchangeable"))
