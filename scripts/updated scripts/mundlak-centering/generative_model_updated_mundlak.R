@@ -28,7 +28,7 @@ dgm_with_treatment <- function(sample_size, total_T, dgm_type) {
     if (dgm_type == 2) {
       sigma_b1 <- sigma_b3 <- 0.5 # sqrt(0.25)
       # set the random slopes to 0 for "a" models
-    } else if (dgm_type %in% c("3a")) {
+    } else if (dgm_type == "3a") {
       sigma_b2 <- 0
     } else if (dgm_type == "3d") {
       beta_1 <- 0
@@ -109,14 +109,18 @@ dgm_with_treatment <- function(sample_size, total_T, dgm_type) {
     return(dta)
 }
 
+set.seed(123)
+
 # test the function
-dta <- dgm_with_treatment(sample_size = 1000, total_T = 10, dgm_type = "3d")
+dta <- dgm_with_treatment(sample_size = 1000, total_T = 10, dgm_type = "3a")
 
 library(lme4)
 
 # predict Y from X and A
-summary(lmer(Y ~ X + A + (1 | userid), data = dta))$coefficients[,1]
-summary(lmer(Y ~ X + A + cluster_mean_X + cluster_mean_A + (1 | userid), data = dta))$coefficients[,1]
+l1 <- lmer(Y ~ X + A + (1 | userid), data = dta)
+summary(l1)$coefficients
+l2 <- lmer(Y ~ X + A + cluster_mean_X + cluster_mean_A + X:A + (1 | userid), data = dta)
+summary(l2)$coefficients
 
 library(geepack)
 
@@ -124,6 +128,6 @@ library(geepack)
 summary(geeglm(Y ~ X * A, id = userid, data = dta, corstr = "independence"))
 summary(geeglm(Y ~ X * A + cluster_mean_X + cluster_mean_A, id = userid, data = dta, corstr = "independence"))
 
-# predict Y from X and A
-summary(geeglm(Y ~ X * A, id = userid, data = dta, corstr = "exchangeable"))
-summary(geeglm(Y ~ X * A + cluster_mean_X + cluster_mean_A, id = userid, data = dta, corstr = "exchangeable"))
+# # predict Y from X and A
+# summary(geeglm(Y ~ X * A, id = userid, data = dta, corstr = "exchangeable"))
+# summary(geeglm(Y ~ X * A + cluster_mean_X + cluster_mean_A, id = userid, data = dta, corstr = "exchangeable"))
