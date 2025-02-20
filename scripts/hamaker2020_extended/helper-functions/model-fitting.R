@@ -6,21 +6,21 @@ fit_models <- function(data, outcome.type) {
   models <- list()
   
   # Define family argument for GLMM and GEE
-  family_arg <- if (outcome.type == "continuous") gaussian() else binomial(link = "logit")
+  family_arg <- if (outcome.type == "continuous") gaussian(link = "identity") else binomial(link = "logit")
   
   # Define formulae for different models
   formulas <- list(
     l1 = Y ~ X + (1 | Cluster),
     l2 = Y ~ X.cent + (1 | Cluster),
-    l3a = Y ~ X.cent + cluster.means + (1 | Cluster),
-    l4 = Y ~ X + cluster.means + (1 | Cluster)
+    l3a = Y ~ X.cent + X.cluster.means + (1 | Cluster),
+    l4 = Y ~ X + X.cluster.means + (1 | Cluster)
   )
   
   gee_formulas <- list(
     g1 = Y ~ X,
     g2 = Y ~ X.cent,
-    g3a = Y ~ X.cent + cluster.means,
-    g4 = Y ~ X + cluster.means
+    g3a = Y ~ X.cent + X.cluster.means,
+    g4 = Y ~ X + X.cluster.means
   )
   
   # Fit GLMM models

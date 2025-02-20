@@ -51,9 +51,9 @@ glmm_data_generation <- function(N_total, T_total, predictor.type, outcome.type,
   }
   
   # Compute cluster-level means and centering
-  dta$X_mean_est <- ave(dta$X, dta$Cluster, FUN = mean)
-  dta$X_cent <- dta$X - dta$X_mean
-  dta$X_cent_est <- dta$X - dta$X_mean_est
+  dta$X.cluster.means <- ave(dta$X, dta$Cluster, FUN = mean)
+  dta$X.cent <- dta$X - dta$X_mean_est # using estimated mean
+  # dta$X.cent_true <- dta$X - dta$X_mean # using true mean
   
   return(dta)
 }
