@@ -9,55 +9,6 @@ library(tidyverse)
 library(foreach)
 library(doParallel)
 
-# DATA GENERATION FUNCTION
-generate_data <- function(N, n, predictor.type, outcome.type, seed, 
-                          sdX.within, sdX.between, g.00, g.01, sd.u0, 
-                          g.10, sd.u1, sd.e) {
-  set.seed(seed)
-  
-  # Initialize matrices
-  Y <- matrix(, N, n)    
-  X <- matrix(, N, n)    
-  
-  for (j in 1:N) {
-    X.mean.j <- rnorm(1, mean = 0, sd = sdX.between)
-    
-    if (predictor.type == "continuous") {
-      X.j <- rnorm(n, mean = X.mean.j, sd = sdX.within)
-    } else if (predictor.type == "binary") {
-      p <- plogis(X.mean.j)
-      X.j <- rbinom(n, 1, p)
-    }
-    
-    X[j, ] <- X.j
-    b1.j <- g.10 + rnorm(1, 0, sd.u1)
-    b0.j <- g.00 + g.01 * X.mean.j + rnorm(1, 0, sd.u0)
-    
-    if (outcome.type == "continuous") {
-      Y[j, ] <- b0.j + b1.j * (X.j - X.mean.j) + rnorm(n, 0, sd.e)
-    } else if (outcome.type == "binary") {
-      eta <- b0.j + b1.j * (X.j - X.mean.j)
-      p.y <- plogis(eta)
-      Y[j, ] <- rbinom(n, 1, p.y)
-    }
-  }
-  
-  data <- data.frame(
-    Y = c(t(Y)), 
-    X = c(t(X)), 
-    Cluster = rep(1:N, each = n), 
-    Time = rep(1:n, N)
-  )
-  
-  return(data)
-}
-
-# DATA PREPARATION FUNCTION
-prepare_data <- function(data) {
-  data$cluster.means <- ave(data$X, data$Cluster, FUN = mean)
-  data$X.cent <- data$X - data$cluster.means
-  return(data)
-}
 
 # MODEL FITTING FUNCTION
 fit_models <- function(data, outcome.type) {
