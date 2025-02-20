@@ -1,8 +1,27 @@
 library(tidyverse)
 
-glmm_data_generation <- function(N_total, T_total, predictor.type, outcome.type, 
-                          sdX.within, sdX.between, g.00, g.01, sd.u0, 
-                          g.10, sd.u1, sd.e) {
+glmm_data_generation <- function(N_total = 5000, # number of clusters
+                                 T_total = 20, # number of observations within a cluster, originally set to 4.
+                                 predictor.type = "continuous", # type of predictor
+                                 outcome.type = "continuous", # type of outcome
+                                 
+                                 # PREDICTOR
+                                 sdX.within = sqrt(1),		# within-person variance 
+                                 sdX.between = sqrt(4),	# between-person variance
+                                 # if set to zero, the marginal effect will become approximately equal to the conditional effect.
+                                 
+                                 # INTERCEPT LEVEL 2
+                                 g.00 = 0,			# Grand intercept
+                                 g.01 = 2,			# between-cluster slope
+                                 sd.u0 = 1,			# SD of residuals intercept at level 2
+                                 
+                                 # SLOPE LEVEL 2
+                                 g.10 = 1,			# fixed within-cluster slope
+                                 sd.u1 = 0,			# SD of within-cluster slope at level 2
+                                 
+                                 # RESIDUALS AT LEVEL 1
+                                 sd.e = 1			# residual SD at level 1 (only used when outcome.type is continuous)
+){
   
   stopifnot(predictor.type %in% c("continuous", "binary"))
   stopifnot(outcome.type %in% c("continuous", "binary"))
