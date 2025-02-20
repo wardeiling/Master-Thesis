@@ -1,5 +1,89 @@
 library(tidyverse)
 
+generate_data <- function(N_total, T_total, predictor.type, outcome.type, 
+                          sdX.within, sdX.between, g.00, g.01, sd.u0, 
+                          g.10, sd.u1, sd.e) {
+  
+  # Precompute Level 2 (Cluster-Level) Variables
+  X.mean <- rnorm(N_total, mean = 0, sd = sdX.between)  # Cluster means
+  p_X_mean <- if (predictor.type == "binary") plogis(X.mean) else rep(NA, N_total)
+  b0 <- g.00 + g.01 * X.mean + rnorm(N_total, 0, sd.u0)  # Random intercepts
+  b1 <- g.10 + rnorm(N_total, 0, sd.u1)  # Random slopes
+  
+  # Initialize storage for long-format data
+  dta <- data.frame(
+    Cluster = rep(1:N_total, each = T_total),
+    Time = rep(1:T_total, times = N_total),
+    X_mean = rep(X.mean, each = T_total),
+    b0 = rep(b0, each = T_total),
+    b1 = rep(b1, each = T_total),
+    p_X_mean = rep(p_X_mean, each = T_total),
+    X = NA, eta = NA, Y = NA, p_y = NA  # Preallocate necessary columns
+  )
+  
+  # Generate Level 1 data
+  for (j in 1:N_total) {
+    idx <- which(dta$Cluster == j)  # Rows belonging to cluster j
+    
+    # Generate predictor
+    if (predictor.type == "continuous") {
+      X_j <- rnorm(T_total, mean = X.mean[j], sd = sdX.within)
+    } else {
+      X_j <- rbinom(T_total, 1, p_X_mean[j])
+    }
+    
+    # Compute eta and outcome
+    eta_j <- b0[j] + b1[j] * (X_j - X.mean[j])
+    
+    if (outcome.type == "continuous") {
+      Y_j <- eta_j + rnorm(T_total, mean = 0, sd = sd.e)
+      p_y_j <- NA  # No probability needed for continuous outcome
+    } else {
+      p_y_j <- plogis(eta_j)
+      Y_j <- rbinom(T_total, 1, p_y_j)
+    }
+    
+    # Store values
+    dta$X[idx] <- X_j
+    dta$eta[idx] <- eta_j
+    dta$Y[idx] <- Y_j
+    dta$p_y[idx] <- p_y_j
+  }
+  
+  # Compute cluster-level means and centering
+  dta$X_mean_est <- ave(dta$X, dta$Cluster, FUN = mean)
+  dta$X_cent <- dta$X - dta$X_mean
+  dta$X_cent_est <- dta$X - dta$X_mean_est
+  
+  return(dta)
+}
+
+# test function
+data <- generate_data(N_total = 5000, # number of clusters
+                      T_total = 20, # number of observations within a cluster, originally set to 4.
+                      predictor.type = "continuous", # type of predictor
+                      outcome.type = "continuous", # type of outcome
+                      
+                      # PREDICTOR
+                      sdX.within = sqrt(1),		# within-person variance 
+                      sdX.between = sqrt(4),	# between-person variance
+                      # if set to zero, the marginal effect will become approximately equal to the conditional effect.
+                      
+                      # INTERCEPT LEVEL 2
+                      g.00 = 0,			# Grand intercept
+                      g.01 = 2,			# between-cluster slope
+                      sd.u0 = 1,			# SD of residuals intercept at level 2
+                      
+                      # SLOPE LEVEL 2
+                      g.10 = 1,			# fixed within-cluster slope
+                      sd.u1 = 0,			# SD of within-cluster slope at level 2
+                      
+                      # RESIDUALS AT LEVEL 1
+                      sd.e = 1			# residual SD at level 1 (only used when outcome.type is continuous)
+)
+
+
+summary(data)
 
 # generate_data2 <- function(N_total, T_total, predictor.type, outcome.type, 
 #                           sdX.within, sdX.between, g.00, g.01, sd.u0, 
@@ -175,6 +259,8 @@ generate_data3 <- function(N_total, T_total, predictor.type, outcome.type,
 }
 
 
+
+
 # test functions
 
 data2 <- generate_data2(N_total = 5000, # number of clusters
@@ -250,12 +336,12 @@ sd.e <- 1
 # Storage for means and SDs
 vars_to_check <- c("Y", "X", "eta", "b0", "b1", "X_mean", "X_cent")
 
-stats_data2 <- matrix(NA, nrow = 1000, ncol = length(vars_to_check) * 2)
-stats_data3 <- matrix(NA, nrow = 1000, ncol = length(vars_to_check) * 2)
+stats_data2 <- matrix(NA, nrow = 10000, ncol = length(vars_to_check) * 2)
+stats_data3 <- matrix(NA, nrow = 10000, ncol = length(vars_to_check) * 2)
 
 colnames(stats_data2) <- colnames(stats_data3) <- c(rbind(paste0(vars_to_check, "_mean"), paste0(vars_to_check, "_sd")))
 
-for (i in 1:1000) {
+for (i in 1:10000) {
   data2 <- generate_data2(N_total, T_total, predictor.type, outcome.type, 
                           sdX.within, sdX.between, g.00, g.01, sd.u0, 
                           g.10, sd.u1, sd.e)
