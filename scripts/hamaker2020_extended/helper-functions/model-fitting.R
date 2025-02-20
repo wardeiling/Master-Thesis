@@ -2,13 +2,13 @@ library(lme4)
 library(geepack) # geepack yields more stable results than gee package: https://www2.stat.duke.edu/~fl35/teaching/610-23F/docs/slides/6-1-GEE.pdf
 
 # Improved Model Fitting Function
-fit_models <- function(data, outcome.type) {
+glmm_model_fitting <- function(data, outcome.type) {
   models <- list()
   
   # Define family argument for GLMM and GEE
   family_arg <- if (outcome.type == "continuous") gaussian(link = "identity") else binomial(link = "logit")
   
-  # Define formulae for different models
+  # Define formula for different models
   formulas <- list(
     l1 = Y ~ X + (1 | Cluster),
     l2 = Y ~ X.cent + (1 | Cluster),

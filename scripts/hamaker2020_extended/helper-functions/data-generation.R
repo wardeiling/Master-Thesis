@@ -4,6 +4,9 @@ glmm_data_generation <- function(N_total, T_total, predictor.type, outcome.type,
                           sdX.within, sdX.between, g.00, g.01, sd.u0, 
                           g.10, sd.u1, sd.e) {
   
+  stopifnot(predictor.type %in% c("continuous", "binary"))
+  stopifnot(outcome.type %in% c("continuous", "binary"))
+  
   # Precompute Level 2 (Cluster-Level) Variables
   X.mean <- rnorm(N_total, mean = 0, sd = sdX.between)  # Cluster means
   p_X_mean <- if (predictor.type == "binary") plogis(X.mean) else rep(NA, N_total)
@@ -52,7 +55,7 @@ glmm_data_generation <- function(N_total, T_total, predictor.type, outcome.type,
   
   # Compute cluster-level means and centering
   dta$X.cluster.means <- ave(dta$X, dta$Cluster, FUN = mean)
-  dta$X.cent <- dta$X - dta$X_mean_est # using estimated mean
+  dta$X.cent <- dta$X - dta$X.cluster.means # using estimated mean
   # dta$X.cent_true <- dta$X - dta$X_mean # using true mean
   
   return(dta)
@@ -60,7 +63,7 @@ glmm_data_generation <- function(N_total, T_total, predictor.type, outcome.type,
 
 ### FUNCTION TESTING ###
 
-if(testing == TRUE){
+if(0){
   # generate continuous data
   data_cont <- glmm_data_generation(N_total = 5000, T_total = 20, predictor.type = "continuous", outcome.type = "continuous",
                                     sdX.within = sqrt(1), sdX.between = sqrt(4), g.00 = 0, g.01 = 2, sd.u0 = 1,
