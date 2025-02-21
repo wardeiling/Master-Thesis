@@ -83,6 +83,9 @@ glmm_data_generation <- function(N_total = 5000, # number of clusters
 ### FUNCTION TESTING ###
 
 if(0){
+  
+  library(ggplot2)
+  
   # generate continuous data
   data_cont <- glmm_data_generation(N_total = 5000, T_total = 20, predictor.type = "continuous", outcome.type = "continuous",
                                     sdX.within = sqrt(1), sdX.between = sqrt(4), g.00 = 0, g.01 = 2, sd.u0 = 1,
