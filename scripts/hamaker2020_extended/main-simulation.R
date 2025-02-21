@@ -9,7 +9,7 @@
 
 rm(list = ls()) # clear workspace
 set.seed(123) # set global seed
-runname <- "run3" # set a runname
+runname <- "run4" # set a runname
 
 # make a directory in simulation_results based on runname
 dir.create(paste0("simulation_results_glmm/", runname), showWarnings = FALSE)

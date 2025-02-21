@@ -144,3 +144,144 @@ Starting iteration 20
 Starting iteration 30 
 Starting iteration 40 
 Starting iteration 50 
+starting worker pid=13436 on localhost:11593 at 12:44:31.183
+starting worker pid=5552 on localhost:11593 at 12:44:31.438
+starting worker pid=1844 on localhost:11593 at 12:44:31.690
+starting worker pid=5572 on localhost:11593 at 12:44:31.949
+starting worker pid=1920 on localhost:11593 at 12:44:32.209
+starting worker pid=14992 on localhost:11593 at 12:44:32.461
+starting worker pid=16344 on localhost:11593 at 12:44:32.716
+starting worker pid=6308 on localhost:11593 at 12:44:32.969
+starting worker pid=17212 on localhost:11593 at 12:44:33.222
+starting worker pid=15276 on localhost:11593 at 12:44:33.477
+starting worker pid=8704 on localhost:11593 at 12:44:33.730
+Loading required package: Matrix
+Loading required package: Matrix
+Loading required package: Matrix
+Loading required package: Matrix
+Loading required package: Matrix
+Loading required package: Matrix
+Loading required package: Matrix
+Loading required package: Matrix
+Loading required package: Matrix
+Loading required package: Matrix
+Loading required package: Matrix
+Loading required package: foreach
+Loading required package: foreach
+Loading required package: foreach
+Loading required package: rngtools
+Loading required package: rngtools
+Loading required package: foreach
+Loading required package: foreach
+Loading required package: rngtools
+Loading required package: rngtools
+Loading required package: foreach
+Loading required package: foreach
+Loading required package: rngtools
+Loading required package: rngtools
+Loading required package: rngtools
+Loading required package: rngtools
+Loading required package: foreach
+Loading required package: foreach
+Loading required package: rngtools
+Loading required package: rngtools
+Loading required package: foreach
+Loading required package: rngtools
+Starting iteration 10 
+Starting iteration 20 
+Starting iteration 30 
+Starting iteration 40 
+Starting iteration 50 
+starting worker pid=9488 on localhost:11593 at 12:47:02.777
+starting worker pid=15156 on localhost:11593 at 12:47:03.033
+starting worker pid=7704 on localhost:11593 at 12:47:03.287
+starting worker pid=9392 on localhost:11593 at 12:47:03.545
+starting worker pid=9908 on localhost:11593 at 12:47:03.803
+starting worker pid=11016 on localhost:11593 at 12:47:04.058
+starting worker pid=10284 on localhost:11593 at 12:47:04.311
+starting worker pid=16632 on localhost:11593 at 12:47:04.563
+starting worker pid=13220 on localhost:11593 at 12:47:04.819
+starting worker pid=5432 on localhost:11593 at 12:47:05.071
+starting worker pid=4372 on localhost:11593 at 12:47:05.326
+Loading required package: Matrix
+Loading required package: Matrix
+Loading required package: Matrix
+Loading required package: Matrix
+Loading required package: Matrix
+Loading required package: Matrix
+Loading required package: Matrix
+Loading required package: Matrix
+Loading required package: Matrix
+Loading required package: Matrix
+Loading required package: Matrix
+Loading required package: foreach
+Loading required package: rngtools
+Loading required package: foreach
+Loading required package: foreach
+Loading required package: foreach
+Loading required package: rngtools
+Loading required package: rngtools
+Loading required package: foreach
+Loading required package: rngtools
+Loading required package: rngtools
+Loading required package: foreach
+Loading required package: rngtools
+Loading required package: foreach
+Loading required package: foreach
+Loading required package: foreach
+Loading required package: foreach
+Loading required package: rngtools
+Loading required package: foreach
+Loading required package: rngtools
+Loading required package: rngtools
+Loading required package: rngtools
+Loading required package: rngtools
+Starting iteration 10 
+Starting iteration 20 
+Starting iteration 30 
+Starting iteration 40 
+Starting iteration 50 
+There were 16 warnings (use warnings() to see them)
+There were 20 warnings (use warnings() to see them)
+There were 16 warnings (use warnings() to see them)
+There were 20 warnings (use warnings() to see them)
+There were 16 warnings (use warnings() to see them)
+There were 16 warnings (use warnings() to see them)
+There were 20 warnings (use warnings() to see them)
+There were 20 warnings (use warnings() to see them)
+There were 16 warnings (use warnings() to see them)
+There were 20 warnings (use warnings() to see them)
+There were 20 warnings (use warnings() to see them)
+Error in unserialize(node$con) : error reading from connection
+Calls: <Anonymous> ... doTryCatch -> recvData -> recvData.SOCKnode -> unserialize
+Error in unserialize(node$con) : error reading from connection
+Calls: <Anonymous> ... doTryCatch -> recvData -> recvData.SOCKnode -> unserialize
+Error in unserialize(node$con) : error reading from connection
+Calls: <Anonymous> ... doTryCatch -> recvData -> recvData.SOCKnode -> unserialize
+Error in unserialize(node$con) : error reading from connection
+Calls: <Anonymous> ... doTryCatch -> recvData -> recvData.SOCKnode -> unserialize
+Error in unserialize(node$con) : error reading from connection
+Calls: <Anonymous> ... doTryCatch -> recvData -> recvData.SOCKnode -> unserialize
+Error in unserialize(node$con) : error reading from connection
+Calls: <Anonymous> ... doTryCatch -> recvData -> recvData.SOCKnode -> unserialize
+Execution halted
+Error in unserialize(node$con) : error reading from connection
+Calls: <Anonymous> ... doTryCatch -> recvData -> recvData.SOCKnode -> unserialize
+Error in unserialize(node$con) : error reading from connection
+Calls: <Anonymous> ... doTryCatch -> recvData -> recvData.SOCKnode -> unserialize
+Error in unserialize(node$con) : error reading from connection
+Calls: <Anonymous> ... doTryCatch -> recvData -> recvData.SOCKnode -> unserialize
+Execution halted
+Execution halted
+Execution halted
+Error in unserialize(node$con) : error reading from connection
+Calls: <Anonymous> ... doTryCatch -> recvData -> recvData.SOCKnode -> unserialize
+Execution halted
+Execution halted
+Execution halted
+Execution halted
+Execution halted
+Error in unserialize(node$con) : error reading from connection
+Calls: <Anonymous> ... doTryCatch -> recvData -> recvData.SOCKnode -> unserialize
+Execution halted
+Execution halted

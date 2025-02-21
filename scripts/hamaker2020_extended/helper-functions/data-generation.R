@@ -1,28 +1,25 @@
 library(tidyverse)
 
-glmm_data_generation <- function(N_total = 5000, # number of clusters
-                                 T_total = 20, # number of observations within a cluster, originally set to 4.
-                                 predictor.type = "continuous", # type of predictor
-                                 outcome.type = "continuous", # type of outcome
-                                 
-                                 # PREDICTOR
-                                 sdX.within = sqrt(1),		# within-person variance 
-                                 sdX.between = sqrt(4),	# between-person variance
-                                 # if set to zero, the marginal effect will become approximately equal to the conditional effect.
-                                 
-                                 # INTERCEPT LEVEL 2
-                                 g.00 = 0,			# Grand intercept
-                                 g.01 = 2,			# between-cluster slope
-                                 sd.u0 = 1,			# SD of residuals intercept at level 2
-                                 
-                                 # SLOPE LEVEL 2
-                                 g.10 = 1,			# fixed within-cluster slope
-                                 sd.u1 = 0,			# SD of within-cluster slope at level 2
-                                 
-                                 # RESIDUALS AT LEVEL 1
-                                 sd.e = 1			# residual SD at level 1 (only used when outcome.type is continuous)
-){
+glmm_data_generation <- function(N_total, T_total, predictor.type, outcome.type, 
+                                 sdX.within, sdX.between, g.00, g.01, sd.u0, g.10, sd.u1, sd.e){
   
+  # Function to generate data for a generalized linear mixed model
+  # input element     description
+  # ----------------  ---------------------------------------------------
+  # N_total           number of clusters
+  # T_total           number of observations within a cluster
+  # predictor.type    type of predictor
+  # outcome.type      type of outcome
+  # sdX.within        within-person variance
+  # sdX.between       between-person variance
+  # g.00              grand intercept
+  # g.01              between-cluster slope
+  # sd.u0             SD of residuals intercept at level 2
+  # g.10              fixed within-cluster slope
+  # sd.u1             SD of within-cluster slope at level 2
+  # sd.e              residual SD at level 1 (only used when outcome.type is continuous)
+  
+  # Check input
   stopifnot(predictor.type %in% c("continuous", "binary"))
   stopifnot(outcome.type %in% c("continuous", "binary"))
   
@@ -84,30 +81,53 @@ glmm_data_generation <- function(N_total = 5000, # number of clusters
 
 if(0){
   
+  ### Make Evaluation Plots
   library(ggplot2)
   
-  # generate continuous data
+  # generate continuous X and Y
   data_cont <- glmm_data_generation(N_total = 5000, T_total = 20, predictor.type = "continuous", outcome.type = "continuous",
                                     sdX.within = sqrt(1), sdX.between = sqrt(4), g.00 = 0, g.01 = 2, sd.u0 = 1,
                                     g.10 = 1, sd.u1 = 0, sd.e = 1)
   
+  # 1. check distributions of X and Y
   ggplot(data_cont, aes(x = Y)) + geom_histogram(aes(y = ..density..), bins = 30, fill = "lightblue", color = "black") +
     geom_density(alpha = 0.5, fill = "blue") + labs(title = "Histogram of Y")
   ggplot(data_cont, aes(x = X)) + geom_histogram(aes(y = ..density..), bins = 30, fill = "lightblue", color = "black") +
     geom_density(alpha = 0.5, fill = "blue") + labs(title = "Histogram of X")
   
-  # generate binary data
+  # generate binary X and continuous Y
+  data_binx_conty <- glmm_data_generation(N_total = 5000, T_total = 10, predictor.type = "binary", outcome.type = "continuous",
+                                    sdX.within = sqrt(1), sdX.between = sqrt(0.4), g.00 = 0, g.01 = 2, sd.u0 = 1,
+                                    g.10 = 1, sd.u1 = 0, sd.e = 1)
+  
+  # 1. check distributions of X and Y
+  ggplot(data_binx_conty, aes(x = Y)) + geom_histogram(aes(y = ..density..), bins = 30, fill = "lightblue", color = "black") +
+    geom_density(alpha = 0.5, fill = "blue") + labs(title = "Histogram of Y")
+  ggplot(data_binx_conty, aes(x = X)) + geom_histogram(aes(y = ..density..), bins = 30, fill = "lightblue", color = "black") +
+    geom_density(alpha = 0.5, fill = "blue") + labs(title = "Histogram of X")
+  
+  # 2. histograms with density overlay for evaluation of probability distributions  
+  ggplot(data_binx_conty, aes(x = p_X_mean)) + geom_histogram(aes(y = ..density..), bins = 30, fill = "lightblue", color = "black") +
+    geom_density(alpha = 0.5, fill = "blue") + labs(title = "Histogram of p_X_mean")
+  
+  # when sdX.between is large (e.g, sqrt(4)) the distribution of probabilities 
+  # of X and Y are U/bowl shaped (higher density at the edges)
+  # when sdX.between is small (e.g., sqrt(0.4)) the distribution of probabilities
+  # of X and Y are inverted U shaped (higher density in the center)
+  
+  # generate binary X and Y
   data_binary <- glmm_data_generation(N_total = 5000, T_total = 20, predictor.type = "binary", outcome.type = "binary",
                                       sdX.within = sqrt(1), sdX.between = sqrt(4), g.00 = 0, g.01 = 2, sd.u0 = 1,
                                       g.10 = 1, sd.u1 = 0, sd.e = 1)
   
+  # 1. check distributions of X and Y
   ggplot(data_binary, aes(x = Y)) + geom_histogram(aes(y = ..density..), bins = 30, fill = "lightblue", color = "black") +
     geom_density(alpha = 0.5, fill = "blue") + labs(title = "Histogram of Y")
   ggplot(data_binary, aes(x = X)) + geom_histogram(aes(y = ..density..), bins = 30, fill = "lightblue", color = "black") +
     geom_density(alpha = 0.5, fill = "blue") + labs(title = "Histogram of X")
   
-  ### Make Evaluation Plots
-  # 1. histograms with density overlay for evaluation of probability distributions
+  
+  # 2. histograms with density overlay for evaluation of probability distributions
   
   ggplot(data_binary, aes(x = p_X_mean)) + geom_histogram(aes(y = ..density..), bins = 30, fill = "lightblue", color = "black") +
     geom_density(alpha = 0.5, fill = "blue") + labs(title = "Histogram of p_X_mean")
@@ -122,7 +142,7 @@ if(0){
   # when sdX.between is moderate (e.g., sqrt(2)) the distribution of probabilities
   # is more uniform but inverted U shaped for X and slightly U shaped for Y.
   
-  # 2. scatterplots for evaluation of relationship between probabilities and originating variables
+  # 3. scatterplots for evaluation of relationship between probabilities and originating variables
   
   ggplot(data_binary, aes(x = X_mean, y = p_X_mean)) + geom_point() + labs(title = "Scatterplot of X_mean and p_X_mean")
   # As expected, we see a a sigmoid curve representing the logit relationship between X_mean 
