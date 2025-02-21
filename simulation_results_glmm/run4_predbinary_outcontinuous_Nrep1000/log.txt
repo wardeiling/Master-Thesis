@@ -109,3 +109,57 @@ Starting iteration 540
 Starting iteration 550 
 Starting iteration 560 
 Starting iteration 570 
+Starting iteration 580 
+Starting iteration 590 
+Starting iteration 600 
+Starting iteration 610 
+Starting iteration 620 
+Starting iteration 630 
+Starting iteration 640 
+Starting iteration 650 
+Starting iteration 660 
+Starting iteration 670 
+Starting iteration 680 
+Starting iteration 690 
+Starting iteration 700 
+Starting iteration 710 
+Starting iteration 720 
+Starting iteration 730 
+Starting iteration 740 
+Starting iteration 750 
+Starting iteration 760 
+Starting iteration 770 
+Starting iteration 780 
+Starting iteration 790 
+Starting iteration 800 
+Starting iteration 810 
+Starting iteration 820 
+Starting iteration 830 
+Starting iteration 840 
+Starting iteration 850 
+Starting iteration 860 
+Starting iteration 870 
+Starting iteration 880 
+Starting iteration 890 
+Starting iteration 900 
+Starting iteration 910 
+Starting iteration 920 
+Starting iteration 930 
+Starting iteration 940 
+Starting iteration 950 
+Starting iteration 960 
+Starting iteration 970 
+Starting iteration 980 
+Starting iteration 990 
+Starting iteration 1000 
+There were 50 or more warnings (use warnings() to see the first 50)
+There were 50 or more warnings (use warnings() to see the first 50)
+There were 50 or more warnings (use warnings() to see the first 50)
+There were 50 or more warnings (use warnings() to see the first 50)
+There were 50 or more warnings (use warnings() to see the first 50)
+There were 50 or more warnings (use warnings() to see the first 50)
+There were 50 or more warnings (use warnings() to see the first 50)
+There were 50 or more warnings (use warnings() to see the first 50)
+There were 50 or more warnings (use warnings() to see the first 50)
+There were 50 or more warnings (use warnings() to see the first 50)
+There were 50 or more warnings (use warnings() to see the first 50)

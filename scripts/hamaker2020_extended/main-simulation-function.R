@@ -92,7 +92,7 @@ nsim = 1000
 N_total = 200
 T_total = 10
 
-sdX.within <- sqrt(1)
+sdX.within = sqrt(1)
 g.00 = 0
 g.01 = 2
 sd.u0 = 1
