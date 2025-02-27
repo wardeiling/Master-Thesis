@@ -53,14 +53,14 @@ run_simulation <- function(runname = "run1", seed = 4243, nsim = 1000, N_total =
     # Fit models
     models <- glmm_model_fitting(data, outcome.type = outcome.type)
     
-    # Format results
-    result_table <- glmm_formating_results(models)
-    
-    return(result_table)
+    return(models)
   }
   
   # Stop parallel backend
   stopCluster(cl)
+  
+  # Apply result formatting **only once**
+  formatted_results <- lapply(parallel_results, glmm_formating_results)
   
   # Compute mean results
   mean_results <- Reduce("+", parallel_results) / nsim
@@ -105,27 +105,27 @@ sdX.between.binary = sqrt(0.4) # to ensure that we have reallistic values (not s
 sd.e.continuous = 1
 sd.e.binary = 0 # irrelevant for binary outcomes
 
-# contxy_sim <- run_simulation(runname = "run4", seed = seed, nsim = nsim, N_total = N_total, T_total = T_total,
-#                            predictor.type = "continuous", outcome.type = "continuous",
-#                            sdX.within = sdX.within, sdX.between = sdX.between.continuous,
-#                            g.00 = g.00, g.01 = g.01, sd.u0 = sd.u0, g.10 = g.10,
-#                            sd.u1 = sd.u1, sd.e = sd.e.continuous)
-# 
-# contxy_sim$mean_results
-# contxy_sim$monte_carlo_se
+contxy_sim <- run_simulation(runname = "update_output_format", seed = seed, nsim = nsim, N_total = N_total, T_total = T_total,
+                           predictor.type = "continuous", outcome.type = "continuous",
+                           sdX.within = sdX.within, sdX.between = sdX.between.continuous,
+                           g.00 = g.00, g.01 = g.01, sd.u0 = sd.u0, g.10 = g.10,
+                           sd.u1 = sd.u1, sd.e = sd.e.continuous)
+
+contxy_sim$mean_results
+contxy_sim$monte_carlo_se
 #
 # observations
 # - once we increase T_total, the total effect is comprised more of the within-person effect, which explains
 #   the similarity between the "uninterpretable blend" of raw X and the within-person effects.
 
-# binx_conty_sim <- run_simulation(runname = "run4", seed = seed, nsim = nsim, N_total = N_total, T_total = T_total, 
-#                            predictor.type = "binary", outcome.type = "continuous",
-#                            sdX.within = sdX.within, sdX.between = sdX.between.binary, 
-#                            g.00 = g.00, g.01 = g.01, sd.u0 = sd.u0, g.10 = g.10, 
-#                            sd.u1 = sd.u1, sd.e = sd.e.continuous)
-# 
-# binx_conty_sim$mean_results
-# binx_conty_sim$monte_carlo_se
+binx_conty_sim <- run_simulation(runname = "update_eta_calc", seed = seed, nsim = nsim, N_total = N_total, T_total = T_total,
+                           predictor.type = "binary", outcome.type = "continuous",
+                           sdX.within = sdX.within, sdX.between = sdX.between.binary,
+                           g.00 = g.00, g.01 = g.01, sd.u0 = sd.u0, g.10 = g.10,
+                           sd.u1 = sd.u1, sd.e = sd.e.continuous)
+
+binx_conty_sim$mean_results
+binx_conty_sim$monte_carlo_se
 
 # contx_biny_sim <- run_simulation(runname = "run1",seed = seed, nsim = nsim, N_total = N_total, T_total = T_total, 
 #                            predictor.type = "continuous", outcome.type = "binary",
