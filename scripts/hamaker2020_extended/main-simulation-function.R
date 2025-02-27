@@ -59,11 +59,14 @@ run_simulation <- function(runname = "run1", seed = 4243, nsim = 1000, N_total =
   # Stop parallel backend
   stopCluster(cl)
   
+  # Save all raw results
+  saveRDS(parallel_results, file = paste0("simulation_results_glmm/", runname_upd, "/parallel_results.rds"))
+  
   # Apply result formatting **only once**
   formatted_results <- lapply(parallel_results, glmm_formating_results)
   
   # Compute mean results
-  mean_results <- Reduce("+", parallel_results) / nsim
+  mean_results <- Reduce("+", formatted_results) / nsim
   
   # Compute variance (unbiased estimator)
   var_results <- Reduce("+", lapply(parallel_results, function(x) (x - mean_results)^2)) / (nsim - 1)
