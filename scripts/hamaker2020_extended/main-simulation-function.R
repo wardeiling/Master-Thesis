@@ -108,7 +108,7 @@ sdX.between.binary = sqrt(0.4) # to ensure that we have reallistic values (not s
 sd.e.continuous = 1
 sd.e.binary = 0 # irrelevant for binary outcomes
 
-contxy_sim <- run_simulation(runname = "update_output_format", seed = seed, nsim = nsim, N_total = N_total, T_total = T_total,
+contxy_sim <- run_simulation(runname = "update_output_format2", seed = seed, nsim = nsim, N_total = N_total, T_total = T_total,
                            predictor.type = "continuous", outcome.type = "continuous",
                            sdX.within = sdX.within, sdX.between = sdX.between.continuous,
                            g.00 = g.00, g.01 = g.01, sd.u0 = sd.u0, g.10 = g.10,
