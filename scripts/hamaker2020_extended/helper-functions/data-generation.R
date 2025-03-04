@@ -37,7 +37,7 @@ glmm_data_generation <- function(N_total, T_total, predictor.type, outcome.type,
     b0 = rep(b0.j, each = T_total),
     b1 = rep(b1.j, each = T_total),
     p.X.mean.j = rep(p.X.mean.j, each = T_total),
-    X = NA, eta = NA, Y = NA, p.Y = NA  # Preallocate necessary columns
+    X = NA, eta = NA, Y = NA, p.Y = NA
   )
   
   # Generate Level 1 data
@@ -47,14 +47,14 @@ glmm_data_generation <- function(N_total, T_total, predictor.type, outcome.type,
     # Generate predictor
     if (predictor.type == "continuous") {
       X.jt <- rnorm(T_total, mean = X.mean.j[j], sd = sdX.within)
-      # eta.jt <- b0.j[j] + b1.j[j] * (X.jt - X.mean.j[j])
+      eta.jt <- b0.j[j] + b1.j[j] * (X.jt - X.mean.j[j])
     } else {
       X.jt <- rbinom(T_total, 1, p.X.mean.j[j])
-      # eta.jt <- b0.j[j] + b1.j[j] * (X.jt - p.X.mean.j[j])
+      eta.jt <- b0.j[j] + b1.j[j] * (X.jt)
     }
     
     # # Compute eta and outcome
-    eta.jt <- b0.j[j] + b1.j[j] * (X.jt - X.mean.j[j])
+    # eta.jt <- b0.j[j] + b1.j[j] * (X.jt - X.mean.j[j])
     
     if (outcome.type == "continuous") {
       Y.jt <- eta.jt + rnorm(T_total, mean = 0, sd = sd.e)
@@ -83,32 +83,39 @@ glmm_data_generation <- function(N_total, T_total, predictor.type, outcome.type,
 
 if(0){
   
-  ### Make Evaluation Plots
+  ### Make Evaluation Plots ###
   library(ggplot2)
   
-  # generate continuous X and Y
+  ### 1 generate continuous X and Y
   data_cont <- glmm_data_generation(N_total = 5000, T_total = 20, predictor.type = "continuous", outcome.type = "continuous",
                                     sdX.within = sqrt(1), sdX.between = sqrt(4), g.00 = 0, g.01 = 2, sd.u0 = 1,
                                     g.10 = 1, sd.u1 = 0, sd.e = 1)
   
-  # 1. check distributions of X and Y
+  # 1.1 check distributions of X and Y
   ggplot(data_cont, aes(x = Y)) + geom_histogram(aes(y = ..density..), bins = 30, fill = "lightblue", color = "black") +
     geom_density(alpha = 0.5, fill = "blue") + labs(title = "Histogram of Y")
   ggplot(data_cont, aes(x = X)) + geom_histogram(aes(y = ..density..), bins = 30, fill = "lightblue", color = "black") +
     geom_density(alpha = 0.5, fill = "blue") + labs(title = "Histogram of X")
   
-  # generate binary X and continuous Y
+  # 1.2 check histogram of eta
+  ggplot(data_cont, aes(x = eta)) + geom_histogram(aes(y = ..density..), bins = 30, fill = "lightblue", color = "black") +
+    geom_density(alpha = 0.5, fill = "blue") + labs(title = "Histogram of eta")
+  
+  ### 2 generate binary X and continuous Y
   data_binx_conty <- glmm_data_generation(N_total = 5000, T_total = 10, predictor.type = "binary", outcome.type = "continuous",
-                                    sdX.within = sqrt(1), sdX.between = sqrt(0.4), g.00 = 0, g.01 = 2, sd.u0 = 1,
+                                    sdX.within = sqrt(0.2), sdX.between = sqrt(0.5), g.00 = 0, g.01 = 2, sd.u0 = 1,
                                     g.10 = 1, sd.u1 = 0, sd.e = 1)
   
-  # 1. check distributions of X and Y
+  # 2.1 check distributions of X and Y
   ggplot(data_binx_conty, aes(x = Y)) + geom_histogram(aes(y = ..density..), bins = 30, fill = "lightblue", color = "black") +
     geom_density(alpha = 0.5, fill = "blue") + labs(title = "Histogram of Y")
   ggplot(data_binx_conty, aes(x = X)) + geom_histogram(aes(y = ..density..), bins = 30, fill = "lightblue", color = "black") +
     geom_density(alpha = 0.5, fill = "blue") + labs(title = "Histogram of X")
   
-  # 2. histograms with density overlay for evaluation of probability distributions  
+  # 2.2 histograms of eta and p.X.mean.j
+  ggplot(data_binx_conty, aes(x = eta)) + geom_histogram(aes(y = ..density..), bins = 30, fill = "lightblue", color = "black") +
+    geom_density(alpha = 0.5, fill = "blue") + labs(title = "Histogram of eta")
+  # eta is nicely distributed with -4 to 5 range
   ggplot(data_binx_conty, aes(x = p.X.mean.j)) + geom_histogram(aes(y = ..density..), bins = 30, fill = "lightblue", color = "black") +
     geom_density(alpha = 0.5, fill = "blue") + labs(title = "Histogram of p.X.mean.j")
   
@@ -117,24 +124,47 @@ if(0){
   # when sdX.between is small (e.g., sqrt(0.4)) the distribution of probabilities
   # of X and Y are inverted U shaped (higher density in the center)
   
-  # generate binary X and Y
-  data_binary <- glmm_data_generation(N_total = 5000, T_total = 20, predictor.type = "binary", outcome.type = "binary",
-                                      sdX.within = sqrt(1), sdX.between = sqrt(0.4), g.00 = -0.5, g.01 = 0, sd.u0 = 1,
-                                      g.10 = 1, sd.u1 = 0, sd.e = 1)
+  # 3 generate continuous X and binary Y
+  data_contx_biny <- glmm_data_generation(N_total = 5000, T_total = 20, predictor.type = "continuous", outcome.type = "binary",
+                                        sdX.within = 0.15, sdX.between = 0.6, g.00 = 0, g.01 = 1, sd.u0 = 0.5,
+                                        g.10 = 0.5, sd.u1 = 0, sd.e = NA)
+  summary(data_contx_biny)
+  # I lowered the values until the range of eta was approximately -3 to 3, roughly corresponding to probabilities of 0.05 to 0.95.
+  # This was done to ensure that the probabilities are not too close to 0 or 1, which would make the logit transformation unstable.
   
-  # 1. check distributions of X and Y
+  # 3.1 check distributions of X and Y
+  ggplot(data_contx_biny, aes(x = Y)) + geom_histogram(aes(y = ..density..), bins = 30, fill = "lightblue", color = "black") +
+    geom_density(alpha = 0.5, fill = "blue") + labs(title = "Histogram of Y")
+  ggplot(data_contx_biny, aes(x = X)) + geom_histogram(aes(y = ..density..), bins = 30, fill = "lightblue", color = "black") +
+    geom_density(alpha = 0.5, fill = "blue") + labs(title = "Histogram of X")
+  
+  # 3.2 check distributions of eta and p_y
+  ggplot(data_contx_biny, aes(x = eta)) + geom_histogram(aes(y = ..density..), bins = 30, fill = "lightblue", color = "black") +
+    geom_density(alpha = 0.5, fill = "blue") + labs(title = "Histogram of eta")
+  ggplot(data_contx_biny, aes(x = p.Y)) + geom_histogram(aes(y = ..density..), bins = 30, fill = "lightblue", color = "black") +
+    geom_density(alpha = 0.5, fill = "blue") + labs(title = "Histogram of p_y")
+  
+  # 4 generate binary X and Y
+  data_binary <- glmm_data_generation(N_total = 5000, T_total = 20, predictor.type = "binary", outcome.type = "binary",
+                                      sdX.within = 0.15, sdX.between = 0.6, g.00 = -0.51, g.01 = 0.5, sd.u0 = 0.45,
+                                      g.10 = 1, sd.u1 = 0, sd.e = NA)
+  summary(data_binary)
+  # similar to (3), I lowered the values until the range of eta was approximately -3 to 3, roughly corresponding to probabilities of 0.05 to 0.95.
+  # In addition, I made sure eta was centered approximately at 0 to ensure balanced probabilities (mean of 0.5)
+
+  # 4.1 check distributions of X and Y
   ggplot(data_binary, aes(x = Y)) + geom_histogram(aes(y = ..density..), bins = 30, fill = "lightblue", color = "black") +
     geom_density(alpha = 0.5, fill = "blue") + labs(title = "Histogram of Y")
   ggplot(data_binary, aes(x = X)) + geom_histogram(aes(y = ..density..), bins = 30, fill = "lightblue", color = "black") +
     geom_density(alpha = 0.5, fill = "blue") + labs(title = "Histogram of X")
   
   
-  # 2. histograms with density overlay for evaluation of probability distributions
-  
+  # 4.2 histograms with density overlay for evaluation of probability distributions
+  ggplot(data_binary, aes(x = eta)) + geom_histogram(aes(y = ..density..), bins = 30, fill = "lightblue", color = "black") +
+    geom_density(alpha = 0.5, fill = "blue") + labs(title = "Histogram of eta")
   ggplot(data_binary, aes(x = p.X.mean.j)) + geom_histogram(aes(y = ..density..), bins = 30, fill = "lightblue", color = "black") +
     geom_density(alpha = 0.5, fill = "blue") + labs(title = "Histogram of p.X.mean.j")
-  
-  ggplot(data_binary, aes(x = p_y)) + geom_histogram(aes(y = ..density..), bins = 30, fill = "lightblue", color = "black") +
+  ggplot(data_binary, aes(x = p.Y)) + geom_histogram(aes(y = ..density..), bins = 30, fill = "lightblue", color = "black") +
     geom_density(alpha = 0.5, fill = "blue") + labs(title = "Histogram of p_y")
   
   # when sdX.between is large (e.g, sqrt(4)) the distribution of probabilities 
@@ -144,13 +174,13 @@ if(0){
   # when sdX.between is moderate (e.g., sqrt(2)) the distribution of probabilities
   # is more uniform but inverted U shaped for X and slightly U shaped for Y.
   
-  # 3. scatterplots for evaluation of relationship between probabilities and originating variables
+  # 4.3 scatterplots for evaluation of relationship between probabilities and originating variables
   
   ggplot(data_binary, aes(x = X.mean.j, y = p.X.mean.j)) + geom_point() + labs(title = "Scatterplot of X.mean.j and p.X.mean.j")
   # As expected, we see a a sigmoid curve representing the logit relationship between X.mean.j 
   # and p.X.mean.j. It is more pronounced (different from linear) when sdX.between is large.
   
-  ggplot(data_binary, aes(x = eta, y = p_y)) + geom_point() + labs(title = "Scatterplot of eta and p_y")
+  ggplot(data_binary, aes(x = eta, y = p.Y)) + geom_point() + labs(title = "Scatterplot of eta and p_y")
   # As expected again, we see a sigmoid curve representing the logit relationship between eta
   # and p_y. It is more pronounced (different from linear) when sdX.between and sd.u0 are large.
 }

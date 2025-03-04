@@ -130,14 +130,13 @@ binx_conty_sim <- run_simulation(runname = "update_eta_calc", seed = seed, nsim 
 binx_conty_sim$mean_results
 binx_conty_sim$monte_carlo_se
 
-# contx_biny_sim <- run_simulation(runname = "run1",seed = seed, nsim = nsim, N_total = N_total, T_total = T_total, 
-#                            predictor.type = "continuous", outcome.type = "binary",
-#                            sdX.within = sdX.within, sdX.between = sdX.between.continuous, 
-#                            g.00 = g.00, g.01 = g.01, sd.u0 = sd.u0, g.10 = g.10, 
-#                            sd.u1 = sd.u1, sd.e = sd.e.binary)
-# 
-# contx_biny_sim$mean_results
-# contx_biny_sim$monte_carlo_se
+contx_biny_sim <- run_simulation(runname = "run1",seed = seed, nsim = nsim, N_total = 5000, T_total = 20, 
+                                 predictor.type = "continuous", outcome.type = "binary",
+                                 sdX.within = 0.15, sdX.between = 0.6, g.00 = 0, g.01 = 1, sd.u0 = 0.5,
+                                 g.10 = 0.5, sd.u1 = 0, sd.e = NA)
+
+contx_biny_sim$mean_results
+contx_biny_sim$monte_carlo_se
 
 binaryxy_sim <- run_simulation(runname = "run1", seed = seed, nsim = nsim, N_total = N_total, T_total = T_total, 
                            predictor.type = "binary", outcome.type = "binary",
@@ -147,3 +146,11 @@ binaryxy_sim <- run_simulation(runname = "run1", seed = seed, nsim = nsim, N_tot
 
 binaryxy_sim$mean_results
 binaryxy_sim$monte_carlo_se
+
+### Retrieve results
+
+# output from GLMM with logit link is in log-odds, so to get the probability we need to transform it
+# p = exp(logit) / (1 + exp(logit))
+
+# transform every element in matrix mean_results
+apply(mean_results, c(1, 2), function(x) exp(x) / (1 + exp(x)))
