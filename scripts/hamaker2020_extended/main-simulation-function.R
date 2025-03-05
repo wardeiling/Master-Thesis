@@ -92,60 +92,44 @@ run_simulation <- function(runname = "run1", seed = 4243, nsim = 1000, N_total =
 # stable specifications across simulations
 seed = 4243
 nsim = 1000
-N_total = 200
-T_total = 10
+# N_total = 200
+# T_total = 10
 
-sdX.within = sqrt(1)
-g.00 = 0
-g.01 = 2
-sd.u0 = 1
-g.10 = 1
-sd.u1 = 0
-
-# varying specifications across simulations
-sdX.between.continuous = sqrt(4)
-sdX.between.binary = sqrt(0.4) # to ensure that we have reallistic values (not some people only having 0 or 1)
-sd.e.continuous = 1
-sd.e.binary = 0 # irrelevant for binary outcomes
-
-contxy_sim <- run_simulation(runname = "update_output_format2", seed = seed, nsim = nsim, N_total = N_total, T_total = T_total,
-                           predictor.type = "continuous", outcome.type = "continuous",
-                           sdX.within = sdX.within, sdX.between = sdX.between.continuous,
-                           g.00 = g.00, g.01 = g.01, sd.u0 = sd.u0, g.10 = g.10,
-                           sd.u1 = sd.u1, sd.e = sd.e.continuous)
-
-contxy_sim$mean_results
-contxy_sim$monte_carlo_se
+# contxy_sim <- run_simulation(runname = "update_output_format2", seed = seed, nsim = nsim, N_total = 200, T_total = 10, 
+#                              predictor.type = "continuous", outcome.type = "continuous",
+#                              sdX.within = 0.25, sdX.between = 0.5, g.00 = 0, g.01 = 1, sd.u0 = 0.5,
+#                              g.10 = 0.5, sd.u1 = 0, sd.e = 0.5)
+# 
+# contxy_sim$mean_results
+# contxy_sim$monte_carlo_se
 #
 # observations
 # - once we increase T_total, the total effect is comprised more of the within-person effect, which explains
 #   the similarity between the "uninterpretable blend" of raw X and the within-person effects.
 
-binx_conty_sim <- run_simulation(runname = "update_eta_calc", seed = seed, nsim = nsim, N_total = N_total, T_total = T_total,
-                           predictor.type = "binary", outcome.type = "continuous",
-                           sdX.within = sdX.within, sdX.between = sdX.between.binary,
-                           g.00 = g.00, g.01 = g.01, sd.u0 = sd.u0, g.10 = g.10,
-                           sd.u1 = sd.u1, sd.e = sd.e.continuous)
+binx_conty_sim <- run_simulation(runname = "update_eta_calc", seed = seed, nsim = nsim, N_total = 200, T_total = 10, 
+                                 predictor.type = "binary", outcome.type = "continuous",
+                                 sdX.within = NA, sdX.between = 0.5, g.00 = -0.25, g.01 = 1, sd.u0 = 0.5,
+                                 g.10 = 0.5, sd.u1 = 0, sd.e = 0.5)
 
 binx_conty_sim$mean_results
 binx_conty_sim$monte_carlo_se
 
-contx_biny_sim <- run_simulation(runname = "run1",seed = seed, nsim = nsim, N_total = 5000, T_total = 20, 
-                                 predictor.type = "continuous", outcome.type = "binary",
-                                 sdX.within = 0.15, sdX.between = 0.6, g.00 = 0, g.01 = 1, sd.u0 = 0.5,
-                                 g.10 = 0.5, sd.u1 = 0, sd.e = NA)
-
-contx_biny_sim$mean_results
-contx_biny_sim$monte_carlo_se
-
-binaryxy_sim <- run_simulation(runname = "run1", seed = seed, nsim = nsim, N_total = N_total, T_total = T_total, 
-                           predictor.type = "binary", outcome.type = "binary",
-                           sdX.within = sdX.within, sdX.between = sdX.between.binary, 
-                           g.00 = g.00, g.01 = g.01, sd.u0 = sd.u0, g.10 = g.10, 
-                           sd.u1 = sd.u1, sd.e = sd.e.binary)
-
-binaryxy_sim$mean_results
-binaryxy_sim$monte_carlo_se
+# contx_biny_sim <- run_simulation(runname = "run1",seed = seed, nsim = nsim, N_total = 200, T_total = 10, 
+#                                  predictor.type = "continuous", outcome.type = "binary",
+#                                  sdX.within = 0.25, sdX.between = 0.5, g.00 = 0, g.01 = 1, sd.u0 = 0.5,
+#                                  g.10 = 0.5, sd.u1 = 0, sd.e = NA)
+# 
+# contx_biny_sim$mean_results
+# contx_biny_sim$monte_carlo_se
+# 
+# binaryxy_sim <- run_simulation(runname = "run1", seed = seed, nsim = nsim, N_total = 200, T_total = 10, 
+#                                predictor.type = "binary", outcome.type = "binary",
+#                                sdX.within = NA, sdX.between = 0.5, g.00 = -0.25, g.01 = 0.5, sd.u0 = 0.5,
+#                                g.10 = 0.5, sd.u1 = 0, sd.e = NA)
+# 
+# binaryxy_sim$mean_results
+# binaryxy_sim$monte_carlo_se
 
 ### Retrieve results
 
@@ -153,4 +137,4 @@ binaryxy_sim$monte_carlo_se
 # p = exp(logit) / (1 + exp(logit))
 
 # transform every element in matrix mean_results
-apply(mean_results, c(1, 2), function(x) exp(x) / (1 + exp(x)))
+# apply(mean_results, c(1, 2), function(x) exp(x) / (1 + exp(x)))

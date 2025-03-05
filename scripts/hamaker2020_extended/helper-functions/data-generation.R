@@ -4,13 +4,24 @@ glmm_data_generation <- function(N_total, T_total, predictor.type, outcome.type,
                                  sdX.within, sdX.between, g.00, g.01, sd.u0, g.10, sd.u1, sd.e){
   
   # Function to generate data for a generalized linear mixed model
+  # ---------------------------------------------------------------------
+  # when the outcome is continuous, we simulate the mixed linear model,
+  # in which we add residual error to the linear predictor eta.
+  # when the outcome is binary, we simulate the mixed logistic model,
+  # in which we convert the linear predictor eta to probability p and
+  # generate binary outcome Y from the probability.
+  # ---------------------------------------------------------------------
+  # when the predictor is continuous, we center it around the cluster mean.
+  # when the predictor is binary, we don't center it, but we rely on the 
+  # (latent) cluster mean in b0.j.
+  
   # input element     description
   # ----------------  ---------------------------------------------------
   # N_total           number of clusters
   # T_total           number of observations within a cluster
   # predictor.type    type of predictor
   # outcome.type      type of outcome
-  # sdX.within        within-person variance
+  # sdX.within        within-person variance (only used when predictor.type is continuous)
   # sdX.between       between-person variance
   # g.00              grand intercept
   # g.01              between-cluster slope
@@ -25,7 +36,7 @@ glmm_data_generation <- function(N_total, T_total, predictor.type, outcome.type,
   
   # Precompute Level 2 (Cluster-Level) Variables
   X.mean.j <- rnorm(N_total, mean = 0, sd = sdX.between)  # Cluster means
-  p.X.mean.j <- if (predictor.type == "binary") plogis(X.mean.j) else rep(NA, N_total)
+  p.X.mean.j <- if (predictor.type == "binary") plogis(X.mean.j) else rep(NA, N_total) # convert the log-odds (logit) to probability
   b0.j <- g.00 + g.01 * X.mean.j + rnorm(N_total, 0, sd.u0)  # Random intercepts
   b1.j <- g.10 + rnorm(N_total, 0, sd.u1)  # Random slopes
   
@@ -44,23 +55,23 @@ glmm_data_generation <- function(N_total, T_total, predictor.type, outcome.type,
   for (j in 1:N_total) {
     idx <- which(dta$Cluster == j)  # Rows belonging to cluster j
     
-    # Generate predictor
+    # Generate predictor and linear predictor eta
     if (predictor.type == "continuous") {
       X.jt <- rnorm(T_total, mean = X.mean.j[j], sd = sdX.within)
       eta.jt <- b0.j[j] + b1.j[j] * (X.jt - X.mean.j[j])
     } else {
       X.jt <- rbinom(T_total, 1, p.X.mean.j[j])
-      eta.jt <- b0.j[j] + b1.j[j] * (X.jt)
+      eta.jt <- b0.j[j] + b1.j[j] * X.jt
     }
     
-    # # Compute eta and outcome
-    # eta.jt <- b0.j[j] + b1.j[j] * (X.jt - X.mean.j[j])
-    
     if (outcome.type == "continuous") {
+      # add residual error to linear predictor
       Y.jt <- eta.jt + rnorm(T_total, mean = 0, sd = sd.e)
       p.Y.jt <- NA  # No probability needed for continuous outcome
     } else {
+      # convert the log-odds (logit) to probability
       p.Y.jt <- plogis(eta.jt)
+      # use probability to generate binary outcome
       Y.jt <- rbinom(T_total, 1, p.Y.jt)
     }
     
@@ -87,9 +98,14 @@ if(0){
   library(ggplot2)
   
   ### 1 generate continuous X and Y
-  data_cont <- glmm_data_generation(N_total = 5000, T_total = 20, predictor.type = "continuous", outcome.type = "continuous",
-                                    sdX.within = sqrt(1), sdX.between = sqrt(4), g.00 = 0, g.01 = 2, sd.u0 = 1,
-                                    g.10 = 1, sd.u1 = 0, sd.e = 1)
+  # data_cont <- glmm_data_generation(N_total = 5000, T_total = 4, predictor.type = "continuous", outcome.type = "continuous",
+  #                                   sdX.within = 1, sdX.between = 2, g.00 = 0, g.01 = 2, sd.u0 = 1,
+  #                                   g.10 = 1, sd.u1 = 0, sd.e = 1) # original values
+  data_cont <- glmm_data_generation(N_total = 5000, T_total = 10, predictor.type = "continuous", outcome.type = "continuous",
+                                    sdX.within = 0.25, sdX.between = 0.5, g.00 = 0, g.01 = 1, sd.u0 = 0.5,
+                                    g.10 = 0.5, sd.u1 = 0, sd.e = 0.5)
+  # decreased values to ensure that eta values are not too extreme (within -3 to 3 range)
+  summary(data_cont)
   
   # 1.1 check distributions of X and Y
   ggplot(data_cont, aes(x = Y)) + geom_histogram(aes(y = ..density..), bins = 30, fill = "lightblue", color = "black") +
@@ -103,8 +119,10 @@ if(0){
   
   ### 2 generate binary X and continuous Y
   data_binx_conty <- glmm_data_generation(N_total = 5000, T_total = 10, predictor.type = "binary", outcome.type = "continuous",
-                                    sdX.within = sqrt(0.2), sdX.between = sqrt(0.5), g.00 = 0, g.01 = 2, sd.u0 = 1,
-                                    g.10 = 1, sd.u1 = 0, sd.e = 1)
+                                    sdX.within = NA, sdX.between = 0.5, g.00 = -0.25, g.01 = 1, sd.u0 = 0.5,
+                                    g.10 = 0.5, sd.u1 = 0, sd.e = 0.5)
+  # same values as (1) but without sdX.within
+  summary(data_binx_conty)
   
   # 2.1 check distributions of X and Y
   ggplot(data_binx_conty, aes(x = Y)) + geom_histogram(aes(y = ..density..), bins = 30, fill = "lightblue", color = "black") +
@@ -112,12 +130,14 @@ if(0){
   ggplot(data_binx_conty, aes(x = X)) + geom_histogram(aes(y = ..density..), bins = 30, fill = "lightblue", color = "black") +
     geom_density(alpha = 0.5, fill = "blue") + labs(title = "Histogram of X")
   
-  # 2.2 histograms of eta and p.X.mean.j
-  ggplot(data_binx_conty, aes(x = eta)) + geom_histogram(aes(y = ..density..), bins = 30, fill = "lightblue", color = "black") +
-    geom_density(alpha = 0.5, fill = "blue") + labs(title = "Histogram of eta")
-  # eta is nicely distributed with -4 to 5 range
+  # 2.2 histograms X.mean.j, p.X.mean.j and eta
+  ggplot(data_binx_conty, aes(x = X.mean.j)) + geom_histogram(aes(y = ..density..), bins = 30, fill = "lightblue", color = "black") +
+    geom_density(alpha = 0.5, fill = "blue") + labs(title = "Histogram of X.mean.j")
   ggplot(data_binx_conty, aes(x = p.X.mean.j)) + geom_histogram(aes(y = ..density..), bins = 30, fill = "lightblue", color = "black") +
     geom_density(alpha = 0.5, fill = "blue") + labs(title = "Histogram of p.X.mean.j")
+  ggplot(data_binx_conty, aes(x = eta)) + geom_histogram(aes(y = ..density..), bins = 30, fill = "lightblue", color = "black") +
+    geom_density(alpha = 0.5, fill = "blue") + labs(title = "Histogram of eta")
+  # eta is nicely distributed with -3 to 3 range
   
   # when sdX.between is large (e.g, sqrt(4)) the distribution of probabilities 
   # of X and Y are U/bowl shaped (higher density at the edges)
@@ -125,9 +145,9 @@ if(0){
   # of X and Y are inverted U shaped (higher density in the center)
   
   # 3 generate continuous X and binary Y
-  data_contx_biny <- glmm_data_generation(N_total = 5000, T_total = 20, predictor.type = "continuous", outcome.type = "binary",
-                                        sdX.within = 0.15, sdX.between = 0.6, g.00 = 0, g.01 = 1, sd.u0 = 0.5,
-                                        g.10 = 0.5, sd.u1 = 0, sd.e = NA)
+  data_contx_biny <- glmm_data_generation(N_total = 5000, T_total = 10, predictor.type = "continuous", outcome.type = "binary",
+                                          sdX.within = 0.25, sdX.between = 0.5, g.00 = 0, g.01 = 1, sd.u0 = 0.5,
+                                          g.10 = 0.5, sd.u1 = 0, sd.e = NA)
   summary(data_contx_biny)
   # I lowered the values until the range of eta was approximately -3 to 3, roughly corresponding to probabilities of 0.05 to 0.95.
   # This was done to ensure that the probabilities are not too close to 0 or 1, which would make the logit transformation unstable.
@@ -145,9 +165,9 @@ if(0){
     geom_density(alpha = 0.5, fill = "blue") + labs(title = "Histogram of p_y")
   
   # 4 generate binary X and Y
-  data_binary <- glmm_data_generation(N_total = 5000, T_total = 20, predictor.type = "binary", outcome.type = "binary",
-                                      sdX.within = 0.15, sdX.between = 0.6, g.00 = -0.51, g.01 = 0.5, sd.u0 = 0.45,
-                                      g.10 = 1, sd.u1 = 0, sd.e = NA)
+  data_binary <- glmm_data_generation(N_total = 5000, T_total = 10, predictor.type = "binary", outcome.type = "binary",
+                                      sdX.within = NA, sdX.between = 0.5, g.00 = -0.25, g.01 = 0.5, sd.u0 = 0.5,
+                                      g.10 = 0.5, sd.u1 = 0, sd.e = NA)
   summary(data_binary)
   # similar to (3), I lowered the values until the range of eta was approximately -3 to 3, roughly corresponding to probabilities of 0.05 to 0.95.
   # In addition, I made sure eta was centered approximately at 0 to ensure balanced probabilities (mean of 0.5)
