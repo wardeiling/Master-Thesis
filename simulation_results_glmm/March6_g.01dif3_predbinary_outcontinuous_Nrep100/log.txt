@@ -1,0 +1,1116 @@
+numValues: 100, numResults: 0, stopped: TRUE
+Starting iteration 10 
+Starting iteration 20 
+Starting iteration 30 
+Starting iteration 40 
+Starting iteration 50 
+Starting iteration 60 
+Starting iteration 70 
+Starting iteration 80 
+Starting iteration 90 
+Starting iteration 100 
+got results for task 1
+numValues: 100, numResults: 1, stopped: TRUE
+returning status FALSE
+got results for task 2
+numValues: 100, numResults: 2, stopped: TRUE
+returning status FALSE
+got results for task 3
+numValues: 100, numResults: 3, stopped: TRUE
+returning status FALSE
+got results for task 4
+numValues: 100, numResults: 4, stopped: TRUE
+returning status FALSE
+got results for task 5
+numValues: 100, numResults: 5, stopped: TRUE
+returning status FALSE
+got results for task 6
+numValues: 100, numResults: 6, stopped: TRUE
+returning status FALSE
+got results for task 7
+numValues: 100, numResults: 7, stopped: TRUE
+returning status FALSE
+got results for task 8
+numValues: 100, numResults: 8, stopped: TRUE
+returning status FALSE
+got results for task 9
+numValues: 100, numResults: 9, stopped: TRUE
+returning status FALSE
+got results for task 10
+numValues: 100, numResults: 10, stopped: TRUE
+returning status FALSE
+got results for task 11
+numValues: 100, numResults: 11, stopped: TRUE
+returning status FALSE
+got results for task 12
+numValues: 100, numResults: 12, stopped: TRUE
+returning status FALSE
+got results for task 13
+numValues: 100, numResults: 13, stopped: TRUE
+returning status FALSE
+got results for task 14
+numValues: 100, numResults: 14, stopped: TRUE
+returning status FALSE
+got results for task 15
+numValues: 100, numResults: 15, stopped: TRUE
+returning status FALSE
+got results for task 16
+numValues: 100, numResults: 16, stopped: TRUE
+returning status FALSE
+got results for task 17
+numValues: 100, numResults: 17, stopped: TRUE
+returning status FALSE
+got results for task 18
+numValues: 100, numResults: 18, stopped: TRUE
+returning status FALSE
+got results for task 19
+numValues: 100, numResults: 19, stopped: TRUE
+returning status FALSE
+got results for task 20
+numValues: 100, numResults: 20, stopped: TRUE
+returning status FALSE
+got results for task 21
+numValues: 100, numResults: 21, stopped: TRUE
+returning status FALSE
+got results for task 22
+numValues: 100, numResults: 22, stopped: TRUE
+returning status FALSE
+got results for task 23
+numValues: 100, numResults: 23, stopped: TRUE
+returning status FALSE
+got results for task 24
+numValues: 100, numResults: 24, stopped: TRUE
+returning status FALSE
+got results for task 25
+numValues: 100, numResults: 25, stopped: TRUE
+returning status FALSE
+got results for task 26
+numValues: 100, numResults: 26, stopped: TRUE
+returning status FALSE
+got results for task 27
+numValues: 100, numResults: 27, stopped: TRUE
+returning status FALSE
+got results for task 28
+numValues: 100, numResults: 28, stopped: TRUE
+returning status FALSE
+got results for task 29
+numValues: 100, numResults: 29, stopped: TRUE
+returning status FALSE
+got results for task 30
+numValues: 100, numResults: 30, stopped: TRUE
+returning status FALSE
+got results for task 31
+numValues: 100, numResults: 31, stopped: TRUE
+returning status FALSE
+got results for task 32
+numValues: 100, numResults: 32, stopped: TRUE
+returning status FALSE
+got results for task 33
+numValues: 100, numResults: 33, stopped: TRUE
+returning status FALSE
+got results for task 34
+numValues: 100, numResults: 34, stopped: TRUE
+returning status FALSE
+got results for task 35
+numValues: 100, numResults: 35, stopped: TRUE
+returning status FALSE
+got results for task 36
+numValues: 100, numResults: 36, stopped: TRUE
+returning status FALSE
+got results for task 37
+numValues: 100, numResults: 37, stopped: TRUE
+returning status FALSE
+got results for task 38
+numValues: 100, numResults: 38, stopped: TRUE
+returning status FALSE
+got results for task 39
+numValues: 100, numResults: 39, stopped: TRUE
+returning status FALSE
+got results for task 40
+numValues: 100, numResults: 40, stopped: TRUE
+returning status FALSE
+got results for task 41
+numValues: 100, numResults: 41, stopped: TRUE
+returning status FALSE
+got results for task 42
+numValues: 100, numResults: 42, stopped: TRUE
+returning status FALSE
+got results for task 43
+numValues: 100, numResults: 43, stopped: TRUE
+returning status FALSE
+got results for task 44
+numValues: 100, numResults: 44, stopped: TRUE
+returning status FALSE
+got results for task 45
+numValues: 100, numResults: 45, stopped: TRUE
+returning status FALSE
+got results for task 46
+numValues: 100, numResults: 46, stopped: TRUE
+returning status FALSE
+got results for task 47
+numValues: 100, numResults: 47, stopped: TRUE
+returning status FALSE
+got results for task 48
+numValues: 100, numResults: 48, stopped: TRUE
+returning status FALSE
+got results for task 49
+numValues: 100, numResults: 49, stopped: TRUE
+returning status FALSE
+got results for task 50
+numValues: 100, numResults: 50, stopped: TRUE
+returning status FALSE
+got results for task 51
+numValues: 100, numResults: 51, stopped: TRUE
+returning status FALSE
+got results for task 52
+numValues: 100, numResults: 52, stopped: TRUE
+returning status FALSE
+got results for task 53
+numValues: 100, numResults: 53, stopped: TRUE
+returning status FALSE
+got results for task 54
+numValues: 100, numResults: 54, stopped: TRUE
+returning status FALSE
+got results for task 55
+numValues: 100, numResults: 55, stopped: TRUE
+returning status FALSE
+got results for task 56
+numValues: 100, numResults: 56, stopped: TRUE
+returning status FALSE
+got results for task 57
+numValues: 100, numResults: 57, stopped: TRUE
+returning status FALSE
+got results for task 58
+numValues: 100, numResults: 58, stopped: TRUE
+returning status FALSE
+got results for task 59
+numValues: 100, numResults: 59, stopped: TRUE
+returning status FALSE
+got results for task 60
+numValues: 100, numResults: 60, stopped: TRUE
+returning status FALSE
+got results for task 61
+numValues: 100, numResults: 61, stopped: TRUE
+returning status FALSE
+got results for task 62
+numValues: 100, numResults: 62, stopped: TRUE
+returning status FALSE
+got results for task 63
+numValues: 100, numResults: 63, stopped: TRUE
+returning status FALSE
+got results for task 64
+numValues: 100, numResults: 64, stopped: TRUE
+returning status FALSE
+got results for task 65
+numValues: 100, numResults: 65, stopped: TRUE
+returning status FALSE
+got results for task 66
+numValues: 100, numResults: 66, stopped: TRUE
+returning status FALSE
+got results for task 67
+numValues: 100, numResults: 67, stopped: TRUE
+returning status FALSE
+got results for task 68
+numValues: 100, numResults: 68, stopped: TRUE
+returning status FALSE
+got results for task 69
+numValues: 100, numResults: 69, stopped: TRUE
+returning status FALSE
+got results for task 70
+numValues: 100, numResults: 70, stopped: TRUE
+returning status FALSE
+got results for task 71
+numValues: 100, numResults: 71, stopped: TRUE
+returning status FALSE
+got results for task 72
+numValues: 100, numResults: 72, stopped: TRUE
+returning status FALSE
+got results for task 73
+numValues: 100, numResults: 73, stopped: TRUE
+returning status FALSE
+got results for task 74
+numValues: 100, numResults: 74, stopped: TRUE
+returning status FALSE
+got results for task 75
+numValues: 100, numResults: 75, stopped: TRUE
+returning status FALSE
+got results for task 76
+numValues: 100, numResults: 76, stopped: TRUE
+returning status FALSE
+got results for task 77
+numValues: 100, numResults: 77, stopped: TRUE
+returning status FALSE
+got results for task 78
+numValues: 100, numResults: 78, stopped: TRUE
+returning status FALSE
+got results for task 79
+numValues: 100, numResults: 79, stopped: TRUE
+returning status FALSE
+got results for task 80
+numValues: 100, numResults: 80, stopped: TRUE
+returning status FALSE
+got results for task 81
+numValues: 100, numResults: 81, stopped: TRUE
+returning status FALSE
+got results for task 82
+numValues: 100, numResults: 82, stopped: TRUE
+returning status FALSE
+got results for task 83
+numValues: 100, numResults: 83, stopped: TRUE
+returning status FALSE
+got results for task 84
+numValues: 100, numResults: 84, stopped: TRUE
+returning status FALSE
+got results for task 85
+numValues: 100, numResults: 85, stopped: TRUE
+returning status FALSE
+got results for task 86
+numValues: 100, numResults: 86, stopped: TRUE
+returning status FALSE
+got results for task 87
+numValues: 100, numResults: 87, stopped: TRUE
+returning status FALSE
+got results for task 88
+numValues: 100, numResults: 88, stopped: TRUE
+returning status FALSE
+got results for task 89
+numValues: 100, numResults: 89, stopped: TRUE
+returning status FALSE
+got results for task 90
+numValues: 100, numResults: 90, stopped: TRUE
+returning status FALSE
+got results for task 91
+numValues: 100, numResults: 91, stopped: TRUE
+returning status FALSE
+got results for task 92
+numValues: 100, numResults: 92, stopped: TRUE
+returning status FALSE
+got results for task 93
+numValues: 100, numResults: 93, stopped: TRUE
+returning status FALSE
+got results for task 94
+numValues: 100, numResults: 94, stopped: TRUE
+returning status FALSE
+got results for task 95
+numValues: 100, numResults: 95, stopped: TRUE
+returning status FALSE
+got results for task 96
+numValues: 100, numResults: 96, stopped: TRUE
+returning status FALSE
+got results for task 97
+numValues: 100, numResults: 97, stopped: TRUE
+returning status FALSE
+got results for task 98
+numValues: 100, numResults: 98, stopped: TRUE
+returning status FALSE
+got results for task 99
+numValues: 100, numResults: 99, stopped: TRUE
+calling combine function
+evaluating call object to combine results:
+  fun(accum, result.1, result.2, result.3, result.4, result.5, 
+    result.6, result.7, result.8, result.9, result.10, result.11, 
+    result.12, result.13, result.14, result.15, result.16, result.17, 
+    result.18, result.19, result.20, result.21, result.22, result.23, 
+    result.24, result.25, result.26, result.27, result.28, result.29, 
+    result.30, result.31, result.32, result.33, result.34, result.35, 
+    result.36, result.37, result.38, result.39, result.40, result.41, 
+    result.42, result.43, result.44, result.45, result.46, result.47, 
+    result.48, result.49, result.50, result.51, result.52, result.53, 
+    result.54, result.55, result.56, result.57, result.58, result.59, 
+    result.60, result.61, result.62, result.63, result.64, result.65, 
+    result.66, result.67, result.68, result.69, result.70, result.71, 
+    result.72, result.73, result.74, result.75, result.76, result.77, 
+    result.78, result.79, result.80, result.81, result.82, result.83, 
+    result.84, result.85, result.86, result.87, result.88, result.89, 
+    result.90, result.91, result.92, result.93, result.94, result.95, 
+    result.96, result.97, result.98, result.99)
+returning status FALSE
+got results for task 100
+numValues: 100, numResults: 100, stopped: TRUE
+calling combine function
+evaluating call object to combine results:
+  fun(accum, result.100)
+returning status TRUE
+numValues: 100, numResults: 0, stopped: TRUE
+Starting iteration 10 
+Starting iteration 20 
+Starting iteration 30 
+Starting iteration 40 
+Starting iteration 50 
+Starting iteration 60 
+Starting iteration 70 
+Starting iteration 80 
+Starting iteration 90 
+Starting iteration 100 
+got results for task 1
+numValues: 100, numResults: 1, stopped: TRUE
+returning status FALSE
+got results for task 2
+numValues: 100, numResults: 2, stopped: TRUE
+returning status FALSE
+got results for task 3
+numValues: 100, numResults: 3, stopped: TRUE
+returning status FALSE
+got results for task 4
+numValues: 100, numResults: 4, stopped: TRUE
+returning status FALSE
+got results for task 5
+numValues: 100, numResults: 5, stopped: TRUE
+returning status FALSE
+got results for task 6
+numValues: 100, numResults: 6, stopped: TRUE
+returning status FALSE
+got results for task 7
+numValues: 100, numResults: 7, stopped: TRUE
+returning status FALSE
+got results for task 8
+numValues: 100, numResults: 8, stopped: TRUE
+returning status FALSE
+got results for task 9
+numValues: 100, numResults: 9, stopped: TRUE
+returning status FALSE
+got results for task 10
+numValues: 100, numResults: 10, stopped: TRUE
+returning status FALSE
+got results for task 11
+numValues: 100, numResults: 11, stopped: TRUE
+returning status FALSE
+got results for task 12
+numValues: 100, numResults: 12, stopped: TRUE
+returning status FALSE
+got results for task 13
+numValues: 100, numResults: 13, stopped: TRUE
+returning status FALSE
+got results for task 14
+numValues: 100, numResults: 14, stopped: TRUE
+returning status FALSE
+got results for task 15
+numValues: 100, numResults: 15, stopped: TRUE
+returning status FALSE
+got results for task 16
+numValues: 100, numResults: 16, stopped: TRUE
+returning status FALSE
+got results for task 17
+numValues: 100, numResults: 17, stopped: TRUE
+returning status FALSE
+got results for task 18
+numValues: 100, numResults: 18, stopped: TRUE
+returning status FALSE
+got results for task 19
+numValues: 100, numResults: 19, stopped: TRUE
+returning status FALSE
+got results for task 20
+numValues: 100, numResults: 20, stopped: TRUE
+returning status FALSE
+got results for task 21
+numValues: 100, numResults: 21, stopped: TRUE
+returning status FALSE
+got results for task 22
+numValues: 100, numResults: 22, stopped: TRUE
+returning status FALSE
+got results for task 23
+numValues: 100, numResults: 23, stopped: TRUE
+returning status FALSE
+got results for task 24
+numValues: 100, numResults: 24, stopped: TRUE
+returning status FALSE
+got results for task 25
+numValues: 100, numResults: 25, stopped: TRUE
+returning status FALSE
+got results for task 26
+numValues: 100, numResults: 26, stopped: TRUE
+returning status FALSE
+got results for task 27
+numValues: 100, numResults: 27, stopped: TRUE
+returning status FALSE
+got results for task 28
+numValues: 100, numResults: 28, stopped: TRUE
+returning status FALSE
+got results for task 29
+numValues: 100, numResults: 29, stopped: TRUE
+returning status FALSE
+got results for task 30
+numValues: 100, numResults: 30, stopped: TRUE
+returning status FALSE
+got results for task 31
+numValues: 100, numResults: 31, stopped: TRUE
+returning status FALSE
+got results for task 32
+numValues: 100, numResults: 32, stopped: TRUE
+returning status FALSE
+got results for task 33
+numValues: 100, numResults: 33, stopped: TRUE
+returning status FALSE
+got results for task 34
+numValues: 100, numResults: 34, stopped: TRUE
+returning status FALSE
+got results for task 35
+numValues: 100, numResults: 35, stopped: TRUE
+returning status FALSE
+got results for task 36
+numValues: 100, numResults: 36, stopped: TRUE
+returning status FALSE
+got results for task 37
+numValues: 100, numResults: 37, stopped: TRUE
+returning status FALSE
+got results for task 38
+numValues: 100, numResults: 38, stopped: TRUE
+returning status FALSE
+got results for task 39
+numValues: 100, numResults: 39, stopped: TRUE
+returning status FALSE
+got results for task 40
+numValues: 100, numResults: 40, stopped: TRUE
+returning status FALSE
+got results for task 41
+numValues: 100, numResults: 41, stopped: TRUE
+returning status FALSE
+got results for task 42
+numValues: 100, numResults: 42, stopped: TRUE
+returning status FALSE
+got results for task 43
+numValues: 100, numResults: 43, stopped: TRUE
+returning status FALSE
+got results for task 44
+numValues: 100, numResults: 44, stopped: TRUE
+returning status FALSE
+got results for task 45
+numValues: 100, numResults: 45, stopped: TRUE
+returning status FALSE
+got results for task 46
+numValues: 100, numResults: 46, stopped: TRUE
+returning status FALSE
+got results for task 47
+numValues: 100, numResults: 47, stopped: TRUE
+returning status FALSE
+got results for task 48
+numValues: 100, numResults: 48, stopped: TRUE
+returning status FALSE
+got results for task 49
+numValues: 100, numResults: 49, stopped: TRUE
+returning status FALSE
+got results for task 50
+numValues: 100, numResults: 50, stopped: TRUE
+returning status FALSE
+got results for task 51
+numValues: 100, numResults: 51, stopped: TRUE
+returning status FALSE
+got results for task 52
+numValues: 100, numResults: 52, stopped: TRUE
+returning status FALSE
+got results for task 53
+numValues: 100, numResults: 53, stopped: TRUE
+returning status FALSE
+got results for task 54
+numValues: 100, numResults: 54, stopped: TRUE
+returning status FALSE
+got results for task 55
+numValues: 100, numResults: 55, stopped: TRUE
+returning status FALSE
+got results for task 56
+numValues: 100, numResults: 56, stopped: TRUE
+returning status FALSE
+got results for task 57
+numValues: 100, numResults: 57, stopped: TRUE
+returning status FALSE
+got results for task 58
+numValues: 100, numResults: 58, stopped: TRUE
+returning status FALSE
+got results for task 59
+numValues: 100, numResults: 59, stopped: TRUE
+returning status FALSE
+got results for task 60
+numValues: 100, numResults: 60, stopped: TRUE
+returning status FALSE
+got results for task 61
+numValues: 100, numResults: 61, stopped: TRUE
+returning status FALSE
+got results for task 62
+numValues: 100, numResults: 62, stopped: TRUE
+returning status FALSE
+got results for task 63
+numValues: 100, numResults: 63, stopped: TRUE
+returning status FALSE
+got results for task 64
+numValues: 100, numResults: 64, stopped: TRUE
+returning status FALSE
+got results for task 65
+numValues: 100, numResults: 65, stopped: TRUE
+returning status FALSE
+got results for task 66
+numValues: 100, numResults: 66, stopped: TRUE
+returning status FALSE
+got results for task 67
+numValues: 100, numResults: 67, stopped: TRUE
+returning status FALSE
+got results for task 68
+numValues: 100, numResults: 68, stopped: TRUE
+returning status FALSE
+got results for task 69
+numValues: 100, numResults: 69, stopped: TRUE
+returning status FALSE
+got results for task 70
+numValues: 100, numResults: 70, stopped: TRUE
+returning status FALSE
+got results for task 71
+numValues: 100, numResults: 71, stopped: TRUE
+returning status FALSE
+got results for task 72
+numValues: 100, numResults: 72, stopped: TRUE
+returning status FALSE
+got results for task 73
+numValues: 100, numResults: 73, stopped: TRUE
+returning status FALSE
+got results for task 74
+numValues: 100, numResults: 74, stopped: TRUE
+returning status FALSE
+got results for task 75
+numValues: 100, numResults: 75, stopped: TRUE
+returning status FALSE
+got results for task 76
+numValues: 100, numResults: 76, stopped: TRUE
+returning status FALSE
+got results for task 77
+numValues: 100, numResults: 77, stopped: TRUE
+returning status FALSE
+got results for task 78
+numValues: 100, numResults: 78, stopped: TRUE
+returning status FALSE
+got results for task 79
+numValues: 100, numResults: 79, stopped: TRUE
+returning status FALSE
+got results for task 80
+numValues: 100, numResults: 80, stopped: TRUE
+returning status FALSE
+got results for task 81
+numValues: 100, numResults: 81, stopped: TRUE
+returning status FALSE
+got results for task 82
+numValues: 100, numResults: 82, stopped: TRUE
+returning status FALSE
+got results for task 83
+numValues: 100, numResults: 83, stopped: TRUE
+returning status FALSE
+got results for task 84
+numValues: 100, numResults: 84, stopped: TRUE
+returning status FALSE
+got results for task 85
+numValues: 100, numResults: 85, stopped: TRUE
+returning status FALSE
+got results for task 86
+numValues: 100, numResults: 86, stopped: TRUE
+returning status FALSE
+got results for task 87
+numValues: 100, numResults: 87, stopped: TRUE
+returning status FALSE
+got results for task 88
+numValues: 100, numResults: 88, stopped: TRUE
+returning status FALSE
+got results for task 89
+numValues: 100, numResults: 89, stopped: TRUE
+returning status FALSE
+got results for task 90
+numValues: 100, numResults: 90, stopped: TRUE
+returning status FALSE
+got results for task 91
+numValues: 100, numResults: 91, stopped: TRUE
+returning status FALSE
+got results for task 92
+numValues: 100, numResults: 92, stopped: TRUE
+returning status FALSE
+got results for task 93
+numValues: 100, numResults: 93, stopped: TRUE
+returning status FALSE
+got results for task 94
+numValues: 100, numResults: 94, stopped: TRUE
+returning status FALSE
+got results for task 95
+numValues: 100, numResults: 95, stopped: TRUE
+returning status FALSE
+got results for task 96
+numValues: 100, numResults: 96, stopped: TRUE
+returning status FALSE
+got results for task 97
+numValues: 100, numResults: 97, stopped: TRUE
+returning status FALSE
+got results for task 98
+numValues: 100, numResults: 98, stopped: TRUE
+returning status FALSE
+got results for task 99
+numValues: 100, numResults: 99, stopped: TRUE
+calling combine function
+evaluating call object to combine results:
+  fun(accum, result.1, result.2, result.3, result.4, result.5, 
+    result.6, result.7, result.8, result.9, result.10, result.11, 
+    result.12, result.13, result.14, result.15, result.16, result.17, 
+    result.18, result.19, result.20, result.21, result.22, result.23, 
+    result.24, result.25, result.26, result.27, result.28, result.29, 
+    result.30, result.31, result.32, result.33, result.34, result.35, 
+    result.36, result.37, result.38, result.39, result.40, result.41, 
+    result.42, result.43, result.44, result.45, result.46, result.47, 
+    result.48, result.49, result.50, result.51, result.52, result.53, 
+    result.54, result.55, result.56, result.57, result.58, result.59, 
+    result.60, result.61, result.62, result.63, result.64, result.65, 
+    result.66, result.67, result.68, result.69, result.70, result.71, 
+    result.72, result.73, result.74, result.75, result.76, result.77, 
+    result.78, result.79, result.80, result.81, result.82, result.83, 
+    result.84, result.85, result.86, result.87, result.88, result.89, 
+    result.90, result.91, result.92, result.93, result.94, result.95, 
+    result.96, result.97, result.98, result.99)
+returning status FALSE
+got results for task 100
+numValues: 100, numResults: 100, stopped: TRUE
+calling combine function
+evaluating call object to combine results:
+  fun(accum, result.100)
+returning status TRUE
+Summary of (a total of 50) warning messages:
+15x : In glmer(formulas[[name]], data = data, family = family_arg) :
+  calling glmer() with family=gaussian (identity link) as a shortcut to lmer() is deprecated; please call lmer() directly
+ 1x : In checkConv(attr(opt, "derivs"), opt$par, ctrl = control$checkConv,  ... :
+  Model failed to converge with max|grad| = 28.4828 (tol = 0.002, component 1)
+13x : In checkConv(attr(opt, "derivs"), opt$par, ctrl = control$checkConv,  ... :
+  Model is nearly unidentifiable: very large eigenvalue
+ - Rescale variables?
+ 6x : In optwrap(optimizer, devfun, getStart(start, rho$pp),  ... :
+  convergence code -4 from nloptwrap: NLOPT_ROUNDOFF_LIMITED: Roundoff errors led to a breakdown of the optimization algorithm. In this case, the returned minimum may still be useful. (e.g. this error occurs in NEWUOA if one tries to achieve a tolerance too close to machine precision.)
+ 1x : In checkConv(attr(opt, "derivs"), opt$par, ctrl = control$checkConv,  ... :
+  unable to evaluate scaled gradient
+ 1x : In checkConv(attr(opt, "derivs"), opt$par, ctrl = control$checkConv,  ... :
+  Model failed to converge: degenerate  Hessian with 1 negative eigenvalues
+ 1x : In checkConv(attr(opt, "derivs"), opt$par, ctrl = control$checkConv,  ... :
+  Model failed to converge with max|grad| = 0.282083 (tol = 0.002, component 1)
+ 1x : In checkConv(attr(opt, "derivs"), opt$par, ctrl = control$checkConv,  ... :
+  Model failed to converge with max|grad| = 0.0866791 (tol = 0.002, component 1)
+ 1x : In checkConv(attr(opt, "derivs"), opt$par, ctrl = control$checkConv,  ... :
+  Model failed to converge with max|grad| = 0.0996322 (tol = 0.002, component 1)
+ 1x : In checkConv(attr(opt, "derivs"), opt$par, ctrl = control$checkConv,  ... :
+  Model failed to converge with max|grad| = 17.1776 (tol = 0.002, component 1)
+ 1x : In checkConv(attr(opt, "derivs"), opt$par, ctrl = control$checkConv,  ... :
+  Model failed to converge with max|grad| = 1.27479 (tol = 0.002, component 1)
+ 1x : In checkConv(attr(opt, "derivs"), opt$par, ctrl = control$checkConv,  ... :
+  Model failed to converge with max|grad| = 6.7249 (tol = 0.002, component 1)
+ 1x : In checkConv(attr(opt, "derivs"), opt$par, ctrl = control$checkConv,  ... :
+  Model failed to converge with max|grad| = 0.186408 (tol = 0.002, component 1)
+ 1x : In checkConv(attr(opt, "derivs"), opt$par, ctrl = control$checkConv,  ... :
+  Model failed to converge with max|grad| = 11.6835 (tol = 0.002, component 1)
+ 1x : In checkConv(attr(opt, "derivs"), opt$par, ctrl = control$checkConv,  ... :
+  Model failed to converge with max|grad| = 9.61035 (tol = 0.002, component 1)
+ 1x : In checkConv(attr(opt, "derivs"), opt$par, ctrl = control$checkConv,  ... :
+  Model failed to converge with max|grad| = 0.0598577 (tol = 0.002, component 1)
+ 1x : In checkConv(attr(opt, "derivs"), opt$par, ctrl = control$checkConv,  ... :
+  Model failed to converge with max|grad| = 1.43289 (tol = 0.002, component 1)
+ 1x : In checkConv(attr(opt, "derivs"), opt$par, ctrl = control$checkConv,  ... :
+  Model failed to converge with max|grad| = 4.00674 (tol = 0.002, component 1)
+ 1x : In checkConv(attr(opt, "derivs"), opt$par, ctrl = control$checkConv,  ... :
+  Model failed to converge with max|grad| = 0.139545 (tol = 0.002, component 1)
+numValues: 10, numResults: 0, stopped: TRUE
+numValues: 10, numResults: 0, stopped: TRUE
+Starting iteration 10 
+got results for task 1
+numValues: 10, numResults: 1, stopped: TRUE
+returning status FALSE
+got results for task 2
+numValues: 10, numResults: 2, stopped: TRUE
+returning status FALSE
+got results for task 3
+numValues: 10, numResults: 3, stopped: TRUE
+returning status FALSE
+got results for task 4
+numValues: 10, numResults: 4, stopped: TRUE
+returning status FALSE
+got results for task 5
+numValues: 10, numResults: 5, stopped: TRUE
+returning status FALSE
+got results for task 6
+numValues: 10, numResults: 6, stopped: TRUE
+returning status FALSE
+got results for task 7
+numValues: 10, numResults: 7, stopped: TRUE
+returning status FALSE
+got results for task 8
+numValues: 10, numResults: 8, stopped: TRUE
+returning status FALSE
+got results for task 9
+numValues: 10, numResults: 9, stopped: TRUE
+returning status FALSE
+got results for task 10
+numValues: 10, numResults: 10, stopped: TRUE
+calling combine function
+evaluating call object to combine results:
+  fun(accum, result.1, result.2, result.3, result.4, result.5, 
+    result.6, result.7, result.8, result.9, result.10)
+returning status TRUE
+numValues: 100, numResults: 0, stopped: TRUE
+Starting iteration 10 
+Starting iteration 20 
+Starting iteration 30 
+Starting iteration 40 
+Starting iteration 50 
+Starting iteration 60 
+Starting iteration 70 
+Starting iteration 80 
+Starting iteration 90 
+Starting iteration 100 
+got results for task 1
+numValues: 100, numResults: 1, stopped: TRUE
+returning status FALSE
+got results for task 2
+numValues: 100, numResults: 2, stopped: TRUE
+returning status FALSE
+got results for task 3
+numValues: 100, numResults: 3, stopped: TRUE
+returning status FALSE
+got results for task 4
+numValues: 100, numResults: 4, stopped: TRUE
+returning status FALSE
+got results for task 5
+numValues: 100, numResults: 5, stopped: TRUE
+returning status FALSE
+got results for task 6
+numValues: 100, numResults: 6, stopped: TRUE
+returning status FALSE
+got results for task 7
+numValues: 100, numResults: 7, stopped: TRUE
+returning status FALSE
+got results for task 8
+numValues: 100, numResults: 8, stopped: TRUE
+returning status FALSE
+got results for task 9
+numValues: 100, numResults: 9, stopped: TRUE
+returning status FALSE
+got results for task 10
+numValues: 100, numResults: 10, stopped: TRUE
+returning status FALSE
+got results for task 11
+numValues: 100, numResults: 11, stopped: TRUE
+returning status FALSE
+got results for task 12
+numValues: 100, numResults: 12, stopped: TRUE
+returning status FALSE
+got results for task 13
+numValues: 100, numResults: 13, stopped: TRUE
+returning status FALSE
+got results for task 14
+numValues: 100, numResults: 14, stopped: TRUE
+returning status FALSE
+got results for task 15
+numValues: 100, numResults: 15, stopped: TRUE
+returning status FALSE
+got results for task 16
+numValues: 100, numResults: 16, stopped: TRUE
+returning status FALSE
+got results for task 17
+numValues: 100, numResults: 17, stopped: TRUE
+returning status FALSE
+got results for task 18
+numValues: 100, numResults: 18, stopped: TRUE
+returning status FALSE
+got results for task 19
+numValues: 100, numResults: 19, stopped: TRUE
+returning status FALSE
+got results for task 20
+numValues: 100, numResults: 20, stopped: TRUE
+returning status FALSE
+got results for task 21
+numValues: 100, numResults: 21, stopped: TRUE
+returning status FALSE
+got results for task 22
+numValues: 100, numResults: 22, stopped: TRUE
+returning status FALSE
+got results for task 23
+numValues: 100, numResults: 23, stopped: TRUE
+returning status FALSE
+got results for task 24
+numValues: 100, numResults: 24, stopped: TRUE
+returning status FALSE
+got results for task 25
+numValues: 100, numResults: 25, stopped: TRUE
+returning status FALSE
+got results for task 26
+numValues: 100, numResults: 26, stopped: TRUE
+returning status FALSE
+got results for task 27
+numValues: 100, numResults: 27, stopped: TRUE
+returning status FALSE
+got results for task 28
+numValues: 100, numResults: 28, stopped: TRUE
+returning status FALSE
+got results for task 29
+numValues: 100, numResults: 29, stopped: TRUE
+returning status FALSE
+got results for task 30
+numValues: 100, numResults: 30, stopped: TRUE
+returning status FALSE
+got results for task 31
+numValues: 100, numResults: 31, stopped: TRUE
+returning status FALSE
+got results for task 32
+numValues: 100, numResults: 32, stopped: TRUE
+returning status FALSE
+got results for task 33
+numValues: 100, numResults: 33, stopped: TRUE
+returning status FALSE
+got results for task 34
+numValues: 100, numResults: 34, stopped: TRUE
+returning status FALSE
+got results for task 35
+numValues: 100, numResults: 35, stopped: TRUE
+returning status FALSE
+got results for task 36
+numValues: 100, numResults: 36, stopped: TRUE
+returning status FALSE
+got results for task 37
+numValues: 100, numResults: 37, stopped: TRUE
+returning status FALSE
+got results for task 38
+numValues: 100, numResults: 38, stopped: TRUE
+returning status FALSE
+got results for task 39
+numValues: 100, numResults: 39, stopped: TRUE
+returning status FALSE
+got results for task 40
+numValues: 100, numResults: 40, stopped: TRUE
+returning status FALSE
+got results for task 41
+numValues: 100, numResults: 41, stopped: TRUE
+returning status FALSE
+got results for task 42
+numValues: 100, numResults: 42, stopped: TRUE
+returning status FALSE
+got results for task 43
+numValues: 100, numResults: 43, stopped: TRUE
+returning status FALSE
+got results for task 44
+numValues: 100, numResults: 44, stopped: TRUE
+returning status FALSE
+got results for task 45
+numValues: 100, numResults: 45, stopped: TRUE
+returning status FALSE
+got results for task 46
+numValues: 100, numResults: 46, stopped: TRUE
+returning status FALSE
+got results for task 47
+numValues: 100, numResults: 47, stopped: TRUE
+returning status FALSE
+got results for task 48
+numValues: 100, numResults: 48, stopped: TRUE
+returning status FALSE
+got results for task 49
+numValues: 100, numResults: 49, stopped: TRUE
+returning status FALSE
+got results for task 50
+numValues: 100, numResults: 50, stopped: TRUE
+returning status FALSE
+got results for task 51
+numValues: 100, numResults: 51, stopped: TRUE
+returning status FALSE
+got results for task 52
+numValues: 100, numResults: 52, stopped: TRUE
+returning status FALSE
+got results for task 53
+numValues: 100, numResults: 53, stopped: TRUE
+returning status FALSE
+got results for task 54
+numValues: 100, numResults: 54, stopped: TRUE
+returning status FALSE
+got results for task 55
+numValues: 100, numResults: 55, stopped: TRUE
+returning status FALSE
+got results for task 56
+numValues: 100, numResults: 56, stopped: TRUE
+returning status FALSE
+got results for task 57
+numValues: 100, numResults: 57, stopped: TRUE
+returning status FALSE
+got results for task 58
+numValues: 100, numResults: 58, stopped: TRUE
+returning status FALSE
+got results for task 59
+numValues: 100, numResults: 59, stopped: TRUE
+returning status FALSE
+got results for task 60
+numValues: 100, numResults: 60, stopped: TRUE
+returning status FALSE
+got results for task 61
+numValues: 100, numResults: 61, stopped: TRUE
+returning status FALSE
+got results for task 62
+numValues: 100, numResults: 62, stopped: TRUE
+returning status FALSE
+got results for task 63
+numValues: 100, numResults: 63, stopped: TRUE
+returning status FALSE
+got results for task 64
+numValues: 100, numResults: 64, stopped: TRUE
+returning status FALSE
+got results for task 65
+numValues: 100, numResults: 65, stopped: TRUE
+returning status FALSE
+got results for task 66
+numValues: 100, numResults: 66, stopped: TRUE
+returning status FALSE
+got results for task 67
+numValues: 100, numResults: 67, stopped: TRUE
+returning status FALSE
+got results for task 68
+numValues: 100, numResults: 68, stopped: TRUE
+returning status FALSE
+got results for task 69
+numValues: 100, numResults: 69, stopped: TRUE
+returning status FALSE
+got results for task 70
+numValues: 100, numResults: 70, stopped: TRUE
+returning status FALSE
+got results for task 71
+numValues: 100, numResults: 71, stopped: TRUE
+returning status FALSE
+got results for task 72
+numValues: 100, numResults: 72, stopped: TRUE
+returning status FALSE
+got results for task 73
+numValues: 100, numResults: 73, stopped: TRUE
+returning status FALSE
+got results for task 74
+numValues: 100, numResults: 74, stopped: TRUE
+returning status FALSE
+got results for task 75
+numValues: 100, numResults: 75, stopped: TRUE
+returning status FALSE
+got results for task 76
+numValues: 100, numResults: 76, stopped: TRUE
+returning status FALSE
+got results for task 77
+numValues: 100, numResults: 77, stopped: TRUE
+returning status FALSE
+got results for task 78
+numValues: 100, numResults: 78, stopped: TRUE
+returning status FALSE
+got results for task 79
+numValues: 100, numResults: 79, stopped: TRUE
+returning status FALSE
+got results for task 80
+numValues: 100, numResults: 80, stopped: TRUE
+returning status FALSE
+got results for task 81
+numValues: 100, numResults: 81, stopped: TRUE
+returning status FALSE
+got results for task 82
+numValues: 100, numResults: 82, stopped: TRUE
+returning status FALSE
+got results for task 83
+numValues: 100, numResults: 83, stopped: TRUE
+returning status FALSE
+got results for task 84
+numValues: 100, numResults: 84, stopped: TRUE
+returning status FALSE
+got results for task 85
+numValues: 100, numResults: 85, stopped: TRUE
+returning status FALSE
+got results for task 86
+numValues: 100, numResults: 86, stopped: TRUE
+returning status FALSE
+got results for task 87
+numValues: 100, numResults: 87, stopped: TRUE
+returning status FALSE
+got results for task 88
+numValues: 100, numResults: 88, stopped: TRUE
+returning status FALSE
+got results for task 89
+numValues: 100, numResults: 89, stopped: TRUE
+returning status FALSE
+got results for task 90
+numValues: 100, numResults: 90, stopped: TRUE
+returning status FALSE
+got results for task 91
+numValues: 100, numResults: 91, stopped: TRUE
+returning status FALSE
+got results for task 92
+numValues: 100, numResults: 92, stopped: TRUE
+returning status FALSE
+got results for task 93
+numValues: 100, numResults: 93, stopped: TRUE
+returning status FALSE
+got results for task 94
+numValues: 100, numResults: 94, stopped: TRUE
+returning status FALSE
+got results for task 95
+numValues: 100, numResults: 95, stopped: TRUE
+returning status FALSE
+got results for task 96
+numValues: 100, numResults: 96, stopped: TRUE
+returning status FALSE
+got results for task 97
+numValues: 100, numResults: 97, stopped: TRUE
+returning status FALSE
+got results for task 98
+numValues: 100, numResults: 98, stopped: TRUE
+returning status FALSE
+got results for task 99
+numValues: 100, numResults: 99, stopped: TRUE
+calling combine function
+evaluating call object to combine results:
+  fun(accum, result.1, result.2, result.3, result.4, result.5, 
+    result.6, result.7, result.8, result.9, result.10, result.11, 
+    result.12, result.13, result.14, result.15, result.16, result.17, 
+    result.18, result.19, result.20, result.21, result.22, result.23, 
+    result.24, result.25, result.26, result.27, result.28, result.29, 
+    result.30, result.31, result.32, result.33, result.34, result.35, 
+    result.36, result.37, result.38, result.39, result.40, result.41, 
+    result.42, result.43, result.44, result.45, result.46, result.47, 
+    result.48, result.49, result.50, result.51, result.52, result.53, 
+    result.54, result.55, result.56, result.57, result.58, result.59, 
+    result.60, result.61, result.62, result.63, result.64, result.65, 
+    result.66, result.67, result.68, result.69, result.70, result.71, 
+    result.72, result.73, result.74, result.75, result.76, result.77, 
+    result.78, result.79, result.80, result.81, result.82, result.83, 
+    result.84, result.85, result.86, result.87, result.88, result.89, 
+    result.90, result.91, result.92, result.93, result.94, result.95, 
+    result.96, result.97, result.98, result.99)
+returning status FALSE
+got results for task 100
+numValues: 100, numResults: 100, stopped: TRUE
+calling combine function
+evaluating call object to combine results:
+  fun(accum, result.100)
+returning status TRUE
+Summary of (a total of 50) warning messages:
+15x : In glmer(formulas[[name]], data = data, family = family_arg) :
+  calling glmer() with family=gaussian (identity link) as a shortcut to lmer() is deprecated; please call lmer() directly
+ 1x : In checkConv(attr(opt, "derivs"), opt$par, ctrl = control$checkConv,  ... :
+  Model failed to converge with max|grad| = 28.4828 (tol = 0.002, component 1)
+13x : In checkConv(attr(opt, "derivs"), opt$par, ctrl = control$checkConv,  ... :
+  Model is nearly unidentifiable: very large eigenvalue
+ - Rescale variables?
+ 6x : In optwrap(optimizer, devfun, getStart(start, rho$pp),  ... :
+  convergence code -4 from nloptwrap: NLOPT_ROUNDOFF_LIMITED: Roundoff errors led to a breakdown of the optimization algorithm. In this case, the returned minimum may still be useful. (e.g. this error occurs in NEWUOA if one tries to achieve a tolerance too close to machine precision.)
+ 1x : In checkConv(attr(opt, "derivs"), opt$par, ctrl = control$checkConv,  ... :
+  unable to evaluate scaled gradient
+ 1x : In checkConv(attr(opt, "derivs"), opt$par, ctrl = control$checkConv,  ... :
+  Model failed to converge: degenerate  Hessian with 1 negative eigenvalues
+ 1x : In checkConv(attr(opt, "derivs"), opt$par, ctrl = control$checkConv,  ... :
+  Model failed to converge with max|grad| = 0.282083 (tol = 0.002, component 1)
+ 1x : In checkConv(attr(opt, "derivs"), opt$par, ctrl = control$checkConv,  ... :
+  Model failed to converge with max|grad| = 0.0866791 (tol = 0.002, component 1)
+ 1x : In checkConv(attr(opt, "derivs"), opt$par, ctrl = control$checkConv,  ... :
+  Model failed to converge with max|grad| = 0.0996322 (tol = 0.002, component 1)
+ 1x : In checkConv(attr(opt, "derivs"), opt$par, ctrl = control$checkConv,  ... :
+  Model failed to converge with max|grad| = 17.1776 (tol = 0.002, component 1)
+ 1x : In checkConv(attr(opt, "derivs"), opt$par, ctrl = control$checkConv,  ... :
+  Model failed to converge with max|grad| = 1.27479 (tol = 0.002, component 1)
+ 1x : In checkConv(attr(opt, "derivs"), opt$par, ctrl = control$checkConv,  ... :
+  Model failed to converge with max|grad| = 6.7249 (tol = 0.002, component 1)
+ 1x : In checkConv(attr(opt, "derivs"), opt$par, ctrl = control$checkConv,  ... :
+  Model failed to converge with max|grad| = 0.186408 (tol = 0.002, component 1)
+ 1x : In checkConv(attr(opt, "derivs"), opt$par, ctrl = control$checkConv,  ... :
+  Model failed to converge with max|grad| = 11.6835 (tol = 0.002, component 1)
+ 1x : In checkConv(attr(opt, "derivs"), opt$par, ctrl = control$checkConv,  ... :
+  Model failed to converge with max|grad| = 9.61035 (tol = 0.002, component 1)
+ 1x : In checkConv(attr(opt, "derivs"), opt$par, ctrl = control$checkConv,  ... :
+  Model failed to converge with max|grad| = 0.0598577 (tol = 0.002, component 1)
+ 1x : In checkConv(attr(opt, "derivs"), opt$par, ctrl = control$checkConv,  ... :
+  Model failed to converge with max|grad| = 1.43289 (tol = 0.002, component 1)
+ 1x : In checkConv(attr(opt, "derivs"), opt$par, ctrl = control$checkConv,  ... :
+  Model failed to converge with max|grad| = 4.00674 (tol = 0.002, component 1)
+ 1x : In checkConv(attr(opt, "derivs"), opt$par, ctrl = control$checkConv,  ... :
+  Model failed to converge with max|grad| = 0.139545 (tol = 0.002, component 1)

@@ -1,15 +1,3 @@
-rm(list = ls()) # clear workspace
-
-# load libraries
-library(lme4) # for generalized linear mixed models
-library(geepack) # for generalized estimating equations
-library(doFuture) # for parallelization
-
-# load helper functions
-source("scripts/hamaker2020_extended/helper-functions/data-generation.R")
-source("scripts/hamaker2020_extended/helper-functions/model-fitting.R")
-source("scripts/hamaker2020_extended/helper-functions/result-formatting.R")
-
 ### WRAPPER FUNCTION ###
 run_simulation <- function(runname = "run1", seed = 4243, nsim = 1000, N_total = 200, T_total = 10, 
                            predictor.type = "continuous", outcome.type = "continuous",
@@ -17,12 +5,22 @@ run_simulation <- function(runname = "run1", seed = 4243, nsim = 1000, N_total =
                            g.00 = 0, g.01 = 2, sd.u0 = 1, g.10 = 1, 
                            sd.u1 = 0, sd.e = 1) {
   
+  # load libraries
+  library(lme4) # for generalized linear mixed models
+  library(geepack) # for generalized estimating equations
+  library(doFuture) # for parallelization (neatly handles RNG, errors, making objects available for workers)
+  
+  # load helper functions
+  source("scripts/hamaker2020_extended/helper-functions/data-generation.R")
+  source("scripts/hamaker2020_extended/helper-functions/model-fitting.R")
+  source("scripts/hamaker2020_extended/helper-functions/result-formatting.R")
+  
   # runname more information
   runname_upd <- paste0(runname, "_pred", predictor.type, "_out", outcome.type, "_Nrep", nsim)
+  directory <- paste0("simulation_results_glmm/", runname_upd)
   
   # Create results directory
-  dir.create(paste0("simulation_results_glmm/", runname_upd), 
-                    showWarnings = FALSE, recursive = TRUE)
+  dir.create(directory, showWarnings = FALSE, recursive = TRUE)
   
   # set global seed
   set.seed(seed) 
@@ -31,7 +29,7 @@ run_simulation <- function(runname = "run1", seed = 4243, nsim = 1000, N_total =
   plan(multisession)
   
   # Run simulations in parallel
-  parallel_results <- foreach(isim = 1:nsim) %dofuture% {
+  parallel_results <- foreach(isim = 1:nsim,  .options.future = list(seed = TRUE), .verbose = TRUE) %dofuture% {
     if (isim %% 10 == 0) {
       cat(paste("Starting iteration", isim, "\n"))
     }
@@ -50,7 +48,7 @@ run_simulation <- function(runname = "run1", seed = 4243, nsim = 1000, N_total =
   }
   
   # Save all raw results
-  saveRDS(parallel_results, file = paste0("simulation_results_glmm/", runname_upd, "/parallel_results.rds"))
+  saveRDS(parallel_results, file = paste0(directory, "/parallel_results.rds"))
   
   # Apply result formatting **only once**
   formatted_results <- lapply(parallel_results, glmm_formating_results)
@@ -63,15 +61,19 @@ run_simulation <- function(runname = "run1", seed = 4243, nsim = 1000, N_total =
   sd_results <- sqrt(var_results)
   monte_carlo_se <- sd_results / sqrt(nsim)
   
+  # record settings
   settings <- list(runname = runname, seed = seed, nsim = nsim, N_total = N_total, T_total = T_total, 
                    predictor.type = predictor.type, outcome.type = outcome.type,
                    sdX.within = sdX.within, sdX.between = sdX.between, 
                    g.00 = g.00, g.01 = g.01, sd.u0 = sd.u0, g.10 = g.10, 
                    sd.u1 = sd.u1, sd.e = sd.e)
   
+  # combine all output
   output <- list(settings = settings, all_results = parallel_results, mean_results = mean_results, sd_results = sd_results, monte_carlo_se = monte_carlo_se)
+  
+  # save all output
   for (name in names(output)) {
-    saveRDS(output[[name]], file = paste0("simulation_results_glmm/", runname_upd, "/", name, ".rds"))
+    saveRDS(output[[name]], file = paste0(directory, "/", name, ".rds"))
   }
   
   return(output)
@@ -80,46 +82,52 @@ run_simulation <- function(runname = "run1", seed = 4243, nsim = 1000, N_total =
 ### RUNNING CONDITIONS ###
 
 # stable specifications across simulations
-seed = 4243
-nsim = 1000
+# seed = 4243
+# nsim = 1000
 # N_total = 200
 # T_total = 10
 
-# contxy_sim <- run_simulation(runname = "update_output_format2", seed = seed, nsim = nsim, N_total = 200, T_total = 10, 
-#                              predictor.type = "continuous", outcome.type = "continuous",
-#                              sdX.within = 0.25, sdX.between = 0.5, g.00 = 0, g.01 = 1, sd.u0 = 0.5,
-#                              g.10 = 0.5, sd.u1 = 0, sd.e = 0.5)
-# 
-# contxy_sim$mean_results
-# contxy_sim$monte_carlo_se
-#
+contxy_sim <- run_simulation(runname = "March6", seed = 4243, nsim = 1000,
+                             N_total = 200, T_total = 20, predictor.type = "continuous", outcome.type = "continuous",
+                             sdX.within = 0.25, sdX.between = 0.5, g.00 = 0, g.01 = 1, sd.u0 = 0.7,
+                             g.10 = 0.5, sd.u1 = 0, sd.e = 0.5)
+
+contxy_sim$mean_results
+contxy_sim$monte_carlo_se
+summary(warnings())
+
 # observations
 # - once we increase T_total, the total effect is comprised more of the within-person effect, which explains
 #   the similarity between the "uninterpretable blend" of raw X and the within-person effects.
 
-# binx_conty_sim <- run_simulation(runname = "yes_centering_futuredo", seed = seed, nsim = nsim, N_total = 200, T_total = 10, 
-#                                  predictor.type = "binary", outcome.type = "continuous",
-#                                  sdX.within = NA, sdX.between = 0.5, g.00 = 0, g.01 = 1, sd.u0 = 0.5,
-#                                  g.10 = 0.5, sd.u1 = 0, sd.e = 0.5)
-# 
-# binx_conty_sim$mean_results
-# binx_conty_sim$monte_carlo_se
+binx_conty_sim <- run_simulation(runname = "March6_g.01dif6", seed = 4243, nsim = 100,
+                                 N_total = 200, T_total = 30, predictor.type = "binary", outcome.type = "continuous",
+                                 sdX.within = NA, sdX.between = 0.5, g.00 = 0, g.01 = 2, sd.u0 = 0.7,
+                                 g.10 = 0.5, sd.u1 = 0, sd.e = 0)
 
-# contx_biny_sim <- run_simulation(runname = "run1",seed = seed, nsim = nsim, N_total = 200, T_total = 10, 
-#                                  predictor.type = "continuous", outcome.type = "binary",
-#                                  sdX.within = 0.25, sdX.between = 0.5, g.00 = 0, g.01 = 1, sd.u0 = 0.5,
-#                                  g.10 = 0.5, sd.u1 = 0, sd.e = NA)
-# 
-# contx_biny_sim$mean_results
-# contx_biny_sim$monte_carlo_se
-# 
-binaryxy_sim <- run_simulation(runname = "yes_centering_futuredo_nointercept", seed = seed, nsim = nsim, N_total = 200, T_total = 10,
-                               predictor.type = "binary", outcome.type = "binary",
-                               sdX.within = NA, sdX.between = 0.5, g.00 = 0, g.01 = 0.5, sd.u0 = 0.5,
+binx_conty_sim$mean_results
+binx_conty_sim$monte_carlo_se
+summary(warnings())
+
+# write the summary(warnings()) to file
+
+contx_biny_sim <- run_simulation(runname = "March6", seed = 4243, nsim = 1000,
+                                 N_total = 200, T_total = 20, predictor.type = "continuous", outcome.type = "binary",
+                                 sdX.within = 0.25, sdX.between = 0.5, g.00 = 0, g.01 = 1, sd.u0 = 0.7,
+                                 g.10 = 0.5, sd.u1 = 0, sd.e = NA)
+
+contx_biny_sim$mean_results
+contx_biny_sim$monte_carlo_se
+summary(warnings())
+
+binaryxy_sim <- run_simulation(runname = "March6", seed = 4243, nsim = 1000,
+                               N_total = 200, T_total = 20, predictor.type = "binary", outcome.type = "binary",
+                               sdX.within = NA, sdX.between = 0.5, g.00 = -0.50, g.01 = 1, sd.u0 = 0.7,
                                g.10 = 0.5, sd.u1 = 0, sd.e = NA)
 
 binaryxy_sim$mean_results
 binaryxy_sim$monte_carlo_se
+summary(warnings())
 
 ### Retrieve results
 
