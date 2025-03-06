@@ -97,13 +97,13 @@ nsim = 1000
 # - once we increase T_total, the total effect is comprised more of the within-person effect, which explains
 #   the similarity between the "uninterpretable blend" of raw X and the within-person effects.
 
-binx_conty_sim <- run_simulation(runname = "yes_centering_futuredo", seed = seed, nsim = nsim, N_total = 200, T_total = 10, 
-                                 predictor.type = "binary", outcome.type = "continuous",
-                                 sdX.within = NA, sdX.between = 0.5, g.00 = 0, g.01 = 1, sd.u0 = 0.5,
-                                 g.10 = 0.5, sd.u1 = 0, sd.e = 0.5)
-
-binx_conty_sim$mean_results
-binx_conty_sim$monte_carlo_se
+# binx_conty_sim <- run_simulation(runname = "yes_centering_futuredo", seed = seed, nsim = nsim, N_total = 200, T_total = 10, 
+#                                  predictor.type = "binary", outcome.type = "continuous",
+#                                  sdX.within = NA, sdX.between = 0.5, g.00 = 0, g.01 = 1, sd.u0 = 0.5,
+#                                  g.10 = 0.5, sd.u1 = 0, sd.e = 0.5)
+# 
+# binx_conty_sim$mean_results
+# binx_conty_sim$monte_carlo_se
 
 # contx_biny_sim <- run_simulation(runname = "run1",seed = seed, nsim = nsim, N_total = 200, T_total = 10, 
 #                                  predictor.type = "continuous", outcome.type = "binary",
@@ -113,13 +113,13 @@ binx_conty_sim$monte_carlo_se
 # contx_biny_sim$mean_results
 # contx_biny_sim$monte_carlo_se
 # 
-# binaryxy_sim <- run_simulation(runname = "run1", seed = seed, nsim = nsim, N_total = 200, T_total = 10, 
-#                                predictor.type = "binary", outcome.type = "binary",
-#                                sdX.within = NA, sdX.between = 0.5, g.00 = -0.25, g.01 = 0.5, sd.u0 = 0.5,
-#                                g.10 = 0.5, sd.u1 = 0, sd.e = NA)
-# 
-# binaryxy_sim$mean_results
-# binaryxy_sim$monte_carlo_se
+binaryxy_sim <- run_simulation(runname = "yes_centering_futuredo_nointercept", seed = seed, nsim = nsim, N_total = 200, T_total = 10,
+                               predictor.type = "binary", outcome.type = "binary",
+                               sdX.within = NA, sdX.between = 0.5, g.00 = 0, g.01 = 0.5, sd.u0 = 0.5,
+                               g.10 = 0.5, sd.u1 = 0, sd.e = NA)
+
+binaryxy_sim$mean_results
+binaryxy_sim$monte_carlo_se
 
 ### Retrieve results
 
