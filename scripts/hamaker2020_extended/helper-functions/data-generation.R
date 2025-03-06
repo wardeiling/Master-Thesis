@@ -61,7 +61,8 @@ glmm_data_generation <- function(N_total, T_total, predictor.type, outcome.type,
       eta.jt <- b0.j[j] + b1.j[j] * (X.jt - X.mean.j[j])
     } else {
       X.jt <- rbinom(T_total, 1, p.X.mean.j[j])
-      eta.jt <- b0.j[j] + b1.j[j] * X.jt
+      # eta.jt <- b0.j[j] + b1.j[j] * X.jt
+      eta.jt <- b0.j[j] + b1.j[j] * (X.jt - X.mean.j[j])
     }
     
     if (outcome.type == "continuous") {

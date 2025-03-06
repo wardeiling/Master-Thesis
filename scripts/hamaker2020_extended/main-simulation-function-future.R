@@ -3,9 +3,7 @@ rm(list = ls()) # clear workspace
 # load libraries
 library(lme4) # for generalized linear mixed models
 library(geepack) # for generalized estimating equations
-library(foreach) # for parallelization
-library(doParallel) # for parallelization
-library(doRNG) # for reproducibility
+library(doFuture) # for parallelization
 
 # load helper functions
 source("scripts/hamaker2020_extended/helper-functions/data-generation.R")
@@ -27,18 +25,13 @@ run_simulation <- function(runname = "run1", seed = 4243, nsim = 1000, N_total =
                     showWarnings = FALSE, recursive = TRUE)
   
   # set global seed
-  set.seed(123) 
+  set.seed(seed) 
   
   # Set up parallel backend
-  cores <- detectCores()
-  cl <- makeCluster(cores - 1, outfile = paste0("simulation_results_glmm/", runname_upd, "/log.txt"))
-  registerDoParallel(cl)
-  
-  # Export functions to workers
-  clusterExport(cl, varlist = c("glmm_data_generation", "glmm_model_fitting", "glmm_formating_results"))
+  plan(multisession)
   
   # Run simulations in parallel
-  parallel_results <- foreach(isim = 1:nsim, .packages = c("geepack", "lme4"), .options.RNG=120, .verbose = TRUE) %dorng% {
+  parallel_results <- foreach(isim = 1:nsim) %dofuture% {
     if (isim %% 10 == 0) {
       cat(paste("Starting iteration", isim, "\n"))
     }
@@ -55,9 +48,6 @@ run_simulation <- function(runname = "run1", seed = 4243, nsim = 1000, N_total =
     
     return(models)
   }
-  
-  # Stop parallel backend
-  stopCluster(cl)
   
   # Save all raw results
   saveRDS(parallel_results, file = paste0("simulation_results_glmm/", runname_upd, "/parallel_results.rds"))
@@ -107,7 +97,7 @@ nsim = 1000
 # - once we increase T_total, the total effect is comprised more of the within-person effect, which explains
 #   the similarity between the "uninterpretable blend" of raw X and the within-person effects.
 
-binx_conty_sim <- run_simulation(runname = "yes_centering_nointercept", seed = seed, nsim = nsim, N_total = 200, T_total = 10, 
+binx_conty_sim <- run_simulation(runname = "yes_centering_futuredo", seed = seed, nsim = nsim, N_total = 200, T_total = 10, 
                                  predictor.type = "binary", outcome.type = "continuous",
                                  sdX.within = NA, sdX.between = 0.5, g.00 = 0, g.01 = 1, sd.u0 = 0.5,
                                  g.10 = 0.5, sd.u1 = 0, sd.e = 0.5)

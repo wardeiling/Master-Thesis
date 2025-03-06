@@ -1,10 +1,18 @@
-starting worker pid=2976 on localhost:11110 at 11:32:55.507
-starting worker pid=10076 on localhost:11110 at 11:32:55.716
-starting worker pid=2436 on localhost:11110 at 11:32:55.907
-starting worker pid=2320 on localhost:11110 at 11:32:56.783
-starting worker pid=9780 on localhost:11110 at 11:32:56.968
-starting worker pid=9548 on localhost:11110 at 11:32:57.155
-starting worker pid=1716 on localhost:11110 at 11:32:57.341
+starting worker pid=16888 on localhost:11169 at 12:35:29.513
+starting worker pid=18552 on localhost:11169 at 12:35:29.778
+starting worker pid=1436 on localhost:11169 at 12:35:30.093
+starting worker pid=8076 on localhost:11169 at 12:35:30.645
+starting worker pid=1548 on localhost:11169 at 12:35:30.904
+starting worker pid=18996 on localhost:11169 at 12:35:31.188
+starting worker pid=20268 on localhost:11169 at 12:35:31.479
+starting worker pid=3420 on localhost:11169 at 12:35:31.734
+starting worker pid=17572 on localhost:11169 at 12:35:31.989
+starting worker pid=8420 on localhost:11169 at 12:35:32.251
+starting worker pid=13764 on localhost:11169 at 12:35:32.514
+Loading required package: Matrix
+Loading required package: Matrix
+Loading required package: Matrix
+Loading required package: Matrix
 Loading required package: Matrix
 Loading required package: Matrix
 Loading required package: Matrix
@@ -13,17 +21,175 @@ Loading required package: Matrix
 Loading required package: Matrix
 Loading required package: Matrix
 Loading required package: foreach
+Loading required package: foreach
+Loading required package: foreach
+Loading required package: rngtools
+Loading required package: rngtools
 Loading required package: rngtools
 Loading required package: foreach
 Loading required package: foreach
 Loading required package: foreach
+Loading required package: rngtools
+Loading required package: foreach
+Loading required package: foreach
+Loading required package: rngtools
+Loading required package: rngtools
+Loading required package: foreach
+Loading required package: rngtools
+Loading required package: rngtools
+Loading required package: rngtools
+Loading required package: foreach
+Loading required package: rngtools
+Starting iteration 10 
+Starting iteration 20 
+Starting iteration 30 
+Starting iteration 40 
+Starting iteration 50 
+Starting iteration 60 
+Starting iteration 70 
+Starting iteration 80 
+Starting iteration 90 
+Starting iteration 100 
+Starting iteration 110 
+Starting iteration 120 
+Starting iteration 130 
+Starting iteration 140 
+Starting iteration 150 
+Starting iteration 160 
+Starting iteration 170 
+Starting iteration 180 
+Starting iteration 190 
+Starting iteration 200 
+Starting iteration 210 
+Starting iteration 220 
+Starting iteration 230 
+Starting iteration 240 
+Starting iteration 250 
+Starting iteration 260 
+Starting iteration 270 
+Starting iteration 280 
+Starting iteration 290 
+Starting iteration 300 
+Starting iteration 310 
+Starting iteration 320 
+Starting iteration 330 
+Starting iteration 340 
+Starting iteration 350 
+Starting iteration 360 
+Starting iteration 370 
+Starting iteration 380 
+Starting iteration 390 
+Starting iteration 400 
+Starting iteration 410 
+Starting iteration 420 
+Starting iteration 430 
+Starting iteration 440 
+Starting iteration 450 
+Starting iteration 460 
+Starting iteration 470 
+Starting iteration 480 
+Starting iteration 490 
+Starting iteration 500 
+Starting iteration 510 
+Starting iteration 520 
+Starting iteration 530 
+Starting iteration 540 
+Starting iteration 550 
+Starting iteration 560 
+Starting iteration 570 
+Starting iteration 580 
+Starting iteration 590 
+Starting iteration 600 
+Starting iteration 610 
+Starting iteration 620 
+Starting iteration 630 
+Starting iteration 640 
+Starting iteration 650 
+Starting iteration 660 
+Starting iteration 670 
+Starting iteration 680 
+Starting iteration 690 
+Starting iteration 700 
+Starting iteration 710 
+Starting iteration 720 
+Starting iteration 730 
+Starting iteration 740 
+Starting iteration 750 
+Starting iteration 760 
+Starting iteration 770 
+Starting iteration 780 
+Starting iteration 790 
+Starting iteration 800 
+Starting iteration 810 
+Starting iteration 820 
+Starting iteration 830 
+Starting iteration 840 
+Starting iteration 850 
+Starting iteration 860 
+Starting iteration 870 
+Starting iteration 880 
+Starting iteration 890 
+Starting iteration 900 
+Starting iteration 910 
+Starting iteration 920 
+Starting iteration 930 
+Starting iteration 940 
+Starting iteration 950 
+Starting iteration 960 
+Starting iteration 970 
+Starting iteration 980 
+Starting iteration 990 
+Starting iteration 1000 
+There were 50 or more warnings (use warnings() to see the first 50)
+There were 50 or more warnings (use warnings() to see the first 50)
+There were 50 or more warnings (use warnings() to see the first 50)
+There were 50 or more warnings (use warnings() to see the first 50)
+There were 50 or more warnings (use warnings() to see the first 50)
+There were 50 or more warnings (use warnings() to see the first 50)
+There were 50 or more warnings (use warnings() to see the first 50)
+There were 50 or more warnings (use warnings() to see the first 50)
+There were 50 or more warnings (use warnings() to see the first 50)
+There were 50 or more warnings (use warnings() to see the first 50)
+There were 50 or more warnings (use warnings() to see the first 50)
+starting worker pid=8420 on localhost:11169 at 13:33:00.401
+starting worker pid=16936 on localhost:11169 at 13:33:01.091
+starting worker pid=8800 on localhost:11169 at 13:33:01.344
+starting worker pid=20296 on localhost:11169 at 13:33:01.598
+starting worker pid=12984 on localhost:11169 at 13:33:01.851
+starting worker pid=10436 on localhost:11169 at 13:33:02.116
+starting worker pid=15732 on localhost:11169 at 13:33:02.368
+starting worker pid=13192 on localhost:11169 at 13:33:02.622
+starting worker pid=16556 on localhost:11169 at 13:33:02.874
+starting worker pid=13112 on localhost:11169 at 13:33:03.126
+starting worker pid=10088 on localhost:11169 at 13:33:03.378
+Loading required package: Matrix
+Loading required package: Matrix
+Loading required package: Matrix
+Loading required package: Matrix
+Loading required package: Matrix
+Loading required package: Matrix
+Loading required package: Matrix
+Loading required package: Matrix
+Loading required package: Matrix
+Loading required package: foreach
+Loading required package: foreach
+Loading required package: foreach
+Loading required package: foreach
+Loading required package: foreach
+Loading required package: foreach
+Loading required package: foreach
+Loading required package: foreach
+Loading required package: foreach
+Loading required package: foreach
 Loading required package: foreach
 Loading required package: rngtools
 Loading required package: rngtools
 Loading required package: rngtools
 Loading required package: rngtools
-Loading required package: foreach
-Loading required package: foreach
+Loading required package: rngtools
+Loading required package: rngtools
+Loading required package: rngtools
+Loading required package: rngtools
 Loading required package: rngtools
 Loading required package: rngtools
 Starting iteration 10 
@@ -133,158 +299,7 @@ There were 50 or more warnings (use warnings() to see the first 50)
 There were 50 or more warnings (use warnings() to see the first 50)
 There were 50 or more warnings (use warnings() to see the first 50)
 There were 50 or more warnings (use warnings() to see the first 50)
-starting worker pid=10700 on localhost:11169 at 12:32:21.855
-starting worker pid=18952 on localhost:11169 at 12:32:22.134
-starting worker pid=944 on localhost:11169 at 12:32:22.391
-starting worker pid=8936 on localhost:11169 at 12:32:22.646
-starting worker pid=13540 on localhost:11169 at 12:32:22.903
-starting worker pid=7468 on localhost:11169 at 12:32:23.166
-starting worker pid=7660 on localhost:11169 at 12:32:23.426
-starting worker pid=8984 on localhost:11169 at 12:32:23.682
-starting worker pid=18824 on localhost:11169 at 12:32:23.937
-starting worker pid=12444 on localhost:11169 at 12:32:24.191
-starting worker pid=20280 on localhost:11169 at 12:32:24.447
-Loading required package: Matrix
-Loading required package: Matrix
-Loading required package: Matrix
-Loading required package: Matrix
-Loading required package: Matrix
-Loading required package: Matrix
-Loading required package: Matrix
-Loading required package: Matrix
-Loading required package: Matrix
-Loading required package: Matrix
-Loading required package: Matrix
-Loading required package: foreach
-Loading required package: rngtools
-Loading required package: foreach
-Loading required package: foreach
-Loading required package: foreach
-Loading required package: rngtools
-Loading required package: rngtools
-Loading required package: rngtools
-Loading required package: foreach
-Loading required package: foreach
-Loading required package: foreach
-Loading required package: rngtools
-Loading required package: rngtools
-Loading required package: rngtools
-Loading required package: foreach
-Loading required package: foreach
-Loading required package: foreach
-Loading required package: foreach
-Loading required package: rngtools
-Loading required package: rngtools
-Loading required package: rngtools
-Loading required package: rngtools
-Starting iteration 10 
-Starting iteration 20 
-Starting iteration 30 
-Starting iteration 40 
-Starting iteration 50 
-Starting iteration 60 
-Starting iteration 70 
-Starting iteration 80 
-Starting iteration 90 
-Starting iteration 100 
-Starting iteration 110 
-Starting iteration 120 
-Starting iteration 130 
-Starting iteration 140 
-Starting iteration 150 
-Starting iteration 160 
-Starting iteration 170 
-Starting iteration 180 
-Starting iteration 190 
-Starting iteration 200 
-Starting iteration 210 
-Starting iteration 220 
-Starting iteration 230 
-Starting iteration 240 
-Starting iteration 250 
-Starting iteration 260 
-Starting iteration 270 
-Starting iteration 280 
-Starting iteration 290 
-Starting iteration 300 
-Starting iteration 310 
-Starting iteration 320 
-Starting iteration 330 
-Starting iteration 340 
-Starting iteration 350 
-Starting iteration 360 
-Starting iteration 370 
-Starting iteration 380 
-Starting iteration 390 
-Starting iteration 400 
-Starting iteration 410 
-Starting iteration 420 
-Starting iteration 430 
-Starting iteration 440 
-Starting iteration 450 
-Starting iteration 460 
-Starting iteration 470 
-Starting iteration 480 
-Starting iteration 490 
-Starting iteration 500 
-Starting iteration 510 
-Starting iteration 520 
-Starting iteration 530 
-Starting iteration 540 
-Starting iteration 550 
-Starting iteration 560 
-Starting iteration 570 
-Starting iteration 580 
-Starting iteration 590 
-Starting iteration 600 
-Starting iteration 610 
-Starting iteration 620 
-Starting iteration 630 
-Starting iteration 640 
-Starting iteration 650 
-Starting iteration 660 
-Starting iteration 670 
-Starting iteration 680 
-Error in unserialize(node$con) : error reading from connection
-Calls: <Anonymous> ... doTryCatch -> recvData -> recvData.SOCKnode -> unserialize
-In addition: There were 50 or more warnings (use warnings() to see the first 50)
-Execution halted
-ze(node$con) : error reading from connection
-Calls: <Anonymous> ... doTryCatch -> recvData -> recvData.SOCKnode -> unserialize
-Error in unserialize(node$con) : error reading from connection
-Calls: <Anonymous> ... doTryCatch -> recvData -> recvData.SOCKnode -> unserialize
-In addition: Error in unserialize(node$con) : error reading from connection
-Calls: <Anonymous> ... doTryCatch -> recvData -> recvData.SOCKnode -> unserialize
-In addition: There were 50 or more warnings (use warnings() to see the first 50)
-There were 50 or more warnings (use warnings() to see the first 50)There were 50 or more warnings (use warnings() to see the first 50)
-Error in unserialize(node$con) : error reading from connection
-Calls: <Anonymous> ... doTryCatch -> recvData -> recvData.SOCKnode -> unserialize
-Execution halted
-In addition: Execution halted
-Execution halted
 There were 50 or more warnings (use warnings() to see the first 50)
-Execution halted
-Error in unserialize(node$con) : error reading from connection
-Calls: <Anonymous> ... doTryCatch -> recvData -> recvData.SOCKnode -> unserialize
-In addition: There were 50 or more warnings (use warnings() to see the first 50)
-Error in unserialize(node$con) : error reading from connection
-Calls: <Anonymous> ... doTryCatch -> recvData -> recvData.SOCKnode -> unserialize
-In addition: Execution halted
 There were 50 or more warnings (use warnings() to see the first 50)
-Error in unserialize(node$con) : error reading from connection
-Calls: <Anonymous> ... doTryCatch -> recvData -> recvData.SOCKnode -> unserialize
-Execution halted
-In addition: There were 50 or more warnings (use warnings() to see the first 50)
-Error in unserialize(node$con) : error reading from connection
-Calls: <Anonymous> ... doTryCatch -> recvData -> recvData.SOCKnode -> unserialize
-In addition: Execution halted
 There were 50 or more warnings (use warnings() to see the first 50)
-Execution halted
-Error in unserialize(node$con) : error reading from connection
-Calls: <Anonymous> ... doTryCatch -> recvData -> recvData.SOCKnode -> unserialize
-In addition: There were 50 or more warnings (use warnings() to see the first 50)
-Error in unserialize(node$con) : error reading from connection
-Calls: <Anonymous> ... doTryCatch -> recvData -> recvData.SOCKnode -> unserialize
-In addition: Execution halted
 There were 50 or more warnings (use warnings() to see the first 50)
-Execution halted
