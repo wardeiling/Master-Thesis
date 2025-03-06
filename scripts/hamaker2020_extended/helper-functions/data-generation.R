@@ -37,7 +37,7 @@ glmm_data_generation <- function(N_total, T_total, predictor.type, outcome.type,
   # Precompute Level 2 (Cluster-Level) Variables
   X.mean.j <- rnorm(N_total, mean = 0, sd = sdX.between)  # Cluster means
   p.X.mean.j <- if (predictor.type == "binary") plogis(X.mean.j) else rep(NA, N_total) # convert the log-odds (logit) to probability
-  b0.j <- g.00 + g.01 * X.mean.j + rnorm(N_total, 0, sd.u0)  # Random intercepts
+  b0.j <- if (predictor.type == "binary") g.00 + g.01 * p.X.mean.j + rnorm(N_total, 0, sd.u0) else g.00 + g.01 * X.mean.j + rnorm(N_total, 0, sd.u0)  # Random intercepts
   b1.j <- g.10 + rnorm(N_total, 0, sd.u1)  # Random slopes
   
   # Initialize storage for long-format data
@@ -61,19 +61,15 @@ glmm_data_generation <- function(N_total, T_total, predictor.type, outcome.type,
       eta.jt <- b0.j[j] + b1.j[j] * (X.jt - X.mean.j[j])
     } else {
       X.jt <- rbinom(T_total, 1, p.X.mean.j[j])
-      # eta.jt <- b0.j[j] + b1.j[j] * X.jt
-      eta.jt <- b0.j[j] + b1.j[j] * (X.jt - X.mean.j[j])
+      eta.jt <- b0.j[j] + b1.j[j] * (X.jt - p.X.mean.j[j])
     }
     
     if (outcome.type == "continuous") {
-      # add residual error to linear predictor
-      Y.jt <- eta.jt + rnorm(T_total, mean = 0, sd = sd.e)
+      Y.jt <- eta.jt + rnorm(T_total, mean = 0, sd = sd.e) # add residual error to linear predictor
       p.Y.jt <- NA  # No probability needed for continuous outcome
     } else {
-      # convert the log-odds (logit) to probability
-      p.Y.jt <- plogis(eta.jt)
-      # use probability to generate binary outcome
-      Y.jt <- rbinom(T_total, 1, p.Y.jt)
+      p.Y.jt <- plogis(eta.jt) # convert the log-odds (logit) to probability
+      Y.jt <- rbinom(T_total, 1, p.Y.jt) # use probability to generate binary outcome
     }
     
     # Store values
