@@ -76,6 +76,11 @@ run_simulation <- function(runname = "run1", seed = 4243, nsim = 1000, N_total =
     saveRDS(output[[name]], file = paste0(directory, "/", name, ".rds"))
   }
   
+  # save warnings to text file
+  sink(file = paste0(directory, "/warnings.txt"))
+  summary(warnings())
+  sink()
+  
   return(output)
 }
 
@@ -87,39 +92,25 @@ run_simulation <- function(runname = "run1", seed = 4243, nsim = 1000, N_total =
 # N_total = 200
 # T_total = 10
 
-# initialize timer
-start_time <- Sys.time()
-binx_conty_sim <- run_simulation(runname = "speed_new", seed = 4243, nsim = 1000, N_total = 200, T_total = 10, 
-                                 predictor.type = "binary", outcome.type = "continuous",
-                                 sdX.within = NA, sdX.between = 0.5, g.00 = 0, g.01 = 1, sd.u0 = 0.5,
-                                 g.10 = 0.5, sd.u1 = 0, sd.e = 0.5)
+contxy_sim <- run_simulation(runname = "March6", seed = 4243, nsim = 1000,
+                             N_total = 200, T_total = 20, predictor.type = "continuous", outcome.type = "continuous",
+                             sdX.within = 0.25, sdX.between = 0.5, g.00 = 0, g.01 = 1, sd.u0 = 0.7,
+                             g.10 = 0.5, sd.u1 = 0, sd.e = 0.5)
 
-binx_conty_sim$mean_results
-binx_conty_sim$monte_carlo_se
-
-# finalize timer
-end_time <- Sys.time()
-end_time - start_time
-
-# contxy_sim <- run_simulation(runname = "March6", seed = 4243, nsim = 1000,
-#                              N_total = 200, T_total = 20, predictor.type = "continuous", outcome.type = "continuous",
-#                              sdX.within = 0.25, sdX.between = 0.5, g.00 = 0, g.01 = 1, sd.u0 = 0.7,
-#                              g.10 = 0.5, sd.u1 = 0, sd.e = 0.5)
-# 
-# contxy_sim$mean_results
-# contxy_sim$monte_carlo_se
-# summary(warnings())
+round(contxy_sim$mean_results, 4)
+contxy_sim$monte_carlo_se
+summary(warnings())
 
 # observations
 # - once we increase T_total, the total effect is comprised more of the within-person effect, which explains
 #   the similarity between the "uninterpretable blend" of raw X and the within-person effects.
 
-binx_conty_sim <- run_simulation(runname = "March6_g.01dif6", seed = 4243, nsim = 100,
-                                 N_total = 200, T_total = 30, predictor.type = "binary", outcome.type = "continuous",
-                                 sdX.within = NA, sdX.between = 0.5, g.00 = 0, g.01 = 2, sd.u0 = 0.7,
-                                 g.10 = 0.5, sd.u1 = 0, sd.e = 0)
+binx_conty_sim <- run_simulation(runname = "lower-g.01-vals-fix", seed = 4243, nsim = 1000,
+                                 N_total = 200, T_total = 20, predictor.type = "binary", outcome.type = "continuous",
+                                 sdX.within = NA, sdX.between = 0.5, g.00 = 0, g.01 = 0.5, sd.u0 = 0.7,
+                                 g.10 = 0.5, sd.u1 = 0, sd.e = 0.5)
 
-binx_conty_sim$mean_results
+round(binx_conty_sim$mean_results, 4)
 binx_conty_sim$monte_carlo_se
 summary(warnings())
 
@@ -127,19 +118,19 @@ summary(warnings())
 
 contx_biny_sim <- run_simulation(runname = "March6", seed = 4243, nsim = 1000,
                                  N_total = 200, T_total = 20, predictor.type = "continuous", outcome.type = "binary",
-                                 sdX.within = 0.25, sdX.between = 0.5, g.00 = 0, g.01 = 1, sd.u0 = 0.7,
+                                 sdX.within = 0.25, sdX.between = 0.5, g.00 = 0, g.01 = 0.5, sd.u0 = 0.7,
                                  g.10 = 0.5, sd.u1 = 0, sd.e = NA)
 
-contx_biny_sim$mean_results
+round(contx_biny_sim$mean_results, 4)
 contx_biny_sim$monte_carlo_se
 summary(warnings())
 
-binaryxy_sim <- run_simulation(runname = "March6", seed = 4243, nsim = 1000,
+binaryxy_sim <- run_simulation(runname = "lower-g.01-vals-fix", seed = 4243, nsim = 1000,
                                N_total = 200, T_total = 20, predictor.type = "binary", outcome.type = "binary",
-                               sdX.within = NA, sdX.between = 0.5, g.00 = -0.50, g.01 = 1, sd.u0 = 0.7,
+                               sdX.within = NA, sdX.between = 0.5, g.00 = 0, g.01 = 0.5, sd.u0 = 0.7,
                                g.10 = 0.5, sd.u1 = 0, sd.e = NA)
 
-binaryxy_sim$mean_results
+round(binaryxy_sim$mean_results, 4)
 binaryxy_sim$monte_carlo_se
 summary(warnings())
 

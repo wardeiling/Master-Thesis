@@ -108,10 +108,7 @@ if(0){
                                     g.10 = 0.5, sd.u1 = 0, sd.e = 0.5)
   # decreased values to ensure that eta values are not too extreme (within -3 to 3 range)
   summary(data_cont)
-  m1 <- fixef(glmer(Y ~ X.cent + X.cluster.means + (1 | Cluster), data = data_cont))
-  m1_other <- summary(lmer(Y ~ X.cent + X.cluster.means + (1 | Cluster), data = data_cont))$coefficients[,1]
-  fixef(m1)
-  ranef(m1)
+  fixef(lmer(Y ~ X.cent + X.cluster.means + (1 | Cluster), data = data_cont))
   
   # 1.1 check distributions of X and Y
   ggplot(data_cont, aes(x = Y)) + geom_histogram(aes(y = ..density..), bins = 30, fill = "lightblue", color = "black") +
@@ -123,12 +120,18 @@ if(0){
   ggplot(data_cont, aes(x = eta)) + geom_histogram(aes(y = ..density..), bins = 30, fill = "lightblue", color = "black") +
     geom_density(alpha = 0.5, fill = "blue") + labs(title = "Histogram of eta")
   
+  # 1.3 overlaying density plots for X.cluster.means and X.mean.j
+  ggplot(data_cont, aes(x = X.cluster.means, fill = "X.cluster.means")) + geom_density(alpha = 0.5) +
+    geom_density(aes(x = X.mean.j, fill = "X.mean.j"), alpha = 0.5) + labs(title = "Density plot of X.cluster.means and X.mean.j")
+  
+  
   ### 2 generate binary X and continuous Y
-  data_binx_conty <- glmm_data_generation(N_total = 5000, T_total = 20, predictor.type = "binary", outcome.type = "continuous",
-                                    sdX.within = NA, sdX.between = 0.5, g.00 = -0.5, g.01 = 1, sd.u0 = 0.7,
+  data_binx_conty <- glmm_data_generation(N_total = 5000, T_total = 5, predictor.type = "binary", outcome.type = "continuous",
+                                    sdX.within = NA, sdX.between = 0.5, g.00 = 0, g.01 = 0.8, sd.u0 = 0.7,
                                     g.10 = 0.5, sd.u1 = 0, sd.e = 0.5)
   # same values as (1) but without sdX.within
   summary(data_binx_conty)
+  fixef(lmer(Y ~ X.cent + X.cluster.means + (1 | Cluster), data = data_binx_conty))
   
   # 2.1 check distributions of X and Y
   ggplot(data_binx_conty, aes(x = Y)) + geom_histogram(aes(y = ..density..), bins = 30, fill = "lightblue", color = "black") +
@@ -150,12 +153,22 @@ if(0){
   # when sdX.between is small (e.g., sqrt(0.4)) the distribution of probabilities
   # of X and Y are inverted U shaped (higher density in the center)
   
+  # 2.3 scatterplot of estimated cluster mean and p.X.mean.j
+  ggplot(data_binx_conty, aes(x = X.cluster.means, y = p.X.mean.j)) + geom_point() + labs(title = "Scatterplot of X.cluster.means and p.X.mean.j")
+  # create overlapping density plots for X.cluster.means and p.X.mean.j
+  ggplot(data_binx_conty, aes(x = X.cluster.means, fill = "X.cluster.means")) + geom_density(alpha = 0.5) +
+    geom_density(aes(x = p.X.mean.j, fill = "p.X.mean.j"), alpha = 0.5) + labs(title = "Density plot of X.cluster.means and p.X.mean.j")
+  # create overlapping density plots for X.cluster.means and X.mean.j
+  ggplot(data_binx_conty, aes(x = X.cluster.means, fill = "X.cluster.means")) + geom_density(alpha = 0.5) +
+    geom_density(aes(x = X.mean.j, fill = "X.mean.j"), alpha = 0.5) + labs(title = "Density plot of X.cluster.means and X.mean.j")
+  
   # 3 generate continuous X and binary Y
   data_contx_biny <- glmm_data_generation(N_total = 5000, T_total = 20, predictor.type = "continuous", outcome.type = "binary",
                                           sdX.within = 0.25, sdX.between = 0.5, g.00 = 0, g.01 = 1, sd.u0 = 0.7,
                                           g.10 = 0.5, sd.u1 = 0, sd.e = NA)
   
   summary(data_contx_biny)
+  fixef(lmer(Y ~ X.cent + X.cluster.means + (1 | Cluster), data = data_contx_biny))
   # I lowered the values until the range of eta was approximately -3 to 3, roughly corresponding to probabilities of 0.05 to 0.95.
   # This was done to ensure that the probabilities are not too close to 0 or 1, which would make the logit transformation unstable.
   
@@ -177,6 +190,7 @@ if(0){
                                       g.10 = 0.5, sd.u1 = 0, sd.e = NA)
   
   summary(data_binary)
+  fixef(lmer(Y ~ X + X.cluster.means + (1 | Cluster), data = data_binary))
   # similar to (3), I lowered the values until the range of eta was approximately -3 to 3, roughly corresponding to probabilities of 0.05 to 0.95.
   # In addition, I made sure eta was centered approximately at 0 to ensure balanced probabilities (mean of 0.5)
 
