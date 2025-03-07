@@ -87,14 +87,28 @@ run_simulation <- function(runname = "run1", seed = 4243, nsim = 1000, N_total =
 # N_total = 200
 # T_total = 10
 
-contxy_sim <- run_simulation(runname = "March6", seed = 4243, nsim = 1000,
-                             N_total = 200, T_total = 20, predictor.type = "continuous", outcome.type = "continuous",
-                             sdX.within = 0.25, sdX.between = 0.5, g.00 = 0, g.01 = 1, sd.u0 = 0.7,
-                             g.10 = 0.5, sd.u1 = 0, sd.e = 0.5)
+# initialize timer
+start_time <- Sys.time()
+binx_conty_sim <- run_simulation(runname = "speed_new", seed = 4243, nsim = 1000, N_total = 200, T_total = 10, 
+                                 predictor.type = "binary", outcome.type = "continuous",
+                                 sdX.within = NA, sdX.between = 0.5, g.00 = 0, g.01 = 1, sd.u0 = 0.5,
+                                 g.10 = 0.5, sd.u1 = 0, sd.e = 0.5)
 
-contxy_sim$mean_results
-contxy_sim$monte_carlo_se
-summary(warnings())
+binx_conty_sim$mean_results
+binx_conty_sim$monte_carlo_se
+
+# finalize timer
+end_time <- Sys.time()
+end_time - start_time
+
+# contxy_sim <- run_simulation(runname = "March6", seed = 4243, nsim = 1000,
+#                              N_total = 200, T_total = 20, predictor.type = "continuous", outcome.type = "continuous",
+#                              sdX.within = 0.25, sdX.between = 0.5, g.00 = 0, g.01 = 1, sd.u0 = 0.7,
+#                              g.10 = 0.5, sd.u1 = 0, sd.e = 0.5)
+# 
+# contxy_sim$mean_results
+# contxy_sim$monte_carlo_se
+# summary(warnings())
 
 # observations
 # - once we increase T_total, the total effect is comprised more of the within-person effect, which explains

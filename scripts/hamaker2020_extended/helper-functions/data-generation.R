@@ -97,6 +97,7 @@ if(0){
   
   ### Make Evaluation Plots ###
   library(ggplot2)
+  library(lme4)
   
   ### 1 generate continuous X and Y
   # data_cont <- glmm_data_generation(N_total = 5000, T_total = 4, predictor.type = "continuous", outcome.type = "continuous",
@@ -107,6 +108,10 @@ if(0){
                                     g.10 = 0.5, sd.u1 = 0, sd.e = 0.5)
   # decreased values to ensure that eta values are not too extreme (within -3 to 3 range)
   summary(data_cont)
+  m1 <- fixef(glmer(Y ~ X.cent + X.cluster.means + (1 | Cluster), data = data_cont))
+  m1_other <- summary(lmer(Y ~ X.cent + X.cluster.means + (1 | Cluster), data = data_cont))$coefficients[,1]
+  fixef(m1)
+  ranef(m1)
   
   # 1.1 check distributions of X and Y
   ggplot(data_cont, aes(x = Y)) + geom_histogram(aes(y = ..density..), bins = 30, fill = "lightblue", color = "black") +

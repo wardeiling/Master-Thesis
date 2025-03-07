@@ -1,7 +1,7 @@
 library(lme4)
 library(geepack) # geepack yields more stable results than gee package: https://www2.stat.duke.edu/~fl35/teaching/610-23F/docs/slides/6-1-GEE.pdf
 
-# Improved Model Fitting Function
+# Model Fitting Function
 glmm_model_fitting <- function(data, outcome.type) {
   models <- list()
   
@@ -26,7 +26,7 @@ glmm_model_fitting <- function(data, outcome.type) {
   # Fit GLMM models
   for (name in names(formulas)) {
     models[[name]] <- tryCatch(
-      summary(glmer(formulas[[name]], data = data, family = family_arg))$coefficients[, 1],
+      fixef(glmer(formulas[[name]], data = data, family = family_arg)),
       error = function(e) NA
     )
   }

@@ -1,14 +1,14 @@
-starting worker pid=12488 on localhost:11169 at 14:14:44.542
-starting worker pid=19788 on localhost:11169 at 14:14:44.806
-starting worker pid=1180 on localhost:11169 at 14:14:45.073
-starting worker pid=16196 on localhost:11169 at 14:14:45.633
-starting worker pid=2540 on localhost:11169 at 14:14:45.885
-starting worker pid=2756 on localhost:11169 at 14:14:46.138
-starting worker pid=7752 on localhost:11169 at 14:14:46.391
-starting worker pid=11580 on localhost:11169 at 14:14:46.647
-starting worker pid=12028 on localhost:11169 at 14:14:46.899
-starting worker pid=13196 on localhost:11169 at 14:14:47.152
-starting worker pid=11484 on localhost:11169 at 14:14:47.404
+starting worker pid=8744 on localhost:11690 at 10:35:24.420
+starting worker pid=316 on localhost:11690 at 10:35:24.705
+starting worker pid=19516 on localhost:11690 at 10:35:24.970
+starting worker pid=18356 on localhost:11690 at 10:35:25.523
+starting worker pid=8020 on localhost:11690 at 10:35:25.785
+starting worker pid=7656 on localhost:11690 at 10:35:26.049
+starting worker pid=6980 on localhost:11690 at 10:35:26.313
+starting worker pid=3628 on localhost:11690 at 10:35:26.579
+starting worker pid=6708 on localhost:11690 at 10:35:26.843
+starting worker pid=11028 on localhost:11690 at 10:35:27.143
+starting worker pid=9360 on localhost:11690 at 10:35:27.418
 Loading required package: Matrix
 Loading required package: Matrix
 Loading required package: Matrix
@@ -25,18 +25,18 @@ Loading required package: rngtools
 Loading required package: foreach
 Loading required package: rngtools
 Loading required package: foreach
-Loading required package: foreach
-Loading required package: rngtools
-Loading required package: rngtools
-Loading required package: foreach
 Loading required package: rngtools
 Loading required package: foreach
 Loading required package: foreach
 Loading required package: rngtools
 Loading required package: rngtools
 Loading required package: foreach
+Loading required package: foreach
+Loading required package: foreach
+Loading required package: rngtools
 Loading required package: rngtools
 Loading required package: foreach
+Loading required package: rngtools
 Loading required package: foreach
 Loading required package: foreach
 Loading required package: rngtools
@@ -153,48 +153,3 @@ There were 50 or more warnings (use warnings() to see the first 50)
 There were 50 or more warnings (use warnings() to see the first 50)
 There were 50 or more warnings (use warnings() to see the first 50)
 There were 50 or more warnings (use warnings() to see the first 50)
-starting worker pid=12248 on localhost:11690 at 10:34:56.398
-starting worker pid=13548 on localhost:11690 at 10:34:56.673
-starting worker pid=11684 on localhost:11690 at 10:34:56.930
-starting worker pid=18916 on localhost:11690 at 10:34:57.190
-starting worker pid=20080 on localhost:11690 at 10:34:57.448
-starting worker pid=17472 on localhost:11690 at 10:34:57.708
-starting worker pid=13296 on localhost:11690 at 10:34:57.964
-starting worker pid=14344 on localhost:11690 at 10:34:58.223
-starting worker pid=5976 on localhost:11690 at 10:34:58.476
-starting worker pid=5792 on localhost:11690 at 10:34:58.725
-starting worker pid=9828 on localhost:11690 at 10:34:58.976
-Loading required package: Matrix
-Loading required package: Matrix
-Loading required package: Matrix
-Loading required package: Matrix
-Loading required package: Matrix
-Loading required package: Matrix
-Loading required package: Matrix
-Loading required package: Matrix
-Loading required package: Matrix
-Loading required package: Matrix
-Loading required package: Matrix
-Loading required package: foreach
-Loading required package: rngtools
-Loading required package: foreach
-Loading required package: rngtools
-Loading required package: foreach
-Loading required package: foreach
-Loading required package: rngtools
-Loading required package: foreach
-Loading required package: foreach
-Loading required package: rngtools
-Loading required package: foreach
-Loading required package: rngtools
-Loading required package: rngtools
-Loading required package: rngtools
-Loading required package: foreach
-Loading required package: foreach
-Loading required package: rngtools
-Loading required package: foreach
-Loading required package: rngtools
-Loading required package: rngtools
-Loading required package: foreach
-Loading required package: rngtools
-Starting iteration 10 
