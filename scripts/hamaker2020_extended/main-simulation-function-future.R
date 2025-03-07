@@ -125,9 +125,9 @@ round(contx_biny_sim$mean_results, 4)
 contx_biny_sim$monte_carlo_se
 summary(warnings())
 
-binaryxy_sim <- run_simulation(runname = "lower-g.01-vals-fix", seed = 4243, nsim = 1000,
+binaryxy_sim <- run_simulation(runname = "higher-g.01-vals-fix", seed = 4243, nsim = 1000,
                                N_total = 200, T_total = 20, predictor.type = "binary", outcome.type = "binary",
-                               sdX.within = NA, sdX.between = 0.5, g.00 = 0, g.01 = 0.5, sd.u0 = 0.7,
+                               sdX.within = NA, sdX.between = 0.5, g.00 = 0, g.01 = 0.8, sd.u0 = 0.7,
                                g.10 = 0.5, sd.u1 = 0, sd.e = NA)
 
 round(binaryxy_sim$mean_results, 4)
