@@ -168,7 +168,7 @@ if(0){
                                           g.10 = 0.5, sd.u1 = 0, sd.e = NA)
   
   summary(data_contx_biny)
-  fixef(lmer(Y ~ X.cent + X.cluster.means + (1 | Cluster), data = data_contx_biny))
+  fixef(glmer(Y ~ X.cent + X.cluster.means + (1 | Cluster), data = data_contx_biny, family = binomial))
   # I lowered the values until the range of eta was approximately -3 to 3, roughly corresponding to probabilities of 0.05 to 0.95.
   # This was done to ensure that the probabilities are not too close to 0 or 1, which would make the logit transformation unstable.
   
@@ -190,7 +190,7 @@ if(0){
                                       g.10 = 0.5, sd.u1 = 0, sd.e = NA)
   
   summary(data_binary)
-  fixef(lmer(Y ~ X + X.cluster.means + (1 | Cluster), data = data_binary))
+  fixef(glmer(Y ~ X.cent + X.cluster.means + (1 | Cluster), data = data_binary, family = binomial))
   # similar to (3), I lowered the values until the range of eta was approximately -3 to 3, roughly corresponding to probabilities of 0.05 to 0.95.
   # In addition, I made sure eta was centered approximately at 0 to ensure balanced probabilities (mean of 0.5)
 
