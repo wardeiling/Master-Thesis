@@ -71,7 +71,7 @@ glmm_data_generation <- function(N_total, T_total, predictor.type, outcome.type,
     if (outcome.type == "continuous"){
       Y.jt <- eta.jt + rnorm(T_total, mean = 0, sd = sd.e) # add residual error to linear predictor
       p.Y.jt <- NA  # No probability needed for continuous outcome
-    } else if (predictor.type == "binary"){
+    } else if (outcome.type == "binary"){
       p.Y.jt <- plogis(eta.jt) # convert the log-odds (logit) to probability
       Y.jt <- rbinom(T_total, 1, p.Y.jt) # use probability to generate binary outcome
     }
