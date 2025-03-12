@@ -5,7 +5,7 @@ format:
     toc: true
     toc_float: true
     toc_depth: 2
-    code_folding: hide
+    code-fold: true
     fig_width: 8
     self-contained: true
 ---
@@ -150,9 +150,13 @@ p2.23 <- ggplot(data_binx_conty, aes(x = eta)) + geom_histogram(aes(y = ..densit
 # combine plots
 gridExtra::grid.arrange(p2.11, p2.12, p2.21, p2.22, p2.23, ncol = 2)
 
-# 2.3 scatterplot of estimated cluster mean and p.X.mean.j
-p2.31 <- ggplot(data_binx_conty, aes(x = X.cluster.means, y = p.X.mean.j)) + geom_point() + labs(title = "Scatterplot of X.cluster.means and p.X.mean.j")
-p2.31
+# 2.3 scatterplot of p.X.mean.j and b0, b0 and eta, estimated cluster mean and p.X.mean.j
+p2.31 <- ggplot(data_binx_conty, aes(x = p.X.mean.j, y = b0)) + geom_point() + labs(title = "Scatterplot of p.X.mean.j and b0")
+p2.32 <- ggplot(data_binx_conty, aes(x = b0, y = eta)) + geom_point() + labs(title = "Scatterplot of b0 and eta")
+p2.33 <- ggplot(data_binx_conty, aes(x = X.cluster.means, y = p.X.mean.j)) + geom_point() + labs(title = "Scatterplot of X.cluster.means and p.X.mean.j")
+
+# combine plots
+gridExtra::grid.arrange(p2.31, p2.32, p2.33, ncol = 2)
 
 # create overlapping density plots for X.cluster.means and p.X.mean.j
 p2.32 <- ggplot(data_binx_conty, aes(x = X.cluster.means, fill = "X.cluster.means")) + geom_density(alpha = 0.5) +
