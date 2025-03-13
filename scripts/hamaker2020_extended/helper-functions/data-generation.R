@@ -62,10 +62,10 @@ glmm_data_generation <- function(N_total, T_total, predictor.type, outcome.type,
     # Generate predictor and linear predictor eta
     if (predictor.type == "continuous"){
       X.jt <- rnorm(T_total, mean = X.mean.j[j], sd = sdX.within)
-      eta.jt <- b0.j[j] + b1.j[j] * (X.jt - X.mean.j[j])
+      eta.jt <- b0.j[j] + b1.j[j] * X.jt
     } else if (predictor.type == "binary"){
       X.jt <- rbinom(T_total, 1, p.X.mean.j[j])
-      eta.jt <- b0.j[j] + b1.j[j] * (X.jt - p.X.mean.j[j]) 
+      eta.jt <- b0.j[j] + b1.j[j] * X.jt
     }
     
     if (outcome.type == "continuous"){
