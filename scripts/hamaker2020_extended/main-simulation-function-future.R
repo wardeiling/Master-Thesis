@@ -105,14 +105,37 @@ summary(warnings())
 # - once we increase T_total, the total effect is comprised more of the within-person effect, which explains
 #   the similarity between the "uninterpretable blend" of raw X and the within-person effects.
 
-binx_conty_sim <- run_simulation(runname = "lower-g.01-vals-fix", seed = 4243, nsim = 1000,
+binx_conty_sim1 <- run_simulation(runname = "postfix_reference", seed = 4243, nsim = 1000,
                                  N_total = 200, T_total = 20, predictor.type = "binary", outcome.type = "continuous",
                                  sdX.within = NA, sdX.between = 0.5, g.00 = 0, g.01 = 0.5, sd.u0 = 0.7,
                                  g.10 = 0.5, sd.u1 = 0, sd.e = 0.5)
 
-round(binx_conty_sim$mean_results, 4)
-binx_conty_sim$monte_carlo_se
-summary(warnings())
+# round(binx_conty_sim$mean_results, 4)
+# binx_conty_sim$monte_carlo_se
+# summary(warnings())
+
+binx_conty_sim2 <- run_simulation(runname = "postfix_highsdxbetw", seed = 4243, nsim = 1000,
+                                 N_total = 200, T_total = 20, predictor.type = "binary", outcome.type = "continuous",
+                                 sdX.within = NA, sdX.between = 3, g.00 = 0, g.01 = 0.5, sd.u0 = 0.7,
+                                 g.10 = 0.5, sd.u1 = 0, sd.e = 0.5)
+
+# round(binx_conty_sim$mean_results, 4)
+# binx_conty_sim$monte_carlo_se
+# summary(warnings())
+
+binx_conty_sim3 <- run_simulation(runname = "postfix_highg.01", seed = 4243, nsim = 1000,
+                                 N_total = 200, T_total = 20, predictor.type = "binary", outcome.type = "continuous",
+                                 sdX.within = NA, sdX.between = 0.5, g.00 = 0, g.01 = 2, sd.u0 = 0.7,
+                                 g.10 = 0.5, sd.u1 = 0, sd.e = 0.5)
+
+binx_conty_sim3 <- run_simulation(runname = "postfix_highg.01", seed = 4243, nsim = 100,
+                                  N_total = 200, T_total = 20, predictor.type = "binary", outcome.type = "continuous",
+                                  sdX.within = NA, sdX.between = 0.5, g.00 = 0, g.01 = 2, sd.u0 = 0.7,
+                                  g.10 = 0.5, sd.u1 = 0, sd.e = 0.5)
+
+# round(binx_conty_sim$mean_results, 4)
+# binx_conty_sim$monte_carlo_se
+# summary(warnings())
 
 # write the summary(warnings()) to file
 
