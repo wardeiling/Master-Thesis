@@ -11,7 +11,7 @@ run_simulation <- function(runname = "run1", seed = 4243, nsim = 1000, N_total =
   library(doFuture) # for parallelization (neatly handles RNG, errors, making objects available for workers)
   
   # load helper functions
-  source("scripts/hamaker2020_extended/helper-functions/data-generation.R")
+  source("scripts/hamaker2020_extended/helper-functions/data-generation-centeredX.R")
   source("scripts/hamaker2020_extended/helper-functions/model-fitting.R")
   source("scripts/hamaker2020_extended/helper-functions/result-formatting.R")
   
@@ -105,7 +105,7 @@ summary(warnings())
 # - once we increase T_total, the total effect is comprised more of the within-person effect, which explains
 #   the similarity between the "uninterpretable blend" of raw X and the within-person effects.
 
-binx_conty_sim1 <- run_simulation(runname = "newpar_postfix_reference", seed = 4243, nsim = 100,
+binx_conty_sim1 <- run_simulation(runname = "postfix_reference", seed = 4243, nsim = 100,
                                  N_total = 200, T_total = 20, predictor.type = "binary", outcome.type = "continuous",
                                  sdX.within = NA, sdX.between = 0.5, g.00 = 0, g.01 = 0.5, sd.u0 = 0.7,
                                  g.10 = 0.5, sd.u1 = 0, sd.e = 0.5)
@@ -114,7 +114,14 @@ binx_conty_sim1 <- run_simulation(runname = "newpar_postfix_reference", seed = 4
 # binx_conty_sim$monte_carlo_se
 # summary(warnings())
 
-binx_conty_sim2 <- run_simulation(runname = "newpar_postfix_highsdxbetw", seed = 4243, nsim = 100,
+binx_conty_sim1 <- run_simulation(runname = "postfix_g.01andg.10is2", seed = 4243, nsim = 1000,
+                                  N_total = 200, T_total = 20, predictor.type = "binary", outcome.type = "continuous",
+                                  sdX.within = NA, sdX.between = 0.5, g.00 = 0, g.01 = 2, sd.u0 = 0.7,
+                                  g.10 = 2, sd.u1 = 0, sd.e = 0.5)
+
+round(binx_conty_sim1$mean_results, 4)
+
+binx_conty_sim2 <- run_simulation(runname = "postfix_highsdxbetw", seed = 4243, nsim = 100,
                                  N_total = 200, T_total = 20, predictor.type = "binary", outcome.type = "continuous",
                                  sdX.within = NA, sdX.between = 3, g.00 = 0, g.01 = 0.5, sd.u0 = 0.7,
                                  g.10 = 0.5, sd.u1 = 0, sd.e = 0.5)
@@ -123,12 +130,27 @@ binx_conty_sim2 <- run_simulation(runname = "newpar_postfix_highsdxbetw", seed =
 # binx_conty_sim$monte_carlo_se
 # summary(warnings())
 
-binx_conty_sim3 <- run_simulation(runname = "newpar_postfix_highg.01", seed = 4243, nsim = 100,
-                                 N_total = 200, T_total = 20, predictor.type = "binary", outcome.type = "continuous",
+binx_conty_sim3 <- run_simulation(runname = "postfix_highg.01_lowT", seed = 4243, nsim = 1000,
+                                 N_total = 200, T_total = 5, predictor.type = "binary", outcome.type = "continuous",
                                  sdX.within = NA, sdX.between = 0.5, g.00 = 0, g.01 = 2, sd.u0 = 0.7,
                                  g.10 = 0.5, sd.u1 = 0, sd.e = 0.5)
 
-binx_conty_sim4 <- run_simulation(runname = "newpar_postfix_highg.01andg.10", seed = 4243, nsim = 100,
+round(binx_conty_sim3$mean_results, 4)
+
+binx_conty_sim3.1 <- run_simulation(runname = "postfix_highg.01_highT", seed = 4243, nsim = 1000,
+                                  N_total = 200, T_total = 30, predictor.type = "binary", outcome.type = "continuous",
+                                  sdX.within = NA, sdX.between = 0.5, g.00 = 0, g.01 = 2, sd.u0 = 0.7,
+                                  g.10 = 0.5, sd.u1 = 0, sd.e = 0.5)
+
+round(binx_conty_sim3.1$mean_results, 4)
+
+binx_conty_sim3.1 <- run_simulation(runname = "postfix_highg.01_highT", seed = 4243, nsim = 1000,
+                                    N_total = 200, T_total = 30, predictor.type = "binary", outcome.type = "continuous",
+                                    sdX.within = NA, sdX.between = 0.5, g.00 = 0, g.01 = 2, sd.u0 = 0.7,
+                                    g.10 = 0.5, sd.u1 = 0, sd.e = 0.5)
+
+
+binx_conty_sim4 <- run_simulation(runname = "postfix_highg.01andg.10", seed = 4243, nsim = 100,
                                   N_total = 200, T_total = 20, predictor.type = "binary", outcome.type = "continuous",
                                   sdX.within = NA, sdX.between = 0.5, g.00 = 0, g.01 = 2, sd.u0 = 0.7,
                                   g.10 = 3, sd.u1 = 0, sd.e = 0.5)
@@ -137,7 +159,7 @@ binx_conty_sim4 <- run_simulation(runname = "newpar_postfix_highg.01andg.10", se
 # # binx_conty_sim$monte_carlo_se
 # summary(warnings())
 
-binx_conty_sim5 <- run_simulation(runname = "newpar_postfix_highg.01andg.10andsdXbet", seed = 4243, nsim = 100,
+binx_conty_sim5 <- run_simulation(runname = "postfix_highg.01andg.10andsdXbet", seed = 4243, nsim = 100,
                                   N_total = 200, T_total = 20, predictor.type = "binary", outcome.type = "continuous",
                                   sdX.within = NA, sdX.between = 2, g.00 = 0, g.01 = -1, sd.u0 = 0.7,
                                   g.10 = 3, sd.u1 = 0, sd.e = 0.5)

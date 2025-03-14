@@ -22,9 +22,9 @@ glmm_data_generation <- function(N_total, T_total, predictor.type, outcome.type,
   # sdX.within        within-person variance (only used when predictor.type is continuous)
   # sdX.between       between-person variance
   # g.00              grand intercept
-  # g.01              between-cluster slope
+  # g.01              contextual effect g.01* = beta(b) – beta(w)
   # sd.u0             SD of residuals intercept at level 2
-  # g.10              fixed within-cluster slope
+  # g.10              fixed within-cluster slope beta(w)
   # sd.u1             SD of within-cluster slope at level 2
   # sd.e              residual SD at level 1 (only used when outcome.type is continuous)
   
