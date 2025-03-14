@@ -144,12 +144,12 @@ binx_conty_sim3 <- run_simulation(runname = "postfix_highg.01_lowT", seed = 4243
 
 round(binx_conty_sim3$mean_results, 4)
 
-binx_conty_sim3.1 <- run_simulation(runname = "postfix_highg.01_highT", seed = 4243, nsim = 1000,
-                                  N_total = 200, T_total = 30, predictor.type = "binary", outcome.type = "continuous",
+binx_conty_sim3.3 <- run_simulation(runname = "postfix_highg.01_realmean2", seed = 4243, nsim = 1000,
+                                  N_total = 200, T_total = 20, predictor.type = "binary", outcome.type = "continuous",
                                   sdX.within = NA, sdX.between = 0.5, g.00 = 0, g.01 = 2, sd.u0 = 0.7,
                                   g.10 = 0.5, sd.u1 = 0, sd.e = 0.5)
 
-round(binx_conty_sim3.1$mean_results, 4)
+round(binx_conty_sim3.3$mean_results, 4)
 
 binx_conty_sim3.1 <- run_simulation(runname = "postfix_highg.01_highT", seed = 4243, nsim = 1000,
                                     N_total = 200, T_total = 30, predictor.type = "binary", outcome.type = "continuous",

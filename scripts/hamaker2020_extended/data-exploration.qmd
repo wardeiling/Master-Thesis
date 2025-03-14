@@ -293,6 +293,15 @@ p2.42t20 <- ggplot(data_binx_contyt20, aes(x = diff)) + geom_histogram(aes(y = .
 gridExtra::grid.arrange(p2.42t5, p2.42t20, ncol = 2)
 ```
 
+```{r}
+data_binx_contyt20 <- glmm_data_generation(N_total = 5000, T_total = 30, predictor.type = "binary", outcome.type = "continuous",
+                                        sdX.within = NA, sdX.between = 0.5, g.00 = 0, g.01 = 2, sd.u0 = 0.7,
+                                        g.10 = 0.5, sd.u1 = 0, sd.e = 0.5)
+
+str(data_binx_contyt20)
+fixef(lmer(Y ~ X + p.X.mean.j + (1 | Cluster), data = data_binx_contyt20))
+```
+
 
 ## Continuous X and Binary Y
 
