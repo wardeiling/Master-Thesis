@@ -121,6 +121,13 @@ binx_conty_sim1 <- run_simulation(runname = "postfix_g.01andg.10is2", seed = 424
 
 round(binx_conty_sim1$mean_results, 4)
 
+binx_conty_sim1.1 <- run_simulation(runname = "postfix_g.01is1g.10is-1", seed = 4243, nsim = 1000,
+                                  N_total = 200, T_total = 20, predictor.type = "binary", outcome.type = "continuous",
+                                  sdX.within = NA, sdX.between = 0.5, g.00 = 0, g.01 = 1, sd.u0 = 0.7,
+                                  g.10 = -1, sd.u1 = 0, sd.e = 0.5)
+
+round(binx_conty_sim1.1$mean_results, 4)
+
 binx_conty_sim2 <- run_simulation(runname = "postfix_highsdxbetw", seed = 4243, nsim = 100,
                                  N_total = 200, T_total = 20, predictor.type = "binary", outcome.type = "continuous",
                                  sdX.within = NA, sdX.between = 3, g.00 = 0, g.01 = 0.5, sd.u0 = 0.7,
