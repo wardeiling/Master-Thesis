@@ -8,7 +8,7 @@ library(doParallel) # for parallelization
 library(doRNG) # for reproducibility
 
 # load helper functions
-source("scripts/hamaker2020_extended/helper-functions/data-generation.R")
+source("scripts/hamaker2020_extended/helper-functions/data-generation-centeredX.R")
 source("scripts/hamaker2020_extended/helper-functions/model-fitting.R")
 source("scripts/hamaker2020_extended/helper-functions/result-formatting.R")
 
@@ -109,10 +109,10 @@ nsim = 1000
 
 # initialize timer
 start_time <- Sys.time()
-binx_conty_sim <- run_simulation(runname = "speed_old", seed = seed, nsim = nsim, N_total = 200, T_total = 10, 
-                                 predictor.type = "binary", outcome.type = "continuous",
-                                 sdX.within = NA, sdX.between = 0.5, g.00 = 0, g.01 = 1, sd.u0 = 0.5,
-                                 g.10 = 0.5, sd.u1 = 0, sd.e = 0.5)
+binx_conty_sim <- run_simulation(runname = "newpc_oldfunction", seed = 4243, nsim = 1000,
+                                 N_total = 200, T_total = 20, predictor.type = "binary", outcome.type = "binary",
+                                 sdX.within = NA, sdX.between = 1, g.00 = 0, g.01 = 0.8, sd.u0 = 0.7,
+                                 g.10 = 0.5, sd.u1 = 0, sd.e = NA)
 
 binx_conty_sim$mean_results
 binx_conty_sim$monte_carlo_se

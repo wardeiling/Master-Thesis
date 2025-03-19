@@ -26,10 +26,10 @@ run_simulation <- function(runname = "run1", seed = 4243, nsim = 1000, N_total =
   set.seed(seed) 
   
   # Set up parallel backend
-  plan(multisession)
+  plan(multisession, worker = I(1))
   
   # Run simulations in parallel
-  parallel_results <- foreach(isim = 1:nsim,  .options.future = list(seed = TRUE), .verbose = TRUE) %dofuture% {
+  parallel_results <- foreach(isim = 1:nsim,  .options.future = list(seed = TRUE), .verbose = F) %dofuture% {
     if (isim %% 10 == 0) {
       cat(paste("Starting iteration", isim, "\n"))
     }
@@ -92,7 +92,7 @@ run_simulation <- function(runname = "run1", seed = 4243, nsim = 1000, N_total =
 # N_total = 200
 # T_total = 10
 
-contxy_sim <- run_simulation(runname = "March6", seed = 4243, nsim = 1000,
+contxy_sim <- run_simulation(runname = "March6_check", seed = 4243, nsim = 1000,
                              N_total = 200, T_total = 20, predictor.type = "continuous", outcome.type = "continuous",
                              sdX.within = 0.25, sdX.between = 0.5, g.00 = 0, g.01 = 1, sd.u0 = 0.7,
                              g.10 = 0.5, sd.u1 = 0, sd.e = 0.5)
@@ -208,6 +208,16 @@ binaryxy_sim2 <- run_simulation(runname = "higher-g.01-vals-fix_solved", seed = 
                                N_total = 200, T_total = 20, predictor.type = "binary", outcome.type = "binary",
                                sdX.within = NA, sdX.between = 0.5, g.00 = 0, g.01 = 0.8, sd.u0 = 0.7,
                                g.10 = 0.5, sd.u1 = 0, sd.e = NA)
+
+binaryxy_sim3 <- run_simulation(runname = "newpc", seed = 4243, nsim = 1000,
+                                N_total = 200, T_total = 20, predictor.type = "binary", outcome.type = "binary",
+                                sdX.within = NA, sdX.between = 1, g.00 = 0, g.01 = 0.8, sd.u0 = 0.7,
+                                g.10 = 0.5, sd.u1 = 0, sd.e = NA)
+
+binaryxy_sim3 <- run_simulation(runname = "newpc5", seed = 4243, nsim = 1000,
+                                N_total = 200, T_total = 20, predictor.type = "binary", outcome.type = "binary",
+                                sdX.within = NA, sdX.between = 1, g.00 = 0, g.01 = 0.8, sd.u0 = 0.7,
+                                g.10 = 0.5, sd.u1 = 0, sd.e = NA)
 
 # round(binaryxy_sim$mean_results, 4)
 # binaryxy_sim$monte_carlo_se
