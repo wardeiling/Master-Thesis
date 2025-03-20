@@ -15,8 +15,11 @@ In this report, we will explore the data generating mechanism underlying the sim
 ```{r}
 # load libraries
 library(ggplot2)
+library(ggpubr)
 library(lme4)
 library(here)
+library(tidyr)
+library(dplyr)
 
 # source the helper function
 source(here("scripts/hamaker2020_extended/helper-functions/data-generation-centeredX.R"))
@@ -94,22 +97,26 @@ p1.2 <- ggplot(data_cont, aes(x = eta)) + geom_histogram(aes(y = ..density..), b
 # combine plots
 gridExtra::grid.arrange(p1.11, p1.12, p1.2, ncol = 2)
 
+# Reduce to only cluster level variables
+data_cont_level2 <- data_cont %>% select(Cluster, X.cluster.means, X.mean.j, p.X.mean.j, eta, b0, b1) %>%
+  distinct(Cluster, .keep_all = TRUE)
+
 # 1.4 scatterplot of b0 and eta and X.mean.j and X.cluster.means
-p1.31 <- ggplot(data_cont, aes(x = b0, y = eta)) + geom_point() + labs(title = "Scatterplot of b0 and eta")
-p1.32 <- ggplot(data_cont, aes(x = X.mean.j, y = X.cluster.means)) + geom_point() + labs(title = "Scatterplot of X.mean.j and X.cluster.means")
+p1.31 <- ggplot(data_cont_level2, aes(x = b0, y = eta)) + geom_point() + labs(title = "Scatterplot of b0 and eta") + stat_cor(method = "pearson", digits = 3)
+p1.32 <- ggplot(data_cont_level2, aes(x = X.mean.j, y = X.cluster.means)) + geom_point() + labs(title = "Scatterplot of X.mean.j and X.cluster.means", x = "True cluster mean", y = "Estimated cluster mean") + stat_cor(method = "pearson", digits = 3)
 
 # combine plots
 gridExtra::grid.arrange(p1.31, p1.32, ncol = 2)
 
 # 1.3 overlaying density plots for X.cluster.means and X.mean.j
-p1.41 <- ggplot(data_cont, aes(x = X.cluster.means, fill = "X.cluster.means")) + geom_density(alpha = 0.5) +
+p1.41 <- ggplot(data_cont_level2, aes(x = X.cluster.means, fill = "X.cluster.means")) + geom_density(alpha = 0.5) +
   geom_density(aes(x = X.mean.j, fill = "X.mean.j"), alpha = 0.5) + labs(title = "Density plot of X.cluster.means and X.mean.j")
 
 # compute difference between estimated and true cluster mean for each cluster
-data_cont$diff <- data_cont$X.cluster.means - data_cont$X.mean.j
+data_cont_level2$diff <- data_cont_level2$X.cluster.means - data_cont_level2$X.mean.j
 
 # plot histogram of differences
-p1.42 <- ggplot(data_cont, aes(x = diff)) + geom_histogram(aes(y = ..density..), bins = 30, fill = "lightblue", color = "black") +
+p1.42 <- ggplot(data_cont_level2, aes(x = diff)) + geom_histogram(aes(y = ..density..), bins = 30, fill = "lightblue", color = "black") +
   geom_density(alpha = 0.5, fill = "blue") + labs(title = "Histogram of differences between estimated and true cluster mean") +
   geom_vline(xintercept = mean(data_cont$diff), linetype = "dashed", color = "red")
 
@@ -141,14 +148,18 @@ p2.12 <- ggplot(data_binx_conty, aes(x = X)) + geom_histogram(aes(y = ..density.
   geom_density(alpha = 0.5, fill = "blue") + labs(title = "Histogram of X") +
   geom_vline(xintercept = mean(data_binx_conty$X), linetype = "dashed", color = "red")
 
+# Reduce to only cluster level variables
+data_binx_conty_level2 <- data_binx_conty %>% select(Cluster, X.cluster.means, X.mean.j, p.X.mean.j, eta, b0, b1) %>%
+  distinct(Cluster, .keep_all = TRUE)
+
 # 2.2 histograms X.mean.j, p.X.mean.j and eta
-p2.21 <- ggplot(data_binx_conty, aes(x = X.mean.j)) + geom_histogram(aes(y = ..density..), bins = 30, fill = "lightblue", color = "black") +
+p2.21 <- ggplot(data_binx_conty_level2, aes(x = X.mean.j)) + geom_histogram(aes(y = ..density..), bins = 30, fill = "lightblue", color = "black") +
   geom_density(alpha = 0.5, fill = "blue") + labs(title = "Histogram of X.mean.j") +
   geom_vline(xintercept = mean(data_binx_conty$X.mean.j), linetype = "dashed", color = "red")
-p2.22 <- ggplot(data_binx_conty, aes(x = p.X.mean.j)) + geom_histogram(aes(y = ..density..), bins = 30, fill = "lightblue", color = "black") +
+p2.22 <- ggplot(data_binx_conty_level2, aes(x = p.X.mean.j)) + geom_histogram(aes(y = ..density..), bins = 30, fill = "lightblue", color = "black") +
   geom_density(alpha = 0.5, fill = "blue") + labs(title = "Histogram of p.X.mean.j") +
   geom_vline(xintercept = mean(data_binx_conty$p.X.mean.j), linetype = "dashed", color = "red")
-p2.23 <- ggplot(data_binx_conty, aes(x = eta)) + geom_histogram(aes(y = ..density..), bins = 30, fill = "lightblue", color = "black") +
+p2.23 <- ggplot(data_binx_conty_level2, aes(x = eta)) + geom_histogram(aes(y = ..density..), bins = 30, fill = "lightblue", color = "black") +
   geom_density(alpha = 0.5, fill = "blue") + labs(title = "Histogram of eta") +
   geom_vline(xintercept = mean(data_binx_conty$eta), linetype = "dashed", color = "red")
 # eta is nicely distributed with -3 to 3 range
@@ -162,24 +173,25 @@ p2.23 <- ggplot(data_binx_conty, aes(x = eta)) + geom_histogram(aes(y = ..densit
 gridExtra::grid.arrange(p2.11, p2.12, p2.21, p2.22, p2.23, ncol = 2)
 
 # 2.3 scatterplot of p.X.mean.j and b0, b0 and eta, estimated cluster mean and p.X.mean.j
-p2.31 <- ggplot(data_binx_conty, aes(x = p.X.mean.j, y = b0)) + geom_point() + labs(title = "Scatterplot of p.X.mean.j and b0")
-p2.32 <- ggplot(data_binx_conty, aes(x = b0, y = eta)) + geom_point() + labs(title = "Scatterplot of b0 and eta")
-p2.33 <- ggplot(data_binx_conty, aes(x = X.cluster.means, y = p.X.mean.j)) + geom_point() + labs(title = "Scatterplot of X.cluster.means and p.X.mean.j")
+p2.31 <- ggplot(data_binx_conty_level2, aes(x = p.X.mean.j, y = b0)) + geom_point() + labs(title = "Scatterplot of p.X.mean.j and b0") + stat_cor(method = "pearson", digits = 3)
+
+p2.32 <- ggplot(data_binx_conty_level2, aes(x = b0, y = eta)) + geom_point() + labs(title = "Scatterplot of b0 and eta") + stat_cor(method = "pearson", digits = 3)
+p2.33 <- ggplot(data_binx_conty_level2, aes(x = p.X.mean.j, y = X.cluster.means)) + geom_point() + labs(title = "Scatterplot of X.cluster.means and p.X.mean.j", x = "True underlying probability", y = "Observed proportion") + stat_cor(method = "pearson", digits = 3)
 
 # combine plots
 gridExtra::grid.arrange(p2.31, p2.32, p2.33, ncol = 2)
 
 # create overlapping density plots for X.cluster.means and p.X.mean.j
-p2.41 <- ggplot(data_binx_conty, aes(x = X.cluster.means, fill = "X.cluster.means")) + geom_histogram(alpha = 0.8, binwidth = 0.02) +
+p2.41 <- ggplot(data_binx_conty_level2, aes(x = X.cluster.means, fill = "X.cluster.means")) + geom_histogram(alpha = 0.8, binwidth = 0.02) +
   geom_histogram(aes(x = p.X.mean.j, fill = "p.X.mean.j"), alpha = 0.8, binwidth = 0.02) + labs(title = "Density plot of X.cluster.means and p.X.mean.j", x = "value")
 
 # compute difference between estimated and true cluster mean for each cluster
-data_binx_conty$diff <- data_binx_conty$X.cluster.means - data_binx_conty$p.X.mean.j
+data_binx_conty_level2$diff <- data_binx_conty_level2$X.cluster.means - data_binx_conty_level2$p.X.mean.j
 
 # plot histogram of differences
-p2.42 <- ggplot(data_binx_conty, aes(x = diff)) + geom_histogram(aes(y = ..density..), bins = 30, fill = "lightblue", color = "black") +
+p2.42 <- ggplot(data_binx_conty_level2, aes(x = diff)) + geom_histogram(aes(y = ..density..), bins = 30, fill = "lightblue", color = "black") +
   geom_density(alpha = 0.5, fill = "blue") + labs(title = "Histogram of differences between estimated and true cluster mean") +
-  geom_vline(xintercept = mean(data_binx_conty$diff), linetype = "dashed", color = "red")
+  geom_vline(xintercept = mean(data_binx_conty_level2$diff, na.rm = TRUE), linetype = "dashed", color = "red")
 
 # combine plots
 gridExtra::grid.arrange(p2.41, p2.42, nrow = 2)
@@ -208,14 +220,18 @@ p2.12 <- ggplot(data_binx_conty, aes(x = X)) + geom_histogram(aes(y = ..density.
   geom_density(alpha = 0.5, fill = "blue") + labs(title = "Histogram of X") +
   geom_vline(xintercept = mean(data_binx_conty$X), linetype = "dashed", color = "red")
 
+# Reduce to only cluster level variables
+data_binx_conty_level2 <- data_binx_conty %>% select(Cluster, X.cluster.means, X.mean.j, p.X.mean.j, eta, b0, b1) %>%
+  distinct(Cluster, .keep_all = TRUE)
+
 # 2.2 histograms X.mean.j, p.X.mean.j and eta
-p2.21 <- ggplot(data_binx_conty, aes(x = X.mean.j)) + geom_histogram(aes(y = ..density..), bins = 30, fill = "lightblue", color = "black") +
+p2.21 <- ggplot(data_binx_conty_level2, aes(x = X.mean.j)) + geom_histogram(aes(y = ..density..), bins = 30, fill = "lightblue", color = "black") +
   geom_density(alpha = 0.5, fill = "blue") + labs(title = "Histogram of X.mean.j") +
   geom_vline(xintercept = mean(data_binx_conty$X.mean.j), linetype = "dashed", color = "red")
-p2.22 <- ggplot(data_binx_conty, aes(x = p.X.mean.j)) + geom_histogram(aes(y = ..density..), bins = 30, fill = "lightblue", color = "black") +
+p2.22 <- ggplot(data_binx_conty_level2, aes(x = p.X.mean.j)) + geom_histogram(aes(y = ..density..), bins = 30, fill = "lightblue", color = "black") +
   geom_density(alpha = 0.5, fill = "blue") + labs(title = "Histogram of p.X.mean.j") +
   geom_vline(xintercept = mean(data_binx_conty$p.X.mean.j), linetype = "dashed", color = "red")
-p2.23 <- ggplot(data_binx_conty, aes(x = eta)) + geom_histogram(aes(y = ..density..), bins = 30, fill = "lightblue", color = "black") +
+p2.23 <- ggplot(data_binx_conty_level2, aes(x = eta)) + geom_histogram(aes(y = ..density..), bins = 30, fill = "lightblue", color = "black") +
   geom_density(alpha = 0.5, fill = "blue") + labs(title = "Histogram of eta") +
   geom_vline(xintercept = mean(data_binx_conty$eta), linetype = "dashed", color = "red")
 # eta is nicely distributed with -3 to 3 range
@@ -229,24 +245,25 @@ p2.23 <- ggplot(data_binx_conty, aes(x = eta)) + geom_histogram(aes(y = ..densit
 gridExtra::grid.arrange(p2.11, p2.12, p2.21, p2.22, p2.23, ncol = 2)
 
 # 2.3 scatterplot of p.X.mean.j and b0, b0 and eta, estimated cluster mean and p.X.mean.j
-p2.31 <- ggplot(data_binx_conty, aes(x = p.X.mean.j, y = b0)) + geom_point() + labs(title = "Scatterplot of p.X.mean.j and b0")
-p2.32 <- ggplot(data_binx_conty, aes(x = b0, y = eta)) + geom_point() + labs(title = "Scatterplot of b0 and eta")
-p2.33 <- ggplot(data_binx_conty, aes(x = X.cluster.means, y = p.X.mean.j)) + geom_point() + labs(title = "Scatterplot of X.cluster.means and p.X.mean.j")
+p2.31 <- ggplot(data_binx_conty_level2, aes(x = p.X.mean.j, y = b0)) + geom_point() + labs(title = "Scatterplot of p.X.mean.j and b0") + stat_cor(method = "pearson", digits = 3)
+
+p2.32 <- ggplot(data_binx_conty_level2, aes(x = b0, y = eta)) + geom_point() + labs(title = "Scatterplot of b0 and eta") + stat_cor(method = "pearson", digits = 3)
+p2.33 <- ggplot(data_binx_conty_level2, aes(x = p.X.mean.j, y = X.cluster.means)) + geom_point() + labs(title = "Scatterplot of X.cluster.means and p.X.mean.j", x = "True underlying probability", y = "Observed proportion") + stat_cor(method = "pearson", digits = 3)
 
 # combine plots
 gridExtra::grid.arrange(p2.31, p2.32, p2.33, ncol = 2)
 
 # create overlapping density plots for X.cluster.means and p.X.mean.j
-p2.41 <- ggplot(data_binx_conty, aes(x = X.cluster.means, fill = "X.cluster.means")) + geom_histogram(alpha = 0.8, binwidth = 0.02) +
+p2.41 <- ggplot(data_binx_conty_level2, aes(x = X.cluster.means, fill = "X.cluster.means")) + geom_histogram(alpha = 0.8, binwidth = 0.02) +
   geom_histogram(aes(x = p.X.mean.j, fill = "p.X.mean.j"), alpha = 0.8, binwidth = 0.02) + labs(title = "Density plot of X.cluster.means and p.X.mean.j", x = "value")
 
 # compute difference between estimated and true cluster mean for each cluster
-data_binx_conty$diff <- data_binx_conty$X.cluster.means - data_binx_conty$p.X.mean.j
+data_binx_conty_level2$diff <- data_binx_conty_level2$X.cluster.means - data_binx_conty_level2$p.X.mean.j
 
 # plot histogram of differences
-p2.42 <- ggplot(data_binx_conty, aes(x = diff)) + geom_histogram(aes(y = ..density..), bins = 30, fill = "lightblue", color = "black") +
+p2.42 <- ggplot(data_binx_conty_level2, aes(x = diff)) + geom_histogram(aes(y = ..density..), bins = 30, fill = "lightblue", color = "black") +
   geom_density(alpha = 0.5, fill = "blue") + labs(title = "Histogram of differences between estimated and true cluster mean") +
-  geom_vline(xintercept = mean(data_binx_conty$diff), linetype = "dashed", color = "red")
+  geom_vline(xintercept = mean(data_binx_conty_level2$diff, na.rm = TRUE), linetype = "dashed", color = "red")
 
 # combine plots
 gridExtra::grid.arrange(p2.41, p2.42, nrow = 2)
@@ -262,13 +279,21 @@ data_binx_contyt5 <- glmm_data_generation(N_total = 1000, T_total = 5, predictor
                                         sdX.within = NA, sdX.between = 0.5, g.00 = 0, g.01 = 2, sd.u0 = 0.7,
                                         g.10 = 0.5, sd.u1 = 0, sd.e = 0.5)
 
+# only keep level 2 variables
+data_binx_contyt5 <- data_binx_contyt5 %>% select(Cluster, X.cluster.means, X.mean.j, p.X.mean.j, eta, b0, b1) %>%
+  distinct(Cluster, .keep_all = TRUE)
+
 data_binx_contyt20 <- glmm_data_generation(N_total = 1000, T_total = 20, predictor.type = "binary", outcome.type = "continuous",
                                         sdX.within = NA, sdX.between = 0.5, g.00 = 0, g.01 = 2, sd.u0 = 0.7,
                                         g.10 = 0.5, sd.u1 = 0, sd.e = 0.5)
 
+# only keep level 2 variables
+data_binx_contyt20 <- data_binx_contyt20 %>% select(Cluster, X.cluster.means, X.mean.j, p.X.mean.j, eta, b0, b1) %>%
+  distinct(Cluster, .keep_all = TRUE)
+
 # scatterplot of p.X.mean.j and b0, b0 and eta, estimated cluster mean and p.X.mean.j
-p2.33t5 <- ggplot(data_binx_contyt5, aes(x = X.cluster.means, y = p.X.mean.j)) + geom_point() + labs(title = "T = 5") + xlim(0,1) + ylim(0,1)
-p2.33t20 <- ggplot(data_binx_contyt20, aes(x = X.cluster.means, y = p.X.mean.j)) + geom_point() + labs(title = "T = 20") + xlim(0,1) + ylim(0,1)
+p2.33t5 <- ggplot(data_binx_contyt5, aes(x = p.X.mean.j, y = X.cluster.means)) + geom_point() + labs(title = "T = 5", x = "True underlying probability", y = "Observed proportion") + xlim(0,1) + ylim(0,1) + stat_cor(method = "pearson", digits = 3)
+p2.33t20 <- ggplot(data_binx_contyt20, aes(x = p.X.mean.j, y = X.cluster.means)) + geom_point() + labs(title = "T = 20", x = "True underlying probability", y = "Observed proportion") + xlim(0,1) + ylim(0,1) + stat_cor(method = "pearson", digits = 3)
 
 # combine plots
 gridExtra::grid.arrange(p2.33t5, p2.33t20, ncol = 2)
@@ -330,8 +355,12 @@ p3.12 <- ggplot(data_contx_biny, aes(x = X)) + geom_histogram(aes(y = ..density.
   geom_density(alpha = 0.5, fill = "blue") + labs(title = "Histogram of X") +
   geom_vline(xintercept = mean(data_contx_biny$X), linetype = "dashed", color = "red")
 
+# only keep level 2 variables
+data_contx_biny_level2 <- data_contx_biny %>% select(Cluster, X.cluster.means, X.mean.j, p.X.mean.j, eta, b0, b1) %>%
+  distinct(Cluster, .keep_all = TRUE)
+
 # 3.2 check distributions of eta and p_y
-p3.21 <- ggplot(data_contx_biny, aes(x = eta)) + geom_histogram(aes(y = ..density..), bins = 30, fill = "lightblue", color = "black") +
+p3.21 <- ggplot(data_contx_biny_level2, aes(x = eta)) + geom_histogram(aes(y = ..density..), bins = 30, fill = "lightblue", color = "black") +
   geom_density(alpha = 0.5, fill = "blue") + labs(title = "Histogram of eta") +
   geom_vline(xintercept = mean(data_contx_biny$eta), linetype = "dashed", color = "red")
 p3.22 <- ggplot(data_contx_biny, aes(x = p.Y)) + geom_histogram(aes(y = ..density..), bins = 30, fill = "lightblue", color = "black") +
@@ -342,23 +371,23 @@ p3.22 <- ggplot(data_contx_biny, aes(x = p.Y)) + geom_histogram(aes(y = ..densit
 gridExtra::grid.arrange(p3.11, p3.12, p3.21, p3.22, ncol = 2)
 
 # 3.3 scatterplot of b0 and eta and X.mean.j and X.cluster.means
-p3.31 <- ggplot(data_contx_biny, aes(x = b0, y = eta)) + geom_point() + labs(title = "Scatterplot of b0 and eta")
-p3.32 <- ggplot(data_contx_biny, aes(x = X.mean.j, y = X.cluster.means)) + geom_point() + labs(title = "Scatterplot of X.mean.j and X.cluster.means")
+p3.31 <- ggplot(data_contx_biny, aes(x = b0, y = eta)) + geom_point() + labs(title = "Scatterplot of b0 and eta") + stat_cor(method = "pearson", digits = 3)
+p3.32 <- ggplot(data_contx_biny, aes(x = X.mean.j, y = X.cluster.means)) + geom_point() + labs(title = "Scatterplot of X.mean.j and X.cluster.means", x = "True cluster mean", y = "Estimated cluster mean") + stat_cor(method = "pearson", digits = 3)
 
 # combine plots
 gridExtra::grid.arrange(p3.31, p3.32, ncol = 2)
 
 # create overlapping density plots for X.cluster.means and p.X.mean.j
-p3.41 <- ggplot(data_contx_biny, aes(x = X.cluster.means, fill = "X.cluster.means")) + geom_density(alpha = 0.5) +
+p3.41 <- ggplot(data_contx_biny_level2, aes(x = X.cluster.means, fill = "X.cluster.means")) + geom_density(alpha = 0.5) +
   geom_density(aes(x = X.mean.j, fill = "p.X.mean.j"), alpha = 0.5) + labs(title = "Density plot of X.cluster.means and X.mean.j", x = "value")
 
 # compute difference between estimated and true cluster mean for each cluster
-data_contx_biny$diff <- data_contx_biny$X.cluster.means - data_contx_biny$X.mean.j
+data_contx_biny_level2$diff <- data_contx_biny_level2$X.cluster.means - data_contx_biny_level2$X.mean.j
 
 # plot histogram of differences
-p3.42 <- ggplot(data_contx_biny, aes(x = diff)) + geom_histogram(aes(y = ..density..), bins = 30, fill = "lightblue", color = "black") +
+p3.42 <- ggplot(data_contx_biny_level2, aes(x = diff)) + geom_histogram(aes(y = ..density..), bins = 30, fill = "lightblue", color = "black") +
   geom_density(alpha = 0.5, fill = "blue") + labs(title = "Histogram of differences between estimated and true cluster mean") +
-  geom_vline(xintercept = mean(data_contx_biny$diff), linetype = "dashed", color = "red")
+  geom_vline(xintercept = mean(data_contx_biny_level2$diff), linetype = "dashed", color = "red")
 
 # combine plots
 gridExtra::grid.arrange(p3.41, p3.42, nrow = 2)
@@ -391,11 +420,15 @@ p4.12 <- ggplot(data_binary, aes(x = X)) + geom_histogram(aes(y = ..density..), 
   geom_density(alpha = 0.5, fill = "blue") + labs(title = "Histogram of X") +
   geom_vline(xintercept = mean(data_binary$X), linetype = "dashed", color = "red")
 
+# only keep level 2 variables
+data_binary_level2 <- data_binary %>% select(Cluster, X.cluster.means, X.mean.j, p.X.mean.j, eta, b0, b1) %>%
+  distinct(Cluster, .keep_all = TRUE)
+
 # 4.2 histograms with density overlay for evaluation of probability distributions
-p4.21 <- ggplot(data_binary, aes(x = eta)) + geom_histogram(aes(y = ..density..), bins = 30, fill = "lightblue", color = "black") +
+p4.21 <- ggplot(data_binary_level2, aes(x = eta)) + geom_histogram(aes(y = ..density..), bins = 30, fill = "lightblue", color = "black") +
   geom_density(alpha = 0.5, fill = "blue") + labs(title = "Histogram of eta") +
   geom_vline(xintercept = mean(data_binary$eta), linetype = "dashed", color = "red")
-p4.22 <- ggplot(data_binary, aes(x = p.X.mean.j)) + geom_histogram(aes(y = ..density..), bins = 30, fill = "lightblue", color = "black") +
+p4.22 <- ggplot(data_binary_level2, aes(x = p.X.mean.j)) + geom_histogram(aes(y = ..density..), bins = 30, fill = "lightblue", color = "black") +
   geom_density(alpha = 0.5, fill = "blue") + labs(title = "Histogram of p.X.mean.j") +
   geom_vline(xintercept = mean(data_binary$p.X.mean.j), linetype = "dashed", color = "red")
 p4.23 <- ggplot(data_binary, aes(x = p.Y)) + geom_histogram(aes(y = ..density..), bins = 30, fill = "lightblue", color = "black") +
@@ -415,13 +448,13 @@ gridExtra::grid.arrange(p4.11, p4.12, p4.21, p4.22, p4.23, ncol = 2)
 # 4.3 scatterplots for evaluation of relationship between probabilities and originating variables
 
 # between p.X.mean.j and b0
-p4.31 <- ggplot(data_binary, aes(x = p.X.mean.j, y = b0)) + geom_point() + labs(title = "Scatterplot of p.X.mean.j and b0")
+p4.31 <- ggplot(data_binary_level2, aes(x = p.X.mean.j, y = b0)) + geom_point() + labs(title = "Scatterplot of p.X.mean.j and b0") + stat_cor(method = "pearson", digits = 3)
 
 # between b0 and eta
-p4.32 <- ggplot(data_binary, aes(x = b0, y = eta)) + geom_point() + labs(title = "Scatterplot of b0 and eta")
+p4.32 <- ggplot(data_binary_level2, aes(x = b0, y = eta)) + geom_point() + labs(title = "Scatterplot of b0 and eta") + stat_cor(method = "pearson", digits = 3)
 
-# between X.cluster.means and ...
-p4.33 <- ggplot(data_binary, aes(x = X.cluster.means, y = p.X.mean.j)) + geom_point() + labs(title = "Scatterplot of X.cluster.means and p.X.mean.j")
+# between X.cluster.means and p.X.mean.j
+p4.33 <- ggplot(data_binary_level2, aes(x = p.X.mean.j, y = X.cluster.means)) + geom_point() + labs(title = "Scatterplot of X.cluster.means and p.X.mean.j", x = "True underlying probability", y = "Observed proportion") + stat_cor(method = "pearson", digits = 3)
 
 # combine plots
 gridExtra::grid.arrange(p4.31, p4.32, p4.33, ncol = 2)
@@ -436,16 +469,16 @@ gridExtra::grid.arrange(p4.31, p4.32, p4.33, ncol = 2)
 # and p_y. It is more pronounced (different from linear) when sdX.between and sd.u0 are large.
 
 # create overlapping density plots for X.cluster.means and p.X.mean.j
-p4.41 <- ggplot(data_binary, aes(x = X.cluster.means, fill = "X.cluster.means")) + geom_histogram(alpha = 0.8, binwidth = 0.02) +
+p4.41 <- ggplot(data_binary_level2, aes(x = X.cluster.means, fill = "X.cluster.means")) + geom_histogram(alpha = 0.8, binwidth = 0.02) +
   geom_histogram(aes(x = p.X.mean.j, fill = "p.X.mean.j"), alpha = 0.8) + labs(title = "Density plot of X.cluster.means and p.X.mean.j", x = "value")
 
 # compute difference between estimated and true cluster mean for each cluster
-data_binary$diff <- data_binary$X.cluster.means - data_binary$p.X.mean.j
+data_binary_level2$diff <- data_binary_level2$X.cluster.means - data_binary_level2$p.X.mean.j
 
 # plot histogram of differences
-p4.42 <- ggplot(data_binary, aes(x = diff)) + geom_histogram(aes(y = ..density..), bins = 30, fill = "lightblue", color = "black") +
+p4.42 <- ggplot(data_binary_level2, aes(x = diff)) + geom_histogram(aes(y = ..density..), bins = 30, fill = "lightblue", color = "black") +
   geom_density(alpha = 0.5, fill = "blue") + labs(title = "Histogram of differences between estimated and true cluster mean") +
-  geom_vline(xintercept = mean(data_binary$diff), linetype = "dashed", color = "red")
+  geom_vline(xintercept = mean(data_binary_level2$diff), linetype = "dashed", color = "red")
 
 # combine plots
 gridExtra::grid.arrange(p4.41, p4.42, nrow = 2)
@@ -476,11 +509,15 @@ p4.12 <- ggplot(data_binary, aes(x = X)) + geom_histogram(aes(y = ..density..), 
   geom_density(alpha = 0.5, fill = "blue") + labs(title = "Histogram of X") +
   geom_vline(xintercept = mean(data_binary$X), linetype = "dashed", color = "red")
 
+# only keep level 2 variables
+data_binary_level2 <- data_binary %>% select(Cluster, X.cluster.means, X.mean.j, p.X.mean.j, eta, b0, b1) %>%
+  distinct(Cluster, .keep_all = TRUE)
+
 # 4.2 histograms with density overlay for evaluation of probability distributions
-p4.21 <- ggplot(data_binary, aes(x = eta)) + geom_histogram(aes(y = ..density..), bins = 30, fill = "lightblue", color = "black") +
+p4.21 <- ggplot(data_binary_level2, aes(x = eta)) + geom_histogram(aes(y = ..density..), bins = 30, fill = "lightblue", color = "black") +
   geom_density(alpha = 0.5, fill = "blue") + labs(title = "Histogram of eta") +
   geom_vline(xintercept = mean(data_binary$eta), linetype = "dashed", color = "red")
-p4.22 <- ggplot(data_binary, aes(x = p.X.mean.j)) + geom_histogram(aes(y = ..density..), bins = 30, fill = "lightblue", color = "black") +
+p4.22 <- ggplot(data_binary_level2, aes(x = p.X.mean.j)) + geom_histogram(aes(y = ..density..), bins = 30, fill = "lightblue", color = "black") +
   geom_density(alpha = 0.5, fill = "blue") + labs(title = "Histogram of p.X.mean.j") +
   geom_vline(xintercept = mean(data_binary$p.X.mean.j), linetype = "dashed", color = "red")
 p4.23 <- ggplot(data_binary, aes(x = p.Y)) + geom_histogram(aes(y = ..density..), bins = 30, fill = "lightblue", color = "black") +
@@ -500,13 +537,13 @@ gridExtra::grid.arrange(p4.11, p4.12, p4.21, p4.22, p4.23, ncol = 2)
 # 4.3 scatterplots for evaluation of relationship between probabilities and originating variables
 
 # between p.X.mean.j and b0
-p4.31 <- ggplot(data_binary, aes(x = p.X.mean.j, y = b0)) + geom_point() + labs(title = "Scatterplot of p.X.mean.j and b0")
+p4.31 <- ggplot(data_binary_level2, aes(x = p.X.mean.j, y = b0)) + geom_point() + labs(title = "Scatterplot of p.X.mean.j and b0") + stat_cor(method = "pearson", digits = 3)
 
 # between b0 and eta
-p4.32 <- ggplot(data_binary, aes(x = b0, y = eta)) + geom_point() + labs(title = "Scatterplot of b0 and eta")
+p4.32 <- ggplot(data_binary_level2, aes(x = b0, y = eta)) + geom_point() + labs(title = "Scatterplot of b0 and eta") + stat_cor(method = "pearson", digits = 3)
 
-# between X.cluster.means and ...
-p4.33 <- ggplot(data_binary, aes(x = X.cluster.means, y = p.X.mean.j)) + geom_point() + labs(title = "Scatterplot of X.cluster.means and p.X.mean.j")
+# between X.cluster.means and p.X.mean.j
+p4.33 <- ggplot(data_binary_level2, aes(x = p.X.mean.j, y = X.cluster.means)) + geom_point() + labs(title = "Scatterplot of X.cluster.means and p.X.mean.j", x = "True underlying probability", y = "Observed proportion") + stat_cor(method = "pearson", digits = 3)
 
 # combine plots
 gridExtra::grid.arrange(p4.31, p4.32, p4.33, ncol = 2)
@@ -521,16 +558,16 @@ gridExtra::grid.arrange(p4.31, p4.32, p4.33, ncol = 2)
 # and p_y. It is more pronounced (different from linear) when sdX.between and sd.u0 are large.
 
 # create overlapping density plots for X.cluster.means and p.X.mean.j
-p4.41 <- ggplot(data_binary, aes(x = X.cluster.means, fill = "X.cluster.means")) + geom_histogram(alpha = 0.8, binwidth = 0.02) +
+p4.41 <- ggplot(data_binary_level2, aes(x = X.cluster.means, fill = "X.cluster.means")) + geom_histogram(alpha = 0.8, binwidth = 0.02) +
   geom_histogram(aes(x = p.X.mean.j, fill = "p.X.mean.j"), alpha = 0.8) + labs(title = "Density plot of X.cluster.means and p.X.mean.j", x = "value")
 
 # compute difference between estimated and true cluster mean for each cluster
-data_binary$diff <- data_binary$X.cluster.means - data_binary$p.X.mean.j
+data_binary_level2$diff <- data_binary_level2$X.cluster.means - data_binary_level2$p.X.mean.j
 
 # plot histogram of differences
-p4.42 <- ggplot(data_binary, aes(x = diff)) + geom_histogram(aes(y = ..density..), bins = 30, fill = "lightblue", color = "black") +
+p4.42 <- ggplot(data_binary_level2, aes(x = diff)) + geom_histogram(aes(y = ..density..), bins = 30, fill = "lightblue", color = "black") +
   geom_density(alpha = 0.5, fill = "blue") + labs(title = "Histogram of differences between estimated and true cluster mean") +
-  geom_vline(xintercept = mean(data_binary$diff), linetype = "dashed", color = "red")
+  geom_vline(xintercept = mean(data_binary_level2$diff), linetype = "dashed", color = "red")
 
 # combine plots
 gridExtra::grid.arrange(p4.41, p4.42, nrow = 2)
@@ -561,11 +598,15 @@ p4.12 <- ggplot(data_binary, aes(x = X)) + geom_histogram(aes(y = ..density..), 
   geom_density(alpha = 0.5, fill = "blue") + labs(title = "Histogram of X") +
   geom_vline(xintercept = mean(data_binary$X), linetype = "dashed", color = "red")
 
+# only keep level 2 variables
+data_binary_level2 <- data_binary %>% select(Cluster, X.cluster.means, X.mean.j, p.X.mean.j, eta, b0, b1) %>%
+  distinct(Cluster, .keep_all = TRUE)
+
 # 4.2 histograms with density overlay for evaluation of probability distributions
-p4.21 <- ggplot(data_binary, aes(x = eta)) + geom_histogram(aes(y = ..density..), bins = 30, fill = "lightblue", color = "black") +
+p4.21 <- ggplot(data_binary_level2, aes(x = eta)) + geom_histogram(aes(y = ..density..), bins = 30, fill = "lightblue", color = "black") +
   geom_density(alpha = 0.5, fill = "blue") + labs(title = "Histogram of eta") +
   geom_vline(xintercept = mean(data_binary$eta), linetype = "dashed", color = "red")
-p4.22 <- ggplot(data_binary, aes(x = p.X.mean.j)) + geom_histogram(aes(y = ..density..), bins = 30, fill = "lightblue", color = "black") +
+p4.22 <- ggplot(data_binary_level2, aes(x = p.X.mean.j)) + geom_histogram(aes(y = ..density..), bins = 30, fill = "lightblue", color = "black") +
   geom_density(alpha = 0.5, fill = "blue") + labs(title = "Histogram of p.X.mean.j") +
   geom_vline(xintercept = mean(data_binary$p.X.mean.j), linetype = "dashed", color = "red")
 p4.23 <- ggplot(data_binary, aes(x = p.Y)) + geom_histogram(aes(y = ..density..), bins = 30, fill = "lightblue", color = "black") +
@@ -585,13 +626,13 @@ gridExtra::grid.arrange(p4.11, p4.12, p4.21, p4.22, p4.23, ncol = 2)
 # 4.3 scatterplots for evaluation of relationship between probabilities and originating variables
 
 # between p.X.mean.j and b0
-p4.31 <- ggplot(data_binary, aes(x = p.X.mean.j, y = b0)) + geom_point() + labs(title = "Scatterplot of p.X.mean.j and b0")
+p4.31 <- ggplot(data_binary_level2, aes(x = p.X.mean.j, y = b0)) + geom_point() + labs(title = "Scatterplot of p.X.mean.j and b0") + stat_cor(method = "pearson", digits = 3)
 
 # between b0 and eta
-p4.32 <- ggplot(data_binary, aes(x = b0, y = eta)) + geom_point() + labs(title = "Scatterplot of b0 and eta")
+p4.32 <- ggplot(data_binary_level2, aes(x = b0, y = eta)) + geom_point() + labs(title = "Scatterplot of b0 and eta") + stat_cor(method = "pearson", digits = 3)
 
-# between X.cluster.means and ...
-p4.33 <- ggplot(data_binary, aes(x = X.cluster.means, y = p.X.mean.j)) + geom_point() + labs(title = "Scatterplot of X.cluster.means and p.X.mean.j")
+# between X.cluster.means and p.X.mean.j
+p4.33 <- ggplot(data_binary_level2, aes(x = p.X.mean.j, y = X.cluster.means)) + geom_point() + labs(title = "Scatterplot of X.cluster.means and p.X.mean.j", x = "True underlying probability", y = "Observed proportion") + stat_cor(method = "pearson", digits = 3)
 
 # combine plots
 gridExtra::grid.arrange(p4.31, p4.32, p4.33, ncol = 2)
@@ -606,16 +647,16 @@ gridExtra::grid.arrange(p4.31, p4.32, p4.33, ncol = 2)
 # and p_y. It is more pronounced (different from linear) when sdX.between and sd.u0 are large.
 
 # create overlapping density plots for X.cluster.means and p.X.mean.j
-p4.41 <- ggplot(data_binary, aes(x = X.cluster.means, fill = "X.cluster.means")) + geom_histogram(alpha = 0.8, binwidth = 0.02) +
+p4.41 <- ggplot(data_binary_level2, aes(x = X.cluster.means, fill = "X.cluster.means")) + geom_histogram(alpha = 0.8, binwidth = 0.02) +
   geom_histogram(aes(x = p.X.mean.j, fill = "p.X.mean.j"), alpha = 0.8) + labs(title = "Density plot of X.cluster.means and p.X.mean.j", x = "value")
 
 # compute difference between estimated and true cluster mean for each cluster
-data_binary$diff <- data_binary$X.cluster.means - data_binary$p.X.mean.j
+data_binary_level2$diff <- data_binary_level2$X.cluster.means - data_binary_level2$p.X.mean.j
 
 # plot histogram of differences
-p4.42 <- ggplot(data_binary, aes(x = diff)) + geom_histogram(aes(y = ..density..), bins = 30, fill = "lightblue", color = "black") +
+p4.42 <- ggplot(data_binary_level2, aes(x = diff)) + geom_histogram(aes(y = ..density..), bins = 30, fill = "lightblue", color = "black") +
   geom_density(alpha = 0.5, fill = "blue") + labs(title = "Histogram of differences between estimated and true cluster mean") +
-  geom_vline(xintercept = mean(data_binary$diff), linetype = "dashed", color = "red")
+  geom_vline(xintercept = mean(data_binary_level2$diff), linetype = "dashed", color = "red")
 
 # combine plots
 gridExtra::grid.arrange(p4.41, p4.42, nrow = 2)
