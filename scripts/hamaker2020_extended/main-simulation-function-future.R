@@ -26,7 +26,7 @@ run_simulation <- function(runname = "run1", seed = 4243, nsim = 1000, N_total =
   set.seed(seed) 
   
   # Set up parallel backend
-  plan(multisession)
+  future::plan(multisession, workers = parallelly::availableCores())
   
   # Run simulations in parallel
   parallel_results <- foreach(isim = 1:nsim,  .options.future = list(seed = TRUE), .verbose = TRUE) %dofuture% {
@@ -92,7 +92,7 @@ run_simulation <- function(runname = "run1", seed = 4243, nsim = 1000, N_total =
 # N_total = 200
 # T_total = 10
 
-contxy_sim <- run_simulation(runname = "March6_check", seed = 4243, nsim = 1000,
+contxy_sim <- run_simulation(runname = "March6_checknewpc_noworker_try3", seed = 4243, nsim = 1000,
                              N_total = 200, T_total = 20, predictor.type = "continuous", outcome.type = "continuous",
                              sdX.within = 0.25, sdX.between = 0.5, g.00 = 0, g.01 = 1, sd.u0 = 0.7,
                              g.10 = 0.5, sd.u1 = 0, sd.e = 0.5)
