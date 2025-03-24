@@ -1,7 +1,7 @@
 rm(list = ls()) # clear workspace
 
-set.seed(123) # set global seed
-runname <- "March24.7" # set a runname
+seed = 4243 # set global seed
+runname <- "March24.laptop1" # set a runname
 dir.create(paste0("simulation_results_glmm/", runname), showWarnings = FALSE) # create a directory
 
 # load libraries
@@ -17,7 +17,7 @@ source("scripts/hamaker2020_extended/helper-functions/model-fitting.R")
 source("scripts/hamaker2020_extended/helper-functions/result-formatting.R")
 
 # set the number of simulations
-nsim <- 1000
+nsim <- 10
 
 # simulation for Research Report
 design <- expand.grid(N_total = 200, T_total = c(10, 30), 
@@ -43,7 +43,7 @@ for (idesign in 1:nrow(design)) {
   sd.e <- design$sd.e[idesign]
   
   # Set up parallel backend
-  future::plan(multisession, workers = 16)
+  future::plan(multisession, workers = parallelly::availableCores())
   
   # Run simulations in parallel
   parallel_results <- foreach(isim = 1:nsim,  .options.future = list(seed = TRUE), .verbose = TRUE) %dofuture% {
@@ -74,6 +74,8 @@ library(purrr) # for functional programming
 library(dplyr) # for data manipulation
 library(tidyr) # for data manipulation
 
+design$l1_X <- design$l2_X.cent <- design$l3a_X.cent <- design$l3a_X.cluster.means <- design$l4_X <- design$l4_X.cluster.means
+
 for (idesign in 1:nrow(design)) {
   
   parallel_results_setting <- readRDS(paste0("simulation_results_glmm/", runname, "/", idesign, ".RDS"))
@@ -83,77 +85,19 @@ for (idesign in 1:nrow(design)) {
     map_dfr(rep, ~ as.data.frame(as.list(.x)), .id = "model")
   }, .id = "replication")
   
-  # average across replications (not across models)
-  df2 <- df %>%
+  # average across replications
+  df_processed <- df %>%
     group_by(model) %>%
-    summarise(across(c("X", "X.cent", "X.cluster.means"), mean, na.rm = TRUE))
+    summarise(across(c("X", "X.cent", "X.cluster.means"), mean, na.rm = TRUE)) %>%
+    # for now only select the mlm models
+    filter(model %in% c("l1", "l2", "l3a", "l4")) %>%
+    # change into wide format
+    pivot_wider(names_from = model, values_from = c("X", "X.cent", "X.cluster.means"), names_glue = "{model}_{.value}") %>%
+    # only select possible columns
+    select("l1_X", "l2_X.cent", "l3a_X.cent", "l3a_X.cluster.means", "l4_X", "l4_X.cluster.means")
   
-  # change into wide format
-  df3 <- pivot_wider(df2, names_from = model, values_from = c("X", "X.cent", "X.cluster.means"))
+  # add to design
+  design[idesign, c("l1_X", "l2_X.cent", "l3a_X.cent", "l3a_X.cluster.means", "l4_X", "l4_X.cluster.means")] <- df_processed
   
 }
-  
-  
-  
-  # unlist the lists inside the list
-  results <- lapply(parallel_results, unlist)
-  
-  # note model names
-  model_names <- c("l1", "l2", "l3a", "l4", 
-                  "g.independence1", "g.exchangeable1", "g.ar11", 
-                  "g.independence2", "g.exchangeable2", "g.ar12", 
-                  "g.independence3a", "g.exchangeable3a", "g.ar13a", 
-                  "g.independence4", "g.exchangeable4", "g.ar14")
-  
-  # for every model name, extract the results
-  for (model_name in model_names) {
-    results_list[grep("solution_lmm", names(results_list))]
-    results <- lapply(parallel_results, function(x) x[[model_name]])
-    saveRDS(results, file = paste0("simulation_results_glmm/", runname, "/", idesign, "_", model_name, ".RDS"))
-  }
-  
-  # Apply result formatting **only once**
-  formatted_results <- lapply(parallel_results, glmm_formating_results)
-  
-  # Compute mean results
-  mean_results <- Reduce("+", formatted_results) / nsim
-  
-  # Compute variance (unbiased estimator)
-  var_results <- Reduce("+", lapply(formatted_results, function(x) (x - mean_results)^2)) / (nsim - 1)
-  sd_results <- sqrt(var_results)
-  monte_carlo_se <- sd_results / sqrt(nsim)
-  
-  # record settings
-  settings <- list(runname = runname, seed = seed, nsim = nsim, N_total = N_total, T_total = T_total, 
-                   predictor.type = predictor.type, outcome.type = outcome.type,
-                   sdX.within = sdX.within, sdX.between = sdX.between, 
-                   g.00 = g.00, g.01 = g.01, sd.u0 = sd.u0, g.10 = g.10, 
-                   sd.u1 = sd.u1, sd.e = sd.e)
-  
-  # combine all output
-  output <- list(settings = settings, all_results = parallel_results, mean_results = mean_results, sd_results = sd_results, monte_carlo_se = monte_carlo_se)
-  
-  # save all output
-  for (name in names(output)) {
-    saveRDS(output[[name]], file = paste0(directory, "/", name, ".rds"))
-  }
-  
-  # save warnings to text file
-  sink(file = paste0(directory, "/warnings.txt"))
-  summary(warnings())
-  sink()
-  
-  return(output)
-}
-
-
-
-### RUNNING CONDITIONS ###
-
-# stable specifications across simulations
-# seed = 4243
-# nsim = 1000
-# N_total = 200
-# T_total = 10
-
 
