@@ -133,6 +133,7 @@ data_binx_conty <- glmm_data_generation(N_total = 1000, T_total = 20, predictor.
                                         g.10 = 0.5, sd.u1 = 0, sd.e = 0.5)
 # same values as (1) but without sdX.within
 summary(data_binx_conty)
+var(data_binx_conty$p.X.mean.j)
 fixef(lmer(Y ~ X.cent + X.cluster.means + (1 | Cluster), data = data_binx_conty))
 ```
 Strange behaviour when g.01 is negative or exceeds 0.8 (with T = 20). The intercept is borrowing from the slope. Happens more with a smaller number of total timepoints T. A value of 0.6 seems to be fine.

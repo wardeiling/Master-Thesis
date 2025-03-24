@@ -20,11 +20,11 @@ source("scripts/hamaker2020_extended/helper-functions/result-formatting.R")
 nsim <- 10
 
 # simulation for Research Report
-design <- expand.grid(N_total = 200, T_total = c(10, 30), 
-                      predictor.type = "continuous", outcome.type = "continuous",
-                      sdX.within = sqrt(1), sdX.between = sqrt(4), 
-                      g.00 = 0, g.01 = 2, sd.u0 = 1, g.10 = c(1, 2), 
-                      sd.u1 = 0, sd.e = 1)
+design <- expand.grid(N_total = c(100, 200), T_total = c(5, 10, 20), 
+                      predictor.type = "binary", outcome.type = "continuous",
+                      sdX.within = NA, sdX.between = c(0, 0.5, 1.5), 
+                      g.00 = 0, g.01 = c(-1, 0, 1), sd.u0 = c(0, 0.5, 1.5), g.10 = c(0.5, 1.5, 3), 
+                      sd.u1 = c(0, 0.5, 1.5), sd.e = c(0.5, 1.5))
 
 for (idesign in 1:nrow(design)) {
   
