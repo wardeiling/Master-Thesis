@@ -23,13 +23,22 @@ glmm_model_fitting <- function(data, outcome.type) {
     g4 = Y ~ X + X.cluster.means
   )
   
-  # Fit GLMM models
-  for (name in names(formulas)) {
-    models[[name]] <- tryCatch(
-      fixef(glmer(formulas[[name]], data = data, family = family_arg)),
-      error = function(e) NA
-    )
-  }
+  if (outcome.type == "continuous") {
+    for (name in names(formulas)) {
+      models[[name]] <- tryCatch(
+        fixef(lmer(formulas[[name]], data = data, REML = FALSE)),
+        error = function(e) NA
+      )
+    }
+  } else if (outcome.type == "binary") {
+    # Fit GLMM models
+    for (name in names(formulas)) {
+      models[[name]] <- tryCatch(
+        fixef(glmer(formulas[[name]], data = data, family = family_arg)),
+        error = function(e) NA
+      )
+    }
+    } 
   
   # Fit GEE models with different correlation structures using geepack::geeglm
   cor_structures <- c("independence", "exchangeable", "ar1")
