@@ -1,8 +1,8 @@
 rm(list = ls()) # clear workspace
 
 seed <- 6384
-set.seed(seed)
-runname <- "March25_design1_maineffects_contextual" # set a runname
+set.seed(seed) # set seed for reproducibility
+runname <- "March25_design1_maineffects_contextual_realmeanest" # set a runname
 dir.create(paste0("simulation_results_glmm/", runname), showWarnings = FALSE) # create a directory
 
 # load libraries
@@ -14,6 +14,7 @@ library(foreach) # for parallelization
 
 # load helper functions
 source("scripts/hamaker2020_extended/helper-functions/data-generation-mundlak.R")
+# source("scripts/hamaker2020_extended/helper-functions/data-generation-centeredX.R")
 source("scripts/hamaker2020_extended/helper-functions/model-fitting.R")
 source("scripts/hamaker2020_extended/helper-functions/result-formatting.R")
 
@@ -82,6 +83,12 @@ for (idesign in 1:nrow(design)) {
 
 ### collect results ---------------------------------------------------------
 
+# set new runname for retrieval
+
+# if (0) {
+#   runname <- "March25_design1_maineffects_pctest"
+# }
+
 library(purrr) # for functional programming
 library(dplyr) # for data manipulation
 library(tidyr) # for data manipulation
@@ -99,6 +106,9 @@ for (idesign in 1:nrow(design_abs)) {
   df <- map_dfr(parallel_results_setting, function(rep) {
     map_dfr(rep, ~ as.data.frame(as.list(.x)), .id = "model")
   }, .id = "replication")
+  
+  # rename columns (to address problem where X.cluster.means is not estimated)
+  colnames(df) <- c("replication", "model", "X.Intercept.", "X", "X.cent", "X.cluster.means")
   
   # average across replications
   df_processed <- df %>%
@@ -142,6 +152,9 @@ for (idesign in 1:nrow(design_bias)) {
   df <- map_dfr(parallel_results_setting, function(rep) {
     map_dfr(rep, ~ as.data.frame(as.list(.x)), .id = "model")
   }, .id = "replication")
+  
+  # rename columns (to address problem where X.cluster.means is not estimated)
+  colnames(df) <- c("replication", "model", "X.Intercept.", "X", "X.cent", "X.cluster.means")
   
   # average across replications
   df_processed <- df %>%

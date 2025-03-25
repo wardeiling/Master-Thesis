@@ -23,6 +23,7 @@ library(dplyr)
 
 # source the helper function
 source(here("scripts/hamaker2020_extended/helper-functions/data-generation-centeredX.R"))
+# source(here("scripts/hamaker2020_extended/helper-functions/data-generation-mundlak.R"))
 ```
 
 ## Continuous X and Y
