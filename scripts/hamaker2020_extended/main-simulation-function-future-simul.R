@@ -1,7 +1,7 @@
 rm(list = ls()) # clear workspace
 
 seed = 4243 # set global seed
-runname <- "March24.laptop1" # set a runname
+runname <- "March25_design1_maineffects" # set a runname
 dir.create(paste0("simulation_results_glmm/", runname), showWarnings = FALSE) # create a directory
 
 # load libraries
@@ -17,14 +17,22 @@ source("scripts/hamaker2020_extended/helper-functions/model-fitting.R")
 source("scripts/hamaker2020_extended/helper-functions/result-formatting.R")
 
 # set the number of simulations
-nsim <- 10
+nsim <- 100
 
-# simulation for Research Report
-design <- expand.grid(N_total = c(100, 200), T_total = c(5, 10, 20), 
+# comprehensive design
+# design <- expand.grid(N_total = c(100, 200), T_total = c(5, 20), 
+#                       predictor.type = "binary", outcome.type = "continuous",
+#                       sdX.within = NA, sdX.between = c(0, 0.5, 1.5), 
+#                       g.00 = 0, g.01 = c(-1, 0, 1), sd.u0 = c(0, 0.5, 1.5), g.10 = c(0.5, 1.5, 3), 
+#                       sd.u1 = c(0, 0.5, 1.5), sd.e = c(0.5, 1.5))
+
+# subdesign 1
+design <- expand.grid(N_total = 200, T_total = 20, 
                       predictor.type = "binary", outcome.type = "continuous",
-                      sdX.within = NA, sdX.between = c(0, 0.5, 1.5), 
-                      g.00 = 0, g.01 = c(-1, 0, 1), sd.u0 = c(0, 0.5, 1.5), g.10 = c(0.5, 1.5, 3), 
-                      sd.u1 = c(0, 0.5, 1.5), sd.e = c(0.5, 1.5))
+                      sdX.within = NA, sdX.between = c(0, 1), 
+                      g.00 = 0, g.01 = c(-1, 0, 1), sd.u0 = c(0, 1), g.10 = c(0.5, 1.5, 3), 
+                      sd.u1 = 0, sd.e = 1)
+
 
 for (idesign in 1:nrow(design)) {
   
@@ -101,3 +109,5 @@ for (idesign in 1:nrow(design)) {
   
 }
 
+# save design
+saveRDS(design, paste0("simulation_results_glmm/", runname, "/summary-results.RDS"))

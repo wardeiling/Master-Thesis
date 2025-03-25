@@ -130,7 +130,7 @@ gridExtra::grid.arrange(p1.41, p1.42, nrow = 2)
 ### 2 generate binary X and continuous Y
 data_binx_conty <- glmm_data_generation(N_total = 1000, T_total = 20, predictor.type = "binary", outcome.type = "continuous",
                                         sdX.within = NA, sdX.between = 0.5, g.00 = 0, g.01 = 0.6, sd.u0 = 0.7,
-                                        g.10 = 0.5, sd.u1 = 0, sd.e = 0.5)
+                                        g.10 = 0.5, sd.u1 = 1, sd.e = 1)
 # same values as (1) but without sdX.within
 summary(data_binx_conty)
 var(data_binx_conty$p.X.mean.j)
