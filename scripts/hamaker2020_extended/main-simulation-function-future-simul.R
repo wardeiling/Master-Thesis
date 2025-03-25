@@ -1,7 +1,8 @@
 rm(list = ls()) # clear workspace
 
-seed = 4243 # set global seed
-runname <- "March25_design1_maineffects_pctest" # set a runname
+seed <- 6384
+set.seed(seed)
+runname <- "March25_design1_maineffects_contextual" # set a runname
 dir.create(paste0("simulation_results_glmm/", runname), showWarnings = FALSE) # create a directory
 
 # load libraries
@@ -12,7 +13,7 @@ library(parallelly) # for parallelization
 library(foreach) # for parallelization
 
 # load helper functions
-source("scripts/hamaker2020_extended/helper-functions/data-generation-centeredX.R")
+source("scripts/hamaker2020_extended/helper-functions/data-generation-mundlak.R")
 source("scripts/hamaker2020_extended/helper-functions/model-fitting.R")
 source("scripts/hamaker2020_extended/helper-functions/result-formatting.R")
 
@@ -33,6 +34,9 @@ design <- expand.grid(N_total = 200, T_total = 20,
                       g.00 = 0, g.01 = c(-1, 0, 1), sd.u0 = c(0, 1), g.10 = c(0.5, 1.5, 3), 
                       sd.u1 = 0, sd.e = 1)
 
+# save the empty design and settings to the directory
+settings <- list(nsim = nsim, seed = seed, runname = runname, design = design)
+saveRDS(settings, paste0("simulation_results_glmm/", runname, "/settings.RDS"))
 
 for (idesign in 1:nrow(design)) {
   
