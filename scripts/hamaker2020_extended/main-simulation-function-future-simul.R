@@ -1,7 +1,7 @@
 rm(list = ls()) # clear workspace
 
 seed = 4243 # set global seed
-runname <- "March25_design1_maineffects" # set a runname
+runname <- "March25_design1_maineffects_pctest" # set a runname
 dir.create(paste0("simulation_results_glmm/", runname), showWarnings = FALSE) # create a directory
 
 # load libraries
@@ -51,7 +51,7 @@ for (idesign in 1:nrow(design)) {
   sd.e <- design$sd.e[idesign]
   
   # Set up parallel backend
-  future::plan(multisession, workers = parallelly::availableCores())
+  future::plan(multisession, workers = 8)
   
   # Run simulations in parallel
   parallel_results <- foreach(isim = 1:nsim,  .options.future = list(seed = TRUE), .verbose = TRUE) %dofuture% {
@@ -82,10 +82,13 @@ library(purrr) # for functional programming
 library(dplyr) # for data manipulation
 library(tidyr) # for data manipulation
 
-design$l1_X <- design$l2_X.cent <- design$l3a_X.cent <- design$l3a_X.cluster.means <- design$l4_X <- design$l4_X.cluster.means
+### Version with Absolute Values
+design_abs <- design
+design_abs$l1_X <- design_abs$l2_X.cent <- design_abs$l3a_X.cent <- design_abs$l3a_X.cluster.means <- design_abs$l4_X <- design_abs$l4_X.cluster.means
 
-for (idesign in 1:nrow(design)) {
+for (idesign in 1:nrow(design_abs)) {
   
+  # read in the results
   parallel_results_setting <- readRDS(paste0("simulation_results_glmm/", runname, "/", idesign, ".RDS"))
   
   # unlist the lists inside the list
@@ -105,9 +108,65 @@ for (idesign in 1:nrow(design)) {
     select("l1_X", "l2_X.cent", "l3a_X.cent", "l3a_X.cluster.means", "l4_X", "l4_X.cluster.means")
   
   # add to design
-  design[idesign, c("l1_X", "l2_X.cent", "l3a_X.cent", "l3a_X.cluster.means", "l4_X", "l4_X.cluster.means")] <- df_processed
+  design_abs[idesign, c("l1_X", "l2_X.cent", "l3a_X.cent", "l3a_X.cluster.means", "l4_X", "l4_X.cluster.means")] <- df_processed
   
 }
 
 # save design
-saveRDS(design, paste0("simulation_results_glmm/", runname, "/summary-results.RDS"))
+saveRDS(design_abs, paste0("simulation_results_glmm/", runname, "/summary-results-absolute.RDS"))
+
+# selected results (from column 6 onwards)
+design_abs_selected <- design_abs[,6:ncol(design_abs)]
+round(design_abs_selected, 3)
+
+### Version with Bias in Estimates
+
+design_bias <- design
+design_bias$l1_X <- design_bias$l2_X.cent <- design_bias$l3a_X.cent <- design_bias$l3a_X.cluster.means <- design_bias$l4_X <- design_bias$l4_X.cluster.means
+
+for (idesign in 1:nrow(design_bias)) {
+  
+  # extract parameter values form design
+  g.00 <- design_bias$g.00[idesign]
+  g.01 <- design_bias$g.01[idesign]
+  g.10 <- design_bias$g.10[idesign]
+  
+  # read in the results
+  parallel_results_setting <- readRDS(paste0("simulation_results_glmm/", runname, "/", idesign, ".RDS"))
+  
+  # unlist the lists inside the list
+  df <- map_dfr(parallel_results_setting, function(rep) {
+    map_dfr(rep, ~ as.data.frame(as.list(.x)), .id = "model")
+  }, .id = "replication")
+  
+  # average across replications
+  df_processed <- df %>%
+    group_by(model) %>%
+    summarise(across(c("X", "X.cent", "X.cluster.means"), mean, na.rm = TRUE)) %>%
+    # for now only select the mlm models
+    filter(model %in% c("l1", "l2", "l3a", "l4")) %>%
+    # change into wide format
+    pivot_wider(names_from = model, values_from = c("X", "X.cent", "X.cluster.means"), names_glue = "{model}_{.value}") %>%
+    # only select possible columns
+    select("l1_X", "l2_X.cent", "l3a_X.cent", "l3a_X.cluster.means", "l4_X", "l4_X.cluster.means") %>%
+    # calculate bias (l2, l3a, l4)
+    mutate(l2_g.10_bias = l2_X.cent - g.10,
+           l3a_g.10_bias = l3a_X.cent - g.10,
+           l3a_g.01_bias = l3a_X.cluster.means - g.01,
+           l4_g.10_bias = l4_X - g.10,
+           l4_g.01_bias = l4_X.cluster.means - g.01
+           ) %>%
+    # select only bias columns
+    select("l1_X", "l2_g.10_bias", "l3a_g.10_bias", "l3a_g.01_bias", "l4_g.10_bias", "l4_g.01_bias")
+  
+  # add to design
+  design_bias[idesign, c("l1_X", "l2_g.10_bias", "l3a_g.10_bias", "l3a_g.01_bias", "l4_g.10_bias", "l4_g.01_bias")] <- df_processed
+  
+}
+
+# save design
+saveRDS(design_bias, paste0("simulation_results_glmm/", runname, "/summary-results-bias.RDS"))
+
+# selected results (from column 6 onwards)
+design_bias_selected <- design_bias[,6:ncol(design_bias)]
+round(design_bias_selected, 3)
