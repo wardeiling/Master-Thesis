@@ -89,7 +89,7 @@ glmm_data_generation <- function(N_total, T_total, predictor.type, outcome.type,
     # Compute cluster-level means and centering
     dta$X.cluster.means <- ave(dta$X, dta$Cluster, FUN = mean)
     dta$X.cent <- dta$X - dta$X.cluster.means # using estimated mean
-  } else { # FOR TESTING PURPOSES ONLY!
+  } else { # Set true cluster mean (FOR TESTING PURPOSES ONLY!)
     if (predictor.type == "continuous"){
       dta$X.cluster.means <- X.mean.j
     } else if (predictor.type == "binary"){

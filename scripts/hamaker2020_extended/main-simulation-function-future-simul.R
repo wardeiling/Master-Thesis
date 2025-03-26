@@ -1,8 +1,17 @@
+######################################
+#### MODULARIZED SIMULATION SCRIPT ###
+######################################
+
+# Author: Ward B Eiling
+# Last edited: 26-03-2025
+
+### Simulation set-up -------------------------------------------------------
+
 rm(list = ls()) # clear workspace
 
 seed <- 6384
 set.seed(seed) # set seed for reproducibility
-runname <- "March25_design1_maineffects_contextual" # set a runname
+runname <- "March26_design3_TandN_contextual_bothclustermeans" # set a runname
 parametrization <- "mundlak" # set the parametrization (mundlak or centeredX)
 dir.create(paste0("simulation_results_glmm/", runname), showWarnings = FALSE) # create a directory
 
@@ -32,17 +41,34 @@ nsim <- 100
 #                       g.00 = 0, g.01 = c(-1, 0, 1), sd.u0 = c(0, 0.5, 1.5), g.10 = c(0.5, 1.5, 3), 
 #                       sd.u1 = c(0, 0.5, 1.5), sd.e = c(0.5, 1.5))
 
-# subdesign 1
-design <- expand.grid(N_total = 200, T_total = 20, 
+# subdesign 1 (test influence of general parameters on bias)
+# design <- expand.grid(N_total = 200, T_total = 20, 
+#                       predictor.type = "binary", outcome.type = "continuous",
+#                       sdX.within = NA, sdX.between = c(0, 1), 
+#                       g.00 = 0, g.01 = c(-1, 0, 1), sd.u0 = c(0, 1), g.10 = c(0.5, 1.5, 3), 
+#                       sd.u1 = 0, sd.e = 1, true_cluster_means = FALSE)
+
+# # design 2 (test influence of true cluster means on bias)
+# design <- expand.grid(N_total = 200, T_total = 20, 
+#                       predictor.type = "binary", outcome.type = "continuous",
+#                       sdX.within = NA, sdX.between = c(0, 1), 
+#                       g.00 = 0, g.01 = c(-1, 0, 1), sd.u0 = 1, g.10 = c(0.5, 1.5, 3), 
+#                       sd.u1 = 0, sd.e = 1, true_cluster_means = c(FALSE, TRUE))
+
+# design 3 (test influence T, N, sdX.between on bias)
+design <- expand.grid(N_total = c(100, 200), T_total = c(5, 20), 
                       predictor.type = "binary", outcome.type = "continuous",
-                      sdX.within = NA, sdX.between = c(0, 1), 
-                      g.00 = 0, g.01 = c(-1, 0, 1), sd.u0 = c(0, 1), g.10 = c(0.5, 1.5, 3), 
-                      sd.u1 = 0, sd.e = 1, true_cluster_means = FALSE)
+                      sdX.within = NA, sdX.between = c(0, 1, 3), 
+                      g.00 = 0, g.01 = 1, sd.u0 = 1, g.10 = c(0.8, 2), 
+                      sd.u1 = 0, sd.e = 1, true_cluster_means = c(FALSE, TRUE))
 
 # save the empty design and settings to the directory
 settings <- list(nsim = nsim, seed = seed, runname = runname, parametrization = parametrization, design = design)
 saveRDS(settings, paste0("simulation_results_glmm/", runname, "/settings.RDS"))
 
+### Simulation ---------------------------------------------------------------
+
+# loop over the design
 for (idesign in 1:nrow(design)) {
   
   # extract design parameters
@@ -79,12 +105,9 @@ for (idesign in 1:nrow(design)) {
     
     # Fit models
     models <- glmm_model_fitting(data, outcome.type = outcome.type)
-    
     return(models)
   }
-  
   saveRDS(parallel_results, file = paste0("simulation_results_glmm/", runname, "/", idesign, ".RDS"))
-
 }
 
 ### collect results ---------------------------------------------------------
@@ -207,18 +230,25 @@ for (idesign in 1:nrow(design_bias)) {
 # save design
 saveRDS(design_bias, paste0("simulation_results_glmm/", runname, "/summary-results-bias.RDS"))
 
+design_bias_selected <- design_bias %>%
+  select(-c("predictor.type", "outcome.type", "sdX.within")) %>%
+  # round the last six columns to 3 decimals
+  mutate(across(starts_with("l"), ~ round(., 3)))
+
 # selected results (from column 6 onwards)
-design_bias_selected <- design_bias[,6:ncol(design_bias)]
-round(design_bias_selected, 3)
+# design_bias_selected <- design_bias[,6:ncol(design_bias)]
+# round(design_bias_selected, 3)
 
 ### Optional: Retrieve output
 
 if(0) {
-  runname <- "March25_design1_maineffects_contextual"
-  design_abs <- readRDS(paste0("simulation_results_glmm/", runname, "/summary-results-absolute.RDS"))
-  round(design_abs[,6:18], 3)
-  design_bias <- readRDS(paste0("simulation_results_glmm/", runname, "/summary-results-bias.RDS"))
-  round(design_bias[,6:18], 3)
+  runname <- "March26_design2_maineffects_contextual_bothclustermeans"
+  # design_abs <- readRDS(paste0("simulation_results_glmm/", runname, "/summary-results-absolute.RDS"))
+  # round(design_abs[,6:18], 3)
+  design_bias_temp <- readRDS(paste0("simulation_results_glmm/", runname, "/summary-results-bias.RDS")) %>%
+    # round the last six columns to 3 decimals
+    mutate(across(starts_with("l"), ~ round(., 3)))
+  design_bias_temp_sel <- design_bias_temp[,6:ncol(design_bias_temp)]
 }
 
 

@@ -22,8 +22,8 @@ library(tidyr)
 library(dplyr)
 
 # source the helper function
-source(here("scripts/hamaker2020_extended/helper-functions/data-generation-centeredX.R"))
-# source(here("scripts/hamaker2020_extended/helper-functions/data-generation-mundlak.R"))
+# source(here("scripts/hamaker2020_extended/helper-functions/data-generation-centeredX.R"))
+source(here("scripts/hamaker2020_extended/helper-functions/data-generation-mundlak.R"))
 ```
 
 ## Continuous X and Y
@@ -130,13 +130,26 @@ gridExtra::grid.arrange(p1.41, p1.42, nrow = 2)
 ```{r}
 ### 2 generate binary X and continuous Y
 data_binx_conty <- glmm_data_generation(N_total = 1000, T_total = 20, predictor.type = "binary", outcome.type = "continuous",
-                                        sdX.within = NA, sdX.between = 0.5, g.00 = 0, g.01 = 0.6, sd.u0 = 0.7,
-                                        g.10 = 0.5, sd.u1 = 1, sd.e = 1)
+                                        sdX.within = NA, sdX.between = 0, g.00 = 0, g.01 = 0.1, sd.u0 = 0.7,
+                                        g.10 = 0.5, sd.u1 = 1, sd.e = 1, true_cluster_means = FALSE)
 # same values as (1) but without sdX.within
 summary(data_binx_conty)
 var(data_binx_conty$p.X.mean.j)
+var(data_binx_conty$X.cluster.means)
 fixef(lmer(Y ~ X.cent + X.cluster.means + (1 | Cluster), data = data_binx_conty))
 ```
+```{r}
+### 2 generate binary X and continuous Y
+data_binx_conty <- glmm_data_generation(N_total = 1000, T_total = 20, predictor.type = "binary", outcome.type = "continuous",
+                                        sdX.within = NA, sdX.between = 0, g.00 = 0, g.01 = 1, sd.u0 = 0.7,
+                                        g.10 = 0.5, sd.u1 = 1, sd.e = 1, true_cluster_means = TRUE)
+# same values as (1) but without sdX.within
+summary(data_binx_conty)
+var(data_binx_conty$p.X.mean.j)
+var(data_binx_conty$X.cluster.means)
+fixef(lmer(Y ~ X.cent + X.cluster.means + (1 | Cluster), data = data_binx_conty))
+```
+
 Strange behaviour when g.01 is negative or exceeds 0.8 (with T = 20). The intercept is borrowing from the slope. Happens more with a smaller number of total timepoints T. A value of 0.6 seems to be fine.
 
 ```{r}
