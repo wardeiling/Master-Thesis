@@ -232,12 +232,12 @@ design_all_rounded <- design_all %>%
 saveRDS(design_all_rounded, paste0("simulation_results_glmm/", runname, "/summary-results-all-rounded.RDS"))
 
 # remove absolute value columns
-design_bias <- design_all %>%
-  select(-c("l1_X",  "l2_X.cent", "l3a_X.cent", "l3a_X.cluster.means", "l4_X", "l4_X.cluster.means")) %>%
-  mutate(across(starts_with("l"), ~ round(., 3)))
+design_bias <- design_all_rounded %>%
+  select(-c("l1_X",  "l2_X.cent", "l3a_X.cent", "l3a_X.cluster.means", "l4_X", "l4_X.cluster.means"))
 
 # save design
 saveRDS(design_bias, paste0("simulation_results_glmm/", runname, "/summary-results-bias.RDS"))
+write.csv(design_bias, paste0("simulation_results_glmm/", runname, "/summary-results-bias.csv"), row.names = FALSE)
 
 ### Optional: Retrieve output
 
