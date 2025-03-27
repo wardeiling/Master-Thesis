@@ -11,7 +11,7 @@ rm(list = ls()) # clear workspace
 
 seed <- 6384
 set.seed(seed) # set seed for reproducibility
-runname <- "March26_design4_randomeffects_contextual_bothclustermeans" # set a runname
+runname <- "March26_design3b_TandN_contextual_trueclustermeans" # set a runname
 parametrization <- "mundlak" # set the parametrization (mundlak or centeredX)
 dir.create(paste0("simulation_results_glmm/", runname), showWarnings = FALSE) # create a directory
 
@@ -41,33 +41,54 @@ nsim <- 100
 #                       g.00 = 0, g.01 = c(-1, 0, 1), sd.u0 = c(0, 0.5, 1.5), g.10 = c(0.5, 1.5, 3), 
 #                       sd.u1 = c(0, 0.5, 1.5), sd.e = c(0.5, 1.5))
 
-# subdesign 1 (test influence of general parameters on bias)
+# design 1 (test influence of general parameters on bias)
 # design <- expand.grid(N_total = 200, T_total = 20, 
 #                       predictor.type = "binary", outcome.type = "continuous",
 #                       sdX.within = NA, sdX.between = c(0, 1), 
 #                       g.00 = 0, g.01 = c(-1, 0, 1), sd.u0 = c(0, 1), g.10 = c(0.5, 1.5, 3), 
 #                       sd.u1 = 0, sd.e = 1, true_cluster_means = FALSE)
 
-# # design 2 (test influence of true cluster means on bias)
-# design <- expand.grid(N_total = 200, T_total = 20, 
+# design 2 (test influence of true cluster means on bias)
+# design <- expand.grid(N_total = 200, T_total = 20,
 #                       predictor.type = "binary", outcome.type = "continuous",
-#                       sdX.within = NA, sdX.between = c(0, 1), 
-#                       g.00 = 0, g.01 = c(-1, 0, 1), sd.u0 = 1, g.10 = c(0.5, 1.5, 3), 
+#                       sdX.within = NA, sdX.between = c(0, 1),
+#                       g.00 = 0, g.01 = c(-1, 0, 1), sd.u0 = 1, g.10 = c(0.5, 1.5, 3),
 #                       sd.u1 = 0, sd.e = 1, true_cluster_means = c(FALSE, TRUE))
+
+# # design 2b (true cluster mean)
+# design <- expand.grid(N_total = 200, T_total = 20,
+#                       predictor.type = "binary", outcome.type = "continuous",
+#                       sdX.within = NA, sdX.between = c(0, 1),
+#                       g.00 = 0, g.01 = c(-1, 0, 1), sd.u0 = 1, g.10 = c(0.5, 1.5, 3),
+#                       sd.u1 = 0, sd.e = 1, true_cluster_means = TRUE)
 
 # # design 3 (test influence T, N, sdX.between on bias)
-# design <- expand.grid(N_total = c(100, 200), T_total = c(5, 20), 
+# design <- expand.grid(N_total = c(100, 200), T_total = c(5, 20),
 #                       predictor.type = "binary", outcome.type = "continuous",
-#                       sdX.within = NA, sdX.between = c(0, 1, 3), 
-#                       g.00 = 0, g.01 = 1, sd.u0 = 1, g.10 = c(0.8, 2), 
+#                       sdX.within = NA, sdX.between = c(0, 1, 3),
+#                       g.00 = 0, g.01 = 1, sd.u0 = 1, g.10 = c(0.8, 2),
 #                       sd.u1 = 0, sd.e = 1, true_cluster_means = c(FALSE, TRUE))
 
+# design 3b (true cluster mean)
+# design <- expand.grid(N_total = c(100, 200), T_total = c(5, 20),
+#                       predictor.type = "binary", outcome.type = "continuous",
+#                       sdX.within = NA, sdX.between = c(0, 1, 3),
+#                       g.00 = 0, g.01 = 1, sd.u0 = 1, g.10 = c(0.8, 2),
+#                       sd.u1 = 0, sd.e = 1, true_cluster_means = TRUE)
+
 # design 4 (test influence random intercept and slope on bias)
-design <- expand.grid(N_total = 200, T_total = 20, 
+# design <- expand.grid(N_total = 200, T_total = 20, 
+#                       predictor.type = "binary", outcome.type = "continuous",
+#                       sdX.within = NA, sdX.between = 1, 
+#                       g.00 = c(0, 1), g.01 = c(0, 1.5), sd.u0 = c(0, 1), g.10 = 0.8, 
+#                       sd.u1 = c(0, 1), sd.e = 1, true_cluster_means = c(FALSE, TRUE))
+
+# design 4b (true cluster mean)
+design <- expand.grid(N_total = 200, T_total = 20,
                       predictor.type = "binary", outcome.type = "continuous",
-                      sdX.within = NA, sdX.between = 1, 
-                      g.00 = c(0, 1), g.01 = c(0, 1.5), sd.u0 = c(0, 1), g.10 = 0.8, 
-                      sd.u1 = c(0, 1), sd.e = 1, true_cluster_means = c(FALSE, TRUE))
+                      sdX.within = NA, sdX.between = 1,
+                      g.00 = c(0, 1), g.01 = c(0, 1.5), sd.u0 = c(0, 1), g.10 = 0.8,
+                      sd.u1 = c(0, 1), sd.e = 1, true_cluster_means = TRUE)
 
 # save the empty design and settings to the directory
 settings <- list(nsim = nsim, seed = seed, runname = runname, parametrization = parametrization, design = design)
@@ -119,12 +140,7 @@ for (idesign in 1:nrow(design)) {
 
 ### collect results ---------------------------------------------------------
 
-# set new runname for retrieval
-
-# if (0) {
-#   runname <- "March25_design1_maineffects_pctest"
-# }
-
+# load packages
 library(purrr) # for functional programming
 library(dplyr) # for data manipulation
 library(tidyr) # for data manipulation
@@ -166,8 +182,12 @@ for (idesign in 1:nrow(design_abs)) {
 saveRDS(design_abs, paste0("simulation_results_glmm/", runname, "/summary-results-absolute.RDS"))
 
 # selected results (from column 6 onwards)
-design_abs_selected <- design_abs[,6:ncol(design_abs)]
-round(design_abs_selected, 3)
+design_abs_selected <- design_abs %>%
+  select(-c("predictor.type", "outcome.type", "sdX.within")) %>%
+  # round the last six columns to 3 decimals
+  mutate(across(starts_with("l"), ~ round(., 3)))
+
+design_abs_selected
 
 ### Version with Bias in Estimates
 
@@ -241,6 +261,8 @@ design_bias_selected <- design_bias %>%
   select(-c("predictor.type", "outcome.type", "sdX.within")) %>%
   # round the last six columns to 3 decimals
   mutate(across(starts_with("l"), ~ round(., 3)))
+
+design_bias_selected
 
 # selected results (from column 6 onwards)
 # design_bias_selected <- design_bias[,6:ncol(design_bias)]
