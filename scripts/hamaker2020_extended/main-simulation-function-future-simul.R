@@ -11,7 +11,7 @@ rm(list = ls()) # clear workspace
 
 seed <- 6384
 set.seed(seed) # set seed for reproducibility
-runname <- "March26_design3b_TandN_contextual_trueclustermeans" # set a runname
+runname <- "March27_design5_ludtkesbias_contextual_trueclustermeans" # set a runname
 parametrization <- "mundlak" # set the parametrization (mundlak or centeredX)
 dir.create(paste0("simulation_results_glmm/", runname), showWarnings = FALSE) # create a directory
 
@@ -84,11 +84,22 @@ nsim <- 100
 #                       sd.u1 = c(0, 1), sd.e = 1, true_cluster_means = c(FALSE, TRUE))
 
 # design 4b (true cluster mean)
-design <- expand.grid(N_total = 200, T_total = 20,
-                      predictor.type = "binary", outcome.type = "continuous",
-                      sdX.within = NA, sdX.between = 1,
-                      g.00 = c(0, 1), g.01 = c(0, 1.5), sd.u0 = c(0, 1), g.10 = 0.8,
-                      sd.u1 = c(0, 1), sd.e = 1, true_cluster_means = TRUE)
+# design <- expand.grid(N_total = 200, T_total = 20,
+#                       predictor.type = "binary", outcome.type = "continuous",
+#                       sdX.within = NA, sdX.between = 1,
+#                       g.00 = c(0, 1), g.01 = c(0, 1.5), sd.u0 = c(0, 1), g.10 = 0.8,
+#                       sd.u1 = c(0, 1), sd.e = 1, true_cluster_means = TRUE)
+
+# design 5 (test Ludtke's bias for all predictor and outcome types)
+design <- expand.grid(N_total = c(100, 200), T_total = c(5, 20), 
+                      predictor.type = c("binary", "continuous"), 
+                      outcome.type = c("binary", "continuous"), 
+                      sdX.within = 1, sdX.between = c(0, 1, 3), 
+                      g.00 = 0, g.01 = c(0, 1), g.10 = 1.5, 
+                      sd.u0 = c(0, 1), sd.u1 = 0, sd.e = 1,
+                      true_cluster_means = FALSE)
+# remove scenarios with sdX.between == 0 and g.01 != 0
+design <- design[!(design$sdX.between == 0 & design$g.01 != 0),]
 
 # save the empty design and settings to the directory
 settings <- list(nsim = nsim, seed = seed, runname = runname, parametrization = parametrization, design = design)
@@ -145,61 +156,17 @@ library(purrr) # for functional programming
 library(dplyr) # for data manipulation
 library(tidyr) # for data manipulation
 
-### Version with Absolute Values
-design_abs <- design
-design_abs$l1_X <- design_abs$l2_X.cent <- design_abs$l3a_X.cent <- design_abs$l3a_X.cluster.means <- design_abs$l4_X <- design_abs$l4_X.cluster.means
+# initialize design and add columns for parameter values
+design_all <- design
+design_all$l1_X <- design_all$l2_X.cent <- design_all$l3a_X.cent <- design_all$l3a_X.cluster.means <- design_all$l4_X <- design_all$l4_X.cluster.means 
+design_all$l2_g.10_bias <- design_all$l3a_g.10_bias <- design_all$l3a_g.01_bias <- design_all$l4_g.10_bias <- design_all$l4_g.01_bias <- NA
 
-for (idesign in 1:nrow(design_abs)) {
-  
-  # read in the results
-  parallel_results_setting <- readRDS(paste0("simulation_results_glmm/", runname, "/", idesign, ".RDS"))
-  
-  # unlist the lists inside the list
-  df <- map_dfr(parallel_results_setting, function(rep) {
-    map_dfr(rep, ~ as.data.frame(as.list(.x)), .id = "model")
-  }, .id = "replication")
-  
-  # rename columns (to address problem where X.cluster.means is not estimated)
-  colnames(df) <- c("replication", "model", "X.Intercept.", "X", "X.cent", "X.cluster.means")
-  
-  # average across replications
-  df_processed <- df %>%
-    group_by(model) %>%
-    summarise(across(c("X", "X.cent", "X.cluster.means"), mean, na.rm = TRUE)) %>%
-    # for now only select the mlm models
-    filter(model %in% c("l1", "l2", "l3a", "l4")) %>%
-    # change into wide format
-    pivot_wider(names_from = model, values_from = c("X", "X.cent", "X.cluster.means"), names_glue = "{model}_{.value}") %>%
-    # only select possible columns
-    select("l1_X", "l2_X.cent", "l3a_X.cent", "l3a_X.cluster.means", "l4_X", "l4_X.cluster.means")
-  
-  # add to design
-  design_abs[idesign, c("l1_X", "l2_X.cent", "l3a_X.cent", "l3a_X.cluster.means", "l4_X", "l4_X.cluster.means")] <- df_processed
-  
-}
-
-# save design
-saveRDS(design_abs, paste0("simulation_results_glmm/", runname, "/summary-results-absolute.RDS"))
-
-# selected results (from column 6 onwards)
-design_abs_selected <- design_abs %>%
-  select(-c("predictor.type", "outcome.type", "sdX.within")) %>%
-  # round the last six columns to 3 decimals
-  mutate(across(starts_with("l"), ~ round(., 3)))
-
-design_abs_selected
-
-### Version with Bias in Estimates
-
-design_bias <- design
-design_bias$l1_X <- design_bias$l2_X.cent <- design_bias$l3a_X.cent <- design_bias$l3a_X.cluster.means <- design_bias$l4_X <- design_bias$l4_X.cluster.means
-
-for (idesign in 1:nrow(design_bias)) {
+for (idesign in 1:nrow(design_all)) {
   
   # extract parameter values form design
-  g.00 <- design_bias$g.00[idesign]
-  g.01 <- design_bias$g.01[idesign]
-  g.10 <- design_bias$g.10[idesign]
+  g.00 <- design_all$g.00[idesign]
+  g.01 <- design_all$g.01[idesign]
+  g.10 <- design_all$g.10[idesign]
   
   # determine the beta values based on the parametrization
   if (parametrization == "centeredX") {
@@ -246,31 +213,35 @@ for (idesign in 1:nrow(design_bias)) {
            l3a_g.01_bias = l3a_X.cluster.means - beta_between,
            l4_g.10_bias = l4_X - beta_within,
            l4_g.01_bias = l4_X.cluster.means - beta_contextual) %>%
-    # select only bias columns
-    select("l1_X", "l2_g.10_bias", "l3a_g.10_bias", "l3a_g.01_bias", "l4_g.10_bias", "l4_g.01_bias")
+    # reorder columns
+    select("l2_g.10_bias", "l3a_g.10_bias", "l3a_g.01_bias", "l4_g.10_bias", "l4_g.01_bias", "l1_X", "l2_X.cent", "l3a_X.cent", "l3a_X.cluster.means", "l4_X", "l4_X.cluster.means")
   
   # add to design
-  design_bias[idesign, c("l1_X", "l2_g.10_bias", "l3a_g.10_bias", "l3a_g.01_bias", "l4_g.10_bias", "l4_g.01_bias")] <- df_processed
+  design_all[idesign, c("l2_g.10_bias", "l3a_g.10_bias", "l3a_g.01_bias", "l4_g.10_bias", "l4_g.01_bias", "l1_X",  "l2_X.cent", "l3a_X.cent", "l3a_X.cluster.means", "l4_X", "l4_X.cluster.means")] <- df_processed
   
 }
 
 # save design
-saveRDS(design_bias, paste0("simulation_results_glmm/", runname, "/summary-results-bias.RDS"))
+saveRDS(design_all, paste0("simulation_results_glmm/", runname, "/summary-results-all.RDS"))
 
-design_bias_selected <- design_bias %>%
-  select(-c("predictor.type", "outcome.type", "sdX.within")) %>%
-  # round the last six columns to 3 decimals
+# create a rounded version of the design
+design_all_rounded <- design_all %>%
   mutate(across(starts_with("l"), ~ round(., 3)))
 
-design_bias_selected
+# save design
+saveRDS(design_all_rounded, paste0("simulation_results_glmm/", runname, "/summary-results-all-rounded.RDS"))
 
-# selected results (from column 6 onwards)
-# design_bias_selected <- design_bias[,6:ncol(design_bias)]
-# round(design_bias_selected, 3)
+# remove absolute value columns
+design_bias <- design_all %>%
+  select(-c("l1_X",  "l2_X.cent", "l3a_X.cent", "l3a_X.cluster.means", "l4_X", "l4_X.cluster.means")) %>%
+  mutate(across(starts_with("l"), ~ round(., 3)))
+
+# save design
+saveRDS(design_bias, paste0("simulation_results_glmm/", runname, "/summary-results-bias.RDS"))
 
 ### Optional: Retrieve output
 
-if(0) {
+if(FALSE) {
   runname <- "March26_design2_maineffects_contextual_bothclustermeans"
   # design_abs <- readRDS(paste0("simulation_results_glmm/", runname, "/summary-results-absolute.RDS"))
   # round(design_abs[,6:18], 3)
@@ -279,6 +250,3 @@ if(0) {
     mutate(across(starts_with("l"), ~ round(., 3)))
   design_bias_temp_sel <- design_bias_temp[,6:ncol(design_bias_temp)]
 }
-
-
-# design_abs <- readRDS("simulation_results_glmm/March25_design1_maineffects_pctest/summary-results-absolute.RDS")
