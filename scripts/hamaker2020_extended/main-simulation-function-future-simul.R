@@ -11,7 +11,7 @@ rm(list = ls()) # clear workspace
 
 seed <- 6384
 set.seed(seed) # set seed for reproducibility
-runname <- "March26_design3b_TandN_contextual_trueclustermeans" # set a runname
+runname <- "March27_design5b_ludtkesbias_contextual_trueclustermeans" # set a runname
 parametrization <- "mundlak" # set the parametrization (mundlak or centeredX)
 dir.create(paste0("simulation_results_glmm/", runname), showWarnings = FALSE) # create a directory
 
@@ -69,12 +69,12 @@ nsim <- 100
 #                       g.00 = 0, g.01 = 1, sd.u0 = 1, g.10 = c(0.8, 2),
 #                       sd.u1 = 0, sd.e = 1, true_cluster_means = c(FALSE, TRUE))
 
-# design 3b (true cluster mean)
-design <- expand.grid(N_total = c(100, 200), T_total = c(5, 20),
-                      predictor.type = "binary", outcome.type = "continuous",
-                      sdX.within = NA, sdX.between = c(0, 1, 3),
-                      g.00 = 0, g.01 = 1, sd.u0 = 1, g.10 = c(0.8, 2),
-                      sd.u1 = 0, sd.e = 1, true_cluster_means = TRUE)
+# # design 3b (true cluster mean)
+# design <- expand.grid(N_total = c(100, 200), T_total = c(5, 20),
+#                       predictor.type = "binary", outcome.type = "continuous",
+#                       sdX.within = NA, sdX.between = c(0, 1, 3),
+#                       g.00 = 0, g.01 = 1, sd.u0 = 1, g.10 = c(0.8, 2),
+#                       sd.u1 = 0, sd.e = 1, true_cluster_means = TRUE)
 
 # design 4 (test influence random intercept and slope on bias)
 # design <- expand.grid(N_total = 200, T_total = 20, 
@@ -90,16 +90,27 @@ design <- expand.grid(N_total = c(100, 200), T_total = c(5, 20),
 #                       g.00 = c(0, 1), g.01 = c(0, 1.5), sd.u0 = c(0, 1), g.10 = 0.8,
 #                       sd.u1 = c(0, 1), sd.e = 1, true_cluster_means = TRUE)
 
-# design 5 (test Ludtke's bias for all predictor and outcome types)
-# design <- expand.grid(N_total = c(100, 200), T_total = c(5, 20), 
-#                       predictor.type = c("binary", "continuous"), 
-#                       outcome.type = c("binary", "continuous"), 
-#                       sdX.within = 1, sdX.between = c(0, 1, 3), 
-#                       g.00 = 0, g.01 = c(0, 1), g.10 = 1.5, 
+# design 5a (test Ludtke's bias for all predictor and outcome types)
+# design <- expand.grid(N_total = c(100, 200), T_total = c(5, 20),
+#                       predictor.type = c("binary", "continuous"),
+#                       outcome.type = c("binary", "continuous"),
+#                       sdX.within = 1, sdX.between = c(0, 1, 3),
+#                       g.00 = 0, g.01 = c(0, 1), g.10 = 1.5,
 #                       sd.u0 = c(0, 1), sd.u1 = 0, sd.e = 1,
 #                       true_cluster_means = FALSE)
 # # remove scenarios with sdX.between == 0 and g.01 != 0
 # design <- design[!(design$sdX.between == 0 & design$g.01 != 0),]
+
+# design 5b
+design <- expand.grid(N_total = c(100, 200), T_total = c(5, 20),
+                      predictor.type = c("binary", "continuous"),
+                      outcome.type = c("binary", "continuous"),
+                      sdX.within = 1, sdX.between = c(0, 1, 3),
+                      g.00 = 0, g.01 = c(0, 1), g.10 = 1.5,
+                      sd.u0 = c(0, 1), sd.u1 = 0, sd.e = 1,
+                      true_cluster_means = TRUE)
+# remove scenarios with sdX.between == 0 and g.01 != 0
+design <- design[!(design$sdX.between == 0 & design$g.01 != 0),]
 
 # save the empty design and settings to the directory
 settings <- list(nsim = nsim, seed = seed, runname = runname, parametrization = parametrization, design = design)
@@ -152,7 +163,7 @@ for (idesign in 1:nrow(design)) {
 ### collect results ---------------------------------------------------------
 
 if(FALSE) {
-  runname <- "March26_design3b_TandN_contextual_trueclustermeans"
+  runname <- "March27_design5_ludtkesbias_contextual_estclustermeans"
   design <- readRDS(paste0("simulation_results_glmm/", runname, "/settings.RDS"))$design
   parametrization <- readRDS(paste0("simulation_results_glmm/", runname, "/settings.RDS"))$parametrization
 }
@@ -284,14 +295,17 @@ design_all_rounded <- design_all %>%
 # save design
 saveRDS(design_all_rounded, paste0("simulation_results_glmm/", runname, "/summary-results-all-rounded.RDS"))
 
+# remove all bias columns
+design_absolute <- design_all_rounded %>%
+  select(-contains("g.10"), -contains("g.01"))
+
+# save design
+saveRDS(design_absolute, paste0("simulation_results_glmm/", runname, "/summary-results-absolute.RDS"))
+write.csv(design_absolute, paste0("simulation_results_glmm/", runname, "/summary-results-absolute.csv"), row.names = FALSE)
+
 # remove absolute value columns
 design_bias <- design_all_rounded %>%
-  select(-c("l1_X",  "l2_X.cent", "l3a_X.cent", "l3a_X.cluster.means", "l4_X", "l4_X.cluster.means",
-            "g.independence1_X", "g.exchangeable1_X", "g.ar11_X", "g.independence2_X.cent", "g.exchangeable2_X.cent", 
-            "g.ar12_X.cent", "g.independence3_X.cent", "g.independence3_X.cluster.means","g.exchangeable3_X.cent", 
-            "g.exchangeable3_X.cluster.means", "g.ar13_X.cent", "g.ar13_X.cluster.means", "g.independence4_X",
-            "g.independence4_X.cluster.means", "g.exchangeable4_X", "g.exchangeable4_X.cluster.means", "g.ar14_X",
-            "g.ar14_X.cluster.means"))
+  select(-contains("X"))
 
 # save design
 saveRDS(design_bias, paste0("simulation_results_glmm/", runname, "/summary-results-bias.RDS"))
