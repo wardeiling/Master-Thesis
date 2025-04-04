@@ -163,7 +163,14 @@ for (idesign in 1:nrow(design)) {
 ### collect results ---------------------------------------------------------
 
 if(FALSE) {
+  
+  # design 1
   runname <- "March27_design5_ludtkesbias_contextual_estclustermeans"
+  design <- readRDS(paste0("simulation_results_glmm/", runname, "/settings.RDS"))$design
+  parametrization <- readRDS(paste0("simulation_results_glmm/", runname, "/settings.RDS"))$parametrization
+  
+  # design 2
+  runname <- "March27_design5b_ludtkesbias_contextual_trueclustermeans"
   design <- readRDS(paste0("simulation_results_glmm/", runname, "/settings.RDS"))$design
   parametrization <- readRDS(paste0("simulation_results_glmm/", runname, "/settings.RDS"))$parametrization
 }
@@ -271,9 +278,9 @@ for (idesign in 1:nrow(design_all)) {
            g.ar13_g.10_bias = g.ar13_X.cent - beta_within,
            g.ar13_g.01_bias = g.ar13_X.cluster.means - beta_between,
            g.independence4_g.10_bias = g.independence4_X - beta_within,
-           g.independence4_g.01_bias = g.independence4_X.cluster.means - beta_between,
+           g.independence4_g.01_bias = g.independence4_X.cluster.means - beta_contextual,
            g.exchangeable4_g.10_bias = g.exchangeable4_X - beta_within,
-           g.exchangeable4_g.01_bias = g.exchangeable4_X.cluster.means - beta_between,
+           g.exchangeable4_g.01_bias = g.exchangeable4_X.cluster.means - beta_contextual,
            g.ar14_g.10_bias = g.ar14_X - beta_within,
            g.ar14_g.01_bias = g.ar14_X.cluster.means - beta_contextual
            ) 
@@ -283,11 +290,29 @@ for (idesign in 1:nrow(design_all)) {
   
 }
 
+# reorder the columns (first mlm, then GEE exchangeable, GEE AR(1), GEE independence)
+design_all_reordered <- design_all %>%
+  select(N_total, T_total, predictor.type, outcome.type, sdX.within, sdX.between,
+         g.00, g.01, g.10, sd.u0, sd.u1, sd.e, true_cluster_means,
+         # first absolute value columns (ordered according to centering method)
+         l1_X, g.exchangeable1_X, g.ar11_X, g.independence1_X,
+         l2_X.cent, g.exchangeable2_X.cent, g.ar12_X.cent,  g.independence2_X.cent,
+         l3a_X.cent, g.exchangeable3_X.cent, g.ar13_X.cent, g.independence3_X.cent, 
+         l3a_X.cluster.means, g.exchangeable3_X.cluster.means, g.ar13_X.cluster.means, g.independence3_X.cluster.means, 
+         l4_X, g.exchangeable4_X, g.ar14_X, g.independence4_X,
+         l4_X.cluster.means, g.exchangeable4_X.cluster.means, g.ar14_X.cluster.means, g.independence4_X.cluster.means,
+         # then bias columns (ordered according to model type)
+         l2_g.10_bias, l3a_g.10_bias, l3a_g.01_bias, l4_g.10_bias, l4_g.01_bias,
+         g.exchangeable2_g.10_bias, g.exchangeable3_g.10_bias, g.exchangeable3_g.01_bias, g.exchangeable4_g.10_bias, g.exchangeable4_g.01_bias,
+         g.ar12_g.10_bias, g.ar13_g.10_bias, g.ar13_g.01_bias, g.ar14_g.10_bias, g.ar14_g.01_bias,
+         g.independence2_g.10_bias, g.independence3_g.10_bias, g.independence3_g.01_bias, g.independence4_g.10_bias, g.independence4_g.01_bias
+         )
+
 # save design
-saveRDS(design_all, paste0("simulation_results_glmm/", runname, "/summary-results-all.RDS"))
+saveRDS(design_all_reordered, paste0("simulation_results_glmm/", runname, "/summary-results-all.RDS"))
 
 # create a rounded version of the design
-design_all_rounded <- design_all %>%
+design_all_rounded <- design_all_reordered %>%
   # round numbers to 3 decimals: everything that startswith "l" or "g."
   mutate(across(starts_with("l"), ~ round(., 3)),
          across(starts_with("g."), ~ round(., 3)))
@@ -305,7 +330,7 @@ write.csv(design_absolute, paste0("simulation_results_glmm/", runname, "/summary
 
 # remove absolute value columns
 design_bias <- design_all_rounded %>%
-  select(-contains("X"))
+  select(-contains("X", ignore.case = FALSE))
 
 # save design
 saveRDS(design_bias, paste0("simulation_results_glmm/", runname, "/summary-results-bias.RDS"))
