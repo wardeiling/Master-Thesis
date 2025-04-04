@@ -330,7 +330,8 @@ write.csv(design_absolute, paste0("simulation_results_glmm/", runname, "/summary
 
 # remove absolute value columns
 design_bias <- design_all_rounded %>%
-  select(-contains("X", ignore.case = FALSE))
+  # if endswith X, X.cent, X.cluster.means, remove
+  select(-ends_with("X", ignore.case = FALSE), -ends_with("X.cent", ignore.case = FALSE), -ends_with("X.cluster.means", ignore.case = FALSE))
 
 # save design
 saveRDS(design_bias, paste0("simulation_results_glmm/", runname, "/summary-results-bias.RDS"))
