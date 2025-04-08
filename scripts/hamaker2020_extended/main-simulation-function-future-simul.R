@@ -11,7 +11,7 @@ rm(list = ls()) # clear workspace
 
 seed <- 6384
 set.seed(seed) # set seed for reproducibility
-runname <- "March27_design5b_ludtkesbias_contextual_trueclustermeans" # set a runname
+runname <- "April8_testlog" # set a runname
 parametrization <- "mundlak" # set the parametrization (mundlak or centeredX)
 dir.create(paste0("simulation_results_glmm/", runname), showWarnings = FALSE) # create a directory
 
@@ -35,18 +35,18 @@ source("scripts/hamaker2020_extended/helper-functions/result-formatting.R")
 nsim <- 100
 
 # comprehensive design
-# design <- expand.grid(N_total = c(100, 200), T_total = c(5, 20), 
+# design <- expand.grid(N_total = c(100, 200), T_total = c(5, 20),
 #                       predictor.type = "binary", outcome.type = "continuous",
-#                       sdX.within = NA, sdX.between = c(0, 0.5, 1.5), 
-#                       g.00 = 0, g.01 = c(-1, 0, 1), sd.u0 = c(0, 0.5, 1.5), g.10 = c(0.5, 1.5, 3), 
+#                       sdX.within = NA, sdX.between = c(0, 0.5, 1.5),
+#                       g.00 = 0, g.01 = c(-1, 0, 1), sd.u0 = c(0, 0.5, 1.5), g.10 = c(0.5, 1.5, 3),
 #                       sd.u1 = c(0, 0.5, 1.5), sd.e = c(0.5, 1.5))
 
 # design 1 (test influence of general parameters on bias)
-# design <- expand.grid(N_total = 200, T_total = 20, 
-#                       predictor.type = "binary", outcome.type = "continuous",
-#                       sdX.within = NA, sdX.between = c(0, 1), 
-#                       g.00 = 0, g.01 = c(-1, 0, 1), sd.u0 = c(0, 1), g.10 = c(0.5, 1.5, 3), 
-#                       sd.u1 = 0, sd.e = 1, true_cluster_means = FALSE)
+design <- expand.grid(N_total = 200, T_total = 20,
+                      predictor.type = "binary", outcome.type = "continuous",
+                      sdX.within = NA, sdX.between = c(0, 1),
+                      g.00 = 0, g.01 = c(-1, 0, 1), sd.u0 = c(0, 1), g.10 = c(0.5, 1.5, 3),
+                      sd.u1 = 0, sd.e = 1, true_cluster_means = FALSE)
 
 # design 2 (test influence of true cluster means on bias)
 # design <- expand.grid(N_total = 200, T_total = 20,
@@ -101,22 +101,32 @@ nsim <- 100
 # # remove scenarios with sdX.between == 0 and g.01 != 0
 # design <- design[!(design$sdX.between == 0 & design$g.01 != 0),]
 
-# design 5b
-design <- expand.grid(N_total = c(100, 200), T_total = c(5, 20),
-                      predictor.type = c("binary", "continuous"),
-                      outcome.type = c("binary", "continuous"),
-                      sdX.within = 1, sdX.between = c(0, 1, 3),
-                      g.00 = 0, g.01 = c(0, 1), g.10 = 1.5,
-                      sd.u0 = c(0, 1), sd.u1 = 0, sd.e = 1,
-                      true_cluster_means = TRUE)
-# remove scenarios with sdX.between == 0 and g.01 != 0
-design <- design[!(design$sdX.between == 0 & design$g.01 != 0),]
+# # design 5b
+# design <- expand.grid(N_total = c(100, 200), T_total = c(5, 20),
+#                       predictor.type = c("binary", "continuous"),
+#                       outcome.type = c("binary", "continuous"),
+#                       sdX.within = 1, sdX.between = c(0, 1, 3),
+#                       g.00 = 0, g.01 = c(0, 1), g.10 = 1.5,
+#                       sd.u0 = c(0, 1), sd.u1 = 0, sd.e = 1,
+#                       true_cluster_means = FALSE)
+# # remove scenarios with sdX.between == 0 and g.01 != 0
+# design <- design[!(design$sdX.between == 0 & design$g.01 != 0),]
+# # remove scenarios with predictor and outcome type continuous
+# design <- design[!(design$predictor.type == "continuous" & design$outcome.type == "continuous"),]
 
 # save the empty design and settings to the directory
 settings <- list(nsim = nsim, seed = seed, runname = runname, parametrization = parametrization, design = design)
 saveRDS(settings, paste0("simulation_results_glmm/", runname, "/settings.RDS"))
 
 ### Simulation ---------------------------------------------------------------
+
+# Open a connection to capture output and messages
+output_conn <- file(paste0("simulation_results_glmm/", runname, "/log.txt"), open = "a")
+message_conn <- file(paste0("simulation_results_glmm/", runname, "/log.txt"), open = "a")
+
+# Redirect output and messages to the file
+sink(output_conn, type = "output")
+sink(message_conn, type = "message")
 
 # loop over the design
 for (idesign in 1:nrow(design)) {
@@ -142,7 +152,7 @@ for (idesign in 1:nrow(design)) {
   # Run simulations in parallel
   parallel_results <- foreach(isim = 1:nsim,  .options.future = list(seed = TRUE), .verbose = TRUE) %dofuture% {
     if (isim %% 10 == 0) {
-      cat(paste("Starting iteration", isim, "\n"))
+      cat(paste("Starting iteration", isim, ", setting", idesign, "\n"))
     }
     
     # Generate data
@@ -159,6 +169,14 @@ for (idesign in 1:nrow(design)) {
   }
   saveRDS(parallel_results, file = paste0("simulation_results_glmm/", runname, "/", idesign, ".RDS"))
 }
+
+# Stop capturing output and messages
+sink(type = "output")
+sink(type = "message")
+
+# Close the connections
+close(output_conn)
+close(message_conn)
 
 ### collect results ---------------------------------------------------------
 
