@@ -11,7 +11,7 @@ rm(list = ls()) # clear workspace
 
 seed <- 6384
 set.seed(seed) # set seed for reproducibility
-runname <- "April9_design6" # set a runname
+runname <- "April10_fullsimulation" # set a runname
 parametrization <- "mundlak" # set the parametrization (mundlak or centeredX)
 dir.create(paste0("simulation_results_glmm/", runname), showWarnings = FALSE) # create a directory
 
@@ -28,7 +28,7 @@ if (parametrization == "mundlak") {
 } else if (parametrization == "centeredX") {
   source("scripts/hamaker2020_extended/helper-functions/data-generation-centeredX.R")
 }
-source("scripts/hamaker2020_extended/helper-functions/model-fitting.R")
+source("scripts/hamaker2020_extended/helper-functions/model-fitting-better-warning-handling.R")
 source("scripts/hamaker2020_extended/helper-functions/result-formatting.R")
 
 # set the number of simulations
@@ -111,9 +111,18 @@ nsim <- 1000
 #                       true_cluster_means = FALSE)
 # 
 # # remove scenarios with sdX.between == 0 and g.01 != 0
-# design <- design[!(design$sdX.between == 0 & design$g.01 != 0),]
+# design <- design
 
-# # design 6
+# # design warning/error testing
+# design <- expand.grid(N_total = 150, T_total = 10,
+#                       predictor.type = c("binary", "continuous"),
+#                       outcome.type = c("binary", "continuous"),
+#                       sdX.within = 1, sdX.between = c(0, 3),
+#                       g.00 = 0, g.01 = 1, g.10 = 1.5,
+#                       sd.u0 = 1, sd.u1 = 0, sd.e = 1,
+#                       true_cluster_means = c(FALSE, TRUE))
+
+# design 6
 design <- expand.grid(N_total = c(100, 200), T_total = c(5, 10, 20),
                       predictor.type = c("binary", "continuous"),
                       outcome.type = c("binary", "continuous"),
@@ -165,7 +174,7 @@ for (idesign in 1:nrow(design)) {
   # Run simulations in parallel
   parallel_results <- foreach(isim = 1:nsim,  .options.future = list(seed = TRUE), .verbose = FALSE) %dofuture% {
     if (isim %% 10 == 0) {
-      cat(paste("Starting iteration", isim, ", setting", idesign, "\n"))
+      cat(paste("setting", idesign, ", starting iteration", isim, "\n"))
     }
     
     # Generate data
@@ -195,19 +204,13 @@ close(message_conn)
 
 if(FALSE) {
   
-  # design 1
-  runname <- "March27_design5_ludtkesbias_contextual_estclustermeans"
+  # optional: retrieve older simulation results
+  # runname <- "March27_design5_ludtkesbias_contextual_estclustermeans"
+  # runname <- "March27_design5b_ludtkesbias_contextual_trueclustermeans"
+  runname <- "April8_testlog"
   design <- readRDS(paste0("simulation_results_glmm/", runname, "/settings.RDS"))$design
   parametrization <- readRDS(paste0("simulation_results_glmm/", runname, "/settings.RDS"))$parametrization
   
-  # design 2
-  runname <- "March27_design5b_ludtkesbias_contextual_trueclustermeans"
-  design <- readRDS(paste0("simulation_results_glmm/", runname, "/settings.RDS"))$design
-  parametrization <- readRDS(paste0("simulation_results_glmm/", runname, "/settings.RDS"))$parametrization
-  
-  # runname <- "April8_testlog"
-  # design <- readRDS(paste0("simulation_results_glmm/", runname, "/settings.RDS"))$design
-  # parametrization <- readRDS(paste0("simulation_results_glmm/", runname, "/settings.RDS"))$parametrization
 }
 
 # load packages
@@ -279,7 +282,6 @@ for (idesign in 1:nrow(design_all)) {
   
   # rename columns (to address problem where X.cluster.means is not estimated)
   colnames(df) <- c("replication", "model", "X.Intercept.", "X", "X.cent", "X.cluster.means")
-  
   
   ### Compute statistics (mean, estimation error)
   
