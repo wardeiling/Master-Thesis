@@ -3,7 +3,7 @@
 ######################################
 
 # Author: Ward B Eiling
-# Last edited: 26-03-2025
+# Last edited: 09-04-2025
 
 ### Simulation set-up -------------------------------------------------------
 
@@ -11,7 +11,7 @@ rm(list = ls()) # clear workspace
 
 seed <- 6384
 set.seed(seed) # set seed for reproducibility
-runname <- "April8_testlog" # set a runname
+runname <- "April9_design6" # set a runname
 parametrization <- "mundlak" # set the parametrization (mundlak or centeredX)
 dir.create(paste0("simulation_results_glmm/", runname), showWarnings = FALSE) # create a directory
 
@@ -32,7 +32,7 @@ source("scripts/hamaker2020_extended/helper-functions/model-fitting.R")
 source("scripts/hamaker2020_extended/helper-functions/result-formatting.R")
 
 # set the number of simulations
-nsim <- 100
+nsim <- 1000
 
 # comprehensive design
 # design <- expand.grid(N_total = c(100, 200), T_total = c(5, 20),
@@ -42,11 +42,11 @@ nsim <- 100
 #                       sd.u1 = c(0, 0.5, 1.5), sd.e = c(0.5, 1.5))
 
 # design 1 (test influence of general parameters on bias)
-design <- expand.grid(N_total = 200, T_total = 20,
-                      predictor.type = "binary", outcome.type = "continuous",
-                      sdX.within = NA, sdX.between = c(0, 1),
-                      g.00 = 0, g.01 = c(-1, 0, 1), sd.u0 = c(0, 1), g.10 = c(0.5, 1.5, 3),
-                      sd.u1 = 0, sd.e = 1, true_cluster_means = FALSE)
+# design <- expand.grid(N_total = 200, T_total = 20,
+#                       predictor.type = "binary", outcome.type = "continuous",
+#                       sdX.within = NA, sdX.between = c(0, 1),
+#                       g.00 = 0, g.01 = c(-1, 0, 1), sd.u0 = c(0, 1), g.10 = c(0.5, 1.5, 3),
+#                       sd.u1 = 0, sd.e = 1, true_cluster_means = FALSE)
 
 # design 2 (test influence of true cluster means on bias)
 # design <- expand.grid(N_total = 200, T_total = 20,
@@ -101,7 +101,7 @@ design <- expand.grid(N_total = 200, T_total = 20,
 # # remove scenarios with sdX.between == 0 and g.01 != 0
 # design <- design[!(design$sdX.between == 0 & design$g.01 != 0),]
 
-# # design 5b
+# # # design 5b
 # design <- expand.grid(N_total = c(100, 200), T_total = c(5, 20),
 #                       predictor.type = c("binary", "continuous"),
 #                       outcome.type = c("binary", "continuous"),
@@ -109,10 +109,23 @@ design <- expand.grid(N_total = 200, T_total = 20,
 #                       g.00 = 0, g.01 = c(0, 1), g.10 = 1.5,
 #                       sd.u0 = c(0, 1), sd.u1 = 0, sd.e = 1,
 #                       true_cluster_means = FALSE)
+# 
 # # remove scenarios with sdX.between == 0 and g.01 != 0
 # design <- design[!(design$sdX.between == 0 & design$g.01 != 0),]
-# # remove scenarios with predictor and outcome type continuous
-# design <- design[!(design$predictor.type == "continuous" & design$outcome.type == "continuous"),]
+
+# # design 6
+design <- expand.grid(N_total = c(100, 200), T_total = c(5, 10, 20),
+                      predictor.type = c("binary", "continuous"),
+                      outcome.type = c("binary", "continuous"),
+                      sdX.within = 1, sdX.between = c(0, 1, 3),
+                      g.00 = 0, g.01 = c(0, 1, 3), g.10 = 1.5,
+                      sd.u0 = c(0, 1, 3), sd.u1 = 0, sd.e = 1,
+                      true_cluster_means = FALSE)
+
+# remove scenarios with sdX.between == 0 and g.01 != 0
+design <- design[!(design$sdX.between == 0 & design$g.01 != 0),]
+# remove scenarios with predictor and outcome type continuous
+design <- design[!(design$predictor.type == "continuous" & design$outcome.type == "continuous"),]
 
 # save the empty design and settings to the directory
 settings <- list(nsim = nsim, seed = seed, runname = runname, parametrization = parametrization, design = design)
@@ -150,7 +163,7 @@ for (idesign in 1:nrow(design)) {
   future::plan(multisession, workers = 8)
   
   # Run simulations in parallel
-  parallel_results <- foreach(isim = 1:nsim,  .options.future = list(seed = TRUE), .verbose = TRUE) %dofuture% {
+  parallel_results <- foreach(isim = 1:nsim,  .options.future = list(seed = TRUE), .verbose = FALSE) %dofuture% {
     if (isim %% 10 == 0) {
       cat(paste("Starting iteration", isim, ", setting", idesign, "\n"))
     }
@@ -191,6 +204,10 @@ if(FALSE) {
   runname <- "March27_design5b_ludtkesbias_contextual_trueclustermeans"
   design <- readRDS(paste0("simulation_results_glmm/", runname, "/settings.RDS"))$design
   parametrization <- readRDS(paste0("simulation_results_glmm/", runname, "/settings.RDS"))$parametrization
+  
+  # runname <- "April8_testlog"
+  # design <- readRDS(paste0("simulation_results_glmm/", runname, "/settings.RDS"))$design
+  # parametrization <- readRDS(paste0("simulation_results_glmm/", runname, "/settings.RDS"))$parametrization
 }
 
 # load packages
@@ -220,12 +237,18 @@ design_all <- design %>%
          g.ar13_g.10_bias = NA, g.ar13_g.01_bias = NA,
          g.independence4_g.10_bias = NA, g.independence4_g.01_bias = NA,
          g.exchangeable4_g.10_bias = NA, g.exchangeable4_g.01_bias = NA,
-         g.ar14_g.10_bias = NA, g.ar14_g.01_bias = NA)
+         g.ar14_g.10_bias = NA, g.ar14_g.01_bias = NA,
+         # quantify proportion of sucessful replications
+         l1_success = NA, l2_success = NA, l3a_success = NA, l4_success = NA,
+         g.independence1_success = NA, g.exchangeable1_success = NA, g.ar11_success = NA,
+         g.independence2_success = NA, g.exchangeable2_success = NA, g.ar12_success = NA,
+         g.independence3_success = NA, g.independence3_success = NA, g.ar13_success = NA,
+         g.independence4_success = NA, g.exchangeable4_success = NA, g.ar14_success = NA)
 
 # loop over the design
 for (idesign in 1:nrow(design_all)) {
   
-  # extract parameter values from design
+  ### Extract parameter values from design
   g.00 <- design_all$g.00[idesign]
   g.01 <- design_all$g.01[idesign]
   g.10 <- design_all$g.10[idesign]
@@ -257,9 +280,12 @@ for (idesign in 1:nrow(design_all)) {
   # rename columns (to address problem where X.cluster.means is not estimated)
   colnames(df) <- c("replication", "model", "X.Intercept.", "X", "X.cent", "X.cluster.means")
   
-  # average across replications
+  
+  ### Compute statistics (mean, estimation error)
+  
   df_processed <- df %>%
     group_by(model) %>%
+    # average across replications
     summarise(across(c("X", "X.cent", "X.cluster.means"), mean, na.rm = TRUE)) %>%
     # for now only select the mlm models
     # filter(model %in% c("l1", "l2", "l3a", "l4")) %>%
@@ -306,6 +332,48 @@ for (idesign in 1:nrow(design_all)) {
   # add everything to design, making sure that all columns align
   design_all[idesign, colnames(df_processed)] <- df_processed
   
+  ### Compute success rate
+  
+  # retrieve nsim
+  nsim <- length(parallel_results_setting)
+  
+  compute_success <- function(df, model, variables) {
+    # Filter the dataframe for the specific model and select the relevant variables
+    filtered <- df %>% filter(model == !!model) %>% select(replication, all_of(variables))
+    # Computes the success rate for each variable separately
+    success_rates <- sapply(filtered[-1], function(col) 1 - sum(is.na(col)) / nsim)
+    # Return the minimum success rate across all variables
+    return(min(success_rates))
+  }
+  
+  models <- list(
+    "l1" = "X",
+    "l2" = "X.cent",
+    "l3a" = c("X.cent", "X.cluster.means"),
+    "l4" = c("X", "X.cluster.means"),
+    "g.independence1" = "X",
+    "g.exchangeable1" = "X",
+    "g.ar11" = "X",
+    "g.independence2" = "X.cent",
+    "g.exchangeable2" = "X.cent",
+    "g.ar12" = "X.cent",
+    "g.independence3" = c("X.cent", "X.cluster.means"),
+    "g.exchangeable3" = c("X.cent", "X.cluster.means"),
+    "g.ar13" = c("X.cent", "X.cluster.means"),
+    "g.independence4" = c("X", "X.cluster.means"),
+    "g.exchangeable4" = c("X", "X.cluster.means"),
+    "g.ar14" = c("X", "X.cluster.means")
+  )
+  
+  # apply compute_success function to each model
+  success_rates <- sapply(names(models), function(m) compute_success(df, m, models[[m]]))
+  
+  # add names
+  names(success_rates) <- paste0(names(models), "_success")
+  
+  # add sucess rates to design
+  design_all[idesign, names(success_rates)] <- success_rates
+  
 }
 
 # reorder the columns (first mlm, then GEE exchangeable, GEE AR(1), GEE independence)
@@ -323,8 +391,13 @@ design_all_reordered <- design_all %>%
          l2_g.10_bias, l3a_g.10_bias, l3a_g.01_bias, l4_g.10_bias, l4_g.01_bias,
          g.exchangeable2_g.10_bias, g.exchangeable3_g.10_bias, g.exchangeable3_g.01_bias, g.exchangeable4_g.10_bias, g.exchangeable4_g.01_bias,
          g.ar12_g.10_bias, g.ar13_g.10_bias, g.ar13_g.01_bias, g.ar14_g.10_bias, g.ar14_g.01_bias,
-         g.independence2_g.10_bias, g.independence3_g.10_bias, g.independence3_g.01_bias, g.independence4_g.10_bias, g.independence4_g.01_bias
-         )
+         g.independence2_g.10_bias, g.independence3_g.10_bias, g.independence3_g.01_bias, g.independence4_g.10_bias, g.independence4_g.01_bias,
+         # finally success rates
+         l1_success, l2_success, l3a_success, l4_success,
+         g.independence1_success, g.exchangeable1_success, g.ar11_success,
+         g.independence2_success, g.exchangeable2_success, g.ar12_success,
+         g.independence3_success, g.independence3_success, g.ar13_success,
+         g.independence4_success, g.exchangeable4_success, g.ar14_success)
 
 # save design
 saveRDS(design_all_reordered, paste0("simulation_results_glmm/", runname, "/summary-results-all.RDS"))
@@ -333,7 +406,8 @@ saveRDS(design_all_reordered, paste0("simulation_results_glmm/", runname, "/summ
 design_all_rounded <- design_all_reordered %>%
   # round numbers to 3 decimals: everything that startswith "l" or "g."
   mutate(across(starts_with("l"), ~ round(., 3)),
-         across(starts_with("g."), ~ round(., 3)))
+         across(starts_with("g."), ~ round(., 3)),
+         across(ends_with("success"), ~ round(., 3)))
 
 # save design
 saveRDS(design_all_rounded, paste0("simulation_results_glmm/", runname, "/summary-results-all-rounded.RDS"))
@@ -366,6 +440,15 @@ saveRDS(design_bias_g01, paste0("simulation_results_glmm/", runname, "/summary-r
 write.csv(design_bias_g01, paste0("simulation_results_glmm/", runname, "/summary-results-bias-g01.csv"), row.names = FALSE)
 saveRDS(design_bias_g10, paste0("simulation_results_glmm/", runname, "/summary-results-bias-g10.RDS"))
 write.csv(design_bias_g10, paste0("simulation_results_glmm/", runname, "/summary-results-bias-g10.csv"), row.names = FALSE)
+
+# save sucess rates
+design_success <- design_all_rounded %>%
+  select(c(N_total, T_total, predictor.type, outcome.type, sdX.within, sdX.between,
+                  g.00, g.01, g.10, sd.u0, sd.u1, sd.e, true_cluster_means, contains("success")))
+
+# save design
+saveRDS(design_success, paste0("simulation_results_glmm/", runname, "/summary-results-success.RDS"))
+write.csv(design_success, paste0("simulation_results_glmm/", runname, "/summary-results-success.csv"), row.names = FALSE)
 
 ### Optional: Retrieve output
 
