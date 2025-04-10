@@ -28,7 +28,7 @@ if (parametrization == "mundlak") {
 } else if (parametrization == "centeredX") {
   source("scripts/hamaker2020_extended/helper-functions/data-generation-centeredX.R")
 }
-source("scripts/hamaker2020_extended/helper-functions/model-fitting-better-warning-handling.R")
+source("scripts/hamaker2020_extended/helper-functions/model-fitting.R")
 source("scripts/hamaker2020_extended/helper-functions/result-formatting.R")
 
 # set the number of simulations
