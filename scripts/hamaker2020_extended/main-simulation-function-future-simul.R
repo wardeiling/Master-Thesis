@@ -207,7 +207,8 @@ if(FALSE) {
   # optional: retrieve older simulation results
   # runname <- "March27_design5_ludtkesbias_contextual_estclustermeans"
   # runname <- "March27_design5b_ludtkesbias_contextual_trueclustermeans"
-  runname <- "April8_testlog"
+  # runname <- "April8_testlog"
+  runname <- "April10_fullsimulation"
   design <- readRDS(paste0("simulation_results_glmm/", runname, "/settings.RDS"))$design
   parametrization <- readRDS(paste0("simulation_results_glmm/", runname, "/settings.RDS"))$parametrization
   
@@ -416,7 +417,7 @@ saveRDS(design_all_rounded, paste0("simulation_results_glmm/", runname, "/summar
 
 # remove all bias columns
 design_absolute <- design_all_rounded %>%
-  select(-contains("g.10"), -contains("g.01"))
+  select(-contains("g.10_bias"), -contains("g.01_bias"))
 
 # save design
 saveRDS(design_absolute, paste0("simulation_results_glmm/", runname, "/summary-results-absolute.RDS"))
@@ -433,9 +434,9 @@ write.csv(design_bias, paste0("simulation_results_glmm/", runname, "/summary-res
 
 # create separate versions containing the within-person and contextual effect
 design_bias_g01 <- design_bias %>%
-  select(-contains("g.10"))
+  select(-contains("g.10_bias"))
 design_bias_g10 <- design_bias %>%
-  select(-contains("g.01"))
+  select(-contains("g.01_bias"))
 
 # save design
 saveRDS(design_bias_g01, paste0("simulation_results_glmm/", runname, "/summary-results-bias-g01.RDS"))
