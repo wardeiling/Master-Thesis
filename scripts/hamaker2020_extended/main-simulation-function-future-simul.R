@@ -11,7 +11,7 @@ rm(list = ls()) # clear workspace
 
 seed <- 6384
 set.seed(seed) # set seed for reproducibility
-runname <- "April10_fullsimulation" # set a runname
+runname <- "April17_fullsimulation_contXY" # set a runname
 parametrization <- "mundlak" # set the parametrization (mundlak or centeredX)
 dir.create(paste0("simulation_results_glmm/", runname), showWarnings = FALSE) # create a directory
 
@@ -123,18 +123,27 @@ nsim <- 1000
 #                       true_cluster_means = c(FALSE, TRUE))
 
 # design 6
+# design <- expand.grid(N_total = c(100, 200), T_total = c(5, 10, 20),
+#                       predictor.type = c("binary", "continuous"),
+#                       outcome.type = c("binary", "continuous"),
+#                       sdX.within = 1, sdX.between = c(0, 1, 3),
+#                       g.00 = 0, g.01 = c(0, 1, 3), g.10 = 1.5,
+#                       sd.u0 = c(0, 1, 3), sd.u1 = 0, sd.e = 1,
+#                       true_cluster_means = FALSE)
+# # remove scenarios with sdX.between == 0 and g.01 != 0
+# design <- design[!(design$sdX.between == 0 & design$g.01 != 0),]
+# # remove scenarios with predictor and outcome type continuous
+# design <- design[!(design$predictor.type == "continuous" & design$outcome.type == "continuous"),]
+
+# design 7: run remaining simulations with continuous predictor and outcome
 design <- expand.grid(N_total = c(100, 200), T_total = c(5, 10, 20),
-                      predictor.type = c("binary", "continuous"),
-                      outcome.type = c("binary", "continuous"),
+                      predictor.type = "continuous", outcome.type = "continuous",
                       sdX.within = 1, sdX.between = c(0, 1, 3),
                       g.00 = 0, g.01 = c(0, 1, 3), g.10 = 1.5,
                       sd.u0 = c(0, 1, 3), sd.u1 = 0, sd.e = 1,
                       true_cluster_means = FALSE)
-
 # remove scenarios with sdX.between == 0 and g.01 != 0
 design <- design[!(design$sdX.between == 0 & design$g.01 != 0),]
-# remove scenarios with predictor and outcome type continuous
-design <- design[!(design$predictor.type == "continuous" & design$outcome.type == "continuous"),]
 
 # save the empty design and settings to the directory
 settings <- list(nsim = nsim, seed = seed, runname = runname, parametrization = parametrization, design = design)
