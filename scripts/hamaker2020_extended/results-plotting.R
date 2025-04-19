@@ -59,27 +59,37 @@ for (idesign in 1:nrow(design)) {
   
   # compute bias
   df_wide2 <- df_wide %>%
-    mutate(l2_g.10_bias = l2_X.cent - beta_within,
+    mutate(l1_g.10_bias = l1_X - beta_within,
+           l2_g.10_bias = l2_X.cent - beta_within,
            l3a_g.10_bias = l3a_X.cent - beta_within,
            l3a_g.01_bias = l3a_X.cluster.means - beta_between,
            l4_g.10_bias = l4_X - beta_within,
            l4_g.01_bias = l4_X.cluster.means - beta_contextual,
+           # also for GEE
+           # parametrization 1
+           g.independence1_g.10_bias = g.independence1_X - beta_within,
+           g.exchangeable1_g.10_bias = g.exchangeable1_X - beta_within,
+           g.ar11_g.10_bias = g.ar11_X - beta_within,
+           # parametrization 2
            g.independence2_g.10_bias = g.independence2_X.cent - beta_within,
            g.exchangeable2_g.10_bias = g.exchangeable2_X.cent - beta_within,
            g.ar12_g.10_bias = g.ar12_X.cent - beta_within,
+           # parametrization 3
            g.independence3_g.10_bias = g.independence3_X.cent - beta_within,
            g.independence3_g.01_bias = g.independence3_X.cluster.means - beta_between,
            g.exchangeable3_g.10_bias = g.exchangeable3_X.cent - beta_within,
            g.exchangeable3_g.01_bias = g.exchangeable3_X.cluster.means - beta_between,
            g.ar13_g.10_bias = g.ar13_X.cent - beta_within,
            g.ar13_g.01_bias = g.ar13_X.cluster.means - beta_between,
+           # parametrization 4
            g.independence4_g.10_bias = g.independence4_X - beta_within,
            g.independence4_g.01_bias = g.independence4_X.cluster.means - beta_contextual,
            g.exchangeable4_g.10_bias = g.exchangeable4_X - beta_within,
            g.exchangeable4_g.01_bias = g.exchangeable4_X.cluster.means - beta_contextual,
            g.ar14_g.10_bias = g.ar14_X - beta_within,
            g.ar14_g.01_bias = g.ar14_X.cluster.means - beta_contextual,
-           design_id = idesign)
+           # add design_id for merging later
+           design_id = idesign) 
   
   # store the result
   results_list[[idesign]] <- df_wide2
@@ -92,7 +102,7 @@ sim_results_all <- bind_rows(results_list)
 final_df <- left_join(design_long, sim_results_all, by = c("design_id", "replication"))
 
 # save the final data frame
-saveRDS(final_df, paste0("simulation_results_glmm/", runname, "/plotting_bias_df.RDS"))
+saveRDS(final_df, paste0("simulation_results_glmm/", runname, "/plotting_bias_df1.RDS"))
 
 ### REMAINDER OF SIMULATION (PART 2) ----
 
@@ -147,27 +157,37 @@ for (idesign in 1:nrow(design)) {
   
   # compute bias
   df_wide2 <- df_wide %>%
-    mutate(l2_g.10_bias = l2_X.cent - beta_within,
+    mutate(l1_g.10_bias = l1_X - beta_within,
+           l2_g.10_bias = l2_X.cent - beta_within,
            l3a_g.10_bias = l3a_X.cent - beta_within,
            l3a_g.01_bias = l3a_X.cluster.means - beta_between,
            l4_g.10_bias = l4_X - beta_within,
            l4_g.01_bias = l4_X.cluster.means - beta_contextual,
+           # also for GEE
+           # parametrization 1
+           g.independence1_g.10_bias = g.independence1_X - beta_within,
+           g.exchangeable1_g.10_bias = g.exchangeable1_X - beta_within,
+           g.ar11_g.10_bias = g.ar11_X - beta_within,
+           # parametrization 2
            g.independence2_g.10_bias = g.independence2_X.cent - beta_within,
            g.exchangeable2_g.10_bias = g.exchangeable2_X.cent - beta_within,
            g.ar12_g.10_bias = g.ar12_X.cent - beta_within,
+           # parametrization 3
            g.independence3_g.10_bias = g.independence3_X.cent - beta_within,
            g.independence3_g.01_bias = g.independence3_X.cluster.means - beta_between,
            g.exchangeable3_g.10_bias = g.exchangeable3_X.cent - beta_within,
            g.exchangeable3_g.01_bias = g.exchangeable3_X.cluster.means - beta_between,
            g.ar13_g.10_bias = g.ar13_X.cent - beta_within,
            g.ar13_g.01_bias = g.ar13_X.cluster.means - beta_between,
+           # parametrization 4
            g.independence4_g.10_bias = g.independence4_X - beta_within,
            g.independence4_g.01_bias = g.independence4_X.cluster.means - beta_contextual,
            g.exchangeable4_g.10_bias = g.exchangeable4_X - beta_within,
            g.exchangeable4_g.01_bias = g.exchangeable4_X.cluster.means - beta_contextual,
            g.ar14_g.10_bias = g.ar14_X - beta_within,
            g.ar14_g.01_bias = g.ar14_X.cluster.means - beta_contextual,
-           design_id = idesign)
+           # add design_id for merging later
+           design_id = idesign) 
   
   # store the result
   results_list[[idesign]] <- df_wide2

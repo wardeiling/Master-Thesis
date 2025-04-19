@@ -217,7 +217,8 @@ if(FALSE) {
   # runname <- "March27_design5_ludtkesbias_contextual_estclustermeans"
   # runname <- "March27_design5b_ludtkesbias_contextual_trueclustermeans"
   # runname <- "April8_testlog"
-  runname <- "April10_fullsimulation"
+  # runname <- "April10_fullsimulation"
+  runname <- "April17_fullsimulation_contXY"
   design <- readRDS(paste0("simulation_results_glmm/", runname, "/settings.RDS"))$design
   parametrization <- readRDS(paste0("simulation_results_glmm/", runname, "/settings.RDS"))$parametrization
 }
