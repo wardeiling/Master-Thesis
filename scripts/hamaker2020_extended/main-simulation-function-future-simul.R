@@ -220,7 +220,6 @@ if(FALSE) {
   runname <- "April10_fullsimulation"
   design <- readRDS(paste0("simulation_results_glmm/", runname, "/settings.RDS"))$design
   parametrization <- readRDS(paste0("simulation_results_glmm/", runname, "/settings.RDS"))$parametrization
-  
 }
 
 # load packages
@@ -233,7 +232,7 @@ design_all <- design %>%
   # add columns for MLM estimation
   mutate(l1_X = NA, l2_X.cent = NA, l3a_X.cent = NA, l3a_X.cluster.means = NA, l4_X = NA, l4_X.cluster.means = NA,
          # add columns for MLM estimation error / bias
-         l2_g.10_bias = NA, l3a_g.10_bias = NA, l3a_g.01_bias = NA, l4_g.10_bias = NA, l4_g.01_bias = NA,
+         l1_g.10_bias = NA, l2_g.10_bias = NA, l3a_g.10_bias = NA, l3a_g.01_bias = NA, l4_g.10_bias = NA, l4_g.01_bias = NA,
          # add columns for GEE estimation
          g.independence1_X = NA, g.exchangeable1_X = NA, g.ar11_X = NA,
          g.independence2_X.cent = NA, g.exchangeable2_X.cent = NA, g.ar12_X.cent = NA,
@@ -244,6 +243,7 @@ design_all <- design %>%
          g.exchangeable4_X = NA, g.exchangeable4_X.cluster.means = NA,
          g.ar14_X = NA, g.ar14_X.cluster.means = NA,
          # add columns for GEE estimation error / bias
+         g.independence1_g.10_bias = NA, g.exchangeable1_g.10_bias = NA, g.ar11_g.10_bias = NA,
          g.independence2_g.10_bias = NA, g.exchangeable2_g.10_bias = NA, g.ar12_g.10_bias = NA,
          g.independence3_g.10_bias = NA, g.independence3_g.01_bias = NA,
          g.exchangeable3_g.10_bias = NA, g.exchangeable3_g.01_bias = NA,
@@ -318,21 +318,29 @@ for (idesign in 1:nrow(design_all)) {
     # calculate estimation error (l2, l3a, l4)
     # l3a_X.cluster.means is the between-person effect beta(between)
     # l4_X.cluster.means is the contextual effect = beta(between) - beta(within)
-    mutate(l2_g.10_bias = l2_X.cent - beta_within,
+    mutate(l1_g.10_bias = l1_X - beta_within,
+           l2_g.10_bias = l2_X.cent - beta_within,
            l3a_g.10_bias = l3a_X.cent - beta_within,
            l3a_g.01_bias = l3a_X.cluster.means - beta_between,
            l4_g.10_bias = l4_X - beta_within,
            l4_g.01_bias = l4_X.cluster.means - beta_contextual,
            # also for GEE
+           # parametrization 1
+           g.independence1_g.10_bias = g.independence1_X - beta_within,
+           g.exchangeable1_g.10_bias = g.exchangeable1_X - beta_within,
+           g.ar11_g.10_bias = g.ar11_X - beta_within,
+           # parametrization 2
            g.independence2_g.10_bias = g.independence2_X.cent - beta_within,
            g.exchangeable2_g.10_bias = g.exchangeable2_X.cent - beta_within,
            g.ar12_g.10_bias = g.ar12_X.cent - beta_within,
+           # parametrization 3
            g.independence3_g.10_bias = g.independence3_X.cent - beta_within,
            g.independence3_g.01_bias = g.independence3_X.cluster.means - beta_between,
            g.exchangeable3_g.10_bias = g.exchangeable3_X.cent - beta_within,
            g.exchangeable3_g.01_bias = g.exchangeable3_X.cluster.means - beta_between,
            g.ar13_g.10_bias = g.ar13_X.cent - beta_within,
            g.ar13_g.01_bias = g.ar13_X.cluster.means - beta_between,
+           # parametrization 4
            g.independence4_g.10_bias = g.independence4_X - beta_within,
            g.independence4_g.01_bias = g.independence4_X.cluster.means - beta_contextual,
            g.exchangeable4_g.10_bias = g.exchangeable4_X - beta_within,
@@ -400,10 +408,10 @@ design_all_reordered <- design_all %>%
          l4_X, g.exchangeable4_X, g.ar14_X, g.independence4_X,
          l4_X.cluster.means, g.exchangeable4_X.cluster.means, g.ar14_X.cluster.means, g.independence4_X.cluster.means,
          # then bias columns (ordered according to model type)
-         l2_g.10_bias, l3a_g.10_bias, l3a_g.01_bias, l4_g.10_bias, l4_g.01_bias,
-         g.exchangeable2_g.10_bias, g.exchangeable3_g.10_bias, g.exchangeable3_g.01_bias, g.exchangeable4_g.10_bias, g.exchangeable4_g.01_bias,
-         g.ar12_g.10_bias, g.ar13_g.10_bias, g.ar13_g.01_bias, g.ar14_g.10_bias, g.ar14_g.01_bias,
-         g.independence2_g.10_bias, g.independence3_g.10_bias, g.independence3_g.01_bias, g.independence4_g.10_bias, g.independence4_g.01_bias,
+         l1_g.10_bias, l2_g.10_bias, l3a_g.10_bias, l3a_g.01_bias, l4_g.10_bias, l4_g.01_bias,
+         g.exchangeable1_g.10_bias, g.exchangeable2_g.10_bias, g.exchangeable3_g.10_bias, g.exchangeable3_g.01_bias, g.exchangeable4_g.10_bias, g.exchangeable4_g.01_bias,
+         g.ar11_g.10_bias, g.ar12_g.10_bias, g.ar13_g.10_bias, g.ar13_g.01_bias, g.ar14_g.10_bias, g.ar14_g.01_bias,
+         g.independence1_g.10_bias, g.independence2_g.10_bias, g.independence3_g.10_bias, g.independence3_g.01_bias, g.independence4_g.10_bias, g.independence4_g.01_bias,
          # finally success rates
          l1_success, l2_success, l3a_success, l4_success,
          g.independence1_success, g.exchangeable1_success, g.ar11_success,
