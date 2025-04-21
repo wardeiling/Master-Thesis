@@ -561,7 +561,7 @@ saveRDS(final_df, paste0("simulation_results_glmm/", newrunname, "/plotting_bias
 #   facet_grid(outcome.type ~ predictor.type) +  # 2x2 grid
 #   theme_bw() 
 
-### MORE PLOTTING ###
+### WITHIN-PERSON EFFECTS PLOTS ### ----
 
 runname <- "April18_fullsimulation_combined"
 
@@ -570,32 +570,139 @@ final_df <- readRDS(paste0("simulation_results_glmm/", runname, "/plotting_bias_
 
 # scenario 1
 general_scenario_df_beta1 <- final_df %>%
-  # insert desirable values
-  # filter(N_total == 200, sdX.between == 3, sd.u0 == 1, g.01 == 1) %>%
-  # select(T_total, predictor.type, outcome.type, ends_with("_g.10_bias")) %>%
+  # remove columns ending with "g.01", "X", "X.cent", "X.cluster.means"
+  select(-ends_with("_g.01_bias"), -ends_with("_X"), -ends_with("_X.cent"), -ends_with("_X.cluster.means")) %>%
   pivot_longer(cols = ends_with("_g.10_bias"),
                names_to = "model", values_to = "beta1_bias") %>%
   mutate(
     model = str_remove(model, "_g.10_bias"),
-    model = factor(model, levels = c("l2", "l3a", "l4", 
+    model = factor(model, levels = c("l1", "l2", "l3a", "l4", 
+                                     "g.exchangeable1", "g.ar11", "g.independence1",
                                      "g.exchangeable2", "g.ar12", "g.independence2", 
                                      "g.exchangeable3", "g.ar13", "g.independence3", 
                                      "g.exchangeable4", "g.ar14", "g.independence4")),
-    predictor.type = factor(predictor.type),
-    outcome.type = factor(outcome.type)
-  ) 
+    predictor.type_str = paste0(predictor.type, " predictor"),
+    outcome.type_str = paste0(outcome.type, " outcome"),
+    # Set factor levels of model to ensure correct order in the plot
+    predictor.type_str = factor(predictor.type_str, levels = c("continuous predictor", "binary predictor")),
+    outcome.type_str = factor(outcome.type_str, levels = c("continuous outcome", "binary outcome"))
+  ) %>%
+  # remove parametrization 3
+  filter(!model %in% c("l3a", "g.independence3", "g.ar13", "g.exchangeable3")) %>%
+  # remove any bias values exceeding -100 or 100 (occuring in the GEE models)
+  filter(beta1_bias > -100 & beta1_bias < 100)
+
+# temp
+# temp <- general_scenario_df_beta1 %>%
+#   filter(model == "g.independence1", N_total == 200, T_total == 10, sdX.between == 3, sd.u0 == 0, g.01 == 3)
+
+# create 2x2 grid of boxplots
+boxplot_grid_maker_beta1 <- function(df) {
+  ggplot(df, aes(x = model, y = beta1_bias, col = model)) +
+    geom_boxplot() +
+    geom_hline(yintercept = 0, linetype = "dashed") +  # Dashed horizontal line at 0
+    ylim(-1.5, 1.5) +  # Set y-axis limits
+    labs(x = "Generative Model", y = "Bias") +
+    facet_grid(predictor.type_str ~ outcome.type_str) + 
+    theme_bw() + 
+    # remove X axis labels
+    theme(axis.text.x = element_blank(),
+          axis.ticks.x = element_blank(),
+          axis.title.x = element_blank())
+}
+
+# scenario 01: baseline (all should perform very well, as there is no (random nor systematic) heterogeneity in outcome)
+scenario01_df_beta1 <- general_scenario_df_beta1 %>% 
+  filter(N_total == 200, T_total == 20, sdX.between == 0, sd.u0 == 0, g.01 == 0)
+boxplot_grid_maker_beta1(scenario01_df_beta1)
+
+# scenario 02: baseline (with between-person differences in X)
+scenario02_df_beta1 <- general_scenario_df_beta1 %>%
+  filter(N_total == 200, T_total == 20, sdX.between == 1, sd.u0 == 0, g.01 == 0)
+boxplot_grid_maker_beta1(scenario02_df_beta1)
+
+# scenario 1: challenging for parametrization 1, but no random effect, which is good for GEE
+scenario1_df_beta1 <- general_scenario_df_beta1 %>%
+  filter(N_total == 200, T_total == 5, sdX.between == 3, sd.u0 == 0, g.01 == 3)
+boxplot_grid_maker_beta1(scenario1_df_beta1) # g.independence1 is out of bounds for cont XY
+t# ggsave(paste0("simulation_results_glmm/", runname, "/figures/bias_plot_within_scenario1.pdf"), width = 10, height = 8)
+
+# scenario 2: challenging for parametrization 1 and GEE (large random effect)
+scenario2_df_beta1 <- general_scenario_df_beta1 %>%
+  filter(N_total == 200, T_total == 5, sdX.between == 3, sd.u0 == 3, g.01 == 3)
+boxplot_grid_maker_beta1(scenario2_df_beta1) # g.independence1 is out of bounds for cont XY
+  
+### CONTEXTUAL EFFECTS PLOTS ### ----
+
+runname <- "April18_fullsimulation_combined"
+
+# read in the final data frame
+final_df <- readRDS(paste0("simulation_results_glmm/", runname, "/plotting_bias_df.RDS"))
 
 # scenario 1
-scenario1_df_beta1 <- general_scenario_df_beta1 %>%
-  filter(N_total == 200, T_total == 20, sdX.between == 3, sd.u0 == 1, g.01 == 1)
+general_scenario_df_g01 <- final_df %>%
+  # remove columns ending with "g.01", "X", "X.cent", "X.cluster.means"
+  select(-ends_with("_g.10_bias"), -ends_with("_X"), -ends_with("_X.cent"), -ends_with("_X.cluster.means")) %>%
+  pivot_longer(cols = ends_with("_g.01_bias"),
+               names_to = "model", values_to = "g01_bias") %>%
+  mutate(
+    model = str_remove(model, "_g.01_bias"),
+    model = factor(model, levels = c("l1", "l2", "l3a", "l4", 
+                                     "g.exchangeable1", "g.ar11", "g.independence1",
+                                     "g.exchangeable2", "g.ar12", "g.independence2", 
+                                     "g.exchangeable3", "g.ar13", "g.independence3", 
+                                     "g.exchangeable4", "g.ar14", "g.independence4")),
+    predictor.type_str = paste0(predictor.type, " predictor"),
+    outcome.type_str = paste0(outcome.type, " outcome"),
+    # Set factor levels of model to ensure correct order in the plot
+    predictor.type_str = factor(predictor.type_str, levels = c("continuous predictor", "binary predictor")),
+    outcome.type_str = factor(outcome.type_str, levels = c("continuous outcome", "binary outcome"))
+  ) %>%
+  # remove parametrization 3
+  filter(!model %in% c("l3a", "g.independence3", "g.ar13", "g.exchangeable3")) %>%
+  # remove any bias values exceeding -100 or 100 (occuring in the GEE models)
+  filter(g01_bias > -100 & g01_bias < 100)
 
-scenario2_df_beta1 <- general_scenario_df_beta1 %>%
-  filter(N_total == 200, T_total == 20, sdX.between == 3, sd.u0 == 1, g.01 == 3)
+# create 2x2 grid of boxplots
+boxplot_grid_maker_g01 <- function(df) {
+  ggplot(df, aes(x = model, y = g01_bias, col = model)) +
+    geom_boxplot() +
+    geom_hline(yintercept = 0, linetype = "dashed") +  # Dashed horizontal line at 0
+    ylim(-1.5, 1.5) +  # Set y-axis limits
+    labs(x = "Generative Model", y = "Bias") +
+    facet_grid(predictor.type_str ~ outcome.type_str) + 
+    theme_bw() + 
+    # remove X axis labels
+    theme(axis.text.x = element_blank(),
+          axis.ticks.x = element_blank(),
+          axis.title.x = element_blank())
+}
 
-scenario3_df_beta1 <- general_scenario_df_beta1 %>%
-  filter(N_total == 200, T_total == 20, sdX.between == 3, sd.u0 == 1, g.01 == 0)
-  
-  
+# scenario 01: baseline (all should perform very well, as there is no (random nor systematic) heterogeneity in outcome)
+scenario01_df_g01 <- general_scenario_df_g01 %>% 
+  filter(N_total == 200, T_total == 20, sdX.between == 0, sd.u0 == 0, g.01 == 0)
+boxplot_grid_maker_g01(scenario01_df_g01)
+
+# scenario 02: baseline (with between-person differences in X)
+scenario02_df_g01 <- general_scenario_df_g01 %>%
+  filter(N_total == 200, T_total == 20, sdX.between == 1, sd.u0 == 0, g.01 == 0)
+boxplot_grid_maker_g01(scenario02_df_g01)
+
+# scenario 1: challenging for parametrization 1, but no random effect, which is good for GEE
+scenario1_df_g01 <- general_scenario_df_g01 %>%
+  filter(N_total == 200, T_total == 5, sdX.between == 3, sd.u0 == 0, g.01 == 3)
+boxplot_grid_maker_g01(scenario1_df_g01) # g.independence1 is out of bounds for cont XY
+
+# scenario 2: challenging for parametrization 1 and GEE (large random effect)
+scenario2_df_g01 <- general_scenario_df_g01 %>%
+  filter(N_total == 200, T_total == 5, sdX.between == 3, sd.u0 == 3, g.01 == 3)
+boxplot_grid_maker_g01(scenario2_df_g01) # g.independence1 is out of bounds for cont XY
+
+
+# scenario 2b (with large T)
+scenario2b_df_g01 <- general_scenario_df_g01 %>%
+  filter(N_total == 200, T_total == 20, sdX.between == 3, sd.u0 == 0, g.01 == 3)
+boxplot_grid_maker_g01(scenario2b_df_g01) # g.independence1 is out of bounds for cont XY                  
 
 
 
