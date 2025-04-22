@@ -581,14 +581,19 @@ general_scenario_df_beta1 <- final_df %>%
                                      "g.exchangeable2", "g.ar12", "g.independence2", 
                                      "g.exchangeable3", "g.ar13", "g.independence3", 
                                      "g.exchangeable4", "g.ar14", "g.independence4")),
+    
+    # Create labels and set factor levels of model to ensure correct order in the plot
     predictor.type_str = paste0(predictor.type, " predictor"),
-    outcome.type_str = paste0(outcome.type, " outcome"),
-    # Set factor levels of model to ensure correct order in the plot
     predictor.type_str = factor(predictor.type_str, levels = c("continuous predictor", "binary predictor")),
-    outcome.type_str = factor(outcome.type_str, levels = c("continuous outcome", "binary outcome"))
+    outcome.type_str = paste0(outcome.type, " outcome"),
+    outcome.type_str = factor(outcome.type_str, levels = c("continuous outcome", "binary outcome")),
+    T_total_str = paste0("T = ", T_total),
+    T_total_str = factor(T_total_str, levels = c("T = 5", "T = 10", "T = 20")),
+    sd.u0_str = paste0("sd.u0 = ", sd.u0),
+    sd.u0_str = factor(sd.u0_str, levels = c("sd.u0 = 0", "sd.u0 = 1", "sd.u0 = 3"))
   ) %>%
   # remove parametrization 3
-  filter(!model %in% c("l3a", "g.independence3", "g.ar13", "g.exchangeable3")) %>%
+  # filter(!model %in% c("l3a", "g.independence3", "g.ar13", "g.exchangeable3")) %>%
   # remove any bias values exceeding -100 or 100 (occuring in the GEE models)
   filter(beta1_bias > -100 & beta1_bias < 100)
 
@@ -615,22 +620,80 @@ boxplot_grid_maker_beta1 <- function(df) {
 scenario01_df_beta1 <- general_scenario_df_beta1 %>% 
   filter(N_total == 200, T_total == 20, sdX.between == 0, sd.u0 == 0, g.01 == 0)
 boxplot_grid_maker_beta1(scenario01_df_beta1)
+ggsave(paste0("simulation_results_glmm/", runname, "/figures/bias_plot_within_scenario01.pdf"), width = 10, height = 5)
 
 # scenario 02: baseline (with between-person differences in X)
 scenario02_df_beta1 <- general_scenario_df_beta1 %>%
   filter(N_total == 200, T_total == 20, sdX.between == 1, sd.u0 == 0, g.01 == 0)
 boxplot_grid_maker_beta1(scenario02_df_beta1)
+ggsave(paste0("simulation_results_glmm/", runname, "/figures/bias_plot_within_scenario02.pdf"), width = 10, height = 5)
 
 # scenario 1: challenging for parametrization 1, but no random effect, which is good for GEE
 scenario1_df_beta1 <- general_scenario_df_beta1 %>%
   filter(N_total == 200, T_total == 5, sdX.between == 3, sd.u0 == 0, g.01 == 3)
 boxplot_grid_maker_beta1(scenario1_df_beta1) # g.independence1 is out of bounds for cont XY
-t# ggsave(paste0("simulation_results_glmm/", runname, "/figures/bias_plot_within_scenario1.pdf"), width = 10, height = 8)
+ggsave(paste0("simulation_results_glmm/", runname, "/figures/bias_plot_within_scenario1.pdf"), width = 10, height = 5)
 
 # scenario 2: challenging for parametrization 1 and GEE (large random effect)
 scenario2_df_beta1 <- general_scenario_df_beta1 %>%
   filter(N_total == 200, T_total == 5, sdX.between == 3, sd.u0 == 3, g.01 == 3)
 boxplot_grid_maker_beta1(scenario2_df_beta1) # g.independence1 is out of bounds for cont XY
+ggsave(paste0("simulation_results_glmm/", runname, "/figures/bias_plot_within_scenario2.pdf"), width = 10, height = 5)
+
+# create 2x2x2 grid of boxplots
+boxplot_grid_maker_beta1_3vars <- function(df) {
+  ggplot(df, aes(x = model, y = beta1_bias, col = model)) +
+    geom_boxplot() +
+    geom_hline(yintercept = 0, linetype = "dashed") +  # Dashed horizontal line at 0
+    ylim(-1.5, 1.5) +  # Set y-axis limits
+    labs(x = "Generative Model", y = "Bias") +
+    facet_grid(predictor.type_str ~ outcome.type_str + T_total_str) + 
+    theme_bw() + 
+    # remove X axis labels
+    theme(axis.text.x = element_blank(),
+          axis.ticks.x = element_blank(),
+          axis.title.x = element_blank())
+}
+
+# scenario 3: more comprehensive plot with sd.u0
+scenario3_df_beta1 <- general_scenario_df_beta1 %>%
+  filter(N_total == 200, T_total == 5, sdX.between == 3, sd.u0 %in% c(0, 3), g.01 == 3)
+
+ggplot(scenario3_df_beta1, aes(x = model, y = beta1_bias, col = model)) +
+  geom_boxplot() +
+  geom_hline(yintercept = 0, linetype = "dashed") +  # Dashed horizontal line at 0
+  ylim(-1.5, 1.5) +  # Set y-axis limits
+  labs(x = "Generative Model", y = "Bias") +
+  facet_grid(predictor.type_str ~ outcome.type_str + sd.u0_str) + 
+  theme_bw() + 
+  # remove X axis labels
+  theme(axis.text.x = element_blank(),
+        axis.ticks.x = element_blank(),
+        axis.title.x = element_blank(),
+        # put legend under
+        legend.position = "bottom")
+
+ggsave(paste0("simulation_results_glmm/", runname, "/figures/bias_plot_within_scenario3.pdf"), width = 10, height = 10)
+
+# scenario 4: more comprehensive plot with T_total
+scenario4_df_beta1 <- general_scenario_df_beta1 %>%
+  filter(N_total == 200, T_total %in% c(5, 20), sdX.between == 3, sd.u0 == 0, g.01 == 3)
+
+ggplot(scenario4_df_beta1, aes(x = model, y = beta1_bias, col = model)) +
+  geom_boxplot() +
+  geom_hline(yintercept = 0, linetype = "dashed") +  # Dashed horizontal line at 0
+  ylim(-1.5, 1.5) +  # Set y-axis limits
+  labs(x = "Generative Model", y = "Bias") +
+  facet_grid(T_total_str + predictor.type_str ~ outcome.type_str) + 
+  theme_bw() + 
+  # remove X axis labels
+  theme(axis.text.x = element_blank(),
+        axis.ticks.x = element_blank(),
+        axis.title.x = element_blank(),
+        # put legend under
+        legend.position = "bottom")
+
+# ggsave(paste0("simulation_results_glmm/", runname, "/figures/bias_plot_within_scenario4.pdf"), width = 10, height = 8)
   
 ### CONTEXTUAL EFFECTS PLOTS ### ----
 
@@ -652,14 +715,18 @@ general_scenario_df_g01 <- final_df %>%
                                      "g.exchangeable2", "g.ar12", "g.independence2", 
                                      "g.exchangeable3", "g.ar13", "g.independence3", 
                                      "g.exchangeable4", "g.ar14", "g.independence4")),
+    # Create labels and set factor levels of model to ensure correct order in the plot
     predictor.type_str = paste0(predictor.type, " predictor"),
-    outcome.type_str = paste0(outcome.type, " outcome"),
-    # Set factor levels of model to ensure correct order in the plot
     predictor.type_str = factor(predictor.type_str, levels = c("continuous predictor", "binary predictor")),
-    outcome.type_str = factor(outcome.type_str, levels = c("continuous outcome", "binary outcome"))
+    outcome.type_str = paste0(outcome.type, " outcome"),
+    outcome.type_str = factor(outcome.type_str, levels = c("continuous outcome", "binary outcome")),
+    T_total_str = paste0("T = ", T_total),
+    T_total_str = factor(T_total_str, levels = c("T = 5", "T = 10", "T = 20")),
+    sd.u0_str = paste0("sd.u0 = ", sd.u0),
+    sd.u0_str = factor(sd.u0_str, levels = c("sd.u0 = 0", "sd.u0 = 1", "sd.u0 = 3"))
   ) %>%
   # remove parametrization 3
-  filter(!model %in% c("l3a", "g.independence3", "g.ar13", "g.exchangeable3")) %>%
+  # filter(!model %in% c("l3a", "g.independence3", "g.ar13", "g.exchangeable3")) %>%
   # remove any bias values exceeding -100 or 100 (occuring in the GEE models)
   filter(g01_bias > -100 & g01_bias < 100)
 
@@ -682,27 +749,47 @@ boxplot_grid_maker_g01 <- function(df) {
 scenario01_df_g01 <- general_scenario_df_g01 %>% 
   filter(N_total == 200, T_total == 20, sdX.between == 0, sd.u0 == 0, g.01 == 0)
 boxplot_grid_maker_g01(scenario01_df_g01)
+ggsave(paste0("simulation_results_glmm/", runname, "/figures/bias_plot_contextual_scenario01.pdf"), width = 10, height = 5)
 
 # scenario 02: baseline (with between-person differences in X)
 scenario02_df_g01 <- general_scenario_df_g01 %>%
   filter(N_total == 200, T_total == 20, sdX.between == 1, sd.u0 == 0, g.01 == 0)
 boxplot_grid_maker_g01(scenario02_df_g01)
+ggsave(paste0("simulation_results_glmm/", runname, "/figures/bias_plot_contextual_scenario02.pdf"), width = 10, height = 5)
 
 # scenario 1: challenging for parametrization 1, but no random effect, which is good for GEE
 scenario1_df_g01 <- general_scenario_df_g01 %>%
   filter(N_total == 200, T_total == 5, sdX.between == 3, sd.u0 == 0, g.01 == 3)
 boxplot_grid_maker_g01(scenario1_df_g01) # g.independence1 is out of bounds for cont XY
+ggsave(paste0("simulation_results_glmm/", runname, "/figures/bias_plot_contextual_scenario1.pdf"), width = 10, height = 5)
 
 # scenario 2: challenging for parametrization 1 and GEE (large random effect)
 scenario2_df_g01 <- general_scenario_df_g01 %>%
   filter(N_total == 200, T_total == 5, sdX.between == 3, sd.u0 == 3, g.01 == 3)
 boxplot_grid_maker_g01(scenario2_df_g01) # g.independence1 is out of bounds for cont XY
+ggsave(paste0("simulation_results_glmm/", runname, "/figures/bias_plot_contextual_scenario2.pdf"), width = 10, height = 5)
 
+# # scenario 2b (with large T)
+# scenario2b_df_g01 <- general_scenario_df_g01 %>%
+#   filter(N_total == 200, T_total == 20, sdX.between == 3, sd.u0 == 0, g.01 == 3)
+# boxplot_grid_maker_g01(scenario2b_df_g01) # g.independence1 is out of bounds for cont XY                  
 
-# scenario 2b (with large T)
-scenario2b_df_g01 <- general_scenario_df_g01 %>%
-  filter(N_total == 200, T_total == 20, sdX.between == 3, sd.u0 == 0, g.01 == 3)
-boxplot_grid_maker_g01(scenario2b_df_g01) # g.independence1 is out of bounds for cont XY                  
-
+# scenario 3: more comprehensive plot with sd.u0
+scenario3_df_g01 <- general_scenario_df_g01 %>%
+  filter(N_total == 200, T_total == 5, sdX.between == 3, sd.u0 %in% c(0, 3), g.01 == 3)
+ggplot(scenario3_df_g01, aes(x = model, y = g01_bias, col = model)) +
+  geom_boxplot() +
+  geom_hline(yintercept = 0, linetype = "dashed") +  # Dashed horizontal line at 0
+  ylim(-1.5, 1.5) +  # Set y-axis limits
+  labs(x = "Generative Model", y = "Bias") +
+  facet_grid(predictor.type_str ~ outcome.type_str + sd.u0_str) + 
+  theme_bw() + 
+  # remove X axis labels
+  theme(axis.text.x = element_blank(),
+        axis.ticks.x = element_blank(),
+        axis.title.x = element_blank(),
+        # put legend under
+        legend.position = "bottom")
+ggsave(paste0("simulation_results_glmm/", runname, "/figures/bias_plot_contextual_scenario3.pdf"), width = 10, height = 10)
 
 
