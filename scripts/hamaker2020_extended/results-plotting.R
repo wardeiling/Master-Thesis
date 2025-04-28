@@ -335,7 +335,7 @@ for(i in 1:nrow(settings)) {
   )
     
   # For the within-person effect
-  p_within <- ggplot(plot_df_beta1, aes(x = model, y = beta1_bias, col = model)) +
+  ggplot(plot_df_beta1, aes(x = model, y = beta1_bias, col = model)) +
     geom_boxplot() +
     geom_hline(yintercept = 0, linetype = "dashed") +  # Dashed horizontal line at 0
     ylim(-1.5, 1.5) +  # Set y-axis limits
@@ -354,24 +354,16 @@ for(i in 1:nrow(settings)) {
           )
   
   # save
-  # ggsave(paste0("simulation_results_glmm/", runname, "/figures/", type, "bias_plot_T_total-vs-sd.u0_within.pdf"), width = 10, height = 8)
-  
-  # Create a vector of new x-axis labels
-  new_labels2 <- c(
-    rep("", 2),
-    rep("Method 3", 1),
-    rep("", 1)
-  )
+  ggsave(paste0("simulation_results_glmm/", runname, "/figures/", type, "bias_plot_T_total-vs-sd.u0_within.pdf"), width = 10, height = 8)
   
   # For the contextual effect
-  p_contextual <- ggplot(plot_df_g01, aes(x = model, y = g01_bias, col = model)) +
+  ggplot(plot_df_g01, aes(x = model, y = g01_bias, col = model)) +
     geom_boxplot() +
     geom_hline(yintercept = 0, linetype = "dashed") +  # Dashed horizontal line at 0
     ylim(-1.5, 1.5) +  # Set y-axis limits
     labs(x = "Generative Model", y = "Bias") +
     facet_grid(sd.u0_str ~ T_total_str) + # Show T and N values in labels
     theme_bw() +
-    scale_x_discrete(breaks = waiver(), labels = new_labels2) +  # <<-- overwrite x-axis labels
     theme(axis.text.x = element_text(angle = 45, hjust = 1)) +  # optionally rotate
     # remove X axis labels
     theme(axis.ticks.x = element_blank(),
@@ -379,10 +371,10 @@ for(i in 1:nrow(settings)) {
           panel.grid.major.x = element_blank())
 
   # save
-  # ggsave(paste0("simulation_results_glmm/", runname, "/figures/", type, "bias_plot_T_total-vs-sd.u0_contextual.pdf"), width = 10, height = 8)
+  ggsave(paste0("simulation_results_glmm/", runname, "/figures/", type, "bias_plot_T_total-vs-sd.u0_contextual.pdf"), width = 10, height = 8)
   
-  # combine plots
-  combined_plot <- plot_grid(p_within, p_contextual, ncol = 2, labels = c("A", "B"), label_size = 12)
+  # # combine plots
+  # combined_plot <- plot_grid(p_within, p_contextual, ncol = 2, labels = c("A", "B"), label_size = 12)
 }
 
   # ### PLOT 1: Grid of sdX.between and g.01 ----
