@@ -4,6 +4,8 @@ library(dplyr) # for data manipulation
 library(tidyr) # for data manipulation
 library(stringr) # for string manipulation
 library(ggplot2) # for plotting
+library(ggpubr)
+library(cowplot)
 
 ### RETRIEVE RESULTS ### ----
 
@@ -220,294 +222,437 @@ saveRDS(final_df, paste0("simulation_results_glmm/", newrunname, "/plotting_bias
 
 ### SELECT RELEVANT CASES FOR PLOTTING ### ----
 
-# runname <- "April18_fullsimulation_combined"
-# 
-# # create a matrix with the different combinations of predictor and outcome type
-# settings <- expand.grid(
-#   predictor.type = c("binary", "continuous"),
-#   outcome.type = c("binary", "continuous"),
-#   stringsAsFactors = FALSE
-# )
-# # # remove continuous X and Y setting
-# # settings <- settings %>%
-# #   filter(!(predictor.type == "continuous" & outcome.type == "continuous"))
-# 
-# # loop to make all plots
-# for(i in 1:nrow(settings)) {
-#   set.predictor.type <- settings$predictor.type[i]
-#   set.outcome.type <- settings$outcome.type[i]
-#   
-#   # create string for the file name
-#   type <- paste0("pred_", set.predictor.type, "_out_", set.outcome.type, "_")
-#   
-#   ### PLOT 1: Grid of sdX.between and g.01 ----
-#   
-#   # read in the final data frame
-#   final_df <- readRDS(paste0("simulation_results_glmm/", runname, "/plotting_bias_df.RDS"))
-#   
-#   # select relevant variables and cases (select and filter)
-#   plot1_df <- final_df %>%
-#     # select T = 20, N = 200, sd.u0 = 1, predictor.type = "binary" and outcome.type = "continuous"
-#     filter(T_total == 20, N_total == 200, sd.u0 == 1, predictor.type == set.predictor.type, outcome.type == set.outcome.type) %>%
-#     select(-c(ends_with("_success"), ends_with("_X"), ends_with("_X.cent"), ends_with("_X.cluster.means"))) 
-#   
-#   plot1_df_beta1 <- plot1_df %>%
-#     select(-ends_with("_g.01_bias")) %>%
-#     # turn the bias variables into long format, with a new column indicating the model name 
-#     pivot_longer(cols = ends_with("_bias"), names_to = "model", values_to = "beta1_bias") %>%
-#     # remove the "_g.10_bias" suffix from the model names
-#     mutate(model = str_remove(model, "_g.10_bias")) %>%
-#     # set factor levels of model to ensure correct order in the plot
-#     mutate(model = factor(model, levels = c("l2", "l3a", "l4", "g.exchangeable2", "g.ar12", "g.independence2", 
-#                                             "g.exchangeable3", "g.ar13", "g.independence3", "g.exchangeable4",
-#                                             "g.ar14", "g.independence4"))) %>%
-#     # Turn label variables (sdX.between, g.01 and sd.u0) into strings with an underscore
-#     mutate(sdX.between_str = paste0("sdX.between = ", sdX.between),
-#            g.01_str = paste0("g.01 = ", g.01)) %>%
-#     # Set factor levels to ensure correct order in the plot (0, 1, 3)
-#     mutate(sdX.between_str = factor(sdX.between_str, levels = c("sdX.between = 0", "sdX.between = 1", "sdX.between = 3")),
-#            g.01_str = factor(g.01_str, levels = c("g.01 = 0", "g.01 = 1", "g.01 = 3")))
-#   
-#   plot1_df_g01 <- plot1_df %>%
-#     select(-ends_with("_g.10_bias")) %>%
-#     # turn the bias variables into long format, with a new column indicating the model name
-#     pivot_longer(cols = ends_with("_bias"), names_to = "model", values_to = "g01_bias") %>%
-#     # remove the "_g.01_bias" suffix from the model names
-#     mutate(model = str_remove(model, "_g.01_bias")) %>%
-#     # set factor levels of model to ensure correct order in the plot
-#     mutate(model = factor(model, levels = c("l2", "l3a", "l4", "g.exchangeable2", "g.ar12", "g.independence2", 
-#                                             "g.exchangeable3", "g.ar13", "g.independence3", "g.exchangeable4",
-#                                             "g.ar14", "g.independence4"))) %>%
-#     # Turn label variables (sdX.between, g.01 and sd.u0) into strings with an underscore
-#     mutate(sdX.between_str = paste0("sdX.between = ", sdX.between),
-#            g.01_str = paste0("g.01 = ", g.01)) %>%
-#     # Set factor levels to ensure correct order in the plot (0, 1, 3)
-#     mutate(sdX.between_str = factor(sdX.between_str, levels = c("sdX.between = 0", "sdX.between = 1", "sdX.between = 3")),
-#            g.01_str = factor(g.01_str, levels = c("g.01 = 0", "g.01 = 1", "g.01 = 3")))
-#   
-#   # For the within-person effect
-#   ggplot(plot1_df_beta1, aes(x = model, y = beta1_bias, col = model)) +
-#     geom_boxplot() +
-#     geom_hline(yintercept = 0, linetype = "dashed") +  # Dashed horizontal line at 0
-#     ylim(-1.5, 1.5) +  # Set y-axis limits
-#     labs(x = "Generative Model", y = "Bias") +
-#     facet_grid(sdX.between_str ~ g.01_str) + # Show T and N values in labels
-#     theme_bw() + 
-#     # remove X axis labels
-#     theme(axis.text.x = element_blank(),
-#           axis.ticks.x = element_blank(),
-#           axis.title.x = element_blank())
-#   
-#   # save
-#   ggsave(paste0("simulation_results_glmm/", runname, "/figures/", type, "bias_plot_g01-vs-sd.Xi_within.pdf"), width = 10, height = 8)
-#   
-#   # For the between-person effect
-#   ggplot(plot1_df_g01, aes(x = model, y = g01_bias, col = model)) +
-#     geom_boxplot() +
-#     geom_hline(yintercept = 0, linetype = "dashed") +  # Dashed horizontal line at 0
-#     ylim(-1.5, 1.5) +  # Set y-axis limits
-#     labs(x = "Generative Model", y = "Bias") +
-#     facet_grid(sdX.between_str ~ g.01_str) + # Show T and N values in labels
-#     theme_bw() + 
-#     # remove X axis labels
-#     theme(axis.text.x = element_blank(),
-#           axis.ticks.x = element_blank(),
-#           axis.title.x = element_blank())
-#   
-#   # save
-#   ggsave(paste0("simulation_results_glmm/", runname, "/figures/", type, "bias_plot_g01-vs-sd.Xi_between.pdf"), width = 10, height = 8)
-#   
-#   ### PLOT 2A: Grid of sd.u0 and g.01 ----
-#   
-#   # select relevant variables and cases (select and filter)
-#   plot2_df <- final_df %>%
-#     # select T = 20, N = 200, sd.u0 = 1, predictor.type = "binary" and outcome.type = "continuous"
-#     filter(T_total == 20, N_total == 200, sdX.between == 1, predictor.type == set.predictor.type, outcome.type == set.outcome.type) %>%
-#     select(-c(ends_with("_success"), ends_with("_X"), ends_with("_X.cent"), ends_with("_X.cluster.means"))) 
-#   
-#   plot2_df_beta1 <- plot2_df %>%
-#     select(-ends_with("_g.01_bias")) %>%
-#     # turn the bias variables into long format, with a new column indicating the model name 
-#     pivot_longer(cols = ends_with("_bias"), names_to = "model", values_to = "beta1_bias") %>%
-#     # remove the "_g.10_bias" suffix from the model names
-#     mutate(model = str_remove(model, "_g.10_bias")) %>%
-#     # set factor levels of model to ensure correct order in the plot
-#     mutate(model = factor(model, levels = c("l2", "l3a", "l4", "g.exchangeable2", "g.ar12", "g.independence2", 
-#                                             "g.exchangeable3", "g.ar13", "g.independence3", "g.exchangeable4",
-#                                             "g.ar14", "g.independence4"))) %>%
-#     # Turn label variables (sdX.between, g.01 and sd.u0) into strings with an underscore
-#     mutate(g.01_str = paste0("g.01 = ", g.01),
-#            sd.u0_str = paste0("sd.u0 = ", sd.u0)) %>%
-#     # Set factor levels to ensure correct order in the plot (0, 1, 3)
-#     mutate(g.01_str = factor(g.01_str, levels = c("g.01 = 0", "g.01 = 1", "g.01 = 3")),
-#            sd.u0_str = factor(sd.u0_str, levels = c("sd.u0 = 0", "sd.u0 = 1", "sd.u0 = 3")))
-#   
-#   plot2_df_g01 <- plot2_df %>%
-#     select(-ends_with("_g.10_bias")) %>%
-#     # turn the bias variables into long format, with a new column indicating the model name
-#     pivot_longer(cols = ends_with("_bias"), names_to = "model", values_to = "g01_bias") %>%
-#     # remove the "_g.01_bias" suffix from the model names
-#     mutate(model = str_remove(model, "_g.01_bias")) %>%
-#     # set factor levels of model to ensure correct order in the plot
-#     mutate(model = factor(model, levels = c("l2", "l3a", "l4", "g.exchangeable2", "g.ar12", "g.independence2", 
-#                                             "g.exchangeable3", "g.ar13", "g.independence3", "g.exchangeable4",
-#                                             "g.ar14", "g.independence4"))) %>%
-#     # Turn label variables (sdX.between, g.01 and sd.u0) into strings with an underscore
-#     mutate(g.01_str = paste0("g.01 = ", g.01),
-#            sd.u0_str = paste0("sd.u0 = ", sd.u0)) %>%
-#     # Set factor levels to ensure correct order in the plot (0, 1, 3)
-#     mutate(g.01_str = factor(g.01_str, levels = c("g.01 = 0", "g.01 = 1", "g.01 = 3")),
-#            sd.u0_str = factor(sd.u0_str, levels = c("sd.u0 = 0", "sd.u0 = 1", "sd.u0 = 3")))
-#   
-#   # For the within-person effect
-#   ggplot(plot2_df_beta1, aes(x = model, y = beta1_bias, col = model)) +
-#     geom_boxplot() +
-#     geom_hline(yintercept = 0, linetype = "dashed") +  # Dashed horizontal line at 0
-#     ylim(-1.5, 1.5) +  # Set y-axis limits
-#     labs(x = "Generative Model", y = "Bias") +
-#     facet_grid(sd.u0_str ~ g.01_str) + # Show T and N values in labels
-#     theme_bw() + 
-#     # remove X axis labels
-#     theme(axis.text.x = element_blank(),
-#           axis.ticks.x = element_blank(),
-#           axis.title.x = element_blank())
-#   
-#   # save
-#   ggsave(paste0("simulation_results_glmm/", runname, "/figures/", type, "bias_plot_g01-vs-sd.u0_within.pdf"), width = 10, height = 8)
-#   
-#   # For the between-person effect
-#   ggplot(plot2_df_g01, aes(x = model, y = g01_bias, col = model)) +
-#     geom_boxplot() +
-#     geom_hline(yintercept = 0, linetype = "dashed") +  # Dashed horizontal line at 0
-#     ylim(-1.5, 1.5) +  # Set y-axis limits
-#     labs(x = "Generative Model", y = "Bias") +
-#     facet_grid(sd.u0_str ~ g.01_str) + # Show T and N values in labels
-#     theme_bw() + 
-#     # remove X axis labels
-#     theme(axis.text.x = element_blank(),
-#           axis.ticks.x = element_blank(),
-#           axis.title.x = element_blank())
-#   
-#   # save
-#   ggsave(paste0("simulation_results_glmm/", runname, "/figures/", type, "bias_plot_g01-vs-sd.u0_between.pdf"), width = 10, height = 8)
-#   
-#   ### PLOT 3: Grid of T_total and g.01 ----
-#   
-#   # select relevant variables and cases (select and filter)
-#   plot3_df <- final_df %>%
-#     # select T = 20, N = 200, sd.u0 = 1, predictor.type = "binary" and outcome.type = "continuous"
-#     filter(N_total == 200, sdX.between == 3, sd.u0 == 1, predictor.type == set.predictor.type, outcome.type == set.outcome.type) %>%
-#     select(-c(ends_with("_success"), ends_with("_X"), ends_with("_X.cent"), ends_with("_X.cluster.means"))) 
-#   
-#   plot3_df_beta1 <- plot3_df %>%
-#     select(-ends_with("_g.01_bias")) %>%
-#     # turn the bias variables into long format, with a new column indicating the model name 
-#     pivot_longer(cols = ends_with("_bias"), names_to = "model", values_to = "beta1_bias") %>%
-#     # remove the "_g.10_bias" suffix from the model names
-#     mutate(model = str_remove(model, "_g.10_bias")) %>%
-#     # set factor levels of model to ensure correct order in the plot
-#     mutate(model = factor(model, levels = c("l2", "l3a", "l4", "g.exchangeable2", "g.ar12", "g.independence2", 
-#                                             "g.exchangeable3", "g.ar13", "g.independence3", "g.exchangeable4",
-#                                             "g.ar14", "g.independence4"))) %>%
-#     # Turn label variables (sdX.between, g.01 and sd.u0) into strings with an underscore
-#     mutate(g.01_str = paste0("g.01 = ", g.01),
-#            T_total_str = paste0("T = ", T_total)) %>%
-#     # Set factor levels to ensure correct order in the plot (0, 1, 3)
-#     mutate(g.01_str = factor(g.01_str, levels = c("g.01 = 0", "g.01 = 1", "g.01 = 3")),
-#            T_total_str = factor(T_total_str, levels = c("T = 5", "T = 10", "T = 20")))
-#   
-#   plot3_df_g01 <- plot3_df %>%
-#     select(-ends_with("_g.10_bias")) %>%
-#     # turn the bias variables into long format, with a new column indicating the model name
-#     pivot_longer(cols = ends_with("_bias"), names_to = "model", values_to = "g01_bias") %>%
-#     # remove the "_g.01_bias" suffix from the model names
-#     mutate(model = str_remove(model, "_g.01_bias")) %>%
-#     # set factor levels of model to ensure correct order in the plot
-#     mutate(model = factor(model, levels = c("l2", "l3a", "l4", "g.exchangeable2", "g.ar12", "g.independence2", 
-#                                             "g.exchangeable3", "g.ar13", "g.independence3", "g.exchangeable4",
-#                                             "g.ar14", "g.independence4"))) %>%
-#     # Turn label variables (sdX.between, g.01 and sd.u0) into strings with an underscore
-#     mutate(g.01_str = paste0("g.01 = ", g.01),
-#            T_total_str = paste0("T = ", T_total)) %>%
-#     # Set factor levels to ensure correct order in the plot (0, 1, 3)
-#     mutate(g.01_str = factor(g.01_str, levels = c("g.01 = 0", "g.01 = 1", "g.01 = 3")),
-#            T_total_str = factor(T_total_str, levels = c("T = 5", "T = 10", "T = 20")))
-#   
-#   # For the within-person effect
-#   ggplot(plot3_df_beta1, aes(x = model, y = beta1_bias, col = model)) +
-#     geom_boxplot() +
-#     geom_hline(yintercept = 0, linetype = "dashed") +  # Dashed horizontal line at 0
-#     ylim(-1.5, 1.5) +  # Set y-axis limits
-#     labs(x = "Generative Model", y = "Bias") +
-#     facet_grid(T_total_str ~ g.01_str) + # Show T and N values in labels
-#     theme_bw() + 
-#     # remove X axis labels
-#     theme(axis.text.x = element_blank(),
-#           axis.ticks.x = element_blank(),
-#           axis.title.x = element_blank())
-#   
-#   # save
-#   ggsave(paste0("simulation_results_glmm/", runname, "/figures/", type, "bias_plot_g01-vs-T_total_within.pdf"), width = 10, height = 8)
-#   
-#   # For the between-person effect
-#   ggplot(plot3_df_g01, aes(x = model, y = g01_bias, col = model)) +
-#     geom_boxplot() +
-#     geom_hline(yintercept = 0, linetype = "dashed") +  # Dashed horizontal line at 0
-#     ylim(-1.5, 1.5) +  # Set y-axis limits
-#     labs(x = "Generative Model", y = "Bias") +
-#     facet_grid(T_total_str ~ g.01_str) + # Show T and N values in labels
-#     theme_bw() + 
-#     # remove X axis labels
-#     theme(axis.text.x = element_blank(),
-#           axis.ticks.x = element_blank(),
-#           axis.title.x = element_blank())
-#   
-#   # save
-#   ggsave(paste0("simulation_results_glmm/", runname, "/figures/", type, "bias_plot_g01-vs-T_total_between.pdf"), width = 10, height = 8)
-#   
-#   
-#   # ### PLOT 4 ----
-#   # predictor.type <- "binary"
-#   # outcome.type <- "continuous"
-#   # 
-#   # plot4_df < - final_df %>%
-#   #   filter(N_total == 200, sdX.between == 3, predictor.type == predictor.type, outcome.type == outcome.type) %>%
-#   #   select(T_total, predictor.type, outcome.type, ends_with("_g.10_bias")) %>%
-#   #   pivot_longer(cols = ends_with("_g.10_bias"),
-#   #                names_to = "model", values_to = "beta1_bias") %>%
-#   #   mutate(
-#   #     model = str_remove(model, "_g.10_bias"),
-#   #     model = factor(model, levels = c("l2", "l3a", "l4", 
-#   #                                      "g.exchangeable2", "g.ar12", "g.independence2", 
-#   #                                      "g.exchangeable3", "g.ar13", "g.independence3", 
-#   #                                      "g.exchangeable4", "g.ar14", "g.independence4")),
-#   #     predictor.type = factor(predictor.type),
-#   #     outcome.type = factor(outcome.type)
-#   #   ) %>%
-#   #   # remove any bias values exceeding -100 or 100
-#   #   filter(beta1_bias > -100 & beta1_bias < 100)
-#   # 
-#   # # create a function to summarize the data
-#   # data_summary <- function(data, varname, groupnames){
-#   #   require(plyr)
-#   #   summary_func <- function(x, col){
-#   #     c(mean = mean(x[[col]], na.rm=TRUE),
-#   #       sd = sd(x[[col]], na.rm=TRUE))
-#   #   }
-#   #   data_sum<-ddply(data, groupnames, .fun=summary_func,
-#   #                   varname)
-#   #   data_sum <- rename(data_sum, c("mean" = varname))
-#   #   return(data_sum)
-#   # }
-#   # 
-#   # # employ function to summarize the data
-#   # plot4_df_summary <- data_summary(plot3_df, varname="beta1_bias", groupnames=c("T_total", "predictor.type", "outcome.type", "model")) %>%
-#   #   # turn bias values into absolute values
-#   #   mutate(beta1_bias = abs(beta1_bias))
-#   # 
-#   
-# }
-# 
+runname <- "April18_fullsimulation_combined"
+
+# create a matrix with the different combinations of predictor and outcome type
+settings <- expand.grid(
+  predictor.type = c("binary", "continuous"),
+  outcome.type = c("binary", "continuous"),
+  stringsAsFactors = FALSE
+)
+
+# loop to make all plots
+for(i in 1:nrow(settings)) {
+  set.predictor.type <- settings$predictor.type[i]
+  set.outcome.type <- settings$outcome.type[i]
+
+  # create string for the file name
+  type <- paste0("pred_", set.predictor.type, "_out_", set.outcome.type, "_")
+  
+  #### Plot: Grid of sd.u0 and T_total ----
+  
+  # read in the final data frame
+  final_df <- readRDS(paste0("simulation_results_glmm/", runname, "/plotting_bias_df.RDS"))
+  
+  # select relevant variables and cases (select and filter)
+  plot_df <- final_df %>%
+    # select T = 20, N = 200, sd.u0 = 1, predictor.type = "binary" and outcome.type = "continuous"
+    filter(T_total %in% c(5, 20), N_total == 200, sd.u0 %in% c(0, 3), predictor.type == set.predictor.type, outcome.type == set.outcome.type,
+           sdX.between == 3, g.01 == 3) %>%
+    select(-c(ends_with("_success"), ends_with("_X"), ends_with("_X.cent"), ends_with("_X.cluster.means")))
+  
+  plot_df_beta1 <- plot_df %>%
+    select(-ends_with("_g.01_bias")) %>%
+    # turn the bias variables into long format, with a new column indicating the model name
+    pivot_longer(cols = ends_with("_bias"), names_to = "model", values_to = "beta1_bias") %>%
+    # remove the "_g.10_bias" suffix from the model names
+    mutate(model = str_remove(model, "_g.10_bias")) %>%
+    # remove models with a 3 in the name
+    filter(!str_detect(model, "3")) %>%
+    # change model names
+    mutate(model = recode(model,
+                          "l1" = "M1",
+                          "l2" = "M2",
+                          "l4" = "M3",
+                          "g.independence1" = "G1.independence",
+                          "g.exchangeable1" = "G1.exchangeable",
+                          "g.ar11" = "G1.AR1",
+                          "g.independence2" = "G2.independence",
+                          "g.exchangeable2" = "G2.exchangeable",
+                          "g.ar12" = "G2.AR1",
+                          "g.independence4" = "G3.independence",
+                          "g.exchangeable4" = "G3.exchangeable",
+                          "g.ar14" = "G3.AR1")) %>%
+    # set factor levels of model to ensure correct order in the plot
+    mutate(model = factor(model, levels = c("M1", "G1.independence", "G1.exchangeable", "G1.AR1",
+                                            "M2", "G2.independence", "G2.exchangeable", "G2.AR1",
+                                            "M3", "G3.independence", "G3.exchangeable", "G3.AR1"
+                                            ))) %>%
+    # Turn label variables (sdX.between, g.01 and sd.u0) into strings with an underscore
+    mutate(sd.u0_str = paste0("sd.u0 = ", sd.u0),
+           T_total_str = paste0("T = ", T_total)) %>%
+    # Set factor levels to ensure correct order in the plot (0, 1, 3)
+    mutate(sd.u0_str = factor(sd.u0_str, levels = c("sd.u0 = 0", "sd.u0 = 3")),
+           T_total_str = factor(T_total_str, levels = c("T = 5", "T = 20"))) %>%
+    # create new variable indicating method type (so M1 and G1 are "Method 1")
+    mutate(method_type = case_when(
+      str_detect(model, "M1") ~ "Method 1",
+      str_detect(model, "M2") ~ "Method 2",
+      str_detect(model, "M3") ~ "Method 3",
+      str_detect(model, "G1") ~ "Method 1",
+      str_detect(model, "G2") ~ "Method 2",
+      str_detect(model, "G3") ~ "Method 3"
+    ))
+  
+  plot_df_g01 <- plot_df %>%
+    select(-ends_with("_g.10_bias")) %>%
+    # turn the bias variables into long format, with a new column indicating the model name
+    pivot_longer(cols = ends_with("_bias"), names_to = "model", values_to = "g01_bias") %>%
+    # remove the "_g.01_bias" suffix from the model names
+    mutate(model = str_remove(model, "_g.01_bias")) %>%
+    # remove models with a 3 in the name
+    filter(!str_detect(model, "3")) %>%
+    # change model names
+    mutate(model = recode(model,
+                          "l2" = "M2",
+                          "l4" = "M3",
+                          "g.independence2" = "G2.independence",
+                          "g.exchangeable2" = "G2.exchangeable",
+                          "g.ar12" = "G2.AR1",
+                          "g.independence4" = "G3.independence",
+                          "g.exchangeable4" = "G3.exchangeable",
+                          "g.ar14" = "G3.AR1")) %>%
+    # set factor levels of model to ensure correct order in the plot
+    mutate(model = factor(model, levels = c("M2", "G2.independence", "G2.exchangeable", "G2.AR1",
+                                            "M3", "G3.independence", "G3.exchangeable", "G3.AR1"
+    ))) %>%
+    # Turn label variables (sdX.between, g.01 and sd.u0) into strings with an underscore
+    mutate(sd.u0_str = paste0("sd.u0 = ", sd.u0),
+           T_total_str = paste0("T = ", T_total)) %>%
+    # Set factor levels to ensure correct order in the plot (0, 1, 3)
+    mutate(sd.u0_str = factor(sd.u0_str, levels = c("sd.u0 = 0", "sd.u0 = 3")),
+           T_total_str = factor(T_total_str, levels = c("T = 5", "T = 20"))) 
+  
+  # Create a vector of new x-axis labels
+  new_labels <- c(
+    rep("", 2),
+    rep("Method 1", 1),
+    rep("", 3),
+    rep("Method 2", 1),
+    rep("", 3),
+    rep("Method 3", 1),
+    rep("", 1)
+  )
+    
+  # For the within-person effect
+  p_within <- ggplot(plot_df_beta1, aes(x = model, y = beta1_bias, col = model)) +
+    geom_boxplot() +
+    geom_hline(yintercept = 0, linetype = "dashed") +  # Dashed horizontal line at 0
+    ylim(-1.5, 1.5) +  # Set y-axis limits
+    labs(x = "Generative Model", y = "Bias") +
+    facet_grid(sd.u0_str ~ T_total_str) + # Show T and N values in labels
+    theme_bw() +
+    scale_x_discrete(breaks = waiver(), labels = new_labels) +  # <<-- overwrite x-axis labels
+    theme(axis.text.x = element_text(angle = 45, hjust = 1)) +  # optionally rotate
+    # add 2 vertical lines dividing the methods
+    geom_vline(xintercept = c(4.5, 8.5), linetype = "solid", color = "grey") +
+    # remove X axis labels
+    theme(axis.ticks.x = element_blank(),
+          axis.title.x = element_blank(),
+          # remove vertical grid lines
+          panel.grid.major.x = element_blank()
+          )
+  
+  # save
+  # ggsave(paste0("simulation_results_glmm/", runname, "/figures/", type, "bias_plot_T_total-vs-sd.u0_within.pdf"), width = 10, height = 8)
+  
+  # Create a vector of new x-axis labels
+  new_labels2 <- c(
+    rep("", 2),
+    rep("Method 3", 1),
+    rep("", 1)
+  )
+  
+  # For the contextual effect
+  p_contextual <- ggplot(plot_df_g01, aes(x = model, y = g01_bias, col = model)) +
+    geom_boxplot() +
+    geom_hline(yintercept = 0, linetype = "dashed") +  # Dashed horizontal line at 0
+    ylim(-1.5, 1.5) +  # Set y-axis limits
+    labs(x = "Generative Model", y = "Bias") +
+    facet_grid(sd.u0_str ~ T_total_str) + # Show T and N values in labels
+    theme_bw() +
+    scale_x_discrete(breaks = waiver(), labels = new_labels2) +  # <<-- overwrite x-axis labels
+    theme(axis.text.x = element_text(angle = 45, hjust = 1)) +  # optionally rotate
+    # remove X axis labels
+    theme(axis.ticks.x = element_blank(),
+          axis.title.x = element_blank(),
+          panel.grid.major.x = element_blank())
+
+  # save
+  # ggsave(paste0("simulation_results_glmm/", runname, "/figures/", type, "bias_plot_T_total-vs-sd.u0_contextual.pdf"), width = 10, height = 8)
+  
+  # combine plots
+  combined_plot <- plot_grid(p_within, p_contextual, ncol = 2, labels = c("A", "B"), label_size = 12)
+}
+
+  # ### PLOT 1: Grid of sdX.between and g.01 ----
+  # 
+  # # read in the final data frame
+  # final_df <- readRDS(paste0("simulation_results_glmm/", runname, "/plotting_bias_df.RDS"))
+  # 
+  # # select relevant variables and cases (select and filter)
+  # plot1_df <- final_df %>%
+  #   # select T = 20, N = 200, sd.u0 = 1, predictor.type = "binary" and outcome.type = "continuous"
+  #   filter(T_total == 20, N_total == 200, sd.u0 == 1, predictor.type == set.predictor.type, outcome.type == set.outcome.type) %>%
+  #   select(-c(ends_with("_success"), ends_with("_X"), ends_with("_X.cent"), ends_with("_X.cluster.means")))
+  # 
+  # plot1_df_beta1 <- plot1_df %>%
+  #   select(-ends_with("_g.01_bias")) %>%
+  #   # turn the bias variables into long format, with a new column indicating the model name
+  #   pivot_longer(cols = ends_with("_bias"), names_to = "model", values_to = "beta1_bias") %>%
+  #   # remove the "_g.10_bias" suffix from the model names
+  #   mutate(model = str_remove(model, "_g.10_bias")) %>%
+  #   # set factor levels of model to ensure correct order in the plot
+  #   mutate(model = factor(model, levels = c("l2", "l3a", "l4", "g.exchangeable2", "g.ar12", "g.independence2",
+  #                                           "g.exchangeable3", "g.ar13", "g.independence3", "g.exchangeable4",
+  #                                           "g.ar14", "g.independence4"))) %>%
+  #   # Turn label variables (sdX.between, g.01 and sd.u0) into strings with an underscore
+  #   mutate(sdX.between_str = paste0("sdX.between = ", sdX.between),
+  #          g.01_str = paste0("g.01 = ", g.01)) %>%
+  #   # Set factor levels to ensure correct order in the plot (0, 1, 3)
+  #   mutate(sdX.between_str = factor(sdX.between_str, levels = c("sdX.between = 0", "sdX.between = 1", "sdX.between = 3")),
+  #          g.01_str = factor(g.01_str, levels = c("g.01 = 0", "g.01 = 1", "g.01 = 3")))
+  # 
+  # plot1_df_g01 <- plot1_df %>%
+  #   select(-ends_with("_g.10_bias")) %>%
+  #   # turn the bias variables into long format, with a new column indicating the model name
+  #   pivot_longer(cols = ends_with("_bias"), names_to = "model", values_to = "g01_bias") %>%
+  #   # remove the "_g.01_bias" suffix from the model names
+  #   mutate(model = str_remove(model, "_g.01_bias")) %>%
+  #   # set factor levels of model to ensure correct order in the plot
+  #   mutate(model = factor(model, levels = c("l2", "l3a", "l4", "g.exchangeable2", "g.ar12", "g.independence2",
+  #                                           "g.exchangeable3", "g.ar13", "g.independence3", "g.exchangeable4",
+  #                                           "g.ar14", "g.independence4"))) %>%
+  #   # Turn label variables (sdX.between, g.01 and sd.u0) into strings with an underscore
+  #   mutate(sdX.between_str = paste0("sdX.between = ", sdX.between),
+  #          g.01_str = paste0("g.01 = ", g.01)) %>%
+  #   # Set factor levels to ensure correct order in the plot (0, 1, 3)
+  #   mutate(sdX.between_str = factor(sdX.between_str, levels = c("sdX.between = 0", "sdX.between = 1", "sdX.between = 3")),
+  #          g.01_str = factor(g.01_str, levels = c("g.01 = 0", "g.01 = 1", "g.01 = 3")))
+  # 
+  # # For the within-person effect
+  # ggplot(plot1_df_beta1, aes(x = model, y = beta1_bias, col = model)) +
+  #   geom_boxplot() +
+  #   geom_hline(yintercept = 0, linetype = "dashed") +  # Dashed horizontal line at 0
+  #   ylim(-1.5, 1.5) +  # Set y-axis limits
+  #   labs(x = "Generative Model", y = "Bias") +
+  #   facet_grid(sdX.between_str ~ g.01_str) + # Show T and N values in labels
+  #   theme_bw() +
+  #   # remove X axis labels
+  #   theme(axis.text.x = element_blank(),
+  #         axis.ticks.x = element_blank(),
+  #         axis.title.x = element_blank())
+  # 
+  # # save
+  # ggsave(paste0("simulation_results_glmm/", runname, "/figures/", type, "bias_plot_g01-vs-sd.Xi_within.pdf"), width = 10, height = 8)
+  # 
+  # # For the between-person effect
+  # ggplot(plot1_df_g01, aes(x = model, y = g01_bias, col = model)) +
+  #   geom_boxplot() +
+  #   geom_hline(yintercept = 0, linetype = "dashed") +  # Dashed horizontal line at 0
+  #   ylim(-1.5, 1.5) +  # Set y-axis limits
+  #   labs(x = "Generative Model", y = "Bias") +
+  #   facet_grid(sdX.between_str ~ g.01_str) + # Show T and N values in labels
+  #   theme_bw() +
+  #   # remove X axis labels
+  #   theme(axis.text.x = element_blank(),
+  #         axis.ticks.x = element_blank(),
+  #         axis.title.x = element_blank())
+  # 
+  # # save
+  # ggsave(paste0("simulation_results_glmm/", runname, "/figures/", type, "bias_plot_g01-vs-sd.Xi_between.pdf"), width = 10, height = 8)
+  # 
+  # ### PLOT 2A: Grid of sd.u0 and g.01 ----
+  # 
+  # # select relevant variables and cases (select and filter)
+  # plot2_df <- final_df %>%
+  #   # select T = 20, N = 200, sd.u0 = 1, predictor.type = "binary" and outcome.type = "continuous"
+  #   filter(T_total == 20, N_total == 200, sdX.between == 1, predictor.type == set.predictor.type, outcome.type == set.outcome.type) %>%
+  #   select(-c(ends_with("_success"), ends_with("_X"), ends_with("_X.cent"), ends_with("_X.cluster.means")))
+  # 
+  # plot2_df_beta1 <- plot2_df %>%
+  #   select(-ends_with("_g.01_bias")) %>%
+  #   # turn the bias variables into long format, with a new column indicating the model name
+  #   pivot_longer(cols = ends_with("_bias"), names_to = "model", values_to = "beta1_bias") %>%
+  #   # remove the "_g.10_bias" suffix from the model names
+  #   mutate(model = str_remove(model, "_g.10_bias")) %>%
+  #   # set factor levels of model to ensure correct order in the plot
+  #   mutate(model = factor(model, levels = c("l2", "l3a", "l4", "g.exchangeable2", "g.ar12", "g.independence2",
+  #                                           "g.exchangeable3", "g.ar13", "g.independence3", "g.exchangeable4",
+  #                                           "g.ar14", "g.independence4"))) %>%
+  #   # Turn label variables (sdX.between, g.01 and sd.u0) into strings with an underscore
+  #   mutate(g.01_str = paste0("g.01 = ", g.01),
+  #          sd.u0_str = paste0("sd.u0 = ", sd.u0)) %>%
+  #   # Set factor levels to ensure correct order in the plot (0, 1, 3)
+  #   mutate(g.01_str = factor(g.01_str, levels = c("g.01 = 0", "g.01 = 1", "g.01 = 3")),
+  #          sd.u0_str = factor(sd.u0_str, levels = c("sd.u0 = 0", "sd.u0 = 1", "sd.u0 = 3")))
+  # 
+  # plot2_df_g01 <- plot2_df %>%
+  #   select(-ends_with("_g.10_bias")) %>%
+  #   # turn the bias variables into long format, with a new column indicating the model name
+  #   pivot_longer(cols = ends_with("_bias"), names_to = "model", values_to = "g01_bias") %>%
+  #   # remove the "_g.01_bias" suffix from the model names
+  #   mutate(model = str_remove(model, "_g.01_bias")) %>%
+  #   # set factor levels of model to ensure correct order in the plot
+  #   mutate(model = factor(model, levels = c("l2", "l3a", "l4", "g.exchangeable2", "g.ar12", "g.independence2",
+  #                                           "g.exchangeable3", "g.ar13", "g.independence3", "g.exchangeable4",
+  #                                           "g.ar14", "g.independence4"))) %>%
+  #   # Turn label variables (sdX.between, g.01 and sd.u0) into strings with an underscore
+  #   mutate(g.01_str = paste0("g.01 = ", g.01),
+  #          sd.u0_str = paste0("sd.u0 = ", sd.u0)) %>%
+  #   # Set factor levels to ensure correct order in the plot (0, 1, 3)
+  #   mutate(g.01_str = factor(g.01_str, levels = c("g.01 = 0", "g.01 = 1", "g.01 = 3")),
+  #          sd.u0_str = factor(sd.u0_str, levels = c("sd.u0 = 0", "sd.u0 = 1", "sd.u0 = 3")))
+  # 
+  # # For the within-person effect
+  # ggplot(plot2_df_beta1, aes(x = model, y = beta1_bias, col = model)) +
+  #   geom_boxplot() +
+  #   geom_hline(yintercept = 0, linetype = "dashed") +  # Dashed horizontal line at 0
+  #   ylim(-1.5, 1.5) +  # Set y-axis limits
+  #   labs(x = "Generative Model", y = "Bias") +
+  #   facet_grid(sd.u0_str ~ g.01_str) + # Show T and N values in labels
+  #   theme_bw() +
+  #   # remove X axis labels
+  #   theme(axis.text.x = element_blank(),
+  #         axis.ticks.x = element_blank(),
+  #         axis.title.x = element_blank())
+  # 
+  # # save
+  # ggsave(paste0("simulation_results_glmm/", runname, "/figures/", type, "bias_plot_g01-vs-sd.u0_within.pdf"), width = 10, height = 8)
+  # 
+  # # For the between-person effect
+  # ggplot(plot2_df_g01, aes(x = model, y = g01_bias, col = model)) +
+  #   geom_boxplot() +
+  #   geom_hline(yintercept = 0, linetype = "dashed") +  # Dashed horizontal line at 0
+  #   ylim(-1.5, 1.5) +  # Set y-axis limits
+  #   labs(x = "Generative Model", y = "Bias") +
+  #   facet_grid(sd.u0_str ~ g.01_str) + # Show T and N values in labels
+  #   theme_bw() +
+  #   # remove X axis labels
+  #   theme(axis.text.x = element_blank(),
+  #         axis.ticks.x = element_blank(),
+  #         axis.title.x = element_blank())
+  # 
+  # # save
+  # ggsave(paste0("simulation_results_glmm/", runname, "/figures/", type, "bias_plot_g01-vs-sd.u0_between.pdf"), width = 10, height = 8)
+  # 
+  # ### PLOT 3: Grid of T_total and g.01 ----
+  # 
+  # # select relevant variables and cases (select and filter)
+  # plot3_df <- final_df %>%
+  #   # select T = 20, N = 200, sd.u0 = 1, predictor.type = "binary" and outcome.type = "continuous"
+  #   filter(N_total == 200, sdX.between == 3, sd.u0 == 1, predictor.type == set.predictor.type, outcome.type == set.outcome.type) %>%
+  #   select(-c(ends_with("_success"), ends_with("_X"), ends_with("_X.cent"), ends_with("_X.cluster.means")))
+  # 
+  # plot3_df_beta1 <- plot3_df %>%
+  #   select(-ends_with("_g.01_bias")) %>%
+  #   # turn the bias variables into long format, with a new column indicating the model name
+  #   pivot_longer(cols = ends_with("_bias"), names_to = "model", values_to = "beta1_bias") %>%
+  #   # remove the "_g.10_bias" suffix from the model names
+  #   mutate(model = str_remove(model, "_g.10_bias")) %>%
+  #   # set factor levels of model to ensure correct order in the plot
+  #   mutate(model = factor(model, levels = c("l2", "l3a", "l4", "g.exchangeable2", "g.ar12", "g.independence2",
+  #                                           "g.exchangeable3", "g.ar13", "g.independence3", "g.exchangeable4",
+  #                                           "g.ar14", "g.independence4"))) %>%
+  #   # Turn label variables (sdX.between, g.01 and sd.u0) into strings with an underscore
+  #   mutate(g.01_str = paste0("g.01 = ", g.01),
+  #          T_total_str = paste0("T = ", T_total)) %>%
+  #   # Set factor levels to ensure correct order in the plot (0, 1, 3)
+  #   mutate(g.01_str = factor(g.01_str, levels = c("g.01 = 0", "g.01 = 1", "g.01 = 3")),
+  #          T_total_str = factor(T_total_str, levels = c("T = 5", "T = 10", "T = 20")))
+  # 
+  # plot3_df_g01 <- plot3_df %>%
+  #   select(-ends_with("_g.10_bias")) %>%
+  #   # turn the bias variables into long format, with a new column indicating the model name
+  #   pivot_longer(cols = ends_with("_bias"), names_to = "model", values_to = "g01_bias") %>%
+  #   # remove the "_g.01_bias" suffix from the model names
+  #   mutate(model = str_remove(model, "_g.01_bias")) %>%
+  #   # set factor levels of model to ensure correct order in the plot
+  #   mutate(model = factor(model, levels = c("l2", "l3a", "l4", "g.exchangeable2", "g.ar12", "g.independence2",
+  #                                           "g.exchangeable3", "g.ar13", "g.independence3", "g.exchangeable4",
+  #                                           "g.ar14", "g.independence4"))) %>%
+  #   # Turn label variables (sdX.between, g.01 and sd.u0) into strings with an underscore
+  #   mutate(g.01_str = paste0("g.01 = ", g.01),
+  #          T_total_str = paste0("T = ", T_total)) %>%
+  #   # Set factor levels to ensure correct order in the plot (0, 1, 3)
+  #   mutate(g.01_str = factor(g.01_str, levels = c("g.01 = 0", "g.01 = 1", "g.01 = 3")),
+  #          T_total_str = factor(T_total_str, levels = c("T = 5", "T = 10", "T = 20")))
+  # 
+  # # For the within-person effect
+  # ggplot(plot3_df_beta1, aes(x = model, y = beta1_bias, col = model)) +
+  #   geom_boxplot() +
+  #   geom_hline(yintercept = 0, linetype = "dashed") +  # Dashed horizontal line at 0
+  #   ylim(-1.5, 1.5) +  # Set y-axis limits
+  #   labs(x = "Generative Model", y = "Bias") +
+  #   facet_grid(T_total_str ~ g.01_str) + # Show T and N values in labels
+  #   theme_bw() +
+  #   # remove X axis labels
+  #   theme(axis.text.x = element_blank(),
+  #         axis.ticks.x = element_blank(),
+  #         axis.title.x = element_blank())
+  # 
+  # # save
+  # ggsave(paste0("simulation_results_glmm/", runname, "/figures/", type, "bias_plot_g01-vs-T_total_within.pdf"), width = 10, height = 8)
+  # 
+  # # For the between-person effect
+  # ggplot(plot3_df_g01, aes(x = model, y = g01_bias, col = model)) +
+  #   geom_boxplot() +
+  #   geom_hline(yintercept = 0, linetype = "dashed") +  # Dashed horizontal line at 0
+  #   ylim(-1.5, 1.5) +  # Set y-axis limits
+  #   labs(x = "Generative Model", y = "Bias") +
+  #   facet_grid(T_total_str ~ g.01_str) + # Show T and N values in labels
+  #   theme_bw() +
+  #   # remove X axis labels
+  #   theme(axis.text.x = element_blank(),
+  #         axis.ticks.x = element_blank(),
+  #         axis.title.x = element_blank())
+  # 
+  # # save
+  # ggsave(paste0("simulation_results_glmm/", runname, "/figures/", type, "bias_plot_g01-vs-T_total_between.pdf"), width = 10, height = 8)
+  # 
+
+  # ### PLOT 4 ----
+  # predictor.type <- "binary"
+  # outcome.type <- "continuous"
+  #
+  # plot4_df < - final_df %>%
+  #   filter(N_total == 200, sdX.between == 3, predictor.type == predictor.type, outcome.type == outcome.type) %>%
+  #   select(T_total, predictor.type, outcome.type, ends_with("_g.10_bias")) %>%
+  #   pivot_longer(cols = ends_with("_g.10_bias"),
+  #                names_to = "model", values_to = "beta1_bias") %>%
+  #   mutate(
+  #     model = str_remove(model, "_g.10_bias"),
+  #     model = factor(model, levels = c("l2", "l3a", "l4",
+  #                                      "g.exchangeable2", "g.ar12", "g.independence2",
+  #                                      "g.exchangeable3", "g.ar13", "g.independence3",
+  #                                      "g.exchangeable4", "g.ar14", "g.independence4")),
+  #     predictor.type = factor(predictor.type),
+  #     outcome.type = factor(outcome.type)
+  #   ) %>%
+  #   # remove any bias values exceeding -100 or 100
+  #   filter(beta1_bias > -100 & beta1_bias < 100)
+  #
+  # # create a function to summarize the data
+  # data_summary <- function(data, varname, groupnames){
+  #   require(plyr)
+  #   summary_func <- function(x, col){
+  #     c(mean = mean(x[[col]], na.rm=TRUE),
+  #       sd = sd(x[[col]], na.rm=TRUE))
+  #   }
+  #   data_sum<-ddply(data, groupnames, .fun=summary_func,
+  #                   varname)
+  #   data_sum <- rename(data_sum, c("mean" = varname))
+  #   return(data_sum)
+  # }
+  #
+  # # employ function to summarize the data
+  # plot4_df_summary <- data_summary(plot3_df, varname="beta1_bias", groupnames=c("T_total", "predictor.type", "outcome.type", "model")) %>%
+  #   # turn bias values into absolute values
+  #   mutate(beta1_bias = abs(beta1_bias))
+  #
+
+}
+
 # ### PLOT 3 ----
 # 
 # runname <- "April18_fullsimulation_combined"
@@ -925,9 +1070,6 @@ library(patchwork)
 combined_plot <- (plot1 + plot2) / (plot3 + plot4) / (plot5 + plot6)
 combined_plot
 
-
-  
-  
   
   
 
