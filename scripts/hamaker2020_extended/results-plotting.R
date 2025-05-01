@@ -299,13 +299,15 @@ for(i in 1:nrow(settings)) {
       str_detect(model, "M1") ~ "GLMM",
       str_detect(model, "M2") ~ "GLMM",
       str_detect(model, "M3") ~ "GLMM",
-      str_detect(model, "independence") ~ "GEE-independence",
-      str_detect(model, "exchangeable") ~ "GEE-exchangeable",
+      str_detect(model, "independence") ~ "GEE-indep",
+      str_detect(model, "exchangeable") ~ "GEE-exch",
       str_detect(model, "AR1") ~ "GEE-AR1"
     )) %>%
     # set factor levels of method_type to ensure correct order in the plot
     mutate(method_type = factor(method_type, levels = c("UC", "CWC", "MuCo")),
-           estimation_type = factor(estimation_type, levels = c("GLMM", "GEE-independence", "GEE-exchangeable", "GEE-AR1")))
+           estimation_type = factor(estimation_type, levels = c("GLMM", "GEE-indep", "GEE-exch", "GEE-AR1"))) %>%
+    # remove all bias values exceeding 100
+    mutate(beta1_bias = ifelse(abs(beta1_bias) > 100, NA, beta1_bias))
     
   
   plot_df_g01 <- plot_df %>%
@@ -334,25 +336,32 @@ for(i in 1:nrow(settings)) {
       str_detect(model, "M1") ~ "GLMM",
       str_detect(model, "M2") ~ "GLMM",
       str_detect(model, "M3") ~ "GLMM",
-      str_detect(model, "independence") ~ "GEE-independence",
-      str_detect(model, "exchangeable") ~ "GEE-exchangeable",
+      str_detect(model, "independence") ~ "GEE-indep",
+      str_detect(model, "exchangeable") ~ "GEE-exch",
       str_detect(model, "AR1") ~ "GEE-AR1"
     )) %>%
     # set factor levels of method_type to ensure correct order in the plot
-    mutate(estimation_type = factor(estimation_type, levels = c("GLMM", "GEE-independence", "GEE-exchangeable", "GEE-AR1"))) %>%
+    mutate(estimation_type = factor(estimation_type, levels = c("GLMM", "GEE-indep", "GEE-exch", "GEE-AR1"))) %>%
     # Turn label variables (sdX.between, g.01 and sd.u0) into strings with an underscore
     mutate(sd.u0_label = factor(sd.u0,
                                 levels = c(1, 3),
                                 labels = c(expression(sigma[u] == 1), expression(sigma[u] == 3)))) %>%
     mutate(T_total_label = factor(T_total,
                                 levels = c(5, 20),
-                                labels = c("T == 5", "T == 20")))
+                                labels = c("T == 5", "T == 20"))) %>%
+    # remove all bias values exceeding 100
+    mutate(g01_bias = ifelse(abs(g01_bias) > 100, NA, g01_bias)) 
+  
+  # The palette with grey:
+  # cbPalette <- c("#E69F00", "#56B4E9", "#009E73", "#CC79A7")
 
   # For the within-person effect
   ggplot(plot_df_beta1, aes(x = method_type, y = beta1_bias, col = estimation_type)) +
     geom_boxplot() +
-    geom_hline(yintercept = 0, linetype = "dashed") +  # Dashed horizontal line at 0
-    ylim(-1.5, 1.5) +  # Set y-axis limits
+    geom_hline(yintercept = 0, linetype = "dashed") +  # Dashed horizontal line at 0 +
+    coord_cartesian(ylim = c(-1.5, 1.5)) +
+    scale_y_continuous(breaks = seq(-1.5, 1.5, by = 0.5)) +
+    # ylim(-3, 3) +  # Set y-axis limits
     labs(x = "Disaggregation Method", y = "Bias") +
     facet_grid(sd.u0_label ~ T_total_label, labeller = label_parsed) + # Show T and N values in labels
     theme_bw() +
@@ -376,19 +385,21 @@ for(i in 1:nrow(settings)) {
           legend.title = element_text(size = 13)
           ) +
     # change legend title to "Estimation"
-    scale_color_discrete(name = "Estimation")
+    scale_color_brewer(name = "Estimation", palette = "Spectral") 
     
   # save for test for main direct
   # ggsave("bias_plot_T_total-vs-sd.u0_within.pdf", width = 14, height = 8)
   
   # save
-  ggsave(paste0("simulation_results_glmm/", runname, "/figures/", type, "bias_plot_T_total-vs-sd.u0_within.pdf"), width = 10, height = 8)
+  ggsave(paste0("simulation_results_glmm/", runname, "/figures/", type, "bias_plot_T_total-vs-sd.u0_within.pdf"), width = 12, height = 6.5)
   
   # For the contextual effect
   ggplot(plot_df_g01, aes(x = estimation_type, y = g01_bias, col = estimation_type)) +
     geom_boxplot() +
     geom_hline(yintercept = 0, linetype = "dashed") +  # Dashed horizontal line at 0
-    ylim(-1.5, 1.5) +  # Set y-axis limits
+    coord_cartesian(ylim = c(-1.5, 1.5)) +  # Set y-axis limits
+    # add tick mark at Y for every 0.5
+    scale_y_continuous(breaks = seq(-1.5, 1.5, by = 0.5)) +
     labs(x = "Generative Model", y = "Bias") +
     facet_grid(sd.u0_label ~ T_total_label, labeller = label_parsed) + # Show T and N values in labels
     theme_bw() +
@@ -409,13 +420,14 @@ for(i in 1:nrow(settings)) {
           legend.title = element_text(size = 13)
           ) +
     # change legend title to "Estimation"
-    scale_color_discrete(name = "Estimation")
+    scale_color_brewer(name = "Estimation", palette = "Spectral") 
+    # scale_color_manual(name = "Estimation", values = cbPalette) 
   
   # save for test for main direct
   # ggsave("bias_plot_T_total-vs-sd.u0_contextual.pdf", width = 14, height = 8)
 
   # save
-  ggsave(paste0("simulation_results_glmm/", runname, "/figures/", type, "bias_plot_T_total-vs-sd.u0_contextual.pdf"), width = 10, height = 8)
+  ggsave(paste0("simulation_results_glmm/", runname, "/figures/", type, "bias_plot_T_total-vs-sd.u0_contextual.pdf"), width = 12, height = 6)
   
   # combine plots native with gridextra
   # p_combined <- ggarrange(p_within, p_contextual, ncol = 1, nrow = 2, common.legend = TRUE, legend = "right")
