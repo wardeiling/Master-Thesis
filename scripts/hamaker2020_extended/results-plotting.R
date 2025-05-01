@@ -6,6 +6,7 @@ library(stringr) # for string manipulation
 library(ggplot2) # for plotting
 library(ggpubr)
 library(cowplot)
+library(latex2exp)
 
 ### RETRIEVE RESULTS ### ----
 
@@ -247,7 +248,7 @@ for(i in 1:nrow(settings)) {
   # select relevant variables and cases (select and filter)
   plot_df <- final_df %>%
     # select T = 20, N = 200, sd.u0 = 1, predictor.type = "binary" and outcome.type = "continuous"
-    filter(T_total %in% c(5, 20), N_total == 200, sd.u0 %in% c(0, 3), predictor.type == set.predictor.type, outcome.type == set.outcome.type,
+    filter(T_total %in% c(5, 20), N_total == 200, sd.u0 %in% c(1, 3), predictor.type == set.predictor.type, outcome.type == set.outcome.type,
            sdX.between == 3, g.01 == 3) %>%
     select(-c(ends_with("_success"), ends_with("_X"), ends_with("_X.cent"), ends_with("_X.cluster.means")))
   
@@ -278,21 +279,34 @@ for(i in 1:nrow(settings)) {
                                             "M2", "G2.independence", "G2.exchangeable", "G2.AR1",
                                             "M3", "G3.independence", "G3.exchangeable", "G3.AR1"
                                             ))) %>%
-    # Turn label variables (sdX.between, g.01 and sd.u0) into strings with an underscore
-    mutate(sd.u0_str = paste0("sd.u0 = ", sd.u0),
-           T_total_str = paste0("T = ", T_total)) %>%
-    # Set factor levels to ensure correct order in the plot (0, 1, 3)
-    mutate(sd.u0_str = factor(sd.u0_str, levels = c("sd.u0 = 0", "sd.u0 = 3")),
-           T_total_str = factor(T_total_str, levels = c("T = 5", "T = 20"))) %>%
+    # Turn variables into labels
+    mutate(sd.u0_label = factor(sd.u0,
+                                levels = c(1, 3),
+                                labels = c(expression(sigma[u] == 1), expression(sigma[u] == 3)))) %>%
+    mutate(T_total_label = factor(T_total,
+                                  levels = c(5, 20),
+                                  labels = c("T == 5", "T == 20"))) %>%
     # create new variable indicating method type (so M1 and G1 are "Method 1")
     mutate(method_type = case_when(
-      str_detect(model, "M1") ~ "Method 1",
-      str_detect(model, "M2") ~ "Method 2",
-      str_detect(model, "M3") ~ "Method 3",
-      str_detect(model, "G1") ~ "Method 1",
-      str_detect(model, "G2") ~ "Method 2",
-      str_detect(model, "G3") ~ "Method 3"
-    ))
+      str_detect(model, "M1") ~ "UC",
+      str_detect(model, "M2") ~ "CWC",
+      str_detect(model, "M3") ~ "MuCo",
+      str_detect(model, "G1") ~ "UC",
+      str_detect(model, "G2") ~ "CWC",
+      str_detect(model, "G3") ~ "MuCo"
+    )) %>%
+    mutate(estimation_type = case_when(
+      str_detect(model, "M1") ~ "GLMM",
+      str_detect(model, "M2") ~ "GLMM",
+      str_detect(model, "M3") ~ "GLMM",
+      str_detect(model, "independence") ~ "GEE-independence",
+      str_detect(model, "exchangeable") ~ "GEE-exchangeable",
+      str_detect(model, "AR1") ~ "GEE-AR1"
+    )) %>%
+    # set factor levels of method_type to ensure correct order in the plot
+    mutate(method_type = factor(method_type, levels = c("UC", "CWC", "MuCo")),
+           estimation_type = factor(estimation_type, levels = c("GLMM", "GEE-independence", "GEE-exchangeable", "GEE-AR1")))
+    
   
   plot_df_g01 <- plot_df %>%
     select(-ends_with("_g.10_bias")) %>%
@@ -316,65 +330,95 @@ for(i in 1:nrow(settings)) {
     mutate(model = factor(model, levels = c("M2", "G2.independence", "G2.exchangeable", "G2.AR1",
                                             "M3", "G3.independence", "G3.exchangeable", "G3.AR1"
     ))) %>%
+    mutate(estimation_type = case_when(
+      str_detect(model, "M1") ~ "GLMM",
+      str_detect(model, "M2") ~ "GLMM",
+      str_detect(model, "M3") ~ "GLMM",
+      str_detect(model, "independence") ~ "GEE-independence",
+      str_detect(model, "exchangeable") ~ "GEE-exchangeable",
+      str_detect(model, "AR1") ~ "GEE-AR1"
+    )) %>%
+    # set factor levels of method_type to ensure correct order in the plot
+    mutate(estimation_type = factor(estimation_type, levels = c("GLMM", "GEE-independence", "GEE-exchangeable", "GEE-AR1"))) %>%
     # Turn label variables (sdX.between, g.01 and sd.u0) into strings with an underscore
-    mutate(sd.u0_str = paste0("sd.u0 = ", sd.u0),
-           T_total_str = paste0("T = ", T_total)) %>%
-    # Set factor levels to ensure correct order in the plot (0, 1, 3)
-    mutate(sd.u0_str = factor(sd.u0_str, levels = c("sd.u0 = 0", "sd.u0 = 3")),
-           T_total_str = factor(T_total_str, levels = c("T = 5", "T = 20"))) 
-  
-  # Create a vector of new x-axis labels
-  new_labels <- c(
-    rep("", 2),
-    rep("Method 1", 1),
-    rep("", 3),
-    rep("Method 2", 1),
-    rep("", 3),
-    rep("Method 3", 1),
-    rep("", 1)
-  )
-    
+    mutate(sd.u0_label = factor(sd.u0,
+                                levels = c(1, 3),
+                                labels = c(expression(sigma[u] == 1), expression(sigma[u] == 3)))) %>%
+    mutate(T_total_label = factor(T_total,
+                                levels = c(5, 20),
+                                labels = c("T == 5", "T == 20")))
+
   # For the within-person effect
-  ggplot(plot_df_beta1, aes(x = model, y = beta1_bias, col = model)) +
+  ggplot(plot_df_beta1, aes(x = method_type, y = beta1_bias, col = estimation_type)) +
     geom_boxplot() +
     geom_hline(yintercept = 0, linetype = "dashed") +  # Dashed horizontal line at 0
     ylim(-1.5, 1.5) +  # Set y-axis limits
-    labs(x = "Generative Model", y = "Bias") +
-    facet_grid(sd.u0_str ~ T_total_str) + # Show T and N values in labels
+    labs(x = "Disaggregation Method", y = "Bias") +
+    facet_grid(sd.u0_label ~ T_total_label, labeller = label_parsed) + # Show T and N values in labels
     theme_bw() +
-    scale_x_discrete(breaks = waiver(), labels = new_labels) +  # <<-- overwrite x-axis labels
-    theme(axis.text.x = element_text(angle = 45, hjust = 1)) +  # optionally rotate
+    # scale_x_discrete(breaks = waiver(), labels = new_labels) +  # <<-- overwrite x-axis labels
+    # theme(axis.text.x = element_text(angle = 45, hjust = 1)) +  # optionally rotate
     # add 2 vertical lines dividing the methods
-    geom_vline(xintercept = c(4.5, 8.5), linetype = "solid", color = "grey") +
+    # geom_vline(xintercept = c(4.5, 8.5), linetype = "solid", color = "grey") +
     # remove X axis labels
-    theme(axis.ticks.x = element_blank(),
-          axis.title.x = element_blank(),
-          # remove vertical grid lines
-          panel.grid.major.x = element_blank()
-          )
+    theme(# remove vertical grid lines
+          panel.grid.major.x = element_blank(),
+          # increase font size for grid titles
+          strip.text.x = element_text(size = 12),
+          strip.text.y = element_text(size = 12),
+          # increase font size for X entries
+          axis.text.x = element_text(size = 12),
+          axis.text.y = element_text(size = 12),
+          axis.title.y = element_text(size = 13),
+          axis.title.x = element_text(size = 13),
+          # increase legend font size
+          legend.text = element_text(size = 11),
+          legend.title = element_text(size = 13)
+          ) +
+    # change legend title to "Estimation"
+    scale_color_discrete(name = "Estimation")
+    
+  # save for test for main direct
+  # ggsave("bias_plot_T_total-vs-sd.u0_within.pdf", width = 14, height = 8)
   
   # save
   ggsave(paste0("simulation_results_glmm/", runname, "/figures/", type, "bias_plot_T_total-vs-sd.u0_within.pdf"), width = 10, height = 8)
   
   # For the contextual effect
-  ggplot(plot_df_g01, aes(x = model, y = g01_bias, col = model)) +
+  ggplot(plot_df_g01, aes(x = estimation_type, y = g01_bias, col = estimation_type)) +
     geom_boxplot() +
     geom_hline(yintercept = 0, linetype = "dashed") +  # Dashed horizontal line at 0
     ylim(-1.5, 1.5) +  # Set y-axis limits
     labs(x = "Generative Model", y = "Bias") +
-    facet_grid(sd.u0_str ~ T_total_str) + # Show T and N values in labels
+    facet_grid(sd.u0_label ~ T_total_label, labeller = label_parsed) + # Show T and N values in labels
     theme_bw() +
-    theme(axis.text.x = element_text(angle = 45, hjust = 1)) +  # optionally rotate
     # remove X axis labels
-    theme(axis.ticks.x = element_blank(),
+    theme(axis.text.x = element_blank(),
+          axis.ticks.x = element_blank(),
           axis.title.x = element_blank(),
-          panel.grid.major.x = element_blank())
+          panel.grid.major.x = element_blank(),
+          # remove legend
+          # legend.position = "none",
+          strip.text.x = element_text(size = 12),
+          strip.text.y = element_text(size = 12),
+          # increase font size for X entries
+          axis.text.y = element_text(size = 12),
+          axis.title.y = element_text(size = 13),
+          # increase legend font size
+          legend.text = element_text(size = 11),
+          legend.title = element_text(size = 13)
+          ) +
+    # change legend title to "Estimation"
+    scale_color_discrete(name = "Estimation")
+  
+  # save for test for main direct
+  # ggsave("bias_plot_T_total-vs-sd.u0_contextual.pdf", width = 14, height = 8)
 
   # save
   ggsave(paste0("simulation_results_glmm/", runname, "/figures/", type, "bias_plot_T_total-vs-sd.u0_contextual.pdf"), width = 10, height = 8)
   
-  # # combine plots
-  # combined_plot <- plot_grid(p_within, p_contextual, ncol = 2, labels = c("A", "B"), label_size = 12)
+  # combine plots native with gridextra
+  # p_combined <- ggarrange(p_within, p_contextual, ncol = 1, nrow = 2, common.legend = TRUE, legend = "right")
 }
 
   # ### PLOT 1: Grid of sdX.between and g.01 ----
@@ -643,7 +687,7 @@ for(i in 1:nrow(settings)) {
   #   mutate(beta1_bias = abs(beta1_bias))
   #
 
-}
+# }
 
 # ### PLOT 3 ----
 # 
