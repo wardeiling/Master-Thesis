@@ -317,21 +317,21 @@ for(i in 1:nrow(settings)) {
     # remove the "_g.01_bias" suffix from the model names
     mutate(model = str_remove(model, "_g.01_bias")) %>%
     # remove models with a 3 in the name
-    filter(!str_detect(model, "3")) %>%
+    filter(model == "l4" | model == "g.independence4" | model == "g.exchangeable4" | model == "g.ar14") %>%
     # change model names
     mutate(model = recode(model,
-                          "l2" = "M2",
                           "l4" = "M3",
-                          "g.independence2" = "G2.independence",
-                          "g.exchangeable2" = "G2.exchangeable",
-                          "g.ar12" = "G2.AR1",
                           "g.independence4" = "G3.independence",
                           "g.exchangeable4" = "G3.exchangeable",
                           "g.ar14" = "G3.AR1")) %>%
     # set factor levels of model to ensure correct order in the plot
-    mutate(model = factor(model, levels = c("M2", "G2.independence", "G2.exchangeable", "G2.AR1",
-                                            "M3", "G3.independence", "G3.exchangeable", "G3.AR1"
+    mutate(model = factor(model, levels = c("M3", "G3.independence", "G3.exchangeable", "G3.AR1"
     ))) %>%
+    # # create new variable indicating method type (so M1 and G1 are "Method 1")
+    # mutate(method_type = case_when(
+    #   str_detect(model, "M3") ~ "MuCo",
+    #   str_detect(model, "G3") ~ "MuCo"
+    # )) %>%
     mutate(estimation_type = case_when(
       str_detect(model, "M1") ~ "GLMM",
       str_detect(model, "M2") ~ "GLMM",
@@ -362,7 +362,7 @@ for(i in 1:nrow(settings)) {
     coord_cartesian(ylim = c(-1.5, 1.5)) +
     scale_y_continuous(breaks = seq(-1.5, 1.5, by = 0.5)) +
     # ylim(-3, 3) +  # Set y-axis limits
-    labs(x = "Disaggregation Method", y = "Bias") +
+    labs(x = "Method", y = "Bias") +
     facet_grid(sd.u0_label ~ T_total_label, labeller = label_parsed) + # Show T and N values in labels
     theme_bw() +
     # scale_x_discrete(breaks = waiver(), labels = new_labels) +  # <<-- overwrite x-axis labels
@@ -383,15 +383,23 @@ for(i in 1:nrow(settings)) {
           # increase legend font size
           legend.text = element_text(size = 11),
           legend.title = element_text(size = 13)
+          # legend.position = "none"
           ) +
     # change legend title to "Estimation"
     scale_color_brewer(name = "Estimation", palette = "Spectral") 
-    
+  
+  # compute mean of GEE independence with method type UC
+  # mean_beta1_bias <- plot_df_beta1 %>%
+  #   filter(estimation_type == "GEE-indep", method_type == "UC") %>%
+  #   group_by(sd.u0, T_total) %>%
+  #   summarise(mean_beta1_bias = mean(beta1_bias, na.rm = TRUE)) %>%
+  #   ungroup()
+  
   # save for test for main direct
   # ggsave("bias_plot_T_total-vs-sd.u0_within.pdf", width = 14, height = 8)
   
   # save
-  ggsave(paste0("simulation_results_glmm/", runname, "/figures/", type, "bias_plot_T_total-vs-sd.u0_within.pdf"), width = 12, height = 6.5)
+  ggsave(paste0("simulation_results_glmm/", runname, "/figures/", type, "bias_plot_T_total-vs-sd.u0_within.pdf"), width = 9, height = 7)
   
   # For the contextual effect
   ggplot(plot_df_g01, aes(x = estimation_type, y = g01_bias, col = estimation_type)) +
@@ -400,34 +408,36 @@ for(i in 1:nrow(settings)) {
     coord_cartesian(ylim = c(-1.5, 1.5)) +  # Set y-axis limits
     # add tick mark at Y for every 0.5
     scale_y_continuous(breaks = seq(-1.5, 1.5, by = 0.5)) +
-    labs(x = "Generative Model", y = "Bias") +
+    labs(x = "Method", y = "Bias") +
     facet_grid(sd.u0_label ~ T_total_label, labeller = label_parsed) + # Show T and N values in labels
     theme_bw() +
     # remove X axis labels
-    theme(axis.text.x = element_blank(),
-          axis.ticks.x = element_blank(),
-          axis.title.x = element_blank(),
-          panel.grid.major.x = element_blank(),
-          # remove legend
-          # legend.position = "none",
-          strip.text.x = element_text(size = 12),
-          strip.text.y = element_text(size = 12),
-          # increase font size for X entries
-          axis.text.y = element_text(size = 12),
-          axis.title.y = element_text(size = 13),
-          # increase legend font size
-          legend.text = element_text(size = 11),
-          legend.title = element_text(size = 13)
+    theme(# remove vertical grid lines
+      panel.grid.major.x = element_blank(),
+      # remove X tick marks
+      axis.ticks.x = element_blank(),
+      # increase font size for grid titles
+      strip.text.x = element_text(size = 12),
+      strip.text.y = element_text(size = 12),
+      # increase font size for X entries
+      axis.text.x = element_text(size = 12, colour = NA),
+      axis.text.y = element_text(size = 12),
+      axis.title.y = element_text(size = 13),
+      axis.title.x = element_text(size = 13, colour = NA),
+      # remove legend
+      # legend.text = element_text(size = 11),
+      # legend.title = element_text(size = 13)
+      legend.position = "none"
           ) +
     # change legend title to "Estimation"
     scale_color_brewer(name = "Estimation", palette = "Spectral") 
     # scale_color_manual(name = "Estimation", values = cbPalette) 
   
-  # save for test for main direct
-  # ggsave("bias_plot_T_total-vs-sd.u0_contextual.pdf", width = 14, height = 8)
+  # # save for test for main direct
+  # ggsave("bias_plot_T_total-vs-sd.u0_contextual.pdf", width = 5, height = 7)
 
   # save
-  ggsave(paste0("simulation_results_glmm/", runname, "/figures/", type, "bias_plot_T_total-vs-sd.u0_contextual.pdf"), width = 12, height = 6)
+  ggsave(paste0("simulation_results_glmm/", runname, "/figures/", type, "bias_plot_T_total-vs-sd.u0_contextual.pdf"), width = 3, height = 7)
   
   # combine plots native with gridextra
   # p_combined <- ggarrange(p_within, p_contextual, ncol = 1, nrow = 2, common.legend = TRUE, legend = "right")
