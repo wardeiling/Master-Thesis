@@ -357,7 +357,10 @@ for(i in 1:nrow(settings)) {
 
   # For the within-person effect
   ggplot(plot_df_beta1, aes(x = method_type, y = beta1_bias, col = estimation_type)) +
-    geom_boxplot() +
+    geom_boxplot() +  # Suppress default outlier points
+    # geom_boxplot(position = position_dodge(width = 0.75)) +  # align boxplots
+    # geom_point(position = position_jitterdodge(jitter.width = 0.15, dodge.width = 0.75), 
+    #            alpha = 0.01, size = 0.8) +
     geom_hline(yintercept = 0, linetype = "dashed") +  # Dashed horizontal line at 0 +
     coord_cartesian(ylim = c(-1.5, 1.5)) +
     scale_y_continuous(breaks = seq(-1.5, 1.5, by = 0.5)) +
@@ -1128,6 +1131,75 @@ library(patchwork)
 combined_plot <- (plot1 + plot2) / (plot3 + plot4) / (plot5 + plot6)
 combined_plot
 
-  
-  
 
+plot_df_beta1 <- plotting_bias_df %>%
+  select(-ends_with("_g.01_bias")) %>%
+  # turn the bias variables into long format, with a new column indicating the model name
+  pivot_longer(cols = ends_with("_bias"), names_to = "model", values_to = "beta1_bias") %>%
+  # remove the "_g.10_bias" suffix from the model names
+  mutate(model = str_remove(model, "_g.10_bias")) %>%
+  # remove models with a 3 in the name
+  filter(!str_detect(model, "3")) %>%
+  # change model names
+  mutate(model = recode(model,
+                        "l1" = "M1",
+                        "l2" = "M2",
+                        "l4" = "M3",
+                        "g.independence1" = "G1.independence",
+                        "g.exchangeable1" = "G1.exchangeable",
+                        "g.ar11" = "G1.AR1",
+                        "g.independence2" = "G2.independence",
+                        "g.exchangeable2" = "G2.exchangeable",
+                        "g.ar12" = "G2.AR1",
+                        "g.independence4" = "G3.independence",
+                        "g.exchangeable4" = "G3.exchangeable",
+                        "g.ar14" = "G3.AR1")) %>%
+  # set factor levels of model to ensure correct order in the plot
+  mutate(model = factor(model, levels = c("M1", "G1.independence", "G1.exchangeable", "G1.AR1",
+                                          "M2", "G2.independence", "G2.exchangeable", "G2.AR1",
+                                          "M3", "G3.independence", "G3.exchangeable", "G3.AR1"
+  ))) %>%
+  # Turn variables into labels
+  mutate(sd.u0_label = factor(sd.u0,
+                              levels = c(1, 3),
+                              labels = c(expression(sigma[u] == 1), expression(sigma[u] == 3)))) %>%
+  mutate(T_total_label = factor(T_total,
+                                levels = c(5, 20),
+                                labels = c("T == 5", "T == 20"))) %>%
+  # create new variable indicating method type (so M1 and G1 are "Method 1")
+  mutate(method_type = case_when(
+    str_detect(model, "M1") ~ "UC",
+    str_detect(model, "M2") ~ "CWC",
+    str_detect(model, "M3") ~ "MuCo",
+    str_detect(model, "G1") ~ "UC",
+    str_detect(model, "G2") ~ "CWC",
+    str_detect(model, "G3") ~ "MuCo"
+  )) %>%
+  mutate(estimation_type = case_when(
+    str_detect(model, "M1") ~ "GLMM",
+    str_detect(model, "M2") ~ "GLMM",
+    str_detect(model, "M3") ~ "GLMM",
+    str_detect(model, "independence") ~ "GEE-indep",
+    str_detect(model, "exchangeable") ~ "GEE-exch",
+    str_detect(model, "AR1") ~ "GEE-AR1"
+  )) %>%
+  # set factor levels of method_type to ensure correct order in the plot
+  mutate(method_type = factor(method_type, levels = c("UC", "CWC", "MuCo")),
+         estimation_type = factor(estimation_type, levels = c("GLMM", "GEE-indep", "GEE-exch", "GEE-AR1"))) %>%
+  # select cases with sigma_u = 3 nd T = 20
+  filter(sd.u0 == 3, T_total == 5, model == "G1.independence")
+
+# create density of the estimates of beta1
+ggplot(plot_df_beta1, aes(x = beta1_bias)) +
+  geom_density(aes(fill = model), alpha = 0.5) +
+  labs(x = "Bias", y = "Density") +
+  theme_bw() 
+
+# create normal histogram
+ggplot(plot_df_beta1, aes(x = beta1_bias)) +
+  geom_histogram(aes(fill = model), alpha = 0.5, bins = 30) +
+  labs(x = "Bias", y = "Density") +
+  theme_bw() +
+  facet_wrap(~ model, ncol = 3)
+  
+summary(plot_df_beta1$beta1_bias)
