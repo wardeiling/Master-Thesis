@@ -446,6 +446,234 @@ for(i in 1:nrow(settings)) {
   # p_combined <- ggarrange(p_within, p_contextual, ncol = 1, nrow = 2, common.legend = TRUE, legend = "right")
 }
 
+### VERSION WITH LEGEND AT BOTTOM
+
+runname <- "April18_fullsimulation_combined"
+
+# create a matrix with the different combinations of predictor and outcome type
+settings <- expand.grid(
+  predictor.type = c("binary", "continuous"),
+  outcome.type = c("binary", "continuous"),
+  stringsAsFactors = FALSE
+)
+
+# loop to make all plots
+for(i in 1:nrow(settings)) {
+  set.predictor.type <- settings$predictor.type[i]
+  set.outcome.type <- settings$outcome.type[i]
+  
+  # create string for the file name
+  type <- paste0("pred_", set.predictor.type, "_out_", set.outcome.type, "_")
+  
+  #### Plot: Grid of sd.u0 and T_total ----
+  
+  # read in the final data frame
+  final_df <- readRDS(paste0("simulation_results_glmm/", runname, "/plotting_bias_df.RDS"))
+  
+  # select relevant variables and cases (select and filter)
+  plot_df <- final_df %>%
+    # select T = 20, N = 200, sd.u0 = 1, predictor.type = "binary" and outcome.type = "continuous"
+    filter(T_total %in% c(5, 20), N_total == 200, sd.u0 %in% c(1, 3), predictor.type == set.predictor.type, outcome.type == set.outcome.type,
+           sdX.between == 3, g.01 == 3) %>%
+    select(-c(ends_with("_success"), ends_with("_X"), ends_with("_X.cent"), ends_with("_X.cluster.means")))
+  
+  plot_df_beta1 <- plot_df %>%
+    select(-ends_with("_g.01_bias")) %>%
+    # turn the bias variables into long format, with a new column indicating the model name
+    pivot_longer(cols = ends_with("_bias"), names_to = "model", values_to = "beta1_bias") %>%
+    # remove the "_g.10_bias" suffix from the model names
+    mutate(model = str_remove(model, "_g.10_bias")) %>%
+    # remove models with a 3 in the name
+    filter(!str_detect(model, "3")) %>%
+    # change model names
+    mutate(model = recode(model,
+                          "l1" = "M1",
+                          "l2" = "M2",
+                          "l4" = "M3",
+                          "g.independence1" = "G1.independence",
+                          "g.exchangeable1" = "G1.exchangeable",
+                          "g.ar11" = "G1.AR1",
+                          "g.independence2" = "G2.independence",
+                          "g.exchangeable2" = "G2.exchangeable",
+                          "g.ar12" = "G2.AR1",
+                          "g.independence4" = "G3.independence",
+                          "g.exchangeable4" = "G3.exchangeable",
+                          "g.ar14" = "G3.AR1")) %>%
+    # set factor levels of model to ensure correct order in the plot
+    mutate(model = factor(model, levels = c("M1", "G1.independence", "G1.exchangeable", "G1.AR1",
+                                            "M2", "G2.independence", "G2.exchangeable", "G2.AR1",
+                                            "M3", "G3.independence", "G3.exchangeable", "G3.AR1"
+    ))) %>%
+    # Turn variables into labels
+    mutate(sd.u0_label = factor(sd.u0,
+                                levels = c(1, 3),
+                                labels = c(expression(sigma[u] == 1), expression(sigma[u] == 3)))) %>%
+    mutate(T_total_label = factor(T_total,
+                                  levels = c(5, 20),
+                                  labels = c("T == 5", "T == 20"))) %>%
+    # create new variable indicating method type (so M1 and G1 are "Method 1")
+    mutate(method_type = case_when(
+      str_detect(model, "M1") ~ "UC",
+      str_detect(model, "M2") ~ "CWC",
+      str_detect(model, "M3") ~ "MuCo",
+      str_detect(model, "G1") ~ "UC",
+      str_detect(model, "G2") ~ "CWC",
+      str_detect(model, "G3") ~ "MuCo"
+    )) %>%
+    mutate(estimation_type = case_when(
+      str_detect(model, "M1") ~ "GLMM",
+      str_detect(model, "M2") ~ "GLMM",
+      str_detect(model, "M3") ~ "GLMM",
+      str_detect(model, "independence") ~ "GEE-indep",
+      str_detect(model, "exchangeable") ~ "GEE-exch",
+      str_detect(model, "AR1") ~ "GEE-AR1"
+    )) %>%
+    # set factor levels of method_type to ensure correct order in the plot
+    mutate(method_type = factor(method_type, levels = c("UC", "CWC", "MuCo")),
+           estimation_type = factor(estimation_type, levels = c("GLMM", "GEE-indep", "GEE-exch", "GEE-AR1"))) %>%
+    # remove all bias values exceeding 100
+    mutate(beta1_bias = ifelse(abs(beta1_bias) > 100, NA, beta1_bias))
+  
+  
+  plot_df_g01 <- plot_df %>%
+    select(-ends_with("_g.10_bias")) %>%
+    # turn the bias variables into long format, with a new column indicating the model name
+    pivot_longer(cols = ends_with("_bias"), names_to = "model", values_to = "g01_bias") %>%
+    # remove the "_g.01_bias" suffix from the model names
+    mutate(model = str_remove(model, "_g.01_bias")) %>%
+    # remove models with a 3 in the name
+    filter(model == "l4" | model == "g.independence4" | model == "g.exchangeable4" | model == "g.ar14") %>%
+    # change model names
+    mutate(model = recode(model,
+                          "l4" = "M3",
+                          "g.independence4" = "G3.independence",
+                          "g.exchangeable4" = "G3.exchangeable",
+                          "g.ar14" = "G3.AR1")) %>%
+    # set factor levels of model to ensure correct order in the plot
+    mutate(model = factor(model, levels = c("M3", "G3.independence", "G3.exchangeable", "G3.AR1"
+    ))) %>%
+    # # create new variable indicating method type (so M1 and G1 are "Method 1")
+    # mutate(method_type = case_when(
+    #   str_detect(model, "M3") ~ "MuCo",
+    #   str_detect(model, "G3") ~ "MuCo"
+    # )) %>%
+    mutate(estimation_type = case_when(
+      str_detect(model, "M1") ~ "GLMM",
+      str_detect(model, "M2") ~ "GLMM",
+      str_detect(model, "M3") ~ "GLMM",
+      str_detect(model, "independence") ~ "GEE-indep",
+      str_detect(model, "exchangeable") ~ "GEE-exch",
+      str_detect(model, "AR1") ~ "GEE-AR1"
+    )) %>%
+    # set factor levels of method_type to ensure correct order in the plot
+    mutate(estimation_type = factor(estimation_type, levels = c("GLMM", "GEE-indep", "GEE-exch", "GEE-AR1"))) %>%
+    # Turn label variables (sdX.between, g.01 and sd.u0) into strings with an underscore
+    mutate(sd.u0_label = factor(sd.u0,
+                                levels = c(1, 3),
+                                labels = c(expression(sigma[u] == 1), expression(sigma[u] == 3)))) %>%
+    mutate(T_total_label = factor(T_total,
+                                  levels = c(5, 20),
+                                  labels = c("T == 5", "T == 20"))) %>%
+    # remove all bias values exceeding 100
+    mutate(g01_bias = ifelse(abs(g01_bias) > 100, NA, g01_bias)) 
+  
+  # The palette with grey:
+  # cbPalette <- c("#E69F00", "#56B4E9", "#009E73", "#CC79A7")
+  
+  # For the within-person effect
+  ggplot(plot_df_beta1, aes(x = method_type, y = beta1_bias, col = estimation_type)) +
+    geom_boxplot() +  # Suppress default outlier points
+    # geom_boxplot(position = position_dodge(width = 0.75)) +  # align boxplots
+    # geom_point(position = position_jitterdodge(jitter.width = 0.15, dodge.width = 0.75), 
+    #            alpha = 0.01, size = 0.8) +
+    geom_hline(yintercept = 0, linetype = "dashed") +  # Dashed horizontal line at 0 +
+    coord_cartesian(ylim = c(-1.5, 1.5)) +
+    scale_y_continuous(breaks = seq(-1.5, 1.5, by = 0.5)) +
+    # ylim(-3, 3) +  # Set y-axis limits
+    labs(x = "Method", y = "Bias") +
+    facet_grid(sd.u0_label ~ T_total_label, labeller = label_parsed) + # Show T and N values in labels
+    theme_bw() +
+    # scale_x_discrete(breaks = waiver(), labels = new_labels) +  # <<-- overwrite x-axis labels
+    # theme(axis.text.x = element_text(angle = 45, hjust = 1)) +  # optionally rotate
+    # add 2 vertical lines dividing the methods
+    # geom_vline(xintercept = c(4.5, 8.5), linetype = "solid", color = "grey") +
+    # remove X axis labels
+    theme(# remove vertical grid lines
+      panel.grid.major.x = element_blank(),
+      # increase font size for grid titles
+      strip.text.x = element_text(size = 12),
+      strip.text.y = element_text(size = 12),
+      # increase font size for X entries
+      axis.text.x = element_text(size = 12),
+      axis.text.y = element_text(size = 12),
+      axis.title.y = element_text(size = 13),
+      axis.title.x = element_text(size = 13),
+      # increase legend font size
+      legend.text = element_text(size = 11),
+      legend.title = element_text(size = 13),
+      legend.position = "bottom"
+    ) +
+    # change legend title to "Estimation"
+    scale_color_brewer(name = "Estimation", palette = "Spectral") 
+  
+  # compute mean of GEE independence with method type UC
+  # mean_beta1_bias <- plot_df_beta1 %>%
+  #   filter(estimation_type == "GEE-indep", method_type == "UC") %>%
+  #   group_by(sd.u0, T_total) %>%
+  #   summarise(mean_beta1_bias = mean(beta1_bias, na.rm = TRUE)) %>%
+  #   ungroup()
+  
+  # save for test for main direct
+  # ggsave("bias_plot_T_total-vs-sd.u0_within.pdf", width = 14, height = 8)
+  
+  # save
+  ggsave(paste0("simulation_results_glmm/", runname, "/figures/", type, "bias_plot_T_total-vs-sd.u0_within.pdf"), width = 9, height = 7)
+  
+  # For the contextual effect
+  ggplot(plot_df_g01, aes(x = estimation_type, y = g01_bias, col = estimation_type)) +
+    geom_boxplot() +
+    geom_hline(yintercept = 0, linetype = "dashed") +  # Dashed horizontal line at 0
+    coord_cartesian(ylim = c(-1.5, 1.5)) +  # Set y-axis limits
+    # add tick mark at Y for every 0.5
+    scale_y_continuous(breaks = seq(-1.5, 1.5, by = 0.5)) +
+    labs(x = "Method", y = "Bias") +
+    facet_grid(sd.u0_label ~ T_total_label, labeller = label_parsed) + # Show T and N values in labels
+    theme_bw() +
+    # remove X axis labels
+    theme(# remove vertical grid lines
+      panel.grid.major.x = element_blank(),
+      # remove X tick marks
+      axis.ticks.x = element_blank(),
+      # increase font size for grid titles
+      strip.text.x = element_text(size = 12),
+      strip.text.y = element_text(size = 12),
+      # increase font size for X entries
+      axis.text.x = element_text(size = 12, colour = NA),
+      axis.text.y = element_text(size = 12),
+      axis.title.y = element_text(size = 13),
+      axis.title.x = element_text(size = 13, colour = NA),
+      # remove legend
+      # increase legend font size
+      legend.text = element_text(size = 11, colour = NA),
+      legend.title = element_text(size = 13, colour = NA),
+      legend.position = "bottom"
+    ) +
+    # change legend title to "Estimation"
+    scale_color_brewer(name = "Estimation", palette = "Spectral") +
+    guides(color = guide_legend(override.aes = list(color = NA)))
+  # scale_color_manual(name = "Estimation", values = cbPalette) 
+  
+  # # save for test for main direct
+  # ggsave("bias_plot_T_total-vs-sd.u0_contextual.pdf", width = 5, height = 7)
+  
+  # save
+  ggsave(paste0("simulation_results_glmm/", runname, "/figures/", type, "bias_plot_T_total-vs-sd.u0_contextual.pdf"), width = 3, height = 7)
+  
+  # combine plots native with gridextra
+  # p_combined <- ggarrange(p_within, p_contextual, ncol = 1, nrow = 2, common.legend = TRUE, legend = "right")
+}
+
+
   # ### PLOT 1: Grid of sdX.between and g.01 ----
   # 
   # # read in the final data frame
@@ -1026,16 +1254,21 @@ GEE_check_df <- final_df %>%
 
 
 # define a threshold for "extreme" bias
-threshold <- 1E+11  # can also be set to 5, doesn't affect the number of extreme values
+threshold1 <- 1E+11  # can also be set to 5, doesn't affect the number of extreme values
+threshold2 <- 20  # can also be set to 5, doesn't affect the number of extreme values
 
 extreme_prop_df <- GEE_check_df %>%
   group_by(model, design_id) %>%
   summarize(
-    proportion_extreme = mean(abs(beta1_bias) > threshold),
+    proportion_extreme1 = mean(abs(beta1_bias) > threshold1),
+    proportion_extreme2 = mean(abs(beta1_bias) > threshold2),
     .groups = "drop"
-  ) %>%
-  # remove rows with 0 proportion extreme
-  filter(proportion_extreme > 0)
+  ) 
+
+# check whether the proportions are the same
+extreme_prop_df %>%
+  filter(proportion_extreme1 != proportion_extreme2) %>%
+  select(model, design_id, proportion_extreme1, proportion_extreme2)
 
 # count number of unique design_ids
 length(unique(extreme_prop_df$design_id))
@@ -1054,12 +1287,18 @@ ggplot(extreme_prop_df, aes(x = proportion_extreme, fill = model)) +
 
 # create a table with the number of extreme scenarios per model
 extreme_count_df <- GEE_check_df %>%
-  group_by(model) %>%
+  group_by(model, predictor.type, outcome.type) %>%
   summarize(
-    num_extreme = sum(abs(beta1_bias) > threshold),
+    num_extreme1 = sum(abs(beta1_bias) > threshold1),
+    num_extreme2 = sum(abs(beta1_bias) > threshold2),
     .groups = "drop"
   ) %>%
-  arrange(desc(num_extreme))
+  arrange(desc(num_extreme1))
+
+# check whether the counts are the same
+extreme_count_df %>%
+  filter(num_extreme1 != num_extreme2) %>%
+  select(model, predictor.type, outcome.type, num_extreme1, num_extreme2)
 
 # take the setting with most frequent extreme values (design_id = 299 and g.ar12) and plot the density of bias
 plot1 <- GEE_check_df %>%
