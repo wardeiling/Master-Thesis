@@ -524,13 +524,13 @@ for(i in 1:nrow(settings)) {
       str_detect(model, "M1") ~ "GLMM",
       str_detect(model, "M2") ~ "GLMM",
       str_detect(model, "M3") ~ "GLMM",
-      str_detect(model, "independence") ~ "GEE-indep",
-      str_detect(model, "exchangeable") ~ "GEE-exch",
-      str_detect(model, "AR1") ~ "GEE-AR1"
+      str_detect(model, "independence") ~ "GEE-independence",
+      str_detect(model, "exchangeable") ~ "GEE-exchangeable",
+      str_detect(model, "AR1") ~ "GEE-AR(1)"
     )) %>%
     # set factor levels of method_type to ensure correct order in the plot
     mutate(method_type = factor(method_type, levels = c("UC", "CWC", "MuCo")),
-           estimation_type = factor(estimation_type, levels = c("GLMM", "GEE-indep", "GEE-exch", "GEE-AR1"))) %>%
+           estimation_type = factor(estimation_type, levels = c("GLMM", "GEE-independence", "GEE-exchangeable", "GEE-AR(1)"))) %>%
     # remove all bias values exceeding 100
     mutate(beta1_bias = ifelse(abs(beta1_bias) > 100, NA, beta1_bias))
   
@@ -561,12 +561,12 @@ for(i in 1:nrow(settings)) {
       str_detect(model, "M1") ~ "GLMM",
       str_detect(model, "M2") ~ "GLMM",
       str_detect(model, "M3") ~ "GLMM",
-      str_detect(model, "independence") ~ "GEE-indep",
-      str_detect(model, "exchangeable") ~ "GEE-exch",
-      str_detect(model, "AR1") ~ "GEE-AR1"
+      str_detect(model, "independence") ~ "GEE-independence",
+      str_detect(model, "exchangeable") ~ "GEE-exchangeable",
+      str_detect(model, "AR1") ~ "GEE-AR(1)"
     )) %>%
     # set factor levels of method_type to ensure correct order in the plot
-    mutate(estimation_type = factor(estimation_type, levels = c("GLMM", "GEE-indep", "GEE-exch", "GEE-AR1"))) %>%
+    mutate(estimation_type = factor(estimation_type, levels = c("GLMM", "GEE-independence", "GEE-exchangeable", "GEE-AR(1)"))) %>%
     # Turn label variables (sdX.between, g.01 and sd.u0) into strings with an underscore
     mutate(sd.u0_label = factor(sd.u0,
                                 levels = c(1, 3),
@@ -611,7 +611,8 @@ for(i in 1:nrow(settings)) {
       # increase legend font size
       legend.text = element_text(size = 11),
       legend.title = element_text(size = 13),
-      legend.position = "bottom"
+      legend.position = "bottom",
+      legend.box.background = element_rect(color="black", size=2)
     ) +
     # change legend title to "Estimation"
     scale_color_brewer(name = "Estimation", palette = "Spectral") 
@@ -624,7 +625,7 @@ for(i in 1:nrow(settings)) {
   #   ungroup()
   
   # save for test for main direct
-  # ggsave("bias_plot_T_total-vs-sd.u0_within.pdf", width = 14, height = 8)
+  ggsave("bias_plot_T_total-vs-sd.u0_within.pdf", width = 9, height = 7)
   
   # save
   ggsave(paste0("simulation_results_glmm/", runname, "/figures/", type, "bias_plot_T_total-vs-sd.u0_within.pdf"), width = 9, height = 7)
@@ -656,7 +657,7 @@ for(i in 1:nrow(settings)) {
       # increase legend font size
       legend.text = element_text(size = 11, colour = NA),
       legend.title = element_text(size = 13, colour = NA),
-      legend.position = "bottom"
+      legend.position = "bottom",
     ) +
     # change legend title to "Estimation"
     scale_color_brewer(name = "Estimation", palette = "Spectral") +
