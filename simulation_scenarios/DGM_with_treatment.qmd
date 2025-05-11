@@ -1,0 +1,868 @@
+---
+title: "DGMs of Qian et al. (2020) - Part 2: With Treatment"
+author: "Ward B. Eiling"
+date: last-modified # created on "2024-10-31"
+date-format: long
+# date-modified: last-modified
+format: 
+  # html:
+  #   toc: true
+  #   toc-location: left
+  #   toc-depth: 3
+  #   toc-expand: 3
+  #   number-sections: true
+  #   embed-resources: false
+  pdf:
+    fig-pos: 'H'
+    toc: true
+    toc-depth: 5
+    number-sections: true
+    embed-resources: true
+    papersize: a4
+    geometry: 
+      - top=2cm
+      - bottom=4cm
+  #   # default-image-extension: svg
+execute:
+  message: false
+  warning: false
+fig-cap-location: top
+---
+
+```{r}
+#| label: Packages
+#| echo: false
+
+# for general data manipulation and plotting
+library(tidyverse)
+# for estimation
+library(lme4)
+library(gee)
+library(geex)
+library(geepack)
+library(nlme)
+# for presentation of results
+library(jtools)
+# for diagrams
+library(dagitty)
+library(ggdag)
+library(DiagrammeR)
+library(magick)
+library(pdftools)
+```
+
+\newpage
+
+# Main Simulation of Qian et al. (2020): With Treatment and with Translated Notation
+
+## Simulation Conditions
+
+In the simulation, we considered three generative models (GMs), all of which have an endogenous covariate. In the first two GMs, the endogenous covariate $Z_{ti}$ equals the previous outcome $Y_{ti}$ plus some random noise, so the conditional independence assumption is valid. In GM 3, the endogenous covariate depends directly on $u_{0i}$, violating assumption. The details of the generative models are described below. We follow the notation of Schoot et al. (2017), which is largely based on that of Raudenbusch and Bryk (2002).
+
+### Generative Model 1
+
+In GM1, we considered a simple case with only a random intercept and a random slope for $X_{ti}$. The outcome is generated according to the following repeated-observations or within-person model (level 1)
+
+$$
+Y_{(t+1)i} = \pi_{0i} + \pi_{1i} Z_{ti} + \pi_{2i} X_{ti} + \pi_{3i} X_{ti} Z_{ti} + e_{(t+1)i}
+$$
+
+with the person-level or between-person model (level 2)
+
+$$ 
+\pi_{0i} = \beta_{00} + u_{0i} \quad \text{with} \quad u_{0i} \sim \mathcal{N}(0, \sigma^2_{u_0})
+$$
+
+$$ 
+\pi_{1i} = \beta_{10}
+$$
+
+$$
+\pi_{2i} = \beta_{20} + u_{2i} \quad \text{with} \quad u_{2i} \sim \mathcal{N}(0, \sigma^2_{u_2})
+$$
+
+$$
+\pi_{3i} = \beta_{30}
+$$
+
+By substitution, we get the single equation model:
+
+$$
+\begin{aligned}
+Y_{(t+1)i} &= \pi_{0i} + \pi_{1i} Z_{ti} + \pi_{2i} X_{ti} + \pi_{3i} X_{ti} Z_{ti} + e_{(t+1)i} \\
+&= (\beta_{00} + u_{0i}) + \beta_{10} Z_{ti} + (\beta_{20} + u_{2i}) X_{ti} + \beta_{30} X_{ti} Z_{ti} + e_{(t+1)i} \\
+&= \beta_{00} + \beta_{10} Z_{ti} + u_{0i} + X_{ti} (\beta_{20} + \beta_{30} Z_{ti} + u_{2i}) + e_{(t+1)i}
+\end{aligned}
+$$
+
+The random effects $u_{0i} \sim \mathcal{N}(0, \sigma_{u0}^2)$ and $u_{2i} \sim \mathcal{N}(0, \sigma_{u2}^2)$ are independent of each other. The covariate is generated as $Z_{i1} \sim \mathcal{N}(0, 1)$, and for $t \geq 2$,
+
+$$
+Z_{ti} = Y_{ti} + \mathcal{N}(0, 1).
+$$
+
+The randomization probability $p_t = P(X_{ti} = 1 \mid H_{it})$ is constant at $1/2$. Thus, $X_{ti} \sim \text{Bernoulli}(0.5) \quad \text{for} \quad i = 1, \ldots, N \quad \text{and} \quad t = 1, \ldots, T$. In other words, each individual has an independent $50\%$ chance of receiving the treatment at each time point. The exogenous noise is $e_{(t+1)i} \sim \mathcal{N}(0, \sigma_e^2)$.
+
+### Generative Model 2
+
+In GM2, we considered the case with a random intercept and a random slope for (1) covariate $Z_{ti}$, (2) treatment $X_{ti}$, and (3) the interaction between $X_{ti}$ and $Z_{ti}$; and with a time-varying randomization probability for treatment. The outcome is generated according to the same repeated-observations model presented in GM1. However, the person-level model is different:
+
+$$ 
+\pi_{0i} = \beta_{00} + u_{0i} \quad \text{with} \quad u_{0i} \sim \mathcal{N}(0, \sigma^2_{u_0})
+$$
+
+$$
+\pi_{1i} = \beta_{10} + u_{1i} \quad \text{with} \quad u_{1i} \sim \mathcal{N}(0, \sigma^2_{u_1})
+$$
+
+$$
+\pi_{2i} = \beta_{20} + u_{2i} \quad \text{with} \quad u_{2i} \sim \mathcal{N}(0, \sigma^2_{u_2})
+$$
+
+$$
+\pi_{3i} = \beta_{30} + u_{3i} \quad \text{with} \quad u_{3i} \sim \mathcal{N}(0, \sigma^2_{u_3})
+$$
+
+By substitution, we get the single equation model:
+
+$$
+\begin{aligned}
+Y_{(t+1)i} &= \pi_{0i} + \pi_{1i} Z_{ti} + \pi_{2i} X_{ti} + \pi_{3i} X_{ti} Z_{ti} + e_{(t+1)i} \\ &= (\beta_{00} + u_{0i}) + (\beta_{10} + u_{1i}) Z_{ti} + (\beta_{20} + u_{2i}) X_{ti} + (\beta_{30} + u_{3i}) X_{ti} Z_{ti} + e_{(t+1)i} \\ &= \beta_{00} + \beta_{10} Z_{ti} + u_{0i} + u_{1i} Z_{ti} + X_{ti} \left( \beta_{20} + \beta_{30} Z_{ti} + u_{2i} + u_{3i} Z_{ti} \right) + e_{(t+1)i}
+\end{aligned}
+$$
+
+The random effects $u_{ji} \sim \mathcal{N}(0, \sigma_{u_j}^2)$, for $0 \leq j \leq 3$, are independent of each other. The covariate is generated as $Z_{i1} \sim \mathcal{N}(0, 1)$, and for $t \geq 2$,
+
+$$
+Z_{ti} = Y_{ti} + \mathcal{N}(0, 1).
+$$
+
+The randomization probability depends on $Z_{ti}$:
+
+$$
+p_t = P(X_{ti} = 1 \mid H_{it}) = 
+\begin{cases} 
+0.7 & \text{if } Z_{ti} > -1.27, \\
+0.3 & \text{if } Z_{ti} \leq -1.27 
+\end{cases}
+$$
+
+where the cutoff $-1.27$ was chosen so that $p_t$ equals 0.7 or 0.3 for about half of the time. In other words, if the value for the covariate for any given person and timepoint is above the cutoff, the probability of receiving the treatment $p_t$ is 0.7; otherwise, it is 0.3. Accordingly, $X_{ti} \sim \text{Bernoulli}(p_t)$ for $i = 1, \ldots, N$ and $t = 1, \ldots, T$. The exogenous noise is $e_{(t+1)i} \sim \mathcal{N}(0, \sigma_e^2)$.
+
+### Generative Model 3
+
+GM3 is the same as GM1, except that the covariate $Z_{ti}$ depends directly on $u_{0i}$:
+
+$$
+Z_{i1} \sim \mathcal{N}(u_{0i}, 1), \quad Z_{ti} = Y_{ti} + \mathcal{N}(u_{0i}, 1) \text{ for } t \geq 2.
+$$
+
+### Parameter Values
+
+The following parameter values were chosen:
+
+$$
+\beta_{00} = -2, \quad \beta_{10} = -0.3, \quad \beta_{20} = 1, \quad \beta_{30} = 0.3,
+$$
+
+$$
+\sigma_{u0}^2 = 4, \quad \sigma_{u1}^2 = \frac{1}{4}, \quad \sigma_{u2}^2 = 1, \quad \sigma_{u3}^2 = \frac{1}{4}, \quad \sigma_e^2 = 1.
+$$
+
+## Graphical representations of Data Generating Models
+
+### Directed Acyclic Graphs (DAGs)
+
+The DAGs for the first three observations of the three data generating models are presented in @fig-DAGs (GM1 in @fig-GM1_DAG, GM2 in @fig-GM2_DAG, and GM3 in @fig-GM3_DAG). The red arrows show the biased paths after controlling for the covariate $Z_{it}$. 
+
+```{r}
+#| label: fig-GM_visual
+#| fig-cap: "DAG for Generative Model 1"
+#| echo: false
+#| eval: false
+#| cache: true
+
+GM1_DAG1 <- dagitty('dag {
+bb="0,0,1,1"
+U [latent,pos="0.500,0.200"]
+X_1 [exposure,pos="0.200,0.600"]
+X_2 [pos="0.400,0.600"]
+Y_2 [outcome,pos="0.450,0.450"]
+Y_3 [pos="0.650,0.450"]
+Z_1 [adjusted,pos="0.200,0.300"]
+Z_2 [pos="0.400,0.300"]
+Z_3 [pos="0.600,0.300"]
+U -> Y_2
+U -> Y_3
+X_1 -> Y_2
+X_2 -> Y_3
+Y_2 -> Z_2
+Y_3 -> Z_3
+Z_1 -> Y_2
+Z_2 -> Y_3
+}')
+
+GM1_DAG2 <- dagitty('dag {
+bb="0,0,1,1"
+U [latent,pos="0.500,0.200"]
+X_1 [pos="0.200,0.600"]
+X_2 [exposure,pos="0.400,0.600"]
+Y_2 [pos="0.450,0.450"]
+Y_3 [outcome,pos="0.650,0.450"]
+Z_1 [adjusted,pos="0.200,0.300"]
+Z_2 [adjusted,pos="0.400,0.300"]
+Z_3 [pos="0.600,0.300"]
+U -> Y_2
+U -> Y_3
+X_1 -> Y_2
+X_2 -> Y_3
+Y_2 -> Z_2
+Y_3 -> Z_3
+Z_1 -> Y_2
+Z_2 -> Y_3
+}')
+
+GM2_DAG1 <- dagitty('dag {
+bb="0,0,1,1"
+U [latent,pos="0.500,0.200"]
+X_1 [exposure,pos="0.200,0.600"]
+X_2 [pos="0.400,0.600"]
+Y_2 [outcome,pos="0.450,0.450"]
+Y_3 [pos="0.650,0.450"]
+Z_1 [adjusted,pos="0.200,0.300"]
+Z_2 [pos="0.400,0.300"]
+Z_3 [pos="0.600,0.300"]
+U -> Y_2
+U -> Y_3
+X_1 -> Y_2
+X_2 -> Y_3
+Y_2 -> Z_2
+Y_3 -> Z_3
+Z_1 -> X_1
+Z_1 -> Y_2
+Z_2 -> X_2
+Z_2 -> Y_3
+}
+')
+
+GM2_DAG2 <- dagitty('dag {
+bb="0,0,1,1"
+U [latent,pos="0.500,0.200"]
+X_1 [pos="0.200,0.600"]
+X_2 [exposure,pos="0.400,0.600"]
+Y_2 [pos="0.450,0.450"]
+Y_3 [outcome,pos="0.650,0.450"]
+Z_1 [adjusted,pos="0.200,0.300"]
+Z_2 [adjusted,pos="0.400,0.300"]
+Z_3 [pos="0.600,0.300"]
+U -> Y_2
+U -> Y_3
+X_1 -> Y_2
+X_2 -> Y_3
+Y_2 -> Z_2
+Y_3 -> Z_3
+Z_1 -> X_1
+Z_1 -> Y_2
+Z_2 -> X_2
+Z_2 -> Y_3
+}
+')
+
+GM3_DAG1 <- dagitty('dag {
+bb="0,0,1,1"
+U [latent,pos="0.500,0.200"]
+X_1 [exposure,pos="0.200,0.600"]
+X_2 [pos="0.400,0.600"]
+Y_2 [outcome,pos="0.450,0.450"]
+Y_3 [pos="0.650,0.450"]
+Z_1 [adjusted,pos="0.200,0.300"]
+Z_2 [pos="0.400,0.300"]
+Z_3 [pos="0.600,0.300"]
+U -> Y_2
+U -> Y_3
+U -> Z_1
+U -> Z_2
+U -> Z_3
+X_1 -> Y_2
+X_2 -> Y_3
+Y_2 -> Z_2
+Y_3 -> Z_3
+Z_1 -> Y_2
+Z_2 -> Y_3
+}')
+
+GM3_DAG2 <- dagitty('dag {
+bb="0,0,1,1"
+U [latent,pos="0.500,0.200"]
+X_1 [pos="0.200,0.600"]
+X_2 [exposure,pos="0.400,0.600"]
+Y_2 [pos="0.450,0.450"]
+Y_3 [outcome,pos="0.650,0.450"]
+Z_1 [adjusted,pos="0.200,0.300"]
+Z_2 [adjusted,pos="0.400,0.300"]
+Z_3 [pos="0.600,0.300"]
+U -> Y_2
+U -> Y_3
+U -> Z_1
+U -> Z_2
+U -> Z_3
+X_1 -> Y_2
+X_2 -> Y_3
+Y_2 -> Z_2
+Y_3 -> Z_3
+Z_1 -> Y_2
+Z_2 -> Y_3
+}')
+
+ggdag::ggdag_status(GM1_DAG1) + ggdag::theme_dag()
+ggdag::ggdag_status(GM1_DAG2) + ggdag::theme_dag()
+ggdag::ggdag_status(GM2_DAG1) + ggdag::theme_dag()
+ggdag::ggdag_status(GM2_DAG2) + ggdag::theme_dag()
+ggdag::ggdag_status(GM3_DAG1) + ggdag::theme_dag()
+ggdag::ggdag_status(GM3_DAG2) + ggdag::theme_dag()
+```
+
+::: {#fig-DAGs layout-ncol=2}
+
+![Generative Model 1](figure/GM1_DAG_cropped.png){#fig-GM1_DAG}
+
+![Generative Model 2](figure/GM1_DAG_cropped.png){#fig-GM2_DAG}
+
+![Generative Model 3](figure/GM3_DAG_cropped.png){#fig-GM3_DAG}
+
+Directed Acylcic Graphs (DAGs) for the three Generative Models
+
+:::
+
+We may notice that the DAGs for GM1 and GM2 are identical (there are only differences in random effects and randomization probabilities), while GM3 has a different structure due to the dependency of the covariate $Z_{ti}$ on the random intercept $u_{0i}$. 
+
+Paraphrasing Qian et al. (2020), the conditional independence assumption is:
+
+$$
+Z_{ti} \perp (u_{0i}, u_{1i}) \mid H_{(t-1)i}, X_{(t-1)i}, Y_{ti}.
+$$
+
+This allows $Z_{ti}$ to be endogenous, but the endogenous covariate $Z_{ti}$ can only depend on the random effects through variables observed prior to $Z_{ti}$: $H_{(t-1)i}$, $X_{(t-1)i}$, and $Y_{it}$. If the only endogenous covariates are functions of prior treatments and prior outcomes, then the assumption automatically holds.
+
+When inspecting @fig-DAGs, we can see that this assumption is violated in GM3, as $Z_{ti}$ depends directly on $u_{0i}$; and is thus not independent of the random effects $u_{0i}$ and $u_{1i}$. Notice that GM1 and GM2 are also not marginally independent of $u_{0i}$ and $u_{1i}$, but they are conditionally independent given $H_{(t-1)i}$, $X_{(t-1)i}$, and $Y_{ti}$.
+
+<!-- Visually, we may notice from @fig-GM3_DAG that when we control for $Z_{ti}$ in GM3, we block the backdoor path from $X_{ti}$ to $Y_{(t+1)i}$ through $Z_{ti}$, which is the path that would be biased if we did not control for $Z_{ti}$. -->
+
+### Path Diagrams
+
+Alternatively, we can display the data generating models as a path diagram, where latent variables are represented by circles, observed variables by squares and relationships across variables by arrows. The path diagrams of the three data generating models is presented in @fig-pathdiagrams (GM1 in @fig-GM1_pd, GM2 in @fig-GM2_pd, and GM3 in @fig-GM3_pd), which shows the discrepancies between the different generative models more clearly than the DAGs.
+
+```{r}
+#| label: fig-GM_path
+#| engine: 'tikz'
+#| echo: false
+#| cache: true
+#| fig-cap: "Path diagram for Generative Model 1"
+#| eval: false
+
+\begin{tikzpicture}
+  % Nodes for observed variables (squares)
+  \node[draw, rectangle] (Z1) at (0, -2) {$Z_{1i}$};
+  \node (Z1var) at (0, -3) {$\sigma^2_{Z}$};
+  \node[draw, rectangle] (X1) at (0, 2) {$X_{1i}$};
+  \node[draw, rectangle] (X1Z1) at (0.3, 0) {$X_{1i}\cdot Z_{1i}$};
+  \node[draw, rectangle] (Y2) at (3, 0) {$Y_{2i}$}; % Increased x-coordinate
+  \node (Y2var) at (4, 0) {$\sigma^2_{e}$};
+  \node[draw, rectangle] (Z2) at (3, -2) {$Z_{2i}$}; % Increased x-coordinate
+  \node (Z2var) at (3, -3) {$\sigma^2_{Z}$};
+  \node[draw, rectangle] (X2) at (3, 2) {$X_{2i}$}; % Increased x-coordinate
+  \node[draw, rectangle] (Y3) at (8, 0) {$Y_{3i}$}; % Increased x-coordinate
+  \node (Y3var) at (9, 0) {$\sigma^2_{e}$};
+  \node[draw, rectangle] (Z3) at (8, -2) {$Z_{3i}$}; % Increased x-coordinate
+  \node (Z3var) at (8, -3) {$\sigma^2_{Z}$};
+  \node[draw, rectangle] (X2Z2) at (5.3, 0) {$X_{2i}\cdot Z_{2i}$}; % Increased x-coordinate
+
+  % Nodes for latent variables (circles)
+  \node[draw, circle] (u0) at (6, 4) {$u_{0i}$}; % Increased x-coordinate
+  \node[draw, circle] (u2) at (3, 4) {$u_{2i}$}; % Adjusted to align with middle row
+
+  % Arrows with path coefficients
+  \draw [->] (u0) -- node[right] {$+$} (Y2);
+  \draw [->] (u0) -- node[right] {$+$} (Y3);
+  \draw [->] (X2) edge node[above] {$\beta_{20}$} (Y3);
+  \draw [->] (Z2) edge node[below] {$\beta_{10}$} (Y3);
+  \draw [->] (Y2) edge node[left] {$=$} (Z2);
+  \draw [->] (X1) edge node[left] {$\beta_{20}$} (Y2);
+  \draw [->] (Z1) edge node[below] {$\beta_{10}$} (Y2);
+  \draw [->] (Y3) edge node[right] {$=$} (Z3);
+  \draw [->] (X1Z1) edge node[above] {$\beta_{30}$} (Y2);
+  \draw [->] (X2Z2) edge node[above] {$\beta_{30}$} (Y3);
+  \draw [->] (Z1var) edge (Z1);
+  \draw [->] (Z2var) edge (Z2);
+  \draw [->] (Z3var) edge (Z3);
+  \draw [->] (Y2var) edge (Y2);
+  \draw [->] (Y3var) edge (Y3);
+
+  % Curved arrows for variances
+  %\draw [<->, out=-45, in=-135, looseness=2] (Z2) to node[below] {$\sigma^2_{Z}$} (Z2);
+  %\draw [<->, out=-45, in=-135, looseness=2] (Z3) to node[below] {$\sigma^2_{Z}$} (Z3);
+  \draw [<->, out=45, in=135, looseness=2] (u0) to node[above] {$\sigma^2_{u0}$} (u0);
+  \draw [<->, out=45, in=135, looseness=2] (u2) to node[above] {$\sigma^2_{u2}$} (u2);
+  %\draw [<->, out=30, in=330, looseness=2] (Y2) to node[right] {$\sigma^2_{e}$} (Y2);
+  %\draw [<->, out=30, in=330, looseness=2] (Y3) to node[right] {$\sigma^2_{e}$} (Y3);
+
+  % Additional paths for Z and Y interaction effects
+  \draw[->, dashed] (u2) -- (1.5,1); % Adjusted x-coordinates
+  \draw[->, dashed] (u2) -- (5,1.2); % Adjusted x-coordinates
+  % \draw[->, dashed] (Z1) -- node[right] {$\gamma_{11}$} (1.5,1);
+  % \draw[->, dashed] (Z2) -- node[right] {$\gamma_{11}$} (4.5,1);
+
+\end{tikzpicture}
+
+\begin{tikzpicture}
+  % Nodes for observed variables (squares)
+  \node[draw, rectangle] (Z1) at (0, -2) {$Z_{1i}$};
+  \node (Z1var) at (0, -3) {$\sigma^2_{Z}$};
+  \node[draw, rectangle] (X1) at (0, 2) {$X_{1i}$};
+  \node[draw, rectangle] (X1Z1) at (0.3, 0) {$X_{1i}\cdot Z_{1i}$};
+  \node[draw, rectangle] (Y2) at (3, 0) {$Y_{2i}$}; % Increased x-coordinate
+  \node (Y2var) at (4, 0) {$\sigma^2_{e}$};
+  \node[draw, rectangle] (Z2) at (3, -2) {$Z_{2i}$}; % Increased x-coordinate
+  \node (Z2var) at (3, -3) {$\sigma^2_{Z}$};
+  \node[draw, rectangle] (X2) at (3, 2) {$X_{2i}$}; % Increased x-coordinate
+  \node[draw, rectangle] (Y3) at (8, 0) {$Y_{3i}$}; % Increased x-coordinate
+  \node (Y3var) at (9, 0) {$\sigma^2_{e}$};
+  \node[draw, rectangle] (Z3) at (8, -2) {$Z_{3i}$}; % Increased x-coordinate
+  \node (Z3var) at (8, -3) {$\sigma^2_{Z}$};
+  \node[draw, rectangle] (X2Z2) at (5.3, 0) {$X_{2i}\cdot Z_{2i}$}; % Increased x-coordinate
+
+  % Nodes for latent variables (circles)
+  \node[draw, circle] (u0) at (6, 4) {$u_{0i}$}; % Increased x-coordinate
+  \node[draw, circle] (u2) at (3, 4) {$u_{2i}$}; % Adjusted to align with middle row
+
+  % Arrows with path coefficients
+  \draw [->] (u0) -- node[right] {$+$} (Y2);
+  \draw [->] (u0) -- node[right] {$+$} (Y3);
+  \draw [->] (X2) edge node[above] {$\beta_{20}$} (Y3);
+  \draw [->] (Z2) edge node[below] {$\beta_{10}$} (Y3);
+  \draw [->] (Y2) edge node[left] {$=$} (Z2);
+  \draw [->] (X1) edge node[left] {$\beta_{20}$} (Y2);
+  \draw [->] (Z1) edge node[below] {$\beta_{10}$} (Y2);
+  \draw [->] (Y3) edge node[right] {$=$} (Z3);
+  \draw [->] (X1Z1) edge node[above] {$\beta_{30}$} (Y2);
+  \draw [->] (X2Z2) edge node[above] {$\beta_{30}$} (Y3);
+  \draw [->] (Z1var) edge (Z1);
+  \draw [->] (Z2var) edge (Z2);
+  \draw [->] (Z3var) edge (Z3);
+  \draw [->] (Y2var) edge (Y2);
+  \draw [->] (Y3var) edge (Y3);
+
+  % Curved arrows for variances
+  %\draw [<->, out=-45, in=-135, looseness=2] (Z2) to node[below] {$\sigma^2_{Z}$} (Z2);
+  %\draw [<->, out=-45, in=-135, looseness=2] (Z3) to node[below] {$\sigma^2_{Z}$} (Z3);
+  \draw [<->, out=45, in=135, looseness=2] (u0) to node[above] {$\sigma^2_{u0}$} (u0);
+  \draw [<->, out=45, in=135, looseness=2] (u2) to node[above] {$\sigma^2_{u2}$} (u2);
+  %\draw [<->, out=30, in=330, looseness=2] (Y2) to node[right] {$\sigma^2_{e}$} (Y2);
+  %\draw [<->, out=30, in=330, looseness=2] (Y3) to node[right] {$\sigma^2_{e}$} (Y3);
+
+  % Additional paths for Z and Y interaction effects
+  \draw[->, dashed] (u2) -- (1.5,1); % Adjusted x-coordinates
+  \draw[->, dashed] (u2) -- (5,1.2); % Adjusted x-coordinates
+  % \draw[->, dashed] (Z1) -- node[right] {$\gamma_{11}$} (1.5,1);
+  % \draw[->, dashed] (Z2) -- node[right] {$\gamma_{11}$} (4.5,1);
+
+\end{tikzpicture}
+```
+
+::: {#fig-pathdiagrams layout-ncol=2}
+
+![Generative Model 1](figure/fig-GM1_path-1.png){#fig-GM1_pd}
+
+![Generative Model 2](figure/fig-GM2_path-1.png){#fig-GM2_pd}
+
+![Generative Model 3](figure/fig-GM3_path-1.png){#fig-GM3_pd}
+
+Path Diagrams for the three Generative Models
+
+:::
+
+<!-- ![Path diagram for Generative Model 1](fig-GM1_path-1.png) -->
+
+We can make a couple observations from this path diagram:
+
+-   Contrary to the DAG, this path diagram shows the moderation effect (1) of $Z_{ti}$ on the relationship between $X_{ti}$ and $Y_{ti+1}$ and (2) of $u_{2i}$ on the relationship between $Z_{ti}$ and $Y_{(t+1)i}$.
+-   Similar to the example without treatment in section 2.2, the covariate $Z_{ti}$ is determined by the previous value of the outcome $Y_{ti}$---which makes it an endogenous time-varying covariate.
+-   The path diagram does not display the difference in the randomized treatment assignment probabilities between GM1 and GM2.
+
+## Data Estimation/Analysis
+
+For the multilevel linear model, the analytical models are equivalent to each of the respective data generating models. As a reminder, the analytical *multilevel model* for GM1 and GM3 is given by
+
+$$
+Y_{(t+1)i} = (\beta_{00} + u_{0i}) + \beta_{10} Z_{ti} +  (\beta_{20} + u_{2i}) X_{ti} + \beta_{30} X_{ti} Z_{ti} + e_{(t+1)i}
+$$
+
+and the analytical *multilevel model* for GM2 is given by
+
+$$
+Y_{(t+1)i} = (\beta_{00} + u_{0i}) + (\beta_{10} + u_{1i}) Z_{ti} + (\beta_{20} + u_{2i}) X_{ti} + (\beta_{30} + u_{3i}) X_{ti} Z_{ti} + e_{(t+1)i}
+$$
+
+However, for GEE, the analytical model is different, as they do not explictly model random effects. As the main effects modeled in GM1 through GM3 are the same (the only differences pertains to modelling of random effects), the analytical *GEE models* are identical for these different conditions. The analytical *GEE model* is given by
+
+$$
+Y_{(t+1)i} = \beta_{0} + \beta_{1} Z_{ti} + \beta_{2} X_{ti}  + \beta_{3} X_{ti} Z_{ti} + e_{(t+1)i}
+$$
+
+
+<!-- ```{r} -->
+<!-- #| label: GM1_datageneration -->
+<!-- #| echo: true -->
+<!-- #| eval: false -->
+<!-- #| cache: true -->
+
+<!-- dgm1 <- function(sample_size, total_T) { -->
+
+<!--     # Parameters -->
+<!--     gamma_00 <- -2   # Fixed intercept -->
+<!--     beta_2 <- -0.3 # Fixed slope for Z -->
+<!--     gamma_10 <- 0.5    # Fixed effect of treatment (X) -->
+<!--     beta_3 <- 0.3  # Interaction effect between treatment (X) and covariate (Z) -->
+<!--     sigma_u0 <- 2    # SD of random intercept (u_0i) -->
+<!--     sigma_u2 <- 1    # SD of random slope for treatment (u_1i) -->
+<!--     sigma_e <- 1     # SD of error term (e_{it+1}) -->
+<!--     prob_x <- 0.5    # Randomization probability for treatment (X) -->
+
+<!--     # Data frame setup -->
+<!--     df_names <- c("userid", "day", "Z", "prob_X", "X", "Y", "u0", "u2", "e", "delta") -->
+<!--     dta <- data.frame(matrix(NA, nrow = sample_size * total_T, ncol = length(df_names))) -->
+<!--     names(dta) <- df_names -->
+
+<!--     # Assign userid and day -->
+<!--     dta$userid <- rep(1:sample_size, each = total_T) -->
+<!--     dta$day <- rep(1:total_T, times = sample_size) -->
+
+<!--     # Generate uncorrelated random effects -->
+<!--     u_0i <- rnorm(sample_size, mean = 0, sd = sigma_u0) -->
+<!--     u_1i <- rnorm(sample_size, mean = 0, sd = sigma_u2) -->
+
+<!--     # Data generation for each time point -->
+<!--     for (t in 1:total_T) { -->
+<!--         # Row index for day t for every subject -->
+<!--         row_index <- seq(from = t, by = total_T, length = sample_size) -->
+
+<!--         # Generate Z based on the process described -->
+<!--         if (t == 1) { -->
+<!--             dta$Z[row_index] <- rnorm(sample_size, mean = 0, sd = 1) -->
+<!--         } else { -->
+<!--             dta$Z[row_index] <- dta$Y[row_index_lag1] + rnorm(sample_size, mean = 0, sd = 1) -->
+<!--         } -->
+
+<!--         # Set fixed probability for treatment assignment -->
+<!--         dta$prob_X[row_index] <- rep(prob_x, sample_size) -->
+
+<!--         # Treatment assignment -->
+<!--         dta$X[row_index] <- rbinom(sample_size, 1, dta$prob_X[row_index]) -->
+
+<!--         # Error term -->
+<!--         dta$e[row_index] <- rnorm(sample_size, mean = 0, sd = sigma_e) -->
+
+<!--         # compute part of the equation -->
+<!--         dta$delta[row_index] <- gamma_10 + beta_3 * dta$Z[row_index] + u_1i -->
+
+<!--         # Outcome Y -->
+<!--         dta$Y[row_index] <- gamma_00 + beta_2 * dta$Z[row_index] + u_0i +  -->
+<!--                             dta$X[row_index] * dta$delta[row_index] + dta$e[row_index] -->
+
+<!--         # Store random effects -->
+<!--         dta$u0[row_index] <- u_0i -->
+<!--         dta$u2[row_index] <- u_1i -->
+
+<!--         # Update row index for lagged Y -->
+<!--         row_index_lag1 <- row_index -->
+<!--     } -->
+
+<!--     return(dta) -->
+<!-- } -->
+
+<!-- # Run the data generation function -->
+<!-- set.seed(123987) -->
+<!-- data <- dgm1(sample_size = 100000, total_T = 10) -->
+<!-- saveRDS(data, "Simulation Scenarios/data/Qian_GM1_data.rds") -->
+<!-- ``` -->
+
+<!-- ```{r} -->
+<!-- #| label: GM1_datageneration_qian -->
+
+<!-- # source("Scripts/Qian2020 Code/generative_model.R") -->
+<!-- # source("Scripts/DataGeneratingModels/GM1.R") -->
+<!-- #  -->
+<!-- # # Run the data generation function -->
+<!-- # set.seed(123987) -->
+<!-- # data <- dgm1(sample_size = 100000, total_T = 10) -->
+<!-- # data2 <- dgm_with_treatment(sample_size = 100000, total_T = 10, dgm_type = 1) -->
+<!-- # data3 <- GM1(sample_size = 100000, total_T = 10) -->
+<!-- #  -->
+<!-- # fit <- lmer(Y ~ Z * X + (1 + X | userid), data = data) -->
+<!-- # fit2 <- lmer(Y ~ X * A + (1 + A | userid), data = data2) -->
+<!-- # fit3 <- lmer(Y ~ X * A + (1 + A | userid), data = data3) -->
+<!-- #  -->
+<!-- # fixef(fit) -->
+<!-- # fixef(fit2) -->
+<!-- # fixef(fit3) -->
+<!-- ``` -->
+
+<!-- The analytical model for the mixed linear model is equivalent to the data generating model: -->
+
+<!-- $$ -->
+<!-- Y_{(t+1)i} = (\beta_{00} + u_{0i}) + \beta_{10} Z_{ti} + X_{ti} (\beta_{20} + u_{2i}) + \beta_{30} X_{ti} Z_{ti} + e_{(t+1)i} -->
+<!-- $$ -->
+
+<!-- However, for GEE, the analytical model does not include random coefficients, so reduces to: -->
+
+<!-- $$ -->
+<!-- Y_{(t+1)i} = \beta_{00} + \beta_{10} Z_{ti} + X_{ti} \beta_{20} + \beta_{30} X_{ti} Z_{ti} + e_{(t+1)i} -->
+<!-- $$ -->
+
+<!-- Considering this difference and the nonzero specification of the random effects, we expect that the fixed treatment effect, denoted by $gamma_10$, is not equal across the mixed linear model and its GEE counterparts. -->
+
+<!-- ```{r} -->
+<!-- #| label: GM1_fit -->
+<!-- #| cache: false -->
+<!-- #| echo: true -->
+<!-- #| eval: false -->
+
+<!-- # load data -->
+<!-- data <- readRDS("Simulation Scenarios/data/Qian_GM1_data.rds") -->
+
+<!-- # Fit models -->
+<!-- gee_indep <- geeglm(Y ~ Z + X + Z*X, id = userid, data = data, corstr = "independence") -->
+<!-- gee_exch <- geeglm(Y ~ Z + X + Z*X, id = userid, data = data, corstr = "exchangeable") -->
+<!-- gee_ar1 <- geeglm(Y ~ Z + X + Z*X, id = userid, data = data, corstr = "ar1") -->
+<!-- mlm_mle <- lmer(Y ~ Z + X + Z*X + (1 + X | userid), data = data, REML = FALSE) -->
+
+<!-- treatment_effect <- c(coef(gee_indep)["X"], coef(gee_exch)["X"], coef(gee_ar1)["X"], fixef(mlm_mle)["X"]) -->
+<!-- true_treatment_effect <- gamma_10 <- 1 -->
+<!-- interaction_effect <- c(coef(gee_indep)["Z:X"], coef(gee_exch)["Z:X"], coef(gee_ar1)["Z:X"], fixef(mlm_mle)["Z:X"]) -->
+<!-- true_interaction_effect <- beta_3 <- 0.3 -->
+
+<!-- df_results <- data.frame(row.names = c("GEE (Indep)", "GEE (Exch)", "GEE (AR1)", "MLM (MLE)"), treatment_estimate = treatment_effect, treatment_true = gamma_10, interaction_estimate = interaction_effect, interaction_true = true_interaction_effect) -->
+<!-- saveRDS(df_results, "Simulation Scenarios/data/Qian_GM1_results.rds") -->
+<!-- ``` -->
+
+<!-- ```{r} -->
+<!-- #| label: GM1_results -->
+<!-- #| echo: false -->
+
+<!-- # df_results <- readRDS("Simulation Scenarios/data/Qian_GM1_results.rds") -->
+<!-- # knitr::kable(df_results, digits = 3, caption = "Generating Model 1 - Treatment Effect Estimates") -->
+<!-- ``` -->
+
+\newpage
+
+# Appendix
+
+## Original Section from Qian et al. (2020): "4. Simulation"
+
+In the simulation, we considered three generative models (GMs), all of which have an endogenous covariate. In the first two GMs, the endogenous covariate $X_{it}$ equals the previous outcome $Y_{it}$ plus some random noise, so the conditional independence assumption (10) is valid. In GM 3, the endogenous covariate depends directly on $b_i$, violating assumption (10). The details of the generative models are described below.
+
+In GM1, we considered a simple case with only a random intercept and a random slope for $A_{it}$, so that $Z_{i(t_0)} = Z_{i(t_2)} = 1$ in model (7). The outcome is generated as:
+
+$$
+Y_{it+1} = \alpha_0 + \alpha_1 X_{it} + b_{i0} + A_{it} (\beta_0 + \beta_1 X_{it} + b_{i2}) + \epsilon_{it+1}.
+$$
+
+The random effects $b_{i0} \sim N(0, \sigma_{b0}^2)$ and $b_{i2} \sim N(0, \sigma_{b2}^2)$ are independent of each other. The covariate is generated as $X_{i1} \sim N(0, 1)$, and for $t \geq 2$,
+
+$$
+X_{it} = Y_{it} + N(0, 1).
+$$
+
+The randomization probability $p_t$ is constant at $1/2$. The exogenous noise is $\epsilon_{it+1} \sim N(0, \sigma_\epsilon^2)$.
+
+In GM2, we considered the case where $Z_{i(t_0)} = Z_{i(t_2)} = 1$, with time-varying randomization probability. The outcome is generated as:
+
+$$
+Y_{it+1} = \alpha_0 + \alpha_1 X_{it} + b_{i0} + b_{i1} X_{it} + A_{it} (\beta_0 + \beta_1 X_{it} + b_{i2} + b_{i3} X_{it}) + \epsilon_{it+1}.
+$$
+
+The random effects $b_{ij} \sim N(0, \sigma_{b_j}^2)$, for $0 \leq j \leq 3$, are independent of each other. The covariate is generated as $X_{i1} \sim N(0, 1)$, and for $t \geq 2$,
+
+$$
+X_{it} = Y_{it} + N(0, 1).
+$$
+
+The randomization probability depends on $X_{it}$:
+
+$$
+p_t = 0.7 \cdot 1(X_{it} > -1.27) + 0.3 \cdot 1(X_{it} \leq -1.27),
+$$
+
+where $1(\cdot)$ represents the indicator function, and the cutoff $-1.27$ was chosen so that $p_t$ equals 0.7 or 0.3 for about half of the time. The exogenous noise is $\epsilon_{it+1} \sim N(0, \sigma_\epsilon^2)$.
+
+GM3 is the same as GM 1, except that the covariate $X_{it}$ depends directly on $b_i$:
+
+$$
+X_{i1} \sim N(b_{i0}, 1), \quad X_{it} = Y_{it} + N(b_{i0}, 1) \text{ for } t \geq 2.
+$$
+
+We chose the following parameter values:
+
+$$
+\alpha_0 = -2, \quad \alpha_1 = -0.3, \quad \beta_0 = 1, \quad \beta_1 = 0.3,
+$$
+
+$$
+\sigma_{b0}^2 = 4, \quad \sigma_{b1}^2 = \frac{1}{4}, \quad \sigma_{b2}^2 = 1, \quad \sigma_{b3}^2 = \frac{1}{4}, \quad \sigma_\epsilon^2 = 1.
+$$
+
+## Translation of Notation
+
+In the table below, we will provide the translation of original notation in Qian et al. (2020) to the notation by Schoot et al. (2017). This notation in turn, is very similar to and likely based on the notation by Raudenbush and Bryk (2002). However, rather than representing the random effects with an $r$, the notation by Schoot et al. (2017) uses $u$.
+
+| Parameter/variable                                    | Qian et al. (2020) | Schoot et al. (2017) |
+|----------------------------|----------------------|----------------------|
+| Covariate                                     | $X_{it}$           | $Z_{ti}$                    |
+| Randomized Treatment                          | $A_{it}$           | $X_{ti}$                    |
+| Outcome                              | $Y_{it+1}$           | $Y_{(t+1)i}$                    |
+| Fixed intercept                               | $\alpha_0$         | $\beta_{00}$               |
+| Random intercept                              | $b_{i0}$           | $u_{0i}$                    |
+| Fixed slope for covariate                     | $\alpha_1$         | $\beta_{10}$                 |
+| Random slope for covariate                     | $b_{i1}$         | $u_{1i}$                |
+| Fixed slope of treatment                     | $\beta_0$          | $\beta_{20}$               |
+| Random slope for treatment                    | $b_{i2}$           | $u_{2i}$                    |
+| fixed interaction effect of covariate and treatment | $\beta_1$          | $\beta_{30}$                   |
+| Random interaction effect of covariate and treatment | $b_{i3}$          | $u_{3i}$
+| Error term (exogenous noise)                                  | $\epsilon_{it+1}$  | $e_{(t+1)i}$                  |
+| Randomization probability                     | $p_t$              | $p_t$                        |
+| Residual variance                             | $\sigma^2_{\epsilon}$ | $\sigma^2_{e}$              |
+| Random intercept variance                     | $\sigma^2_{b0}$    | $\sigma^2_{u0}$              |
+| random slope variance for covariate          | $\sigma^2_{b1}$    | $\sigma^2_{u1}$              |
+| Random slope variance for treatment           | $\sigma^2_{b2}$    | $\sigma^2_{u2}$              |
+| Random slope variance for interaction         | $\sigma^2_{b3}$    | $\sigma^2_{u3}$              |
+
+
+### Generative Model 1
+
+Let's first state generative model 1 according to its original notation by Qian et al. (2020)
+
+$$
+\begin{aligned}
+Y_{it+1} &= \alpha_0 + \alpha_1 X_{it} + b_{i0} + A_{it} (\beta_0 + \beta_1 X_{it} + b_{i2}) + \epsilon_{it+1} \\
+&= \alpha_0 + \alpha_1 X_{it} + b_{i0} + A_{it} \beta_0 + A_{it} X_{it} \beta_1 + A_{it} b_{i2} + \epsilon_{it+1}
+\end{aligned}
+$$
+
+Using this new notation, we may thus rewrite GM1 as a repeated-observations or within-person model (level 1)
+
+$$
+Y_{(t+1)i} = \pi_{0i} + \pi_{1i} Z_{ti} + \pi_{2i} X_{ti} + \pi_{3i} X_{ti} Z_{ti} + e_{(t+1)i}
+$$
+
+with the person-level or between-person model (level 2)
+
+$$ 
+\pi_{0i} = \beta_{00} + u_{0i} \quad \text{with} \quad u_{0i} \sim \mathcal{N}(0, \sigma^2_{u_0})
+$$
+
+$$ 
+\pi_{1i} = \beta_{10}
+$$
+
+$$
+\pi_{2i} = \beta_{20} + u_{2i} \quad \text{with} \quad u_{2i} \sim \mathcal{N}(0, \sigma^2_{u_2})
+$$
+
+$$
+\pi_{3i} = \beta_{30}
+$$
+
+By substitution, we get the single equation model:
+
+$$
+\begin{aligned}
+Y_{(t+1)i} &= \pi_{0i} + \pi_{1i} Z_{ti} + \pi_{2i} X_{ti} + \pi_{3i} X_{ti} Z_{ti} + e_{(t+1)i} \\
+&= (\beta_{00} + u_{0i}) + \beta_{10} Z_{ti} + (\beta_{20} + u_{2i}) X_{ti} + \beta_{30} X_{ti} Z_{ti} + e_{(t+1)i} \\
+&= \beta_{00} + \beta_{10} Z_{ti} + u_{0i} + X_{ti} (\beta_{20} + \beta_{30} Z_{ti} + u_{2i}) + e_{(t+1)i}
+\end{aligned}
+$$
+
+We can see that the order of elements in the final equation aligns exactly with the notation of Qian et al. (2020).
+
+$$
+Y_{it+1} = \alpha_0 + \alpha_1 X_{it} + b_{i0} + A_{it} (\beta_0 + \beta_1 X_{it} + b_{i2}) + \epsilon_{it+1}
+$$
+
+### Generative Model 2
+
+The second generative model is given by Qian et al. (2020) as:
+
+$$
+\begin{aligned}
+Y_{it+1} &= \alpha_0 + \alpha_1 X_{it} + b_{i0} + b_{i1} X_{it} + A_{it} (\beta_0 + \beta_1 X_{it} + b_{i2} + b_{i3} X_{it}) + \epsilon_{it+1} \\ &= \alpha_0 + \alpha_1 X_{it} + b_{i0} + b_{i1} X_{it} + A_{it} \beta_0 + A_{it} X_{it} \beta_1 + A_{it} b_{i2} + A_{it} X_{it} b_{i3} + \epsilon_{it+1}
+\end{aligned}
+$$
+
+We may now rewrite this into the repeated-observations or within-person model (level 1)
+
+$$
+Y_{(t+1)i} = \pi_{0i} + \pi_{1i} Z_{ti} + \pi_{2i} X_{ti} + \pi_{3i} X_{ti} Z_{ti} + e_{(t+1)i}
+$$
+
+with the person-level or between-person models (level 2)
+
+$$ 
+\pi_{0i} = \beta_{00} + u_{0i} \quad \text{with} \quad u_{0i} \sim \mathcal{N}(0, \sigma^2_{u_0})
+$$
+
+$$
+\pi_{1i} = \beta_{10} + u_{1i} \quad \text{with} \quad u_{1i} \sim \mathcal{N}(0, \sigma^2_{u_1})
+$$
+
+$$
+\pi_{2i} = \beta_{20} + u_{2i} \quad \text{with} \quad u_{2i} \sim \mathcal{N}(0, \sigma^2_{u_2})
+$$
+
+$$
+\pi_{3i} = \beta_{30} + u_{3i} \quad \text{with} \quad u_{3i} \sim \mathcal{N}(0, \sigma^2_{u_3})
+$$
+
+By substitution, we get the single equation model:
+
+$$
+\begin{aligned}
+Y_{(t+1)i} &= \pi_{0i} + \pi_{1i} Z_{ti} + \pi_{2i} X_{ti} + \pi_{3i} X_{ti} Z_{ti} + e_{(t+1)i} \\ &= (\beta_{00} + u_{0i}) + (\beta_{10} + u_{1i}) Z_{ti} + (\beta_{20} + u_{2i}) X_{ti} + (\beta_{30} + u_{3i}) X_{ti} Z_{ti} + e_{(t+1)i} \\ &= \beta_{00} + \beta_{10} Z_{ti} + u_{0i} + u_{1i} Z_{ti} + X_{ti} \left( \beta_{20} + \beta_{30} Z_{ti} + u_{2i} + u_{3i} Z_{ti} \right) + e_{(t+1)i}
+\end{aligned}
+$$
+
+Now when we directly compare the final equation with the original notation, we can see that the order of elements aligns exactly. 
+
+$$
+Y_{it+1} = \alpha_0 + \alpha_1 X_{it} + b_{i0} + b_{i1} X_{it} + A_{it} (\beta_0 + \beta_1 X_{it} + b_{i2} + b_{i3} X_{it}) + \epsilon_{it+1}
+$$
+
+### Generative Model 3
+
+Generative model 3 is the same as GM 1, except that the covariate depends directly on the random intercept. In the original notation this was given by:
+
+$$
+X_{i1} \sim N(b_{i0}, 1), \quad X_{it} = Y_{it} + N(b_{i0}, 1) \text{ for } t \geq 2.
+$$
+
+whereas in the new notation, this can be written as:
+
+$$
+Z_{i1} \sim \mathcal{N}(u_{0i}, 1), \quad Z_{ti} = Y_{ti} + \mathcal{N}(u_{0i}, 1) \text{ for } t \geq 2.
+$$
+
+
+<!-- ## Explanation versus Prediction -->
+
+<!-- In het voorbeeld van Diggle et al. (2002) wat we vorige week hebben besproken, werd vermeld dat een cross-sectionele relatie tussen $X_{it}$ en $Y_{it}$ van interesse kan zijn met longitudinale data als voorspellen het doel is: -->
+
+<!-- > "In many applications the cross-sectional association between Xit and Yit is of substantive interest. For example, in assessing the predictive potential of biomarkers for the detection of cancer, the accuracy of a marker is typically characterized by the cross-sectional sensitivity and specificity. Although alternative predictive models may be developed using longitudinal marker series, these models would not apply to the common clinical setting where only a single measurement is available." (Diggle et al., 2002, p. 256) -->
+
+<!-- Daarentegen legt Qian et al. (2020) juist de nadruk op de voordelen van mixed linear models om tegelijkertijd ook individuele verschillen te kunnen voorspellen, waarbij de focus meer ligt op causaliteit: -->
+
+<!-- > "A particularly appealing feature of random effects models is the ability to predict person-specific random effects, which enables quantitative characterization of between person heterogeneity due to unobserved factors (Schwartz and Stone, 2007, Bolger and Laurenceau, 2013). Understanding such heterogeneity can bring forth new scientific hypotheses for further studies. In addition, the random effects provide a model for the within-person dependence in the time-varying outcome, which improves efficiency in parameter estimation." (Qian et al., 2020, p. 376) -->
+
+<!-- ## Differences: DAGs and Path Diagrams -->
+
+<!-- As mentioned by Ellen in the last meeting (17-10): -->
+
+<!-- > "Conventional DAGs do not only represent main effects but rather the combination of main effects and interactions. Once you have drawn your DAG, you already assume that any variables pointing to the same outcome can modify the effect of the others pointing to the same outcome." ([stackexchange](https://stats.stackexchange.com/questions/157775/representing-interaction-effects-in-directed-acyclic-graphs)) -->

@@ -2,3 +2,7 @@
 .Rhistory
 .RData
 .Ruserdata
+simulation_results_glmm/April10_fullsimulation/plotting_bias_df.RDS
+simulation_results_glmm/April10_fullsimulation/plotting_bias_df1.RDS
+simulation_results_glmm/April17_fullsimulation_contXY/plotting_bias_df2.RDS
+simulation_results_glmm/April18_fullsimulation_combined/plotting_bias_df.RDS

@@ -1,0 +1,740 @@
+---
+title: "Data Exploration"
+format: 
+  html: 
+    toc: true
+    toc_float: true
+    toc_depth: 2
+    code-fold: true
+    fig_width: 8
+    self-contained: true
+---
+
+In this report, we will explore the data generating mechanism underlying the simulation study.
+
+```{r}
+# load libraries
+library(ggplot2)
+library(ggpubr)
+library(lme4)
+library(here)
+library(tidyr)
+library(dplyr)
+
+# source the helper function
+# source(here("scripts/hamaker2020_extended/helper-functions/data-generation-centeredX.R"))
+source(here("scripts/hamaker2020_extended/helper-functions/data-generation-mundlak.R"))
+```
+
+## Continuous X and Y
+
+In the original simulation study by Hamaker and Muthen (2020), the authors generated data for a continuous predictor and continuous outcome with the following parameters
+
+```{r}
+#| eval: false
+
+set.seed(3859)
+N<-5000 # number of clusters
+n<-4 # number of observations within a cluster
+
+########################
+#### SET PARAMETER VALUES ####
+########################
+
+# PREDICTOR
+sdX.within <- sqrt(1) # within-person variance
+sdX.between <- sqrt(4) # between-person variance
+
+# INTERCEPT LEVEL 2
+g.00 <- 0 # Grand intercept
+g.01 <- 2 # between-cluster slope
+sd.u0 <- 1 # SD of residuals intercept at level 2
+
+# SLOPE LEVEL 2
+g.10 <- 1 # fixed within-cluster slope
+sd.u1 <- 0 # SD of within-cluster slope at level 2
+
+# RESIDUALS AT LEVEL 1
+sd.e <- 1 # residual SD at level 1
+```
+
+We can replicate this value with a more generalized function as follows
+
+```{r}
+# original values in simulations of Hamaker en Muthen (2020)
+data_cont_hm2020 <- glmm_data_generation(N_total = 1000, T_total = 4, predictor.type = "continuous", outcome.type = "continuous",
+                                  sdX.within = sqrt(1), sdX.between = sqrt(4), g.00 = 0, g.01 = 2, sd.u0 = 1,
+                                  g.10 = 1, sd.u1 = 0, sd.e = 1)
+summary(data_cont_hm2020)
+fixef(lmer(Y ~ X.cent + X.cluster.means + (1 | Cluster), data = data_cont_hm2020))
+```
+
+As we can see, the X and Y values have quite a large range of -8 to 8 and -16 to 16 respectively. As we want to ensure, for the analyses with discrete outcomes, that the eta values are not too extreme (within -3 to 3 range), we will decrease the values of the parameters. Let us also add some timepoints to enhance estimation of the cluster mean of X.
+
+```{r}
+data_cont <- glmm_data_generation(N_total = 1000, T_total = 20, predictor.type = "continuous", outcome.type = "continuous",
+                                  sdX.within = 0.25, sdX.between = 0.5, g.00 = 0, g.01 = 1, sd.u0 = 0.7,
+                                  g.10 = 0.5, sd.u1 = 0, sd.e = 0.5)
+summary(data_cont)
+fixef(lmer(Y ~ X.cent + X.cluster.means + (1 | Cluster), data = data_cont))
+```
+
+```{r}
+#| fig.width: 8
+
+# 1.1 check distributions of X and Y
+p1.11 <- ggplot(data_cont, aes(x = Y)) + geom_histogram(aes(y = ..density..), bins = 30, fill = "lightblue", color = "black") +
+  geom_density(alpha = 0.5, fill = "blue") + labs(title = "Histogram of Y") +
+  geom_vline(xintercept = mean(data_cont$Y), linetype = "dashed", color = "red")
+p1.12 <- ggplot(data_cont, aes(x = X)) + geom_histogram(aes(y = ..density..), bins = 30, fill = "lightblue", color = "black") +
+  geom_density(alpha = 0.5, fill = "blue") + labs(title = "Histogram of X") +
+  geom_vline(xintercept = mean(data_cont$X), linetype = "dashed", color = "red")
+
+# 1.2 check histogram of eta
+p1.2 <- ggplot(data_cont, aes(x = eta)) + geom_histogram(aes(y = ..density..), bins = 30, fill = "lightblue", color = "black") +
+  geom_density(alpha = 0.5, fill = "blue") + labs(title = "Histogram of eta") +
+  geom_vline(xintercept = mean(data_cont$eta), linetype = "dashed", color = "red")
+
+# combine plots
+gridExtra::grid.arrange(p1.11, p1.12, p1.2, ncol = 2)
+
+# Reduce to only cluster level variables
+data_cont_level2 <- data_cont %>% select(Cluster, X.cluster.means, X.mean.j, p.X.mean.j, eta, b0, b1) %>%
+  distinct(Cluster, .keep_all = TRUE)
+
+# 1.4 scatterplot of b0 and eta and X.mean.j and X.cluster.means
+p1.31 <- ggplot(data_cont_level2, aes(x = b0, y = eta)) + geom_point() + labs(title = "Scatterplot of b0 and eta") + stat_cor(method = "pearson", digits = 3)
+p1.32 <- ggplot(data_cont_level2, aes(x = X.mean.j, y = X.cluster.means)) + geom_point() + labs(title = "Scatterplot of X.mean.j and X.cluster.means", x = "True cluster mean", y = "Estimated cluster mean") + stat_cor(method = "pearson", digits = 3)
+
+# combine plots
+gridExtra::grid.arrange(p1.31, p1.32, ncol = 2)
+
+# 1.3 overlaying density plots for X.cluster.means and X.mean.j
+p1.41 <- ggplot(data_cont_level2, aes(x = X.cluster.means, fill = "X.cluster.means")) + geom_density(alpha = 0.5) +
+  geom_density(aes(x = X.mean.j, fill = "X.mean.j"), alpha = 0.5) + labs(title = "Density plot of X.cluster.means and X.mean.j")
+
+# compute difference between estimated and true cluster mean for each cluster
+data_cont_level2$diff <- data_cont_level2$X.cluster.means - data_cont_level2$X.mean.j
+
+# plot histogram of differences
+p1.42 <- ggplot(data_cont_level2, aes(x = diff)) + geom_histogram(aes(y = ..density..), bins = 30, fill = "lightblue", color = "black") +
+  geom_density(alpha = 0.5, fill = "blue") + labs(title = "Histogram of differences between estimated and true cluster mean") +
+  geom_vline(xintercept = mean(data_cont$diff), linetype = "dashed", color = "red")
+
+# combine plots
+gridExtra::grid.arrange(p1.41, p1.42, nrow = 2)
+```
+
+## Binary X and Continuous Y
+
+```{r}
+### 2 generate binary X and continuous Y
+data_binx_conty <- glmm_data_generation(N_total = 1000, T_total = 20, predictor.type = "binary", outcome.type = "continuous",
+                                        sdX.within = NA, sdX.between = 1, g.00 = 0, g.01 = 1, sd.u0 = 1,
+                                        g.10 = 0.5, sd.u1 = 0, sd.e = 1, true_cluster_means = FALSE)
+# same values as (1) but without sdX.within
+summary(data_binx_conty)
+var(data_binx_conty$p.X.mean.j) # is equal to zero when sdX.between is zero, which makes it not a variable.
+var(data_binx_conty$X.cluster.means)
+fixef(lmer(Y ~ X.cent + X.cluster.means + (1 | Cluster), data = data_binx_conty))
+```
+```{r}
+#| fig.width: 8
+
+# 2.1 check distributions of X and Y
+p2.11 <- ggplot(data_binx_conty, aes(x = Y)) + geom_histogram(aes(y = ..density..), bins = 30, fill = "lightblue", color = "black") +
+  geom_density(alpha = 0.5, fill = "blue") + labs(title = "Histogram of Y") +
+  geom_vline(xintercept = mean(data_binx_conty$Y), linetype = "dashed", color = "red")
+p2.12 <- ggplot(data_binx_conty, aes(x = X)) + geom_histogram(aes(y = ..density..), bins = 30, fill = "lightblue", color = "black") +
+  geom_density(alpha = 0.5, fill = "blue") + labs(title = "Histogram of X") +
+  geom_vline(xintercept = mean(data_binx_conty$X), linetype = "dashed", color = "red")
+
+# Reduce to only cluster level variables
+data_binx_conty_level2 <- data_binx_conty %>% select(Cluster, X.cluster.means, X.mean.j, p.X.mean.j, eta, b0, b1) %>%
+  distinct(Cluster, .keep_all = TRUE)
+
+# 2.2 histograms X.mean.j, p.X.mean.j and eta
+p2.21 <- ggplot(data_binx_conty_level2, aes(x = X.mean.j)) + geom_histogram(aes(y = ..density..), bins = 30, fill = "lightblue", color = "black") +
+  geom_density(alpha = 0.5, fill = "blue") + labs(title = "Histogram of X.mean.j") +
+  geom_vline(xintercept = mean(data_binx_conty$X.mean.j), linetype = "dashed", color = "red")
+p2.22 <- ggplot(data_binx_conty_level2, aes(x = p.X.mean.j)) + geom_histogram(aes(y = ..density..), bins = 30, fill = "lightblue", color = "black") +
+  geom_density(alpha = 0.5, fill = "blue") + labs(title = "Histogram of p.X.mean.j") +
+  geom_vline(xintercept = mean(data_binx_conty$p.X.mean.j), linetype = "dashed", color = "red")
+p2.23 <- ggplot(data_binx_conty_level2, aes(x = eta)) + geom_histogram(aes(y = ..density..), bins = 30, fill = "lightblue", color = "black") +
+  geom_density(alpha = 0.5, fill = "blue") + labs(title = "Histogram of eta") +
+  geom_vline(xintercept = mean(data_binx_conty$eta), linetype = "dashed", color = "red")
+# eta is nicely distributed with -3 to 3 range
+
+# when sdX.between is large (e.g, sqrt(4)) the distribution of probabilities 
+# of X and Y are U/bowl shaped (higher density at the edges)
+# when sdX.between is small (e.g., sqrt(0.4)) the distribution of probabilities
+# of X and Y are inverted U shaped (higher density in the center)
+
+# combine plots
+gridExtra::grid.arrange(p2.11, p2.12, p2.21, p2.22, p2.23, ncol = 2)
+
+# 2.3 scatterplot of p.X.mean.j and b0, b0 and eta, estimated cluster mean and p.X.mean.j
+p2.31 <- ggplot(data_binx_conty_level2, aes(x = p.X.mean.j, y = b0)) + geom_point() + labs(title = "Scatterplot of p.X.mean.j and b0") + stat_cor(method = "pearson", digits = 3)
+
+p2.32 <- ggplot(data_binx_conty_level2, aes(x = b0, y = eta)) + geom_point() + labs(title = "Scatterplot of b0 and eta") + stat_cor(method = "pearson", digits = 3)
+p2.33 <- ggplot(data_binx_conty_level2, aes(x = p.X.mean.j, y = X.cluster.means)) + geom_point() + labs(title = "Scatterplot of X.cluster.means and p.X.mean.j", x = "True underlying probability", y = "Observed proportion") + stat_cor(method = "pearson", digits = 3)
+
+# combine plots
+gridExtra::grid.arrange(p2.31, p2.32, p2.33, ncol = 2)
+
+# create overlapping density plots for X.cluster.means and p.X.mean.j
+p2.41 <- ggplot(data_binx_conty_level2, aes(x = X.cluster.means, fill = "X.cluster.means")) + geom_histogram(alpha = 0.8, binwidth = 0.02) +
+  geom_histogram(aes(x = p.X.mean.j, fill = "p.X.mean.j"), alpha = 0.8, binwidth = 0.02) + labs(title = "Density plot of X.cluster.means and p.X.mean.j", x = "value")
+
+# compute difference between estimated and true cluster mean for each cluster
+data_binx_conty_level2$diff <- data_binx_conty_level2$X.cluster.means - data_binx_conty_level2$p.X.mean.j
+
+# plot histogram of differences
+p2.42 <- ggplot(data_binx_conty_level2, aes(x = diff)) + geom_histogram(aes(y = ..density..), bins = 30, fill = "lightblue", color = "black") +
+  geom_density(alpha = 0.5, fill = "blue") + labs(title = "Histogram of differences between estimated and true cluster mean") +
+  geom_vline(xintercept = mean(data_binx_conty_level2$diff, na.rm = TRUE), linetype = "dashed", color = "red")
+
+# combine plots
+gridExtra::grid.arrange(p2.41, p2.42, nrow = 2)
+```
+
+```{r}
+### 2 generate binary X and continuous Y
+data_binx_conty <- glmm_data_generation(N_total = 1000, T_total = 20, predictor.type = "binary", outcome.type = "continuous",
+                                        sdX.within = NA, sdX.between = 1, g.00 = 0, g.01 = 1, sd.u0 = 1,
+                                        g.10 = 0.5, sd.u1 = 0, sd.e = 1, true_cluster_means = TRUE)
+# same values as (1) but without sdX.within
+summary(data_binx_conty)
+var(data_binx_conty$p.X.mean.j)
+var(data_binx_conty$X.cluster.means)
+fixef(lmer(Y ~ X.cent + X.cluster.means + (1 | Cluster), data = data_binx_conty))
+```
+
+Strange behaviour when g.01 is negative or exceeds 0.8 (with T = 20). The intercept is borrowing from the slope. Happens more with a smaller number of total timepoints T. A value of 0.6 seems to be fine.
+
+```{r}
+#| fig.width: 8
+
+# 2.1 check distributions of X and Y
+p2.11 <- ggplot(data_binx_conty, aes(x = Y)) + geom_histogram(aes(y = ..density..), bins = 30, fill = "lightblue", color = "black") +
+  geom_density(alpha = 0.5, fill = "blue") + labs(title = "Histogram of Y") +
+  geom_vline(xintercept = mean(data_binx_conty$Y), linetype = "dashed", color = "red")
+p2.12 <- ggplot(data_binx_conty, aes(x = X)) + geom_histogram(aes(y = ..density..), bins = 30, fill = "lightblue", color = "black") +
+  geom_density(alpha = 0.5, fill = "blue") + labs(title = "Histogram of X") +
+  geom_vline(xintercept = mean(data_binx_conty$X), linetype = "dashed", color = "red")
+
+# Reduce to only cluster level variables
+data_binx_conty_level2 <- data_binx_conty %>% select(Cluster, X.cluster.means, X.mean.j, p.X.mean.j, eta, b0, b1) %>%
+  distinct(Cluster, .keep_all = TRUE)
+
+# 2.2 histograms X.mean.j, p.X.mean.j and eta
+p2.21 <- ggplot(data_binx_conty_level2, aes(x = X.mean.j)) + geom_histogram(aes(y = ..density..), bins = 30, fill = "lightblue", color = "black") +
+  geom_density(alpha = 0.5, fill = "blue") + labs(title = "Histogram of X.mean.j") +
+  geom_vline(xintercept = mean(data_binx_conty$X.mean.j), linetype = "dashed", color = "red")
+p2.22 <- ggplot(data_binx_conty_level2, aes(x = p.X.mean.j)) + geom_histogram(aes(y = ..density..), bins = 30, fill = "lightblue", color = "black") +
+  geom_density(alpha = 0.5, fill = "blue") + labs(title = "Histogram of p.X.mean.j") +
+  geom_vline(xintercept = mean(data_binx_conty$p.X.mean.j), linetype = "dashed", color = "red")
+p2.23 <- ggplot(data_binx_conty_level2, aes(x = eta)) + geom_histogram(aes(y = ..density..), bins = 30, fill = "lightblue", color = "black") +
+  geom_density(alpha = 0.5, fill = "blue") + labs(title = "Histogram of eta") +
+  geom_vline(xintercept = mean(data_binx_conty$eta), linetype = "dashed", color = "red")
+# eta is nicely distributed with -3 to 3 range
+
+# when sdX.between is large (e.g, sqrt(4)) the distribution of probabilities 
+# of X and Y are U/bowl shaped (higher density at the edges)
+# when sdX.between is small (e.g., sqrt(0.4)) the distribution of probabilities
+# of X and Y are inverted U shaped (higher density in the center)
+
+# combine plots
+gridExtra::grid.arrange(p2.11, p2.12, p2.21, p2.22, p2.23, ncol = 2)
+
+# 2.3 scatterplot of p.X.mean.j and b0, b0 and eta, estimated cluster mean and p.X.mean.j
+p2.31 <- ggplot(data_binx_conty_level2, aes(x = p.X.mean.j, y = b0)) + geom_point() + labs(title = "Scatterplot of p.X.mean.j and b0") + stat_cor(method = "pearson", digits = 3)
+
+p2.32 <- ggplot(data_binx_conty_level2, aes(x = b0, y = eta)) + geom_point() + labs(title = "Scatterplot of b0 and eta") + stat_cor(method = "pearson", digits = 3)
+p2.33 <- ggplot(data_binx_conty_level2, aes(x = p.X.mean.j, y = X.cluster.means)) + geom_point() + labs(title = "Scatterplot of X.cluster.means and p.X.mean.j", x = "True underlying probability", y = "Observed proportion") + stat_cor(method = "pearson", digits = 3)
+
+# combine plots
+gridExtra::grid.arrange(p2.31, p2.32, p2.33, ncol = 2)
+
+# create overlapping density plots for X.cluster.means and p.X.mean.j
+p2.41 <- ggplot(data_binx_conty_level2, aes(x = X.cluster.means, fill = "X.cluster.means")) + geom_histogram(alpha = 0.8, binwidth = 0.02) +
+  geom_histogram(aes(x = p.X.mean.j, fill = "p.X.mean.j"), alpha = 0.8, binwidth = 0.02) + labs(title = "Density plot of X.cluster.means and p.X.mean.j", x = "value")
+
+# compute difference between estimated and true cluster mean for each cluster
+data_binx_conty_level2$diff <- data_binx_conty_level2$X.cluster.means - data_binx_conty_level2$p.X.mean.j
+
+# plot histogram of differences
+p2.42 <- ggplot(data_binx_conty_level2, aes(x = diff)) + geom_histogram(aes(y = ..density..), bins = 30, fill = "lightblue", color = "black") +
+  geom_density(alpha = 0.5, fill = "blue") + labs(title = "Histogram of differences between estimated and true cluster mean") +
+  geom_vline(xintercept = mean(data_binx_conty_level2$diff, na.rm = TRUE), linetype = "dashed", color = "red")
+
+# combine plots
+gridExtra::grid.arrange(p2.41, p2.42, nrow = 2)
+```
+
+Let's now simulate the data with a more U shaped distribution for p.X.mean.j by increasing the value of sdX.between from 0.5 to 3.
+
+```{r}
+### 2 generate binary X and continuous Y
+data_binx_conty <- glmm_data_generation(N_total = 1000, T_total = 20, predictor.type = "binary", outcome.type = "continuous",
+                                        sdX.within = NA, sdX.between = 3, g.00 = 0, g.01 = 0.6, sd.u0 = 0.7,
+                                        g.10 = 0.5, sd.u1 = 0, sd.e = 0.5)
+# same values as (1) but without sdX.within
+summary(data_binx_conty)
+fixef(lmer(Y ~ X.cent + X.cluster.means + (1 | Cluster), data = data_binx_conty))
+```
+
+```{r}
+#| fig.width: 8
+
+# 2.1 check distributions of X and Y
+p2.11 <- ggplot(data_binx_conty, aes(x = Y)) + geom_histogram(aes(y = ..density..), bins = 30, fill = "lightblue", color = "black") +
+  geom_density(alpha = 0.5, fill = "blue") + labs(title = "Histogram of Y") +
+  geom_vline(xintercept = mean(data_binx_conty$Y), linetype = "dashed", color = "red")
+p2.12 <- ggplot(data_binx_conty, aes(x = X)) + geom_histogram(aes(y = ..density..), bins = 30, fill = "lightblue", color = "black") +
+  geom_density(alpha = 0.5, fill = "blue") + labs(title = "Histogram of X") +
+  geom_vline(xintercept = mean(data_binx_conty$X), linetype = "dashed", color = "red")
+
+# Reduce to only cluster level variables
+data_binx_conty_level2 <- data_binx_conty %>% select(Cluster, X.cluster.means, X.mean.j, p.X.mean.j, eta, b0, b1) %>%
+  distinct(Cluster, .keep_all = TRUE)
+
+# 2.2 histograms X.mean.j, p.X.mean.j and eta
+p2.21 <- ggplot(data_binx_conty_level2, aes(x = X.mean.j)) + geom_histogram(aes(y = ..density..), bins = 30, fill = "lightblue", color = "black") +
+  geom_density(alpha = 0.5, fill = "blue") + labs(title = "Histogram of X.mean.j") +
+  geom_vline(xintercept = mean(data_binx_conty$X.mean.j), linetype = "dashed", color = "red")
+p2.22 <- ggplot(data_binx_conty_level2, aes(x = p.X.mean.j)) + geom_histogram(aes(y = ..density..), bins = 30, fill = "lightblue", color = "black") +
+  geom_density(alpha = 0.5, fill = "blue") + labs(title = "Histogram of p.X.mean.j") +
+  geom_vline(xintercept = mean(data_binx_conty$p.X.mean.j), linetype = "dashed", color = "red")
+p2.23 <- ggplot(data_binx_conty_level2, aes(x = eta)) + geom_histogram(aes(y = ..density..), bins = 30, fill = "lightblue", color = "black") +
+  geom_density(alpha = 0.5, fill = "blue") + labs(title = "Histogram of eta") +
+  geom_vline(xintercept = mean(data_binx_conty$eta), linetype = "dashed", color = "red")
+# eta is nicely distributed with -3 to 3 range
+
+# when sdX.between is large (e.g, sqrt(4)) the distribution of probabilities 
+# of X and Y are U/bowl shaped (higher density at the edges)
+# when sdX.between is small (e.g., sqrt(0.4)) the distribution of probabilities
+# of X and Y are inverted U shaped (higher density in the center)
+
+# combine plots
+gridExtra::grid.arrange(p2.11, p2.12, p2.21, p2.22, p2.23, ncol = 2)
+
+# 2.3 scatterplot of p.X.mean.j and b0, b0 and eta, estimated cluster mean and p.X.mean.j
+p2.31 <- ggplot(data_binx_conty_level2, aes(x = p.X.mean.j, y = b0)) + geom_point() + labs(title = "Scatterplot of p.X.mean.j and b0") + stat_cor(method = "pearson", digits = 3)
+
+p2.32 <- ggplot(data_binx_conty_level2, aes(x = b0, y = eta)) + geom_point() + labs(title = "Scatterplot of b0 and eta") + stat_cor(method = "pearson", digits = 3)
+p2.33 <- ggplot(data_binx_conty_level2, aes(x = p.X.mean.j, y = X.cluster.means)) + geom_point() + labs(title = "Scatterplot of X.cluster.means and p.X.mean.j", x = "True underlying probability", y = "Observed proportion") + stat_cor(method = "pearson", digits = 3)
+
+# combine plots
+gridExtra::grid.arrange(p2.31, p2.32, p2.33, ncol = 2)
+
+# create overlapping density plots for X.cluster.means and p.X.mean.j
+p2.41 <- ggplot(data_binx_conty_level2, aes(x = X.cluster.means, fill = "X.cluster.means")) + geom_histogram(alpha = 0.8, binwidth = 0.02) +
+  geom_histogram(aes(x = p.X.mean.j, fill = "p.X.mean.j"), alpha = 0.8, binwidth = 0.02) + labs(title = "Density plot of X.cluster.means and p.X.mean.j", x = "value")
+
+# compute difference between estimated and true cluster mean for each cluster
+data_binx_conty_level2$diff <- data_binx_conty_level2$X.cluster.means - data_binx_conty_level2$p.X.mean.j
+
+# plot histogram of differences
+p2.42 <- ggplot(data_binx_conty_level2, aes(x = diff)) + geom_histogram(aes(y = ..density..), bins = 30, fill = "lightblue", color = "black") +
+  geom_density(alpha = 0.5, fill = "blue") + labs(title = "Histogram of differences between estimated and true cluster mean") +
+  geom_vline(xintercept = mean(data_binx_conty_level2$diff, na.rm = TRUE), linetype = "dashed", color = "red")
+
+# combine plots
+gridExtra::grid.arrange(p2.41, p2.42, nrow = 2)
+```
+
+We can see that the distriubtion of p.X.mean.j is indeed more U shaped when sdX.between is large. This resulted in less distinguishable lines in the scatterplot of b0 and eta and a more symmetric funnel shaped scatterplot of p.X.mean.j and b0. Interestly, in the scatterplot of X.cluster.means and p.X.mean.j the points are more tightly grouped and the overlapping histograms indicate more agreement, implying that the estimation of the cluster mean seems to have become more accurate.
+
+Let us now break it with the values g.01 = 2 and both T_total = 5 and T_total = 20 to compare the esimation of the cluster mean
+
+```{r}
+### 2 generate binary X and continuous Y
+data_binx_contyt5 <- glmm_data_generation(N_total = 1000, T_total = 5, predictor.type = "binary", outcome.type = "continuous",
+                                        sdX.within = NA, sdX.between = 0.5, g.00 = 0, g.01 = 2, sd.u0 = 0.7,
+                                        g.10 = 0.5, sd.u1 = 0, sd.e = 0.5)
+
+# only keep level 2 variables
+data_binx_contyt5 <- data_binx_contyt5 %>% select(Cluster, X.cluster.means, X.mean.j, p.X.mean.j, eta, b0, b1) %>%
+  distinct(Cluster, .keep_all = TRUE)
+
+data_binx_contyt20 <- glmm_data_generation(N_total = 1000, T_total = 20, predictor.type = "binary", outcome.type = "continuous",
+                                        sdX.within = NA, sdX.between = 0.5, g.00 = 0, g.01 = 2, sd.u0 = 0.7,
+                                        g.10 = 0.5, sd.u1 = 0, sd.e = 0.5)
+
+# only keep level 2 variables
+data_binx_contyt20 <- data_binx_contyt20 %>% select(Cluster, X.cluster.means, X.mean.j, p.X.mean.j, eta, b0, b1) %>%
+  distinct(Cluster, .keep_all = TRUE)
+
+# scatterplot of p.X.mean.j and b0, b0 and eta, estimated cluster mean and p.X.mean.j
+p2.33t5 <- ggplot(data_binx_contyt5, aes(x = p.X.mean.j, y = X.cluster.means)) + geom_point() + labs(title = "T = 5", x = "True underlying probability", y = "Observed proportion") + xlim(0,1) + ylim(0,1) + stat_cor(method = "pearson", digits = 3)
+p2.33t20 <- ggplot(data_binx_contyt20, aes(x = p.X.mean.j, y = X.cluster.means)) + geom_point() + labs(title = "T = 20", x = "True underlying probability", y = "Observed proportion") + xlim(0,1) + ylim(0,1) + stat_cor(method = "pearson", digits = 3)
+
+# combine plots
+gridExtra::grid.arrange(p2.33t5, p2.33t20, ncol = 2)
+
+# compute difference between estimated and true cluster mean for each cluster
+data_binx_contyt5$diff <- data_binx_contyt5$X.cluster.means - data_binx_contyt5$p.X.mean.j
+
+# plot histogram of differences
+p2.42t5 <- ggplot(data_binx_contyt5, aes(x = diff)) + geom_histogram(aes(y = ..density..), bins = 30, fill = "lightblue", color = "black") +
+  geom_density(alpha = 0.5, fill = "blue") + labs(title = "T = 5") +
+  geom_vline(xintercept = mean(data_binx_contyt5$diff), linetype = "dashed", color = "red") + xlim(-0.6, 0.6)
+
+# compute difference between estimated and true cluster mean for each cluster
+data_binx_contyt20$diff <- data_binx_contyt20$X.cluster.means - data_binx_contyt20$p.X.mean.j
+
+# plot histogram of differences
+p2.42t20 <- ggplot(data_binx_contyt20, aes(x = diff)) + geom_histogram(aes(y = ..density..), bins = 30, fill = "lightblue", color = "black") +
+  geom_density(alpha = 0.5, fill = "blue") + labs(title = "T = 20") +
+  geom_vline(xintercept = mean(data_binx_contyt20$diff), linetype = "dashed", color = "red") + xlim(-0.6, 0.6)
+
+# combine plots
+gridExtra::grid.arrange(p2.42t5, p2.42t20, ncol = 2)
+```
+
+```{r}
+data_binx_contyt20 <- glmm_data_generation(N_total = 5000, T_total = 30, predictor.type = "binary", outcome.type = "continuous",
+                                        sdX.within = NA, sdX.between = 0.5, g.00 = 0, g.01 = 2, sd.u0 = 0.7,
+                                        g.10 = 0.5, sd.u1 = 0, sd.e = 0.5)
+
+str(data_binx_contyt20)
+fixef(lmer(Y ~ X + p.X.mean.j + (1 | Cluster), data = data_binx_contyt20))
+```
+
+
+## Continuous X and Binary Y
+
+```{r}
+### 3 generate continuous X and binary Y ###
+data_contx_biny <- glmm_data_generation(N_total = 1000, T_total = 20, predictor.type = "continuous", outcome.type = "binary",
+                                        sdX.within = 0.25, sdX.between = 0.5, g.00 = 0, g.01 = 1, sd.u0 = 0.7,
+                                        g.10 = 0.5, sd.u1 = 0, sd.e = NA)
+
+summary(data_contx_biny)
+fixef(glmer(Y ~ X.cent + X.cluster.means + (1 | Cluster), data = data_contx_biny, family = binomial(link = "logit")))
+# I lowered the values until the range of eta was approximately -3 to 3, roughly corresponding to probabilities of 0.05 to 0.95.
+# This was done to ensure that the probabilities are not too close to 0 or 1, which would make the logit transformation unstable.
+```
+
+For this scenario, since we have a continuous predictor X, we can set the value of g.01 to be greater than before.
+
+```{r}
+#| fig.width: 8
+
+# 3.1 check distributions of X and Y
+p3.11 <- ggplot(data_contx_biny, aes(x = Y)) + geom_histogram(aes(y = ..density..), bins = 30, fill = "lightblue", color = "black") +
+  geom_density(alpha = 0.5, fill = "blue") + labs(title = "Histogram of Y") +
+  geom_vline(xintercept = mean(data_contx_biny$Y), linetype = "dashed", color = "red")
+p3.12 <- ggplot(data_contx_biny, aes(x = X)) + geom_histogram(aes(y = ..density..), bins = 30, fill = "lightblue", color = "black") +
+  geom_density(alpha = 0.5, fill = "blue") + labs(title = "Histogram of X") +
+  geom_vline(xintercept = mean(data_contx_biny$X), linetype = "dashed", color = "red")
+
+# only keep level 2 variables
+data_contx_biny_level2 <- data_contx_biny %>% select(Cluster, X.cluster.means, X.mean.j, p.X.mean.j, eta, b0, b1) %>%
+  distinct(Cluster, .keep_all = TRUE)
+
+# 3.2 check distributions of eta and p_y
+p3.21 <- ggplot(data_contx_biny_level2, aes(x = eta)) + geom_histogram(aes(y = ..density..), bins = 30, fill = "lightblue", color = "black") +
+  geom_density(alpha = 0.5, fill = "blue") + labs(title = "Histogram of eta") +
+  geom_vline(xintercept = mean(data_contx_biny$eta), linetype = "dashed", color = "red")
+p3.22 <- ggplot(data_contx_biny, aes(x = p.Y)) + geom_histogram(aes(y = ..density..), bins = 30, fill = "lightblue", color = "black") +
+  geom_density(alpha = 0.5, fill = "blue") + labs(title = "Histogram of p_y") +
+  geom_vline(xintercept = mean(data_contx_biny$p.Y), linetype = "dashed", color = "red")
+
+# combine plots
+gridExtra::grid.arrange(p3.11, p3.12, p3.21, p3.22, ncol = 2)
+
+# 3.3 scatterplot of b0 and eta and X.mean.j and X.cluster.means
+p3.31 <- ggplot(data_contx_biny, aes(x = b0, y = eta)) + geom_point() + labs(title = "Scatterplot of b0 and eta") + stat_cor(method = "pearson", digits = 3)
+p3.32 <- ggplot(data_contx_biny, aes(x = X.mean.j, y = X.cluster.means)) + geom_point() + labs(title = "Scatterplot of X.mean.j and X.cluster.means", x = "True cluster mean", y = "Estimated cluster mean") + stat_cor(method = "pearson", digits = 3)
+
+# combine plots
+gridExtra::grid.arrange(p3.31, p3.32, ncol = 2)
+
+# create overlapping density plots for X.cluster.means and p.X.mean.j
+p3.41 <- ggplot(data_contx_biny_level2, aes(x = X.cluster.means, fill = "X.cluster.means")) + geom_density(alpha = 0.5) +
+  geom_density(aes(x = X.mean.j, fill = "p.X.mean.j"), alpha = 0.5) + labs(title = "Density plot of X.cluster.means and X.mean.j", x = "value")
+
+# compute difference between estimated and true cluster mean for each cluster
+data_contx_biny_level2$diff <- data_contx_biny_level2$X.cluster.means - data_contx_biny_level2$X.mean.j
+
+# plot histogram of differences
+p3.42 <- ggplot(data_contx_biny_level2, aes(x = diff)) + geom_histogram(aes(y = ..density..), bins = 30, fill = "lightblue", color = "black") +
+  geom_density(alpha = 0.5, fill = "blue") + labs(title = "Histogram of differences between estimated and true cluster mean") +
+  geom_vline(xintercept = mean(data_contx_biny_level2$diff), linetype = "dashed", color = "red")
+
+# combine plots
+gridExtra::grid.arrange(p3.41, p3.42, nrow = 2)
+```
+
+## Binary X and Y
+
+```{r}
+# 4 generate binary X and Y
+data_binary <- glmm_data_generation(N_total = 1000, T_total = 20, predictor.type = "binary", outcome.type = "binary",
+                                    sdX.within = NA, sdX.between = 0.5, g.00 = 0, g.01 = 0.6, sd.u0 = 0.7,
+                                    g.10 = 0.5, sd.u1 = 0, sd.e = NA)
+
+summary(data_binary)
+fixef(glmer(Y ~ X.cent + X.cluster.means + (1 | Cluster), data = data_binary, family = binomial(link = "logit")))
+# similar to (3), I lowered the values until the range of eta was approximately -3 to 3, roughly corresponding to probabilities of 0.05 to 0.95.
+# In addition, I made sure eta was centered approximately at 0 to ensure balanced probabilities (mean of 0.5)
+```
+
+As with the scenario with a binary predictor X and continuous outcome Y, we have to manage the size of g.01 to ensure that the estimation is stable. A value of 0.6 seems to be fine.
+
+```{r}
+#| fig.width: 8
+
+# 4.1 check distributions of X and Y
+p4.11 <- ggplot(data_binary, aes(x = Y)) + geom_histogram(aes(y = ..density..), bins = 30, fill = "lightblue", color = "black") +
+  geom_density(alpha = 0.5, fill = "blue") + labs(title = "Histogram of Y") +
+  geom_vline(xintercept = mean(data_binary$Y), linetype = "dashed", color = "red")
+p4.12 <- ggplot(data_binary, aes(x = X)) + geom_histogram(aes(y = ..density..), bins = 30, fill = "lightblue", color = "black") +
+  geom_density(alpha = 0.5, fill = "blue") + labs(title = "Histogram of X") +
+  geom_vline(xintercept = mean(data_binary$X), linetype = "dashed", color = "red")
+
+# only keep level 2 variables
+data_binary_level2 <- data_binary %>% select(Cluster, X.cluster.means, X.mean.j, p.X.mean.j, eta, b0, b1) %>%
+  distinct(Cluster, .keep_all = TRUE)
+
+# 4.2 histograms with density overlay for evaluation of probability distributions
+p4.21 <- ggplot(data_binary_level2, aes(x = eta)) + geom_histogram(aes(y = ..density..), bins = 30, fill = "lightblue", color = "black") +
+  geom_density(alpha = 0.5, fill = "blue") + labs(title = "Histogram of eta") +
+  geom_vline(xintercept = mean(data_binary$eta), linetype = "dashed", color = "red")
+p4.22 <- ggplot(data_binary_level2, aes(x = p.X.mean.j)) + geom_histogram(aes(y = ..density..), bins = 30, fill = "lightblue", color = "black") +
+  geom_density(alpha = 0.5, fill = "blue") + labs(title = "Histogram of p.X.mean.j") +
+  geom_vline(xintercept = mean(data_binary$p.X.mean.j), linetype = "dashed", color = "red")
+p4.23 <- ggplot(data_binary, aes(x = p.Y)) + geom_histogram(aes(y = ..density..), bins = 30, fill = "lightblue", color = "black") +
+  geom_density(alpha = 0.5, fill = "blue") + labs(title = "Histogram of p_y") +
+  geom_vline(xintercept = mean(data_binary$p.Y), linetype = "dashed", color = "red")
+
+# when sdX.between is large (e.g, sqrt(4)) the distribution of probabilities 
+# of X and Y are U/bowl shaped (higher density at the edges)
+# when sdX.between is small (e.g., sqrt(0.4)) the distribution of probabilities 
+# of X and Y are inverted U shaped (higher density in the center)
+# when sdX.between is moderate (e.g., sqrt(2)) the distribution of probabilities
+# is more uniform but inverted U shaped for X and slightly U shaped for Y.
+
+# combine plots
+gridExtra::grid.arrange(p4.11, p4.12, p4.21, p4.22, p4.23, ncol = 2)
+
+# 4.3 scatterplots for evaluation of relationship between probabilities and originating variables
+
+# between p.X.mean.j and b0
+p4.31 <- ggplot(data_binary_level2, aes(x = p.X.mean.j, y = b0)) + geom_point() + labs(title = "Scatterplot of p.X.mean.j and b0") + stat_cor(method = "pearson", digits = 3)
+
+# between b0 and eta
+p4.32 <- ggplot(data_binary_level2, aes(x = b0, y = eta)) + geom_point() + labs(title = "Scatterplot of b0 and eta") + stat_cor(method = "pearson", digits = 3)
+
+# between X.cluster.means and p.X.mean.j
+p4.33 <- ggplot(data_binary_level2, aes(x = p.X.mean.j, y = X.cluster.means)) + geom_point() + labs(title = "Scatterplot of X.cluster.means and p.X.mean.j", x = "True underlying probability", y = "Observed proportion") + stat_cor(method = "pearson", digits = 3)
+
+# combine plots
+gridExtra::grid.arrange(p4.31, p4.32, p4.33, ncol = 2)
+
+# Other: plots below only really indicate logit relationship
+# ggplot(data_binary, aes(x = X.mean.j, y = p.X.mean.j)) + geom_point() + labs(title = "Scatterplot of X.mean.j and p.X.mean.j")
+# As expected, we see a a sigmoid curve representing the logit relationship between X.mean.j 
+# and p.X.mean.j. It is more pronounced (different from linear) when sdX.between is large.
+
+# ggplot(data_binary, aes(x = eta, y = p.Y)) + geom_point() + labs(title = "Scatterplot of eta and p_y")
+# As expected again, we see a sigmoid curve representing the logit relationship between eta
+# and p_y. It is more pronounced (different from linear) when sdX.between and sd.u0 are large.
+
+# create overlapping density plots for X.cluster.means and p.X.mean.j
+p4.41 <- ggplot(data_binary_level2, aes(x = X.cluster.means, fill = "X.cluster.means")) + geom_histogram(alpha = 0.8, binwidth = 0.02) +
+  geom_histogram(aes(x = p.X.mean.j, fill = "p.X.mean.j"), alpha = 0.8) + labs(title = "Density plot of X.cluster.means and p.X.mean.j", x = "value")
+
+# compute difference between estimated and true cluster mean for each cluster
+data_binary_level2$diff <- data_binary_level2$X.cluster.means - data_binary_level2$p.X.mean.j
+
+# plot histogram of differences
+p4.42 <- ggplot(data_binary_level2, aes(x = diff)) + geom_histogram(aes(y = ..density..), bins = 30, fill = "lightblue", color = "black") +
+  geom_density(alpha = 0.5, fill = "blue") + labs(title = "Histogram of differences between estimated and true cluster mean") +
+  geom_vline(xintercept = mean(data_binary_level2$diff), linetype = "dashed", color = "red")
+
+# combine plots
+gridExtra::grid.arrange(p4.41, p4.42, nrow = 2)
+```
+
+Let us now simulate the data with a more U shaped distribution for p.X.mean.j by increasing the value of sdX.between from 0.5 to 3.
+
+```{r}
+# 4 generate binary X and Y
+data_binary <- glmm_data_generation(N_total = 1000, T_total = 20, predictor.type = "binary", outcome.type = "binary",
+                                    sdX.within = NA, sdX.between = 3, g.00 = 0, g.01 = 0.6, sd.u0 = 0.7,
+                                    g.10 = 0.5, sd.u1 = 0, sd.e = NA)
+
+summary(data_binary)
+fixef(glmer(Y ~ X.cent + X.cluster.means + (1 | Cluster), data = data_binary, family = binomial(link = "logit")))
+# similar to (3), I lowered the values until the range of eta was approximately -3 to 3, roughly corresponding to probabilities of 0.05 to 0.95.
+# In addition, I made sure eta was centered approximately at 0 to ensure balanced probabilities (mean of 0.5)
+```
+
+```{r}
+#| fig.width: 8
+
+# 4.1 check distributions of X and Y
+p4.11 <- ggplot(data_binary, aes(x = Y)) + geom_histogram(aes(y = ..density..), bins = 30, fill = "lightblue", color = "black") +
+  geom_density(alpha = 0.5, fill = "blue") + labs(title = "Histogram of Y") +
+  geom_vline(xintercept = mean(data_binary$Y), linetype = "dashed", color = "red")
+p4.12 <- ggplot(data_binary, aes(x = X)) + geom_histogram(aes(y = ..density..), bins = 30, fill = "lightblue", color = "black") +
+  geom_density(alpha = 0.5, fill = "blue") + labs(title = "Histogram of X") +
+  geom_vline(xintercept = mean(data_binary$X), linetype = "dashed", color = "red")
+
+# only keep level 2 variables
+data_binary_level2 <- data_binary %>% select(Cluster, X.cluster.means, X.mean.j, p.X.mean.j, eta, b0, b1) %>%
+  distinct(Cluster, .keep_all = TRUE)
+
+# 4.2 histograms with density overlay for evaluation of probability distributions
+p4.21 <- ggplot(data_binary_level2, aes(x = eta)) + geom_histogram(aes(y = ..density..), bins = 30, fill = "lightblue", color = "black") +
+  geom_density(alpha = 0.5, fill = "blue") + labs(title = "Histogram of eta") +
+  geom_vline(xintercept = mean(data_binary$eta), linetype = "dashed", color = "red")
+p4.22 <- ggplot(data_binary_level2, aes(x = p.X.mean.j)) + geom_histogram(aes(y = ..density..), bins = 30, fill = "lightblue", color = "black") +
+  geom_density(alpha = 0.5, fill = "blue") + labs(title = "Histogram of p.X.mean.j") +
+  geom_vline(xintercept = mean(data_binary$p.X.mean.j), linetype = "dashed", color = "red")
+p4.23 <- ggplot(data_binary, aes(x = p.Y)) + geom_histogram(aes(y = ..density..), bins = 30, fill = "lightblue", color = "black") +
+  geom_density(alpha = 0.5, fill = "blue") + labs(title = "Histogram of p_y") +
+  geom_vline(xintercept = mean(data_binary$p.Y), linetype = "dashed", color = "red")
+
+# when sdX.between is large (e.g, sqrt(4)) the distribution of probabilities 
+# of X and Y are U/bowl shaped (higher density at the edges)
+# when sdX.between is small (e.g., sqrt(0.4)) the distribution of probabilities 
+# of X and Y are inverted U shaped (higher density in the center)
+# when sdX.between is moderate (e.g., sqrt(2)) the distribution of probabilities
+# is more uniform but inverted U shaped for X and slightly U shaped for Y.
+
+# combine plots
+gridExtra::grid.arrange(p4.11, p4.12, p4.21, p4.22, p4.23, ncol = 2)
+
+# 4.3 scatterplots for evaluation of relationship between probabilities and originating variables
+
+# between p.X.mean.j and b0
+p4.31 <- ggplot(data_binary_level2, aes(x = p.X.mean.j, y = b0)) + geom_point() + labs(title = "Scatterplot of p.X.mean.j and b0") + stat_cor(method = "pearson", digits = 3)
+
+# between b0 and eta
+p4.32 <- ggplot(data_binary_level2, aes(x = b0, y = eta)) + geom_point() + labs(title = "Scatterplot of b0 and eta") + stat_cor(method = "pearson", digits = 3)
+
+# between X.cluster.means and p.X.mean.j
+p4.33 <- ggplot(data_binary_level2, aes(x = p.X.mean.j, y = X.cluster.means)) + geom_point() + labs(title = "Scatterplot of X.cluster.means and p.X.mean.j", x = "True underlying probability", y = "Observed proportion") + stat_cor(method = "pearson", digits = 3)
+
+# combine plots
+gridExtra::grid.arrange(p4.31, p4.32, p4.33, ncol = 2)
+
+# Other: plots below only really indicate logit relationship
+# ggplot(data_binary, aes(x = X.mean.j, y = p.X.mean.j)) + geom_point() + labs(title = "Scatterplot of X.mean.j and p.X.mean.j")
+# As expected, we see a a sigmoid curve representing the logit relationship between X.mean.j 
+# and p.X.mean.j. It is more pronounced (different from linear) when sdX.between is large.
+
+# ggplot(data_binary, aes(x = eta, y = p.Y)) + geom_point() + labs(title = "Scatterplot of eta and p_y")
+# As expected again, we see a sigmoid curve representing the logit relationship between eta
+# and p_y. It is more pronounced (different from linear) when sdX.between and sd.u0 are large.
+
+# create overlapping density plots for X.cluster.means and p.X.mean.j
+p4.41 <- ggplot(data_binary_level2, aes(x = X.cluster.means, fill = "X.cluster.means")) + geom_histogram(alpha = 0.8, binwidth = 0.02) +
+  geom_histogram(aes(x = p.X.mean.j, fill = "p.X.mean.j"), alpha = 0.8) + labs(title = "Density plot of X.cluster.means and p.X.mean.j", x = "value")
+
+# compute difference between estimated and true cluster mean for each cluster
+data_binary_level2$diff <- data_binary_level2$X.cluster.means - data_binary_level2$p.X.mean.j
+
+# plot histogram of differences
+p4.42 <- ggplot(data_binary_level2, aes(x = diff)) + geom_histogram(aes(y = ..density..), bins = 30, fill = "lightblue", color = "black") +
+  geom_density(alpha = 0.5, fill = "blue") + labs(title = "Histogram of differences between estimated and true cluster mean") +
+  geom_vline(xintercept = mean(data_binary_level2$diff), linetype = "dashed", color = "red")
+
+# combine plots
+gridExtra::grid.arrange(p4.41, p4.42, nrow = 2)
+```
+
+When we only increase the value of sdX.between from 0.5 to 3, we can see that the distribution of p.X.mean.j is indeed more U shaped. However, the distribution of p.Y ist still inverted U shaped. Let us now also increase sd.u0 from 0.7 to 3 and g.01 from 0.6 to 1.
+
+```{r}
+# 4 generate binary X and Y
+data_binary <- glmm_data_generation(N_total = 1000, T_total = 20, predictor.type = "binary", outcome.type = "binary",
+                                    sdX.within = NA, sdX.between = 3, g.00 = 0, g.01 = 1, sd.u0 = 3,
+                                    g.10 = 0.5, sd.u1 = 0, sd.e = NA)
+
+summary(data_binary)
+fixef(glmer(Y ~ X.cent + X.cluster.means + (1 | Cluster), data = data_binary, family = binomial(link = "logit")))
+# similar to (3), I lowered the values until the range of eta was approximately -3 to 3, roughly corresponding to probabilities of 0.05 to 0.95.
+# In addition, I made sure eta was centered approximately at 0 to ensure balanced probabilities (mean of 0.5)
+```
+
+```{r}
+#| fig.width: 8
+
+# 4.1 check distributions of X and Y
+p4.11 <- ggplot(data_binary, aes(x = Y)) + geom_histogram(aes(y = ..density..), bins = 30, fill = "lightblue", color = "black") +
+  geom_density(alpha = 0.5, fill = "blue") + labs(title = "Histogram of Y") +
+  geom_vline(xintercept = mean(data_binary$Y), linetype = "dashed", color = "red")
+p4.12 <- ggplot(data_binary, aes(x = X)) + geom_histogram(aes(y = ..density..), bins = 30, fill = "lightblue", color = "black") +
+  geom_density(alpha = 0.5, fill = "blue") + labs(title = "Histogram of X") +
+  geom_vline(xintercept = mean(data_binary$X), linetype = "dashed", color = "red")
+
+# only keep level 2 variables
+data_binary_level2 <- data_binary %>% select(Cluster, X.cluster.means, X.mean.j, p.X.mean.j, eta, b0, b1) %>%
+  distinct(Cluster, .keep_all = TRUE)
+
+# 4.2 histograms with density overlay for evaluation of probability distributions
+p4.21 <- ggplot(data_binary_level2, aes(x = eta)) + geom_histogram(aes(y = ..density..), bins = 30, fill = "lightblue", color = "black") +
+  geom_density(alpha = 0.5, fill = "blue") + labs(title = "Histogram of eta") +
+  geom_vline(xintercept = mean(data_binary$eta), linetype = "dashed", color = "red")
+p4.22 <- ggplot(data_binary_level2, aes(x = p.X.mean.j)) + geom_histogram(aes(y = ..density..), bins = 30, fill = "lightblue", color = "black") +
+  geom_density(alpha = 0.5, fill = "blue") + labs(title = "Histogram of p.X.mean.j") +
+  geom_vline(xintercept = mean(data_binary$p.X.mean.j), linetype = "dashed", color = "red")
+p4.23 <- ggplot(data_binary, aes(x = p.Y)) + geom_histogram(aes(y = ..density..), bins = 30, fill = "lightblue", color = "black") +
+  geom_density(alpha = 0.5, fill = "blue") + labs(title = "Histogram of p_y") +
+  geom_vline(xintercept = mean(data_binary$p.Y), linetype = "dashed", color = "red")
+
+# when sdX.between is large (e.g, sqrt(4)) the distribution of probabilities 
+# of X and Y are U/bowl shaped (higher density at the edges)
+# when sdX.between is small (e.g., sqrt(0.4)) the distribution of probabilities 
+# of X and Y are inverted U shaped (higher density in the center)
+# when sdX.between is moderate (e.g., sqrt(2)) the distribution of probabilities
+# is more uniform but inverted U shaped for X and slightly U shaped for Y.
+
+# combine plots
+gridExtra::grid.arrange(p4.11, p4.12, p4.21, p4.22, p4.23, ncol = 2)
+
+# 4.3 scatterplots for evaluation of relationship between probabilities and originating variables
+
+# between p.X.mean.j and b0
+p4.31 <- ggplot(data_binary_level2, aes(x = p.X.mean.j, y = b0)) + geom_point() + labs(title = "Scatterplot of p.X.mean.j and b0") + stat_cor(method = "pearson", digits = 3)
+
+# between b0 and eta
+p4.32 <- ggplot(data_binary_level2, aes(x = b0, y = eta)) + geom_point() + labs(title = "Scatterplot of b0 and eta") + stat_cor(method = "pearson", digits = 3)
+
+# between X.cluster.means and p.X.mean.j
+p4.33 <- ggplot(data_binary_level2, aes(x = p.X.mean.j, y = X.cluster.means)) + geom_point() + labs(title = "Scatterplot of X.cluster.means and p.X.mean.j", x = "True underlying probability", y = "Observed proportion") + stat_cor(method = "pearson", digits = 3)
+
+# combine plots
+gridExtra::grid.arrange(p4.31, p4.32, p4.33, ncol = 2)
+
+# Other: plots below only really indicate logit relationship
+# ggplot(data_binary, aes(x = X.mean.j, y = p.X.mean.j)) + geom_point() + labs(title = "Scatterplot of X.mean.j and p.X.mean.j")
+# As expected, we see a a sigmoid curve representing the logit relationship between X.mean.j 
+# and p.X.mean.j. It is more pronounced (different from linear) when sdX.between is large.
+
+# ggplot(data_binary, aes(x = eta, y = p.Y)) + geom_point() + labs(title = "Scatterplot of eta and p_y")
+# As expected again, we see a sigmoid curve representing the logit relationship between eta
+# and p_y. It is more pronounced (different from linear) when sdX.between and sd.u0 are large.
+
+# create overlapping density plots for X.cluster.means and p.X.mean.j
+p4.41 <- ggplot(data_binary_level2, aes(x = X.cluster.means, fill = "X.cluster.means")) + geom_histogram(alpha = 0.8, binwidth = 0.02) +
+  geom_histogram(aes(x = p.X.mean.j, fill = "p.X.mean.j"), alpha = 0.8) + labs(title = "Density plot of X.cluster.means and p.X.mean.j", x = "value")
+
+# compute difference between estimated and true cluster mean for each cluster
+data_binary_level2$diff <- data_binary_level2$X.cluster.means - data_binary_level2$p.X.mean.j
+
+# plot histogram of differences
+p4.42 <- ggplot(data_binary_level2, aes(x = diff)) + geom_histogram(aes(y = ..density..), bins = 30, fill = "lightblue", color = "black") +
+  geom_density(alpha = 0.5, fill = "blue") + labs(title = "Histogram of differences between estimated and true cluster mean") +
+  geom_vline(xintercept = mean(data_binary_level2$diff), linetype = "dashed", color = "red")
+
+# combine plots
+gridExtra::grid.arrange(p4.41, p4.42, nrow = 2)
+```
+
+Now both p.X.mean.j and p.Y are U shaped. Rather than being separate distinct lines in the scatterplot of b0 and eta, there is now a very tight single line.

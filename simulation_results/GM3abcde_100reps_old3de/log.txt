@@ -1,0 +1,180 @@
+starting worker pid=10364 on localhost:11034 at 12:42:18.193
+starting worker pid=17896 on localhost:11034 at 12:42:18.464
+starting worker pid=9856 on localhost:11034 at 12:42:18.722
+starting worker pid=13076 on localhost:11034 at 12:42:18.985
+starting worker pid=8016 on localhost:11034 at 12:42:19.586
+starting worker pid=17352 on localhost:11034 at 12:42:20.137
+starting worker pid=8320 on localhost:11034 at 12:42:20.394
+starting worker pid=17936 on localhost:11034 at 12:42:20.680
+starting worker pid=8600 on localhost:11034 at 12:42:20.931
+starting worker pid=8004 on localhost:11034 at 12:42:21.187
+starting worker pid=19664 on localhost:11034 at 12:42:21.438
+Loading required package: Matrix
+Loading required package: Matrix
+Loading required package: Matrix
+Loading required package: Matrix
+Loading required package: Matrix
+Loading required package: Matrix
+Loading required package: Matrix
+Loading required package: Matrix
+Loading required package: Matrix
+Loading required package: Matrix
+Loading required package: Matrix
+Loading required package: foreach
+Loading required package: foreach
+Loading required package: foreach
+Loading required package: foreach
+Loading required package: rngtools
+Loading required package: rngtools
+Loading required package: rngtools
+Loading required package: rngtools
+Loading required package: foreach
+Loading required package: rngtools
+Loading required package: foreach
+Loading required package: foreach
+Loading required package: rngtools
+Loading required package: rngtools
+Loading required package: foreach
+Loading required package: foreach
+Loading required package: rngtools
+Loading required package: rngtools
+Loading required package: foreach
+Loading required package: foreach
+Loading required package: rngtools
+Loading required package: rngtools
+Starting iteration 10 , GM 3 , N = 1000 , T = 10 
+Starting iteration 20 , GM 3 , N = 1000 , T = 10 
+Starting iteration 30 , GM 3 , N = 1000 , T = 10 
+Starting iteration 40 , GM 3 , N = 1000 , T = 10 
+Starting iteration 50 , GM 3 , N = 1000 , T = 10 
+Starting iteration 60 , GM 3 , N = 1000 , T = 10 
+Starting iteration 70 , GM 3 , N = 1000 , T = 10 
+
+Caught warning in lmer():
+Model failed to converge with max|grad| = 0.0025119 (tol = 0.002, component 1)Starting iteration 80 , GM 3 , N = 1000 , T = 10 
+Starting iteration 90 , GM 3 , N = 1000 , T = 10 
+Starting iteration 100 , GM 3 , N = 1000 , T = 10 
+Starting iteration 10 , GM 3 , N = 1000 , T = 30 
+
+Caught warning in lmer():
+Model failed to converge with max|grad| = 0.00227212 (tol = 0.002, component 1)Starting iteration 20 , GM 3 , N = 1000 , T = 30 
+Starting iteration 30 , GM 3 , N = 1000 , T = 30 
+Starting iteration 40 , GM 3 , N = 1000 , T = 30 
+Starting iteration 50 , GM 3 , N = 1000 , T = 30 
+Starting iteration 60 , GM 3 , N = 1000 , T = 30 
+
+Caught warning in lmer():
+Model failed to converge with max|grad| = 0.00211819 (tol = 0.002, component 1)Starting iteration 70 , GM 3 , N = 1000 , T = 30 
+Starting iteration 80 , GM 3 , N = 1000 , T = 30 
+Starting iteration 90 , GM 3 , N = 1000 , T = 30 
+
+Caught warning in lmer():
+Model failed to converge with max|grad| = 0.00291393 (tol = 0.002, component 1)Starting iteration 100 , GM 3 , N = 1000 , T = 30 
+Starting iteration 10 , GM 3a , N = 1000 , T = 10 
+Starting iteration 20 , GM 3a , N = 1000 , T = 10 
+Starting iteration 30 , GM 3a , N = 1000 , T = 10 
+Starting iteration 40 , GM 3a , N = 1000 , T = 10 
+Starting iteration 50 , GM 3a , N = 1000 , T = 10 
+Starting iteration 60 , GM 3a , N = 1000 , T = 10 
+Starting iteration 70 , GM 3a , N = 1000 , T = 10 
+Starting iteration 80 , GM 3a , N = 1000 , T = 10 
+Starting iteration 90 , GM 3a , N = 1000 , T = 10 
+Starting iteration 100 , GM 3a , N = 1000 , T = 10 
+Starting iteration 10 , GM 3a , N = 1000 , T = 30 
+Starting iteration 20 , GM 3a , N = 1000 , T = 30 
+Starting iteration 30 , GM 3a , N = 1000 , T = 30 
+Starting iteration 40 , GM 3a , N = 1000 , T = 30 
+Starting iteration 50 , GM 3a , N = 1000 , T = 30 
+Starting iteration 60 , GM 3a , N = 1000 , T = 30 
+Starting iteration 70 , GM 3a , N = 1000 , T = 30 
+Starting iteration 80 , GM 3a , N = 1000 , T = 30 
+Starting iteration 90 , GM 3a , N = 1000 , T = 30 
+Starting iteration 100 , GM 3a , N = 1000 , T = 30 
+Starting iteration 10 , GM 3b , N = 1000 , T = 10 
+Starting iteration 20 , GM 3b , N = 1000 , T = 10 
+Starting iteration 30 , GM 3b , N = 1000 , T = 10 
+Starting iteration 40 , GM 3b , N = 1000 , T = 10 
+Starting iteration 50 , GM 3b , N = 1000 , T = 10 
+Starting iteration 60 , GM 3b , N = 1000 , T = 10 
+Starting iteration 70 , GM 3b , N = 1000 , T = 10 
+Starting iteration 80 , GM 3b , N = 1000 , T = 10 
+Starting iteration 90 , GM 3b , N = 1000 , T = 10 
+Starting iteration 100 , GM 3b , N = 1000 , T = 10 
+Starting iteration 10 , GM 3b , N = 1000 , T = 30 
+Starting iteration 20 , GM 3b , N = 1000 , T = 30 
+Starting iteration 30 , GM 3b , N = 1000 , T = 30 
+Starting iteration 40 , GM 3b , N = 1000 , T = 30 
+Starting iteration 50 , GM 3b , N = 1000 , T = 30 
+Starting iteration 60 , GM 3b , N = 1000 , T = 30 
+Starting iteration 70 , GM 3b , N = 1000 , T = 30 
+Starting iteration 80 , GM 3b , N = 1000 , T = 30 
+Starting iteration 90 , GM 3b , N = 1000 , T = 30 
+Starting iteration 100 , GM 3b , N = 1000 , T = 30 
+Starting iteration 10 , GM 3c , N = 1000 , T = 10 
+
+Caught warning in lmer():
+Model failed to converge with max|grad| = 0.00290199 (tol = 0.002, component 1)Starting iteration 20 , GM 3c , N = 1000 , T = 10 
+Starting iteration 30 , GM 3c , N = 1000 , T = 10 
+
+Caught warning in lmer():
+Model failed to converge with max|grad| = 0.00240169 (tol = 0.002, component 1)Starting iteration 40 , GM 3c , N = 1000 , T = 10 
+
+Caught warning in lmer():
+Model failed to converge with max|grad| = 0.00355512 (tol = 0.002, component 1)Starting iteration 50 , GM 3c , N = 1000 , T = 10 
+Starting iteration 60 , GM 3c , N = 1000 , T = 10 
+Starting iteration 70 , GM 3c , N = 1000 , T = 10 
+Starting iteration 80 , GM 3c , N = 1000 , T = 10 
+Starting iteration 90 , GM 3c , N = 1000 , T = 10 
+Starting iteration 100 , GM 3c , N = 1000 , T = 10 
+Starting iteration 10 , GM 3c , N = 1000 , T = 30 
+Starting iteration 20 , GM 3c , N = 1000 , T = 30 
+Starting iteration 30 , GM 3c , N = 1000 , T = 30 
+Starting iteration 40 , GM 3c , N = 1000 , T = 30 
+Starting iteration 50 , GM 3c , N = 1000 , T = 30 
+Starting iteration 60 , GM 3c , N = 1000 , T = 30 
+Starting iteration 70 , GM 3c , N = 1000 , T = 30 
+Starting iteration 80 , GM 3c , N = 1000 , T = 30 
+Starting iteration 90 , GM 3c , N = 1000 , T = 30 
+Starting iteration 100 , GM 3c , N = 1000 , T = 30 
+Starting iteration 10 , GM 3d , N = 1000 , T = 10 
+Starting iteration 20 , GM 3d , N = 1000 , T = 10 
+Starting iteration 30 , GM 3d , N = 1000 , T = 10 
+Starting iteration 40 , GM 3d , N = 1000 , T = 10 
+Starting iteration 50 , GM 3d , N = 1000 , T = 10 
+Starting iteration 60 , GM 3d , N = 1000 , T = 10 
+Starting iteration 70 , GM 3d , N = 1000 , T = 10 
+Starting iteration 80 , GM 3d , N = 1000 , T = 10 
+Starting iteration 90 , GM 3d , N = 1000 , T = 10 
+Starting iteration 100 , GM 3d , N = 1000 , T = 10 
+Starting iteration 10 , GM 3d , N = 1000 , T = 30 
+Starting iteration 20 , GM 3d , N = 1000 , T = 30 
+Starting iteration 30 , GM 3d , N = 1000 , T = 30 
+Starting iteration 40 , GM 3d , N = 1000 , T = 30 
+
+Caught warning in lmer():
+Model failed to converge with max|grad| = 0.00583659 (tol = 0.002, component 1)Starting iteration 50 , GM 3d , N = 1000 , T = 30 
+Starting iteration 60 , GM 3d , N = 1000 , T = 30 
+Starting iteration 70 , GM 3d , N = 1000 , T = 30 
+Starting iteration 80 , GM 3d , N = 1000 , T = 30 
+Starting iteration 90 , GM 3d , N = 1000 , T = 30 
+Starting iteration 100 , GM 3d , N = 1000 , T = 30 
+Starting iteration 10 , GM 3e , N = 1000 , T = 10 
+Starting iteration 20 , GM 3e , N = 1000 , T = 10 
+Starting iteration 30 , GM 3e , N = 1000 , T = 10 
+Starting iteration 40 , GM 3e , N = 1000 , T = 10 
+Starting iteration 50 , GM 3e , N = 1000 , T = 10 
+Starting iteration 60 , GM 3e , N = 1000 , T = 10 
+Starting iteration 70 , GM 3e , N = 1000 , T = 10 
+Starting iteration 80 , GM 3e , N = 1000 , T = 10 
+Starting iteration 90 , GM 3e , N = 1000 , T = 10 
+Starting iteration 100 , GM 3e , N = 1000 , T = 10 
+Starting iteration 10 , GM 3e , N = 1000 , T = 30 
+Starting iteration 20 , GM 3e , N = 1000 , T = 30 
+Starting iteration 30 , GM 3e , N = 1000 , T = 30 
+Starting iteration 40 , GM 3e , N = 1000 , T = 30 
+Starting iteration 50 , GM 3e , N = 1000 , T = 30 
+Starting iteration 60 , GM 3e , N = 1000 , T = 30 
+Starting iteration 70 , GM 3e , N = 1000 , T = 30 
+Starting iteration 80 , GM 3e , N = 1000 , T = 30 
+Starting iteration 90 , GM 3e , N = 1000 , T = 30 
+Starting iteration 100 , GM 3e , N = 1000 , T = 30 

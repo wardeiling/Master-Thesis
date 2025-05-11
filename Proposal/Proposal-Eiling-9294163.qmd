@@ -1,0 +1,111 @@
+---
+title: "Estimation of Effects of Endogenous Time-Varying Covariates: A Comparison Of Multilevel Linear Modeling and Generalized Estimating Equations"
+subtitle: "PROPOSAL" 
+author: 
+  - name: "Ward B. Eiling (9294163)"
+    orcid: "0009-0007-8114-9497"
+    affiliation: 
+      - name: "Utrecht University"
+      - department: "Methodology and Statistics"
+date: "Sep 28, 2024"
+date-format: long
+format: 
+  pdf:
+    papersize: a4
+    keep-tex: true
+    # toc: true
+    # number-sections: true
+    colorlinks: true
+    indent: true
+    header-includes:
+      - \usepackage{fancyhdr}
+      - \usepackage{amsmath}
+      - \usepackage{float}
+    geometry:
+      - top=2.5cm
+      - bottom=2.5cm
+      - left=2.5cm
+      - right=2.5cm
+    mainfont: Latin Modern Roman
+    sansfont: Latin Modern Roman
+    linestretch: 2
+    fontsize: 12pt
+    template-partials: 
+      - "before-body.tex"
+bibliography: references.bib
+link-citations: true
+csl: apa.csl
+execute:
+  message: false
+  warning: false
+fig-cap-location: top
+---
+
+```{=tex}
+\pagestyle{fancy}
+  \fancyhead{}
+  \fancyhead[L]{PROPOSAL}
+
+\floatplacement{figure}{H} % Place all figures exactly "here"
+```
+```{r, include=FALSE}
+library(papaja)
+library(rlang)
+library(rmarkdown)
+library(knitr)
+```
+
+\newpage
+
+# Introduction
+
+<!-- -   Start with a paragraph describing a problem in the real-life world (so that a BoS member not familiar with statistics understands why you are pursuing research in this direction); -->
+
+Across a wide range of disciplines, researchers analyze clustered longitudinal, observational data to investigate prospective causal relationships between variables. When analyzing such data, the psychological sciences most commonly resort to the multilevel linear model [MLM, @mcneish2017], which---in the context of longitudinal data analysis---separates observed variance into stable between-person differences and within-person fluctuations [@hamaker2020]. Conversely, other fields, such as biostatistics and econometrics often favour generalized estimating equations (GEE) for the analysis of longitudinal data [@mcneish2017]. Despite some cross-disciplinary efforts to compare these methods [@muth2016; @mcneish2017; @yan2013], their scarcity may leave researchers with limited guidance in choosing the most suitable approach for their application.
+
+<!-- -   Then, add a paragraph describing what is known in the literature; -->
+
+Recent evidence has highlighted an issue present in both methods, where controlling for *time-varying endogenous covariates* may lead to biased causal estimates [@qian2020; @pepe1994]. A time-varying covariate is *endogenous* if it is directly or indirectly influenced by prior treatment or outcome, meaning its value may be determined by earlier stages of the process [@qian2020]. As a result of including these covariates in the mentioned models, ordinary interpretations of the coefficients are no longer valid [@qian2020, p. 3]. According to @diggle2002, this issue not only pertains GEE and MLM, but *all* longitudinal data analysis methods. 
+
+However, due to a divide between the disciplines that employ these methods, such critiques of the MLM appear to have largely failed to reach the applied researcher in psychology. One specific reason might be that the technical jargon in other disciplines makes it difficult for researchers to recognize when and how these issues emerge[^1]. As a result, researchers may address related problems in disconnected literatures but fail to understand each other. For instance, while the MLM literature emphasizes on the distinction between different centering methods and the effect of cross-level interactions on parameter interpretations [e.g., @hamaker2020], the GEE literature appears to focus more on the marginal and conditional interpretations of model parameters [e.g., @pepe1994].
+
+[^1]: For instance, the term 'endogeneity' in econometrics, while related, has a distinct meaning from that of an endogenous variable, which can lead to confusion.
+
+<!-- -   Also, describe what is not known and which gap you will address in your thesis; End with a clear research question and, if applicable, your hypothesis (for confirmatory research questions – it should be a testable hypothesis) or expectations (for exploratory research questions – can be much vaguer because of the explorative nature of the question). -->
+
+Through a cross-fertilization of these literatures, this project aims to (1) explain the issue of including endogenous covariates in analyses involving GEE, MLM and DSEM (a widely used framework in the social sciences based on MLM) in a psychological context and (2) establish guidelines on how researchers can prevent this issue in their longitudinal data analysis. Accordingly, the following research question will be addressed: *to what extent does the inclusion of endogenous variables in multilevel linear models and generalized estimating equations result in biased estimates?* In line with the literature [@diggle2002; @qian2020; @pepe1994], we expect that the inclusion of endogenous time-varying covariates in longitudinal data analyses may result in bias that—depending on the circumstances—can promote the potential for faulty inferences.
+
+<!-- It would be interesting to compare the RI-CLPM to the CLPM, as the former is said to be superior in addressing certain confounders, but could it also be more susceptible to time-varying moderators? -->
+
+\newpage
+
+# Analytic Strategy
+
+<!-- -   Describe how you are planning to answer your research question and how to test your hypothesis or explore your question. Be as specific as possible and preferably use an illustration to help the reader understand how all your plans connect. -->
+
+<!-- -   Also, include information on what data you are going to use and if you already have ethical consent. If you do already have consent, putting the FETC case number on your front page also suffices. -->
+
+<!-- -   Describe what software/packages you will use. -->
+
+To uncover the undesirable effects of endogenous covariates and investigate robustness against these effects, we will carry out simulations in which data will be generated according to several increasingly complex scenarios. These scenarios will be visually represented using directed acyclic graphs and analyzed using GEE, MLM and DSEM. We will start out with a scenario of the basic MLM---where a time-varying outcome $Y$ is regressed on a single time-varying predictor $X$ and in the presence of stable between person differences in the intercept---and increase the complexity until we reach the scenario that includes a time-varying endogenous covariate. The primary interest of this simulation study is the comparative performance of different specifications of the MLM, GEE and DSEM in terms of bias in the estimation of the effect of $X$ to $Y$. The secondary interest is the efficiency in mean squared error (MSE). We consider varying number of time points and sample sizes.
+
+Statistical analyses pertaining to the GEE and basic MLM will be performed in `R`, version 4.2.0 [@rcoreteam2022]. To fit the GEE, the R-packages `geepack` [@halekoh2006] and `gee` [@carey2024] will evaluate several different working correlation structures, including independent, exchangeable, AR(1) and unstructured. To fit the basic MLM, the R-package `lme4` [@bates2015] will be employed, where we will both evaluate restricted maximum likelihood estimation and ordinary maximum likelihood estimation. Extensions of the MLM from the DSEM framework will be fitted using `Mplus`, version 8.10 [@muthén1998].
+
+\newpage
+
+# References
+
+<!-- -   Add a reference list for the literature used in the text – you can use the formatting style of the chosen journal, but this is not mandatory. -->
+
+<!-- -   Add about 20 extra references that will be used for the thesis (you do not have to have read these already). -->
+
+<!-- I have enough resources -->
+
+<!-- ::: {#refs} -->
+
+<!-- ::: -->
+
+---
+nocite: |
+  @*
+---

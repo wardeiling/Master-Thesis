@@ -1,0 +1,111 @@
+---
+format: # docx
+  pdf:
+    papersize: a4
+    fig-pos: 'H'
+    tbl-pos: 'H'
+    # keep-tex: true
+    # toc: true
+    number-sections: true
+    colorlinks: true
+    indent: true
+    header-includes:
+      - \usepackage{fancyhdr}
+      - \usepackage{amsmath}
+      - \usepackage{multirow}
+      - \usepackage{booktabs}
+      - \usepackage{pifont}
+      # - \usepackage{float}
+      # - \usepackage{tikz}
+      # - \usepackage{subcaption}
+    geometry:
+      - top=2.5cm
+      - bottom=2.5cm
+      - left=2.5cm
+      - right=2.5cm
+    mainfont: Latin Modern Roman
+    sansfont: Latin Modern Roman
+    linestretch: 2
+    fontsize: 11pt
+    # no page numbers
+link-citations: true
+header-includes:
+      - \pagestyle{empty}
+csl: apa.csl
+execute:
+  message: false
+  warning: false
+fig-cap-location: top
+---
+
+```{r}
+#| label: Packages
+#| echo: false
+
+# for knitting the document
+library(papaja)
+library(rlang)
+library(rmarkdown)
+library(knitr)
+library(kableExtra)
+library(here)
+# for general data manipulation and plotting
+library(tidyverse)
+# for estimation
+# library(lme4)
+# library(geepack)
+# for diagrams
+library(dagitty)
+library(ggdag)
+library(DiagrammeR)
+library(magick)
+library(pdftools)
+```
+
+::: {#tbl-simulation-results}
+```{r}
+#| label: simulation-results
+#| echo: false
+#| cache: true
+#| escape: false
+
+results <- readRDS(here("simulation_results/GM123ad-1000reps-researchreport-cleanscript_nrep10000/results_beta0_bias_sd_success.rds"))
+
+# remove gee_ex and gee_ar1 and gee_ind
+results <- results[, !grepl("gee_ex|gee_ar1|gee_ind", colnames(results))]
+# remove GM2
+results <- results[results$GM != 2, ]
+# rename GM = 3 to "G", GM = 1 to "A", GM = 3a to "B" and GM = 3d to "C"
+results$GM <- ifelse(results$GM == 3, "G", 
+                     ifelse(results$GM == 1, "A", 
+                            ifelse(results$GM == "3a", "B", 
+                                   ifelse(results$GM == "3d", "C", NA))))
+
+# compute MC-SE
+results <- results %>%
+  mutate(mc_se = mlm_beta0_sd / sqrt(10000))
+
+# reorder columns
+results <- results[, c(1:5,7,6)]
+
+# reset row numbers
+rownames(results) <- NULL
+# reorder so that model GM is in the order G, A, B, C
+
+results <- results[c(7:12, 1:6, 13:24), ]
+
+# Create a kableExtra table with a second header
+kableExtra::kbl(results, "latex", booktabs = T,  escape = F, digits = c(0, 0, 0, 3, 3, 3, 3), col.names = c("GM", "T", "N", "Bias", "SD", "MC-SE", "SR"), row.names = FALSE) %>%
+  add_header_above(c(" " = 3, '$\\\\beta_0$' = 3, " " = 1), escape = F) %>%
+  kable_styling(full_width = TRUE) %>%
+  column_spec(1, width = "5em") %>%
+  collapse_rows(columns = 1:2, valign = "middle") %>%
+  kableExtra::kable_classic_2()
+```
+
+\vspace{2em}
+
+*Note.* GM: generative model. T: number of timepoints. N: sample size. Bias: $\frac{1}{n_{\text{sim}}} \sum\limits_{i = 1}^{n_{\text{sim}}} \hat{\beta}_{0i} - \beta_{0}$, which represents the difference between the mean of the estimated parameter values $\hat{\beta}_{0}$ and the prespecified treatment effect $\beta_{0} = 1$. SD: $\sqrt{\frac{1}{(n_{\text{sim}} - 1)} \sum\limits_{i=1}^{n_{\text{sim}}} \left(\hat{\beta}_{0i} - \bar{\beta}_{0}\right)^2}$, which is the standard deviation of estimates across replications. MC-SE: $\frac{\text{SD}}{\sqrt{n_{\text{sim}}}}$, which represents the Monte Carlo SE of bias. SR: model fitting success rate. 
+
+Treatment effect bias for Generative Models G, A, B and C over 10,000 replications
+:::
