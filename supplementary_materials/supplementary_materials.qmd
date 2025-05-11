@@ -1,0 +1,443 @@
+---
+title: "Online Supplementary Materials"
+author: "Ward B. Eiling"
+date: "2024-05-11"
+date-modified: last-modified
+format: 
+  html:
+    toc: true
+    toc-location: left
+    toc-depth: 3
+    toc-expand: 3
+    number-sections: true
+    # embed-resources: false
+    # default-image-extension: svg
+  pdf:
+    fig-pos: 'h'
+    # toc: true
+    # toc-depth: 5
+    # number-sections: true
+    # embed-resources: true
+    # default-image-extension: svg
+execute:
+  message: false
+  warning: false
+fig-cap-location: top
+---
+
+## Introduction
+
+This document contains the supplementary materials for the manuscript "From MLM to GEE: Revisiting Within- and Between-Person Debate with Binary Predictors and Outcomes". Here we will provide additional explanations on (1) the equivalence of the hybrid method and Mundlak's contextual method, (2) the handling of extreme parameter estimates in GEEs. All code is written in R and can be run in RStudio. 
+
+```{r}
+library(purrr) # for functional programming
+library(dplyr) # for data manipulation
+library(tidyr) # for data manipulation
+library(stringr) # for string manipulation
+library(ggplot2) # for plotting
+library(here) # for file paths
+```
+
+First, we need to load the simulation results. We will first load the results from Part 1 that includes DGMs 2-4, and then the results from Part 2 that includes DGM 1 (continuous predictor and outcome). The saved results are transformed and combined into a single data frame. The results are saved in the `simulation_results` folder.
+
+```{r}
+### PART 1: DGM 2 (binary X and continuous Y), DGM 3 (continuous X and binary Y) and DGM 4 (binary X and Y) ----
+runname <- "April10_fullsimulation"
+
+# retrieve the design and parameterization
+settings <- readRDS(here(paste0("simulation_results/", runname, "/settings.RDS")))
+design <- settings$design
+parametrization <- settings$parametrization
+nsim <- settings$nsim
+
+# repeat each row of the design nsim times and create replication index
+design_long <- design[rep(1:nrow(design), each = nsim), ] %>%
+  mutate(replication = rep(1:nsim, times = nrow(design)),
+         design_id = rep(1:nrow(design), each = nsim))
+
+# initialize list to store simulation results
+results_list <- list()
+
+# loop over the design
+for (idesign in 1:nrow(design)) {
+  
+  ### Extract parameter values from design
+  g.00 <- design$g.00[idesign]
+  g.01 <- design$g.01[idesign]
+  g.10 <- design$g.10[idesign]
+  
+  # determine the beta values based on the parametrization
+  if (parametrization == "centeredX") {
+    beta_between <- g.01
+    beta_within <- g.10
+    beta_contextual <- beta_between - beta_within
+  } else if (parametrization == "mundlak") {
+    beta_contextual <- g.01
+    beta_within <- g.10
+    beta_between <- beta_within + beta_contextual
+  }
+  
+  # read in the results
+  parallel_results_setting <- readRDS(here(paste0("simulation_results/", runname, "/", idesign, ".RDS")))
+  
+  # unlist the lists inside the list
+  df <- map_dfr(parallel_results_setting, function(rep) {
+    map_dfr(rep, ~ as.data.frame(as.list(.x)), .id = "model")
+  }, .id = "replication")
+  
+  df_wide <- df %>%
+    select(-X.Intercept.) %>%
+    pivot_wider(id_cols = replication, names_from = model, values_from = c("X", "X.cent", "X.cluster.means"), names_glue = "{model}_{.value}") %>%
+    select(where(~ !all(is.na(.)))) %>%
+    mutate(replication = as.integer(replication))  # ensure numeric
+  
+  # compute bias
+  df_wide2 <- df_wide %>%
+    mutate(l1_g.10_bias = l1_X - beta_within,
+           l2_g.10_bias = l2_X.cent - beta_within,
+           l3a_g.10_bias = l3a_X.cent - beta_within,
+           l3a_g.01_bias = l3a_X.cluster.means - beta_between,
+           l4_g.10_bias = l4_X - beta_within,
+           l4_g.01_bias = l4_X.cluster.means - beta_contextual,
+           # also for GEE
+           # parametrization 1
+           g.independence1_g.10_bias = g.independence1_X - beta_within,
+           g.exchangeable1_g.10_bias = g.exchangeable1_X - beta_within,
+           g.ar11_g.10_bias = g.ar11_X - beta_within,
+           # parametrization 2
+           g.independence2_g.10_bias = g.independence2_X.cent - beta_within,
+           g.exchangeable2_g.10_bias = g.exchangeable2_X.cent - beta_within,
+           g.ar12_g.10_bias = g.ar12_X.cent - beta_within,
+           # parametrization 3
+           g.independence3_g.10_bias = g.independence3_X.cent - beta_within,
+           g.independence3_g.01_bias = g.independence3_X.cluster.means - beta_between,
+           g.exchangeable3_g.10_bias = g.exchangeable3_X.cent - beta_within,
+           g.exchangeable3_g.01_bias = g.exchangeable3_X.cluster.means - beta_between,
+           g.ar13_g.10_bias = g.ar13_X.cent - beta_within,
+           g.ar13_g.01_bias = g.ar13_X.cluster.means - beta_between,
+           # parametrization 4
+           g.independence4_g.10_bias = g.independence4_X - beta_within,
+           g.independence4_g.01_bias = g.independence4_X.cluster.means - beta_contextual,
+           g.exchangeable4_g.10_bias = g.exchangeable4_X - beta_within,
+           g.exchangeable4_g.01_bias = g.exchangeable4_X.cluster.means - beta_contextual,
+           g.ar14_g.10_bias = g.ar14_X - beta_within,
+           g.ar14_g.01_bias = g.ar14_X.cluster.means - beta_contextual,
+           # add design_id for merging later
+           design_id = idesign) 
+  
+  # store the result
+  results_list[[idesign]] <- df_wide2
+}
+
+# combine all results
+sim_results_all <- bind_rows(results_list)
+
+# merge with the long design
+final_df <- left_join(design_long, sim_results_all, by = c("design_id", "replication"))
+
+# save the final data frame
+saveRDS(final_df, here(paste0("simulation_results/", runname, "/plotting_bias_df1.RDS")))
+
+### PART 2: DGM 1 (continuous X and Y) ----
+
+runname <- "April17_fullsimulation_contXY"
+
+# retrieve the design and parameterization
+settings <- readRDS(here(paste0("simulation_results/", runname, "/settings.RDS")))
+design <- settings$design
+parametrization <- settings$parametrization
+nsim <- settings$nsim
+
+# repeat each row of the design nsim times and create replication index
+design_long <- design[rep(1:nrow(design), each = nsim), ] %>%
+  mutate(replication = rep(1:nsim, times = nrow(design)),
+         design_id = rep(1:nrow(design), each = nsim) + 378)
+
+# initialize list to store simulation results
+results_list <- list()
+
+# loop over the design
+for (idesign in 1:nrow(design)) {
+  
+  ### Extract parameter values from design
+  g.00 <- design$g.00[idesign]
+  g.01 <- design$g.01[idesign]
+  g.10 <- design$g.10[idesign]
+  
+  # determine the beta values based on the parametrization
+  if (parametrization == "centeredX") {
+    beta_between <- g.01
+    beta_within <- g.10
+    beta_contextual <- beta_between - beta_within
+  } else if (parametrization == "mundlak") {
+    beta_contextual <- g.01
+    beta_within <- g.10
+    beta_between <- beta_within + beta_contextual
+  }
+  
+  # read in the results
+  parallel_results_setting <- readRDS(here(paste0("simulation_results/", runname, "/", idesign, ".RDS")))
+  
+  # unlist the lists inside the list
+  df <- map_dfr(parallel_results_setting, function(rep) {
+    map_dfr(rep, ~ as.data.frame(as.list(.x)), .id = "model")
+  }, .id = "replication")
+  
+  df_wide <- df %>%
+    select(-X.Intercept.) %>%
+    pivot_wider(id_cols = replication, names_from = model, values_from = c("X", "X.cent", "X.cluster.means"), names_glue = "{model}_{.value}") %>%
+    select(where(~ !all(is.na(.)))) %>%
+    mutate(replication = as.integer(replication))  # ensure numeric
+  
+  # compute bias
+  df_wide2 <- df_wide %>%
+    mutate(l1_g.10_bias = l1_X - beta_within,
+           l2_g.10_bias = l2_X.cent - beta_within,
+           l3a_g.10_bias = l3a_X.cent - beta_within,
+           l3a_g.01_bias = l3a_X.cluster.means - beta_between,
+           l4_g.10_bias = l4_X - beta_within,
+           l4_g.01_bias = l4_X.cluster.means - beta_contextual,
+           # also for GEE
+           # parametrization 1
+           g.independence1_g.10_bias = g.independence1_X - beta_within,
+           g.exchangeable1_g.10_bias = g.exchangeable1_X - beta_within,
+           g.ar11_g.10_bias = g.ar11_X - beta_within,
+           # parametrization 2
+           g.independence2_g.10_bias = g.independence2_X.cent - beta_within,
+           g.exchangeable2_g.10_bias = g.exchangeable2_X.cent - beta_within,
+           g.ar12_g.10_bias = g.ar12_X.cent - beta_within,
+           # parametrization 3
+           g.independence3_g.10_bias = g.independence3_X.cent - beta_within,
+           g.independence3_g.01_bias = g.independence3_X.cluster.means - beta_between,
+           g.exchangeable3_g.10_bias = g.exchangeable3_X.cent - beta_within,
+           g.exchangeable3_g.01_bias = g.exchangeable3_X.cluster.means - beta_between,
+           g.ar13_g.10_bias = g.ar13_X.cent - beta_within,
+           g.ar13_g.01_bias = g.ar13_X.cluster.means - beta_between,
+           # parametrization 4
+           g.independence4_g.10_bias = g.independence4_X - beta_within,
+           g.independence4_g.01_bias = g.independence4_X.cluster.means - beta_contextual,
+           g.exchangeable4_g.10_bias = g.exchangeable4_X - beta_within,
+           g.exchangeable4_g.01_bias = g.exchangeable4_X.cluster.means - beta_contextual,
+           g.ar14_g.10_bias = g.ar14_X - beta_within,
+           g.ar14_g.01_bias = g.ar14_X.cluster.means - beta_contextual,
+           # add design_id for merging later
+           design_id = idesign) 
+  
+  # store the result
+  results_list[[idesign]] <- df_wide2
+}
+
+# combine all results
+sim_results_all <- bind_rows(results_list) %>%
+  mutate(design_id = design_id + 378) # adjust design_id to match the first simulation
+
+# merge with the long design
+final_df <- left_join(design_long, sim_results_all, by = c("design_id", "replication"))
+
+# save the final data frame
+saveRDS(final_df, here(paste0("simulation_results/", runname, "/plotting_bias_df2.RDS")))
+```
+
+Let us now combine the results from both simulations
+
+```{r}
+### COMBINE RESULTS FROM BOTH SIMULATIONS ### ----
+
+# read in the first simulation results
+runname1 <- "April10_fullsimulation"
+final_df1 <- readRDS(here(paste0("simulation_results/", runname1, "/plotting_bias_df1.RDS")))
+# read in the second simulation results
+runname2 <- "April17_fullsimulation_contXY"
+final_df2 <- readRDS(here(paste0("simulation_results/", runname2, "/plotting_bias_df2.RDS")))
+
+# combine the two data frames
+final_df <- bind_rows(final_df1, final_df2)
+# save the final data frame
+newrunname <- "April18_fullsimulation_combined"
+saveRDS(final_df, here(paste0("simulation_results/", newrunname, "/plotting_bias_df.RDS")))
+```
+
+
+## Equivalence of Hybrid and Mundlak's Contextual Method
+
+```{r}
+
+```
+
+
+
+
+## Appendix: Handling of Extreme Parameter Estimates in GEEs
+
+For GEE, we found extreme values.
+
+```{r}
+# checking how many GEEs yielded extreme values
+runname <- "April18_fullsimulation_combined"
+
+# read in the final data frame
+final_df <- readRDS(here(paste0("simulation_results/", runname, "/plotting_bias_df.RDS")))
+
+# scenario 1
+GEE_check_df <- final_df %>%
+  # remove columns ending with "g.01", "X", "X.cent", "X.cluster.means"
+  select(-ends_with("_g.01_bias"), -ends_with("_X"), -ends_with("_X.cent"), -ends_with("_X.cluster.means")) %>%
+  pivot_longer(cols = ends_with("_g.10_bias"),
+               names_to = "model", values_to = "beta1_bias") %>%
+  mutate(
+    model = str_remove(model, "_g.10_bias"),
+    model = factor(model, levels = c("l1", "l2", "l3a", "l4", 
+                                     "g.exchangeable1", "g.ar11", "g.independence1",
+                                     "g.exchangeable2", "g.ar12", "g.independence2", 
+                                     "g.exchangeable3", "g.ar13", "g.independence3", 
+                                     "g.exchangeable4", "g.ar14", "g.independence4"))) %>%
+  # select only the GEE models
+  filter(model %in% c("g.exchangeable1", "g.ar11", "g.independence1",
+                      "g.exchangeable2", "g.ar12", "g.independence2", 
+                      "g.exchangeable3", "g.ar13", "g.independence3", 
+                      "g.exchangeable4", "g.ar14", "g.independence4")) 
+
+
+# define a threshold for "extreme" bias
+threshold1 <- 1E+11  # can also be set to 5, doesn't affect the number of extreme values
+threshold2 <- 20  # can also be set to 5, doesn't affect the number of extreme values
+
+# create a table with the number of extreme scenarios per model
+extreme_count_df <- GEE_check_df %>%
+  group_by(model, predictor.type, outcome.type) %>%
+  summarize(
+    num_extreme1 = sum(abs(beta1_bias) > threshold1),
+    num_extreme2 = sum(abs(beta1_bias) > threshold2),
+    .groups = "drop"
+  ) %>%
+  arrange(desc(num_extreme1))
+
+# check whether the counts are the same
+extreme_count_df %>%
+  filter(num_extreme1 != num_extreme2) %>%
+  select(model, predictor.type, outcome.type, num_extreme1, num_extreme2)
+```
+
+```{r}
+# create a table with the proportion of extreme scenarios per model
+extreme_prop_df <- GEE_check_df %>%
+  group_by(model, design_id) %>%
+  summarize(
+    proportion_extreme1 = mean(abs(beta1_bias) > threshold1),
+    proportion_extreme2 = mean(abs(beta1_bias) > threshold2),
+    .groups = "drop"
+  ) 
+
+# check whether the proportions are the same
+extreme_prop_df %>%
+  filter(proportion_extreme1 != proportion_extreme2) %>%
+  select(model, design_id, proportion_extreme1, proportion_extreme2)
+
+# count number of unique design_ids
+length(unique(extreme_prop_df$design_id))
+
+# compute min and max
+min(extreme_prop_df$proportion_extreme)
+max(extreme_prop_df$proportion_extreme)
+
+# plot a density plot of extreme values wrapped by model
+ggplot(extreme_prop_df, aes(x = proportion_extreme, fill = model)) +
+  geom_density(alpha = 0.5) +
+  labs(x = "Proportion of extreme values", y = "Density") +
+  theme_bw() +
+  theme(legend.position = "bottom") +
+  facet_wrap(~ model, ncol = 3)
+```
+
+```{r}
+# create a table with the number of extreme scenarios per model
+extreme_count_df <- GEE_check_df %>%
+  group_by(model, predictor.type, outcome.type) %>%
+  summarize(
+    num_extreme1 = sum(abs(beta1_bias) > threshold1),
+    num_extreme2 = sum(abs(beta1_bias) > threshold2),
+    .groups = "drop"
+  ) %>%
+  arrange(desc(num_extreme1))
+
+# check whether the counts are the same
+extreme_count_df %>%
+  filter(num_extreme1 != num_extreme2) %>%
+  select(model, predictor.type, outcome.type, num_extreme1, num_extreme2)
+```
+
+```{r}
+# take the setting with most frequent extreme values (design_id = 299 and g.ar12) and plot the density of bias
+plot1 <- GEE_check_df %>%
+  filter(design_id == 299, model == "g.ar12") %>%
+  ggplot(aes(x = beta1_bias)) +
+  geom_density() +
+  labs(x = "Bias", y = "Density") +
+  theme_bw() +
+  xlim(-5, 5) +
+  theme(legend.position = "bottom")
+
+# g.ar12
+# 300
+plot2 <- GEE_check_df %>%
+  filter(design_id == 300, model == "g.ar12") %>%
+  ggplot(aes(x = beta1_bias)) +
+  geom_density() +
+  labs(x = "Bias", y = "Density") +
+  theme_bw() +
+  xlim(-5, 5) +
+  theme(legend.position = "bottom")
+
+# g.ar12
+# 353
+plot3 <- GEE_check_df %>%
+  filter(design_id == 353, model == "g.ar12") %>%
+  ggplot(aes(x = beta1_bias)) +
+  geom_density() +
+  labs(x = "Bias", y = "Density") +
+  theme_bw() +
+  xlim(-5, 5) +
+  theme(legend.position = "bottom")
+
+# g.ar12
+# 354
+plot4 <- GEE_check_df %>%
+  filter(design_id == 354, model == "g.ar12") %>%
+  ggplot(aes(x = beta1_bias)) +
+  geom_density() +
+  labs(x = "Bias", y = "Density") +
+  theme_bw() +
+  xlim(-5, 5) +
+  theme(legend.position = "bottom")
+
+# g.ar13
+# 263
+plot5 <- GEE_check_df %>%
+  filter(design_id == 263, model == "g.ar13") %>%
+  ggplot(aes(x = beta1_bias)) +
+  geom_density() +
+  labs(x = "Bias", y = "Density") +
+  theme_bw() +
+  xlim(-5, 5) +
+  theme(legend.position = "bottom")
+
+# g.ar14
+# 263
+plot6 <- GEE_check_df %>%
+  filter(design_id == 263, model == "g.ar14") %>%
+  ggplot(aes(x = beta1_bias)) +
+  geom_density() +
+  labs(x = "Bias", y = "Density") +
+  theme_bw() +
+  xlim(-5, 5) +
+  theme(legend.position = "bottom")
+
+# combine plots
+library(patchwork)
+combined_plot <- (plot1 + plot2) / (plot3 + plot4) / (plot5 + plot6)
+combined_plot
+```
+
+## References
+
+
