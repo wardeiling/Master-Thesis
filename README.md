@@ -30,7 +30,7 @@ Contains interactive and rendered documents to explore the simulation designs.
 * **`data-exploration.qmd`**: Allows users to explore all four data-generating mechanisms (DGMs) considered in the study.
 * **`data-exploration.html`**: Rendered HTML version for direct inspection.
 
-### `supplementary_materials/`
+### `docs/`
 
 Supplementary materials accompanying the manuscript.
 
