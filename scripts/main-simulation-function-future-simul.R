@@ -11,9 +11,9 @@ rm(list = ls()) # clear workspace
 
 seed <- 6384
 set.seed(seed) # set seed for reproducibility
-runname <- "April17_fullsimulation_contXY" # set a runname
+runname <- "April10_fullsimulation" # set a runname
 parametrization <- "mundlak" # set the parametrization (mundlak or centeredX)
-dir.create(paste0("simulation_results_glmm/", runname), showWarnings = FALSE) # create a directory
+dir.create(paste0("simulation_results/", runname), showWarnings = FALSE) # create a directory
 
 # load libraries
 library(lme4) # for generalized linear mixed models
@@ -23,137 +23,50 @@ library(parallelly) # for parallelization
 library(foreach) # for parallelization
 
 # load helper functions
-if (parametrization == "mundlak") {
-  source("scripts/hamaker2020_extended/helper-functions/data-generation-mundlak.R")
-} else if (parametrization == "centeredX") {
-  source("scripts/hamaker2020_extended/helper-functions/data-generation-centeredX.R")
+if (parametrization == "mundlak") { # Mundlak's contextual (MuCo) Method
+  source("scripts/helper-functions/data-generation-mundlak.R")
+} else if (parametrization == "centeredX") { # Hybrid (HB) Method
+  source("scripts/helper-functions/data-generation-centeredX.R")
 }
-source("scripts/hamaker2020_extended/helper-functions/model-fitting.R")
-source("scripts/hamaker2020_extended/helper-functions/result-formatting.R")
+source("scripts/helper-functions/model-fitting.R")
+source("scripts/helper-functions/result-formatting.R")
 
 # set the number of simulations
 nsim <- 1000
 
-# comprehensive design
-# design <- expand.grid(N_total = c(100, 200), T_total = c(5, 20),
-#                       predictor.type = "binary", outcome.type = "continuous",
-#                       sdX.within = NA, sdX.between = c(0, 0.5, 1.5),
-#                       g.00 = 0, g.01 = c(-1, 0, 1), sd.u0 = c(0, 0.5, 1.5), g.10 = c(0.5, 1.5, 3),
-#                       sd.u1 = c(0, 0.5, 1.5), sd.e = c(0.5, 1.5))
-
-# design 1 (test influence of general parameters on bias)
-# design <- expand.grid(N_total = 200, T_total = 20,
-#                       predictor.type = "binary", outcome.type = "continuous",
-#                       sdX.within = NA, sdX.between = c(0, 1),
-#                       g.00 = 0, g.01 = c(-1, 0, 1), sd.u0 = c(0, 1), g.10 = c(0.5, 1.5, 3),
-#                       sd.u1 = 0, sd.e = 1, true_cluster_means = FALSE)
-
-# design 2 (test influence of true cluster means on bias)
-# design <- expand.grid(N_total = 200, T_total = 20,
-#                       predictor.type = "binary", outcome.type = "continuous",
-#                       sdX.within = NA, sdX.between = c(0, 1),
-#                       g.00 = 0, g.01 = c(-1, 0, 1), sd.u0 = 1, g.10 = c(0.5, 1.5, 3),
-#                       sd.u1 = 0, sd.e = 1, true_cluster_means = c(FALSE, TRUE))
-
-# # design 2b (true cluster mean)
-# design <- expand.grid(N_total = 200, T_total = 20,
-#                       predictor.type = "binary", outcome.type = "continuous",
-#                       sdX.within = NA, sdX.between = c(0, 1),
-#                       g.00 = 0, g.01 = c(-1, 0, 1), sd.u0 = 1, g.10 = c(0.5, 1.5, 3),
-#                       sd.u1 = 0, sd.e = 1, true_cluster_means = TRUE)
-
-# # design 3 (test influence T, N, sdX.between on bias)
-# design <- expand.grid(N_total = c(100, 200), T_total = c(5, 20),
-#                       predictor.type = "binary", outcome.type = "continuous",
-#                       sdX.within = NA, sdX.between = c(0, 1, 3),
-#                       g.00 = 0, g.01 = 1, sd.u0 = 1, g.10 = c(0.8, 2),
-#                       sd.u1 = 0, sd.e = 1, true_cluster_means = c(FALSE, TRUE))
-
-# # design 3b (true cluster mean)
-# design <- expand.grid(N_total = c(100, 200), T_total = c(5, 20),
-#                       predictor.type = "binary", outcome.type = "continuous",
-#                       sdX.within = NA, sdX.between = c(0, 1, 3),
-#                       g.00 = 0, g.01 = 1, sd.u0 = 1, g.10 = c(0.8, 2),
-#                       sd.u1 = 0, sd.e = 1, true_cluster_means = TRUE)
-
-# design 4 (test influence random intercept and slope on bias)
-# design <- expand.grid(N_total = 200, T_total = 20, 
-#                       predictor.type = "binary", outcome.type = "continuous",
-#                       sdX.within = NA, sdX.between = 1, 
-#                       g.00 = c(0, 1), g.01 = c(0, 1.5), sd.u0 = c(0, 1), g.10 = 0.8, 
-#                       sd.u1 = c(0, 1), sd.e = 1, true_cluster_means = c(FALSE, TRUE))
-
-# design 4b (true cluster mean)
-# design <- expand.grid(N_total = 200, T_total = 20,
-#                       predictor.type = "binary", outcome.type = "continuous",
-#                       sdX.within = NA, sdX.between = 1,
-#                       g.00 = c(0, 1), g.01 = c(0, 1.5), sd.u0 = c(0, 1), g.10 = 0.8,
-#                       sd.u1 = c(0, 1), sd.e = 1, true_cluster_means = TRUE)
-
-# design 5a (test Ludtke's bias for all predictor and outcome types)
-# design <- expand.grid(N_total = c(100, 200), T_total = c(5, 20),
-#                       predictor.type = c("binary", "continuous"),
-#                       outcome.type = c("binary", "continuous"),
-#                       sdX.within = 1, sdX.between = c(0, 1, 3),
-#                       g.00 = 0, g.01 = c(0, 1), g.10 = 1.5,
-#                       sd.u0 = c(0, 1), sd.u1 = 0, sd.e = 1,
-#                       true_cluster_means = FALSE)
-# # remove scenarios with sdX.between == 0 and g.01 != 0
-# design <- design[!(design$sdX.between == 0 & design$g.01 != 0),]
-
-# # # design 5b
-# design <- expand.grid(N_total = c(100, 200), T_total = c(5, 20),
-#                       predictor.type = c("binary", "continuous"),
-#                       outcome.type = c("binary", "continuous"),
-#                       sdX.within = 1, sdX.between = c(0, 1, 3),
-#                       g.00 = 0, g.01 = c(0, 1), g.10 = 1.5,
-#                       sd.u0 = c(0, 1), sd.u1 = 0, sd.e = 1,
-#                       true_cluster_means = FALSE)
-# 
-# # remove scenarios with sdX.between == 0 and g.01 != 0
-# design <- design
-
-# # design warning/error testing
-# design <- expand.grid(N_total = 150, T_total = 10,
-#                       predictor.type = c("binary", "continuous"),
-#                       outcome.type = c("binary", "continuous"),
-#                       sdX.within = 1, sdX.between = c(0, 3),
-#                       g.00 = 0, g.01 = 1, g.10 = 1.5,
-#                       sd.u0 = 1, sd.u1 = 0, sd.e = 1,
-#                       true_cluster_means = c(FALSE, TRUE))
-
-# design 6
-# design <- expand.grid(N_total = c(100, 200), T_total = c(5, 10, 20),
-#                       predictor.type = c("binary", "continuous"),
-#                       outcome.type = c("binary", "continuous"),
-#                       sdX.within = 1, sdX.between = c(0, 1, 3),
-#                       g.00 = 0, g.01 = c(0, 1, 3), g.10 = 1.5,
-#                       sd.u0 = c(0, 1, 3), sd.u1 = 0, sd.e = 1,
-#                       true_cluster_means = FALSE)
-# # remove scenarios with sdX.between == 0 and g.01 != 0
-# design <- design[!(design$sdX.between == 0 & design$g.01 != 0),]
-# # remove scenarios with predictor and outcome type continuous
-# design <- design[!(design$predictor.type == "continuous" & design$outcome.type == "continuous"),]
-
-# design 7: run remaining simulations with continuous predictor and outcome
+# In the study, these simulations were run in two parts
+# Part 1: DGM 2, 3 and 4
 design <- expand.grid(N_total = c(100, 200), T_total = c(5, 10, 20),
-                      predictor.type = "continuous", outcome.type = "continuous",
+                      predictor.type = c("binary", "continuous"),
+                      outcome.type = c("binary", "continuous"),
                       sdX.within = 1, sdX.between = c(0, 1, 3),
                       g.00 = 0, g.01 = c(0, 1, 3), g.10 = 1.5,
                       sd.u0 = c(0, 1, 3), sd.u1 = 0, sd.e = 1,
                       true_cluster_means = FALSE)
 # remove scenarios with sdX.between == 0 and g.01 != 0
 design <- design[!(design$sdX.between == 0 & design$g.01 != 0),]
+# remove scenarios with predictor and outcome type continuous
+design <- design[!(design$predictor.type == "continuous" & design$outcome.type == "continuous"),]
+
+# Part 2: DGM 1 (continuous predictor and outcome)
+# design <- expand.grid(N_total = c(100, 200), T_total = c(5, 10, 20),
+#                       predictor.type = "continuous", outcome.type = "continuous",
+#                       sdX.within = 1, sdX.between = c(0, 1, 3),
+#                       g.00 = 0, g.01 = c(0, 1, 3), g.10 = 1.5,
+#                       sd.u0 = c(0, 1, 3), sd.u1 = 0, sd.e = 1,
+#                       true_cluster_means = FALSE)
+# # remove scenarios with sdX.between == 0 and g.01 != 0
+# design <- design[!(design$sdX.between == 0 & design$g.01 != 0),]
 
 # save the empty design and settings to the directory
 settings <- list(nsim = nsim, seed = seed, runname = runname, parametrization = parametrization, design = design)
-saveRDS(settings, paste0("simulation_results_glmm/", runname, "/settings.RDS"))
+saveRDS(settings, paste0("simulation_results/", runname, "/settings.RDS"))
 
 ### Simulation ---------------------------------------------------------------
 
 # Open a connection to capture output and messages
-output_conn <- file(paste0("simulation_results_glmm/", runname, "/log.txt"), open = "a")
-message_conn <- file(paste0("simulation_results_glmm/", runname, "/log.txt"), open = "a")
+output_conn <- file(paste0("simulation_results/", runname, "/log.txt"), open = "a")
+message_conn <- file(paste0("simulation_results/", runname, "/log.txt"), open = "a")
 
 # Redirect output and messages to the file
 sink(output_conn, type = "output")
@@ -198,7 +111,7 @@ for (idesign in 1:nrow(design)) {
     models <- glmm_model_fitting(data, outcome.type = outcome.type)
     return(models)
   }
-  saveRDS(parallel_results, file = paste0("simulation_results_glmm/", runname, "/", idesign, ".RDS"))
+  saveRDS(parallel_results, file = paste0("simulation_results/", runname, "/", idesign, ".RDS"))
 }
 
 # Stop capturing output and messages
@@ -212,15 +125,10 @@ close(message_conn)
 ### collect results ---------------------------------------------------------
 
 if(FALSE) {
-  
-  # optional: retrieve older simulation results
-  # runname <- "March27_design5_ludtkesbias_contextual_estclustermeans"
-  # runname <- "March27_design5b_ludtkesbias_contextual_trueclustermeans"
-  # runname <- "April8_testlog"
   # runname <- "April10_fullsimulation"
   runname <- "April17_fullsimulation_contXY"
-  design <- readRDS(paste0("simulation_results_glmm/", runname, "/settings.RDS"))$design
-  parametrization <- readRDS(paste0("simulation_results_glmm/", runname, "/settings.RDS"))$parametrization
+  design <- readRDS(paste0("simulation_results/", runname, "/settings.RDS"))$design
+  parametrization <- readRDS(paste0("simulation_results/", runname, "/settings.RDS"))$parametrization
 }
 
 # load packages
@@ -284,7 +192,7 @@ for (idesign in 1:nrow(design_all)) {
   }
   
   # read in the results
-  parallel_results_setting <- readRDS(paste0("simulation_results_glmm/", runname, "/", idesign, ".RDS"))
+  parallel_results_setting <- readRDS(paste0("simulation_results/", runname, "/", idesign, ".RDS"))
   
   # unlist the lists inside the list
   df <- map_dfr(parallel_results_setting, function(rep) {
@@ -421,7 +329,7 @@ design_all_reordered <- design_all %>%
          g.independence4_success, g.exchangeable4_success, g.ar14_success)
 
 # save design
-saveRDS(design_all_reordered, paste0("simulation_results_glmm/", runname, "/summary-results-all.RDS"))
+saveRDS(design_all_reordered, paste0("simulation_results/", runname, "/summary-results-all.RDS"))
 
 # create a rounded version of the design
 design_all_rounded <- design_all_reordered %>%
@@ -431,15 +339,15 @@ design_all_rounded <- design_all_reordered %>%
          across(ends_with("success"), ~ round(., 3)))
 
 # save design
-saveRDS(design_all_rounded, paste0("simulation_results_glmm/", runname, "/summary-results-all-rounded.RDS"))
+saveRDS(design_all_rounded, paste0("simulation_results/", runname, "/summary-results-all-rounded.RDS"))
 
 # remove all bias columns
 design_absolute <- design_all_rounded %>%
   select(-contains("g.10_bias"), -contains("g.01_bias"))
 
 # save design
-saveRDS(design_absolute, paste0("simulation_results_glmm/", runname, "/summary-results-absolute.RDS"))
-write.csv(design_absolute, paste0("simulation_results_glmm/", runname, "/summary-results-absolute.csv"), row.names = FALSE)
+saveRDS(design_absolute, paste0("simulation_results/", runname, "/summary-results-absolute.RDS"))
+write.csv(design_absolute, paste0("simulation_results/", runname, "/summary-results-absolute.csv"), row.names = FALSE)
 
 # remove absolute value columns
 design_bias <- design_all_rounded %>%
@@ -447,8 +355,8 @@ design_bias <- design_all_rounded %>%
   select(-ends_with("X", ignore.case = FALSE), -ends_with("X.cent", ignore.case = FALSE), -ends_with("X.cluster.means", ignore.case = FALSE))
 
 # save design
-saveRDS(design_bias, paste0("simulation_results_glmm/", runname, "/summary-results-bias.RDS"))
-write.csv(design_bias, paste0("simulation_results_glmm/", runname, "/summary-results-bias.csv"), row.names = FALSE)
+saveRDS(design_bias, paste0("simulation_results/", runname, "/summary-results-bias.RDS"))
+write.csv(design_bias, paste0("simulation_results/", runname, "/summary-results-bias.csv"), row.names = FALSE)
 
 # create separate versions containing the within-person and contextual effect
 design_bias_g01 <- design_bias %>%
@@ -457,10 +365,10 @@ design_bias_g10 <- design_bias %>%
   select(-contains("g.01_bias"))
 
 # save design
-saveRDS(design_bias_g01, paste0("simulation_results_glmm/", runname, "/summary-results-bias-g01.RDS"))
-write.csv(design_bias_g01, paste0("simulation_results_glmm/", runname, "/summary-results-bias-g01.csv"), row.names = FALSE)
-saveRDS(design_bias_g10, paste0("simulation_results_glmm/", runname, "/summary-results-bias-g10.RDS"))
-write.csv(design_bias_g10, paste0("simulation_results_glmm/", runname, "/summary-results-bias-g10.csv"), row.names = FALSE)
+saveRDS(design_bias_g01, paste0("simulation_results/", runname, "/summary-results-bias-g01.RDS"))
+write.csv(design_bias_g01, paste0("simulation_results/", runname, "/summary-results-bias-g01.csv"), row.names = FALSE)
+saveRDS(design_bias_g10, paste0("simulation_results/", runname, "/summary-results-bias-g10.RDS"))
+write.csv(design_bias_g10, paste0("simulation_results/", runname, "/summary-results-bias-g10.csv"), row.names = FALSE)
 
 # save sucess rates
 design_success <- design_all_rounded %>%
@@ -468,48 +376,5 @@ design_success <- design_all_rounded %>%
                   g.00, g.01, g.10, sd.u0, sd.u1, sd.e, true_cluster_means, contains("success")))
 
 # save design
-saveRDS(design_success, paste0("simulation_results_glmm/", runname, "/summary-results-success.RDS"))
-write.csv(design_success, paste0("simulation_results_glmm/", runname, "/summary-results-success.csv"), row.names = FALSE)
-
-### Optional: Retrieve output
-
-if(FALSE) {
-  # design 2
-  runname <- "March26_design2_maineffects_contextual_bothclustermeans"
-  design_bias_temp <- readRDS(paste0("simulation_results_glmm/", runname, "/summary-results-bias.RDS")) %>%
-    # round the last six columns to 3 decimals
-    mutate(across(starts_with("l"), ~ round(., 3)))
-  design_bias_temp_sel <- design_bias_temp[,6:ncol(design_bias_temp)]
-  
-  # design 5
-  runname <- "March27_design5_ludtkesbias_contextual_estclustermeans"
-  design_bias_temp <- readRDS(paste0("simulation_results_glmm/", runname, "/summary-results-bias.RDS")) %>%
-    # round the last six columns to 3 decimals
-    mutate(across(starts_with("l"), ~ round(., 3)))
-  design_bias_temp_sel <- design_bias_temp[,6:ncol(design_bias_temp)]
-  
-  design_bias_temp_sel <- design_bias_temp %>%
-    filter(sdX.between == 1 & g.01 == 1 & sd.u0 == 1 & g.10 == 1.5 & sd.u1 == 0 & sd.e == 1) %>%
-    # create column that combines the two factor variables predictor.type and outcome.type
-    mutate(variabel.types = paste("pred", predictor.type, "out", outcome.type, sep = "_")) 
-  
-  # create line plots showing bias of g.01 (for model L3a and L4) against number of timepoints (T_total) with lines 
-  # for each different model and in a 2x2 grid for predictor and outcome type
-  library(ggplot2)
-  
-  # step 1: change the model type into long-format
-  design_bias_temp_sel <- design_bias_temp_sel %>%
-    pivot_longer(cols = starts_with("l"), names_to = "model", values_to = "bias") %>%
-    mutate(model = factor(model, levels = c("l2_g.10_bias", "l3a_g.10_bias", "l3a_g.01_bias", "l4_g.10_bias", "l4_g.01_bias"))) 
-    # only select g.01 from l3a and L4
-    # filter(model %in% c("l3a_g.01_bias", "l4_g.01_bias"))
-  
-  # step 2: create the plot
-  ggplot(design_bias_temp_sel, aes(x = T_total, y = bias, color = model)) +
-    geom_line() +
-    facet_grid(predictor.type ~ outcome.type) +
-    theme_minimal() +
-    theme(legend.position = "right") +
-    labs(x = "Number of timepoints (T_total)", y = "Estimation error")
-  
-}
+saveRDS(design_success, paste0("simulation_results/", runname, "/summary-results-success.RDS"))
+write.csv(design_success, paste0("simulation_results/", runname, "/summary-results-success.csv"), row.names = FALSE)

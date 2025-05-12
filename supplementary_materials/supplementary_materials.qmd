@@ -1,24 +1,28 @@
 ---
 title: "Online Supplementary Materials"
-author: "Ward B. Eiling"
-date: "2024-05-11"
-date-modified: last-modified
+subtitle: "From Multilevel Modeling to GEE: Revisiting the Within- and Between-Person Debate with Binary Predictors and Outcomes"
+author: 
+  - name: "Ward B. Eiling"
+    orcid: 0009-0007-8114-9497
+    affiliation: "Utrecht University"
+date: "2024-05-12"
 format: 
-  html:
+  html: 
     toc: true
-    toc-location: left
-    toc-depth: 3
-    toc-expand: 3
+    toc_float: true
+    toc_depth: 2
+    code-fold: true
+    self-contained: true
     number-sections: true
-    # embed-resources: false
-    # default-image-extension: svg
-  pdf:
-    fig-pos: 'h'
-    # toc: true
-    # toc-depth: 5
-    # number-sections: true
-    # embed-resources: true
-    # default-image-extension: svg
+  # pdf:
+  #   fig-pos: 'h'
+  #   # toc: true
+  #   # toc-depth: 5
+  #   # number-sections: true
+  #   # embed-resources: true
+  #   # default-image-extension: svg
+bibliography: packages.bib
+csl: apa7.csl
 execute:
   message: false
   warning: false
@@ -27,20 +31,36 @@ fig-cap-location: top
 
 ## Introduction
 
-This document contains the supplementary materials for the manuscript "From MLM to GEE: Revisiting Within- and Between-Person Debate with Binary Predictors and Outcomes". Here we will provide additional explanations on (1) the equivalence of the hybrid method and Mundlak's contextual method, (2) the handling of extreme parameter estimates in GEEs. All code is written in R and can be run in RStudio. 
+This document provides supplementary materials for the manuscript "From Multilevel Modeling to GEE: Revisiting the Within- and Between-Person Debate with Binary Predictors and Outcomes". We include:
+
+1.  A comparison of the hybrid and Mundlak's contextual method.
+
+2.  Details on the treatment of extreme parameter estimates in Generalized Estimating Equations (GEEs).
+
+All analyses were conducted in `R`. Package citations are provided at the end of this document.
 
 ```{r}
-library(purrr) # for functional programming
-library(dplyr) # for data manipulation
-library(tidyr) # for data manipulation
-library(stringr) # for string manipulation
-library(ggplot2) # for plotting
-library(here) # for file paths
+# Load packages
+library(purrr)       # Functional programming
+library(dplyr)       # Data manipulation
+library(tidyr)       # Data reshaping
+library(stringr)     # String handling
+library(ggplot2)     # Plotting
+library(here)        # File paths
+library(patchwork)   # Combining ggplots
+library(knitr)       # For bib generation
+
+# Save citations to BibTeX for reproducibility
+write_bib(c("purrr", "dplyr", "tidyr", "stringr", "ggplot2", "here", "patchwork", "knitr"), file = "packages.bib")
 ```
 
-First, we need to load the simulation results. We will first load the results from Part 1 that includes DGMs 2-4, and then the results from Part 2 that includes DGM 1 (continuous predictor and outcome). The saved results are transformed and combined into a single data frame. The results are saved in the `simulation_results` folder.
+## Loading Simulation Results
+
+First, we need to load the simulation results. As the simulations were ran in two parts, we will load the results from both parts. The first part includes DGMs 2-4 (binary X and continuous Y, continuous X and binary Y, and binary X and Y), while the second part includes DGM 1 (continuous predictor and outcome). The results are saved in the `simulation_results` folder.
 
 ```{r}
+#| eval: false
+
 ### PART 1: DGM 2 (binary X and continuous Y), DGM 3 (continuous X and binary Y) and DGM 4 (binary X and Y) ----
 runname <- "April10_fullsimulation"
 
@@ -241,6 +261,7 @@ saveRDS(final_df, here(paste0("simulation_results/", runname, "/plotting_bias_df
 Let us now combine the results from both simulations
 
 ```{r}
+#| eval: false
 ### COMBINE RESULTS FROM BOTH SIMULATIONS ### ----
 
 # read in the first simulation results
@@ -257,21 +278,408 @@ newrunname <- "April18_fullsimulation_combined"
 saveRDS(final_df, here(paste0("simulation_results/", newrunname, "/plotting_bias_df.RDS")))
 ```
 
-
-## Equivalence of Hybrid and Mundlak's Contextual Method
-
 ```{r}
-
+# read in the final data frame
+newrunname <- "April18_fullsimulation_combined"
+final_df <- readRDS(here(paste0("simulation_results/", newrunname, "/plotting_bias_df.RDS")))
 ```
 
+## Comparison of Hybrid and Mundlak's Contextual Method
 
+To demonstrate numerical similarity between the hybrid (Model 4) and mundlak's contextual (Model 3a) specifications, we computed the bias difference per replication. Results show that the within-person effects are equivalent across all scenarios. For contextual effects, we find no systematic differences under continuous outcomes (a linear link), but do find systematic differences in GEE under binary outcomes (a logit link). However, these do not affect conclusions made in the manuscript.
 
+For continuous outcomes (DGMs 1 and 2; see @fig-dgm12), we can see that there are no differences in the within-person effect estimated by the two methods across estimation frameworks and the 1000 replications. In contrast, we see slight differences in the contextual effect estimated by the two methods, although the distribution is closely centered around 0, implying that any imbalance in the estimates is very small and will balance out in the long run.
+
+```{r}
+#| fig-height: 8
+#| fig-width: 8
+#| label: fig-dgm12
+#| fig-cap: "Differences in Estimates Between Hybrid and Contextual Methods in DGM 1 and 2 (continuous outcome)"
+
+# filter for the hybrid and contextual method
+hybrid_contextual_df <- final_df %>%
+  select(-c(ends_with("_success"), ends_with("_X"), ends_with("_X.cent"), ends_with("_X.cluster.means"),
+            "l1_X", "g.independence1_X", "g.exchangeable1_X", "g.ar11_X", contains("2_"))) %>%
+  filter(outcome.type == "continuous") %>%
+  # create a column for the difference for within-person effect beta_1
+  mutate(GLMM_beta1_dif = l4_g.10_bias - l3a_g.10_bias,
+         GEE_indep_beta1_dif = g.independence4_g.10_bias - g.independence3_g.10_bias,
+         GEE_exch_beta1_dif = g.exchangeable4_g.10_bias - g.exchangeable3_g.10_bias,
+         GEE_ar_beta1_dif = g.ar14_g.10_bias - g.ar13_g.10_bias) %>%
+  # create columns for the difference in contextual effect 
+  mutate(GLMM_g01_dif = l4_g.01_bias - l3a_g.01_bias,
+         GEE_indep_g01_dif = g.independence4_g.01_bias - g.independence3_g.01_bias,
+         GEE_exch_g01_dif = g.exchangeable4_g.01_bias - g.exchangeable3_g.01_bias,
+         GEE_ar_g01_dif = g.ar14_g.01_bias - g.ar13_g.01_bias)
+
+# plot the differences in a density plot
+plot1 <- hybrid_contextual_df %>%
+  ggplot(aes(x = GLMM_beta1_dif)) +
+  geom_density() +
+  labs(x = "Difference in within-person effect", y = "Density", title = "GLMM within-person effect") +
+  theme_bw() +
+  xlim(-5, 5) +
+  theme(legend.position = "bottom")
+
+plot2 <- hybrid_contextual_df %>%
+  ggplot(aes(x = GLMM_g01_dif)) +
+  geom_density() +
+  labs(x = "Difference in contextual effect", y = "Density", title = "GLMM contextual effect") +
+  theme_bw() +
+  xlim(-5, 5) +
+  theme(legend.position = "bottom")
+
+plot3 <- hybrid_contextual_df %>%
+  ggplot(aes(x = GEE_indep_beta1_dif)) +
+  geom_density() +
+  labs(x = "Difference in within-person effect", y = "Density", title = "GEE-indep within-person effect") +
+  theme_bw() +
+  xlim(-5, 5) +
+  theme(legend.position = "bottom")
+
+plot4 <- hybrid_contextual_df %>%
+  ggplot(aes(x = GEE_indep_g01_dif)) +
+  geom_density() +
+  labs(x = "Difference in contextual effect", y = "Density", title = "GEE-indep contextual effect") +
+  theme_bw() +
+  xlim(-5, 5) +
+  theme(legend.position = "bottom")
+
+plot5 <- hybrid_contextual_df %>%
+  ggplot(aes(x = GEE_exch_beta1_dif)) +
+  geom_density() +
+  labs(x = "Difference in within-person effect", y = "Density", title = "GEE-exch within-person effect") +
+  theme_bw() +
+  xlim(-5, 5) +
+  theme(legend.position = "bottom")
+
+plot6 <- hybrid_contextual_df %>%
+  ggplot(aes(x = GEE_exch_g01_dif)) +
+  geom_density() +
+  labs(x = "Difference in contextual effect", y = "Density", title = "GEE-exch contextual effect") +
+  theme_bw() +
+  xlim(-5, 5) +
+  theme(legend.position = "bottom")
+
+plot7 <- hybrid_contextual_df %>%
+  ggplot(aes(x = GEE_ar_beta1_dif)) +
+  geom_density() +
+  labs(x = "Difference in within-person effect", y = "Density", title = "GEE-AR(1) within-person effect") +
+  theme_bw() +
+  xlim(-5, 5) +
+  theme(legend.position = "bottom")
+
+plot8 <- hybrid_contextual_df %>%
+  ggplot(aes(x = GEE_ar_g01_dif)) +
+  geom_density() +
+  labs(x = "Difference in contextual effect", y = "Density", title = "GEE-AR(1) contextual effect") +
+  theme_bw() +
+  xlim(-5, 5) +
+  theme(legend.position = "bottom")
+
+# combine plots with title
+combined_plot <- (plot1 + plot2) / (plot3 + plot4) / (plot5 + plot6) / (plot7 + plot8)
+combined_plot
+```
+
+For binary outcomes (DGM 3 and 4; see @fig-dgm34), the story is different. We see again that the within-person effect estimates are similar across the two methods. For the contextual effect, we see that GLMM shows substantially more variation than for the continuous outcomes, but that the distribution is still symmetric and centered around 0. However, for the GEEs estimation approaches, we see bi-modal distributions (two peaks) for the contextual effect estimates and that the distribution is not centered around 0 anymore. This indicates a difference in estimation of the identity (linear) and logit (non-linear) link functions.
+
+```{r}
+#| label: fig-dgm34
+#| fig-cap: "Differences in Estimates Between Hybrid and Contextual Methods in DGM 3 and 4 (binary outcome)"
+#| fig-height: 8
+#| fig-width: 8
+
+# filter for the hybrid and contextual method
+hybrid_contextual_df <- final_df %>%
+  select(-c(ends_with("_success"), ends_with("_X"), ends_with("_X.cent"), ends_with("_X.cluster.means"),
+            "l1_X", "g.independence1_X", "g.exchangeable1_X", "g.ar11_X", contains("2_"))) %>%
+  filter(outcome.type == "binary") %>%
+  # create a column for the difference for within-person effect beta_1
+  mutate(GLMM_beta1_dif = l4_g.10_bias - l3a_g.10_bias,
+         GEE_indep_beta1_dif = g.independence4_g.10_bias - g.independence3_g.10_bias,
+         GEE_exch_beta1_dif = g.exchangeable4_g.10_bias - g.exchangeable3_g.10_bias,
+         GEE_ar_beta1_dif = g.ar14_g.10_bias - g.ar13_g.10_bias) %>%
+  # create columns for the difference in contextual effect 
+  mutate(GLMM_g01_dif = l4_g.01_bias - l3a_g.01_bias,
+         GEE_indep_g01_dif = g.independence4_g.01_bias - g.independence3_g.01_bias,
+         GEE_exch_g01_dif = g.exchangeable4_g.01_bias - g.exchangeable3_g.01_bias,
+         GEE_ar_g01_dif = g.ar14_g.01_bias - g.ar13_g.01_bias)
+
+# plot the differences in a density plot
+plot1 <- hybrid_contextual_df %>%
+  ggplot(aes(x = GLMM_beta1_dif)) +
+  geom_density() +
+  labs(x = "Difference in within-person effect", y = "Density", title = "GLMM within-person effect") +
+  theme_bw() +
+  xlim(-5, 5) +
+  theme(legend.position = "bottom")
+
+plot2 <- hybrid_contextual_df %>%
+  ggplot(aes(x = GLMM_g01_dif)) +
+  geom_density() +
+  labs(x = "Difference in contextual effect", y = "Density", title = "GLMM contextual effect") +
+  theme_bw() +
+  xlim(-5, 5) +
+  theme(legend.position = "bottom")
+
+plot3 <- hybrid_contextual_df %>%
+  ggplot(aes(x = GEE_indep_beta1_dif)) +
+  geom_density() +
+  labs(x = "Difference in within-person effect", y = "Density", title = "GEE-indep within-person effect") +
+  theme_bw() +
+  xlim(-5, 5) +
+  theme(legend.position = "bottom")
+
+plot4 <- hybrid_contextual_df %>%
+  ggplot(aes(x = GEE_indep_g01_dif)) +
+  geom_density() +
+  labs(x = "Difference in contextual effect", y = "Density", title = "GEE-indep contextual effect") +
+  theme_bw() +
+  xlim(-5, 5) +
+  theme(legend.position = "bottom")
+
+plot5 <- hybrid_contextual_df %>%
+  ggplot(aes(x = GEE_exch_beta1_dif)) +
+  geom_density() +
+  labs(x = "Difference in within-person effect", y = "Density", title = "GEE-exch within-person effect") +
+  theme_bw() +
+  xlim(-5, 5) +
+  theme(legend.position = "bottom")
+
+plot6 <- hybrid_contextual_df %>%
+  ggplot(aes(x = GEE_exch_g01_dif)) +
+  geom_density() +
+  labs(x = "Difference in contextual effect", y = "Density", title = "GEE-exch contextual effect") +
+  theme_bw() +
+  xlim(-5, 5) +
+  theme(legend.position = "bottom")
+
+plot7 <- hybrid_contextual_df %>%
+  ggplot(aes(x = GEE_ar_beta1_dif)) +
+  geom_density() +
+  labs(x = "Difference in within-person effect", y = "Density", title = "GEE-AR(1) within-person effect") +
+  theme_bw() +
+  xlim(-5, 5) +
+  theme(legend.position = "bottom")
+
+plot8 <- hybrid_contextual_df %>%
+  ggplot(aes(x = GEE_ar_g01_dif)) +
+  geom_density() +
+  labs(x = "Difference in contextual effect", y = "Density", title = "GEE-AR(1) contextual effect") +
+  theme_bw() +
+  xlim(-5, 5) +
+  theme(legend.position = "bottom")
+
+# combine plots with title
+combined_plot <- (plot1 + plot2) / (plot3 + plot4) / (plot5 + plot6) / (plot7 + plot8)
+combined_plot
+```
+
+Let us investigate whether this influenced the figures shown in the manuscript for binary outcomes. Let us first consider DGM 3 (continuous predictor, binary outcome), which is visualized in @fig-dgm3 . As expected based on the density plots, we see that the GLMM estimates of the two methods are very similar, but that the GEE estimates are not. Specifically, we see that the HB method produces estimates that have greater bias than the MuCo method. Nevertheless, this does not change any conclusions, as both methods under GEE with a binary outcome consistently fail to retrieve the true contextual effect.
+
+```{r}
+#| label: fig-dgm3
+#| fig-cap: "Bias in contextual effect estimates for DGM 3 (continuous predictor, binary outcome)"
+#| fig-height: 8
+#| fig-width: 8
+
+runname <- "April18_fullsimulation_combined"
+
+# read in the final data frame
+final_df <- readRDS(here(paste0("simulation_results/", runname, "/plotting_bias_df.RDS")))
+  
+# select relevant variables and cases (select and filter)
+plot_df <- final_df %>%
+# select T = 20, N = 200, sd.u0 = 1, predictor.type = "binary" and outcome.type = "continuous"
+filter(T_total %in% c(5, 20), N_total == 200, sd.u0 %in% c(1, 3), predictor.type == "continuous", outcome.type == "binary",
+       sdX.between == 3, g.01 == 3) %>%
+select(-c(ends_with("_success"), ends_with("_X"), ends_with("_X.cent"), ends_with("_X.cluster.means")))
+
+plot_df_g01 <- plot_df %>%
+select(-ends_with("_g.10_bias")) %>%
+# turn the bias variables into long format, with a new column indicating the model name
+pivot_longer(cols = ends_with("_bias"), names_to = "model", values_to = "g01_bias") %>%
+# remove the "_g.01_bias" suffix from the model names
+mutate(model = str_remove(model, "_g.01_bias")) %>%
+# change model names
+mutate(model = recode(model,
+                      "l3a" = "GLMM-HB",
+                      "l4" = "GLMM-MuCo",
+                      "g.independence3" = "GEE-independence-HB",
+                      "g.independence4" = "GEE-independence-MuCo",
+                      "g.exchangeable3" = "GEE-exchangeable-HB",
+                      "g.exchangeable4" = "GEE-exchangeable-MuCo",
+                      "g.ar13" = "GEE-AR1-HB",
+                      "g.ar14" = "GEE-AR1-MuCo")) %>%
+# set factor levels of model to ensure correct order in the plot
+mutate(model = factor(model, levels = c("GLMM-HB", "GLMM-MuCo", "GEE-independence-HB", "GEE-independence-MuCo",
+                                        "GEE-exchangeable-HB", "GEE-exchangeable-MuCo",
+                                        "GEE-AR1-HB", "GEE-AR1-MuCo"))) %>%
+# create new variable indicating method type (so M1 and G1 are "Method 1")
+mutate(method_type = case_when(
+  str_detect(model, "HB") ~ "HB",
+  str_detect(model, "MuCo") ~ "MuCo",
+)) %>%
+mutate(estimation_type = case_when(
+  str_detect(model, "GLMM") ~ "GLMM",
+  str_detect(model, "independence") ~ "GEE-independence",
+  str_detect(model, "exchangeable") ~ "GEE-exchangeable",
+  str_detect(model, "AR1") ~ "GEE-AR(1)"
+)) %>%
+# set factor levels of method_type to ensure correct order in the plot
+mutate(estimation_type = factor(estimation_type, levels = c("GLMM", "GEE-independence", "GEE-exchangeable", "GEE-AR(1)")),
+       method_type = factor(method_type, levels = c("HB", "MuCo"))) %>%
+# Turn label variables (sdX.between, g.01 and sd.u0) into strings with an underscore
+mutate(sd.u0_label = factor(sd.u0,
+                            levels = c(1, 3),
+                            labels = c(expression(sigma[u] == 1), expression(sigma[u] == 3)))) %>%
+mutate(T_total_label = factor(T_total,
+                              levels = c(5, 20),
+                              labels = c("T == 5", "T == 20"))) %>%
+# remove all bias values exceeding 100
+mutate(g01_bias = ifelse(abs(g01_bias) > 100, NA, g01_bias)) 
+
+# For the contextual effect
+ggplot(plot_df_g01, aes(x = method_type, y = g01_bias, col = estimation_type)) +
+geom_boxplot() +
+geom_hline(yintercept = 0, linetype = "dashed") +  # Dashed horizontal line at 0
+coord_cartesian(ylim = c(-1.5, 1.5)) +  # Set y-axis limits
+# add tick mark at Y for every 0.5
+scale_y_continuous(breaks = seq(-1.5, 1.5, by = 0.5)) +
+labs(x = "Method", y = "Bias") +
+facet_grid(sd.u0_label ~ T_total_label, labeller = label_parsed) + # Show T and N values in labels
+theme_bw() +
+# remove X axis labels
+theme(# remove vertical grid lines
+  panel.grid.major.x = element_blank(),
+  # remove X tick marks
+  axis.ticks.x = element_blank(),
+  # increase font size for grid titles
+  strip.text.x = element_text(size = 12),
+  strip.text.y = element_text(size = 12),
+  # increase font size for X entries
+  axis.text.x = element_text(size = 12),
+  axis.text.y = element_text(size = 12),
+  axis.title.y = element_text(size = 13),
+  axis.title.x = element_text(size = 13),
+  # remove legend
+  # increase legend font size
+  legend.text = element_text(size = 11),
+  legend.title = element_text(size = 13),
+  legend.position = "bottom",
+) +
+# change legend title to "Estimation"
+scale_color_brewer(name = "Estimation", palette = "Spectral")
+```
+
+For DGM 4 (binary predictor and outcome), we see the same pattern found for DGM 3, indicating that the differences in bias between the two methods do not alter the conclusions.
+
+```{r}
+#| label: fig-dgm4
+#| fig-cap: "Bias in contextual effect estimates for DGM 4 (binary predictor and outcome)"
+#| fig-height: 8
+#| fig-width: 8
+
+runname <- "April18_fullsimulation_combined"
+
+# read in the final data frame
+final_df <- readRDS(here(paste0("simulation_results/", runname, "/plotting_bias_df.RDS")))
+  
+# select relevant variables and cases (select and filter)
+plot_df <- final_df %>%
+# select T = 20, N = 200, sd.u0 = 1, predictor.type = "binary" and outcome.type = "continuous"
+filter(T_total %in% c(5, 20), N_total == 200, sd.u0 %in% c(1, 3), predictor.type == "binary", outcome.type == "binary",
+       sdX.between == 3, g.01 == 3) %>%
+select(-c(ends_with("_success"), ends_with("_X"), ends_with("_X.cent"), ends_with("_X.cluster.means")))
+
+plot_df_g01 <- plot_df %>%
+select(-ends_with("_g.10_bias")) %>%
+# turn the bias variables into long format, with a new column indicating the model name
+pivot_longer(cols = ends_with("_bias"), names_to = "model", values_to = "g01_bias") %>%
+# remove the "_g.01_bias" suffix from the model names
+mutate(model = str_remove(model, "_g.01_bias")) %>%
+# change model names
+mutate(model = recode(model,
+                      "l3a" = "GLMM-HB",
+                      "l4" = "GLMM-MuCo",
+                      "g.independence3" = "GEE-independence-HB",
+                      "g.independence4" = "GEE-independence-MuCo",
+                      "g.exchangeable3" = "GEE-exchangeable-HB",
+                      "g.exchangeable4" = "GEE-exchangeable-MuCo",
+                      "g.ar13" = "GEE-AR1-HB",
+                      "g.ar14" = "GEE-AR1-MuCo")) %>%
+# set factor levels of model to ensure correct order in the plot
+mutate(model = factor(model, levels = c("GLMM-HB", "GLMM-MuCo", "GEE-independence-HB", "GEE-independence-MuCo",
+                                        "GEE-exchangeable-HB", "GEE-exchangeable-MuCo",
+                                        "GEE-AR1-HB", "GEE-AR1-MuCo"))) %>%
+# create new variable indicating method type (so M1 and G1 are "Method 1")
+mutate(method_type = case_when(
+  str_detect(model, "HB") ~ "HB",
+  str_detect(model, "MuCo") ~ "MuCo",
+)) %>%
+mutate(estimation_type = case_when(
+  str_detect(model, "GLMM") ~ "GLMM",
+  str_detect(model, "independence") ~ "GEE-independence",
+  str_detect(model, "exchangeable") ~ "GEE-exchangeable",
+  str_detect(model, "AR1") ~ "GEE-AR(1)"
+)) %>%
+# set factor levels of method_type to ensure correct order in the plot
+mutate(estimation_type = factor(estimation_type, levels = c("GLMM", "GEE-independence", "GEE-exchangeable", "GEE-AR(1)")),
+       method_type = factor(method_type, levels = c("HB", "MuCo"))) %>%
+# Turn label variables (sdX.between, g.01 and sd.u0) into strings with an underscore
+mutate(sd.u0_label = factor(sd.u0,
+                            levels = c(1, 3),
+                            labels = c(expression(sigma[u] == 1), expression(sigma[u] == 3)))) %>%
+mutate(T_total_label = factor(T_total,
+                              levels = c(5, 20),
+                              labels = c("T == 5", "T == 20"))) %>%
+# remove all bias values exceeding 100
+mutate(g01_bias = ifelse(abs(g01_bias) > 100, NA, g01_bias)) 
+
+# For the contextual effect
+ggplot(plot_df_g01, aes(x = method_type, y = g01_bias, col = estimation_type)) +
+geom_boxplot() +
+geom_hline(yintercept = 0, linetype = "dashed") +  # Dashed horizontal line at 0
+coord_cartesian(ylim = c(-1.5, 1.5)) +  # Set y-axis limits
+# add tick mark at Y for every 0.5
+scale_y_continuous(breaks = seq(-1.5, 1.5, by = 0.5)) +
+labs(x = "Method", y = "Bias") +
+facet_grid(sd.u0_label ~ T_total_label, labeller = label_parsed) + # Show T and N values in labels
+theme_bw() +
+# remove X axis labels
+theme(# remove vertical grid lines
+  panel.grid.major.x = element_blank(),
+  # remove X tick marks
+  axis.ticks.x = element_blank(),
+  # increase font size for grid titles
+  strip.text.x = element_text(size = 12),
+  strip.text.y = element_text(size = 12),
+  # increase font size for X entries
+  axis.text.x = element_text(size = 12),
+  axis.text.y = element_text(size = 12),
+  axis.title.y = element_text(size = 13),
+  axis.title.x = element_text(size = 13),
+  # remove legend
+  # increase legend font size
+  legend.text = element_text(size = 11),
+  legend.title = element_text(size = 13),
+  legend.position = "bottom",
+) +
+# change legend title to "Estimation"
+scale_color_brewer(name = "Estimation", palette = "Spectral")
+```
 
 ## Appendix: Handling of Extreme Parameter Estimates in GEEs
 
-For GEE, we found extreme values.
+In the simulations, we found that GEEs tended to yield extreme values rather than terminating with an error. These extreme values are likely a sign of non-convergence. In this section, we will diagnose the extent of this issue and how it relates to the design parameters.
+
+In @tbl-extreme-counts we can see that extreme values only occurred in scenarios with binary outcome variables, that they occurred most frequently for the AR(1) GEE approach, followed by rare occurrences in the exchangeable GEE approach and a complete absence in the independence GEE approach. Here we can see that the `g.ar12` with a continuous predictor and binary outcome had the most extreme values (4714 extreme values).
 
 ```{r}
+#| label: tbl-extreme-counts
+#| tbl-cap: "Design Features with Greatest Number of Extreme Values in GEEs"
+
 # checking how many GEEs yielded extreme values
 runname <- "April18_fullsimulation_combined"
 
@@ -312,132 +720,84 @@ extreme_count_df <- GEE_check_df %>%
   ) %>%
   arrange(desc(num_extreme1))
 
-# check whether the counts are the same
-extreme_count_df %>%
-  filter(num_extreme1 != num_extreme2) %>%
-  select(model, predictor.type, outcome.type, num_extreme1, num_extreme2)
+# create table
+knitr::kable(extreme_count_df[1:10,], format = "html")
 ```
 
+All counts are the same across the two thresholds, indicating that when values are extreme, they are very extreme.
+
 ```{r}
-# create a table with the proportion of extreme scenarios per model
+# check whether the counts are the same (TRUE or FALSE)
+counts_equal <- extreme_count_df$num_extreme1 == extreme_count_df$num_extreme2
+# check if there are exclusively TRUE values
+all(counts_equal)
+```
+
+Another way of investigating this is by evaluating the proportion of extreme replications per scenario. @tbl-extreme-prop shows that there is one scenario (design_id = 299) with nearly half of the replications resulting in extreme values (according to both thresholds).
+
+```{r}
+#| label: tbl-extreme-prop
+#| tbl-cap: "Designs with Greatest Proportion of Extreme Values in GEEs"
+
+# create a table with the proportion of extreme replications per scenario
 extreme_prop_df <- GEE_check_df %>%
   group_by(model, design_id) %>%
   summarize(
     proportion_extreme1 = mean(abs(beta1_bias) > threshold1),
     proportion_extreme2 = mean(abs(beta1_bias) > threshold2),
     .groups = "drop"
-  ) 
-
-# check whether the proportions are the same
-extreme_prop_df %>%
-  filter(proportion_extreme1 != proportion_extreme2) %>%
-  select(model, design_id, proportion_extreme1, proportion_extreme2)
-
-# count number of unique design_ids
-length(unique(extreme_prop_df$design_id))
-
-# compute min and max
-min(extreme_prop_df$proportion_extreme)
-max(extreme_prop_df$proportion_extreme)
-
-# plot a density plot of extreme values wrapped by model
-ggplot(extreme_prop_df, aes(x = proportion_extreme, fill = model)) +
-  geom_density(alpha = 0.5) +
-  labs(x = "Proportion of extreme values", y = "Density") +
-  theme_bw() +
-  theme(legend.position = "bottom") +
-  facet_wrap(~ model, ncol = 3)
-```
-
-```{r}
-# create a table with the number of extreme scenarios per model
-extreme_count_df <- GEE_check_df %>%
-  group_by(model, predictor.type, outcome.type) %>%
-  summarize(
-    num_extreme1 = sum(abs(beta1_bias) > threshold1),
-    num_extreme2 = sum(abs(beta1_bias) > threshold2),
-    .groups = "drop"
   ) %>%
-  arrange(desc(num_extreme1))
+  arrange(desc(proportion_extreme1))
 
-# check whether the counts are the same
-extreme_count_df %>%
-  filter(num_extreme1 != num_extreme2) %>%
-  select(model, predictor.type, outcome.type, num_extreme1, num_extreme2)
+knitr::kable(extreme_prop_df[1:20,])
 ```
 
+All proportions are the same across the two thresholds, indicating that when values are extreme, they are very extreme.
+
 ```{r}
-# take the setting with most frequent extreme values (design_id = 299 and g.ar12) and plot the density of bias
-plot1 <- GEE_check_df %>%
-  filter(design_id == 299, model == "g.ar12") %>%
-  ggplot(aes(x = beta1_bias)) +
-  geom_density() +
-  labs(x = "Bias", y = "Density") +
-  theme_bw() +
-  xlim(-5, 5) +
-  theme(legend.position = "bottom")
+# check whether the proportions are the same by checking if there is any false in the vector extreme_prop_df$proportion_extreme1 == extreme_prop_df$proportion_extreme2
+proportions_equal <- extreme_prop_df$proportion_extreme1 == extreme_prop_df$proportion_extreme2
+# check if there are exclusively TRUE values
+all(proportions_equal)
+```
 
-# g.ar12
-# 300
-plot2 <- GEE_check_df %>%
-  filter(design_id == 300, model == "g.ar12") %>%
-  ggplot(aes(x = beta1_bias)) +
-  geom_density() +
-  labs(x = "Bias", y = "Density") +
-  theme_bw() +
-  xlim(-5, 5) +
-  theme(legend.position = "bottom")
+There are 76 scenarios that have at least one extreme replication.
 
-# g.ar12
-# 353
-plot3 <- GEE_check_df %>%
-  filter(design_id == 353, model == "g.ar12") %>%
-  ggplot(aes(x = beta1_bias)) +
-  geom_density() +
-  labs(x = "Bias", y = "Density") +
-  theme_bw() +
-  xlim(-5, 5) +
-  theme(legend.position = "bottom")
+```{r}
+# remove zeros from the extreme_prop_df
+extreme_prop_df_nozeros <- extreme_prop_df %>%
+  filter(proportion_extreme1 > 0)
+# count number of unique design_ids
+length(unique(extreme_prop_df_nozeros$design_id))
+```
 
-# g.ar12
-# 354
-plot4 <- GEE_check_df %>%
-  filter(design_id == 354, model == "g.ar12") %>%
-  ggplot(aes(x = beta1_bias)) +
-  geom_density() +
-  labs(x = "Bias", y = "Density") +
-  theme_bw() +
-  xlim(-5, 5) +
-  theme(legend.position = "bottom")
+@tbl-extreme-scenarios shows the GEE scenarios for which the most extreme values occurred in a descending order. We can see here that the scenarios with the most extreme values had a large number of time points (T = 20), a continuous predictor, a binary outcome a non-zero random intercept value (sd.u0). The model with the most extreme values was the AR(1) GEE approach with the CWC method (g.ar12), followed by a tie between Mundlak's contextual and the Hybrid methods (g.ar13 and g.ar14).
 
-# g.ar13
-# 263
-plot5 <- GEE_check_df %>%
-  filter(design_id == 263, model == "g.ar13") %>%
-  ggplot(aes(x = beta1_bias)) +
-  geom_density() +
-  labs(x = "Bias", y = "Density") +
-  theme_bw() +
-  xlim(-5, 5) +
-  theme(legend.position = "bottom")
+```{r}
+#| label: tbl-extreme-scenarios
+#| tbl-cap: "Scenarios with Greatest Proportion of Extreme Values in GEEs"
 
-# g.ar14
-# 263
-plot6 <- GEE_check_df %>%
-  filter(design_id == 263, model == "g.ar14") %>%
-  ggplot(aes(x = beta1_bias)) +
-  geom_density() +
-  labs(x = "Bias", y = "Density") +
-  theme_bw() +
-  xlim(-5, 5) +
-  theme(legend.position = "bottom")
+# filter the first 8 columns
+extreme_scenarios <- extreme_prop_df[1:8,]
 
-# combine plots
-library(patchwork)
-combined_plot <- (plot1 + plot2) / (plot3 + plot4) / (plot5 + plot6)
-combined_plot
+# filter the GEE_check_df for the extreme scenarios
+GEE_check_df_extreme <- GEE_check_df %>%
+  right_join(extreme_scenarios, by = c("model", "design_id")) %>%
+  select(-c(beta1_bias, replication, g.00, sdX.within, g.10, true_cluster_means, design_id, sd.u1, proportion_extreme2)) %>%
+  distinct() %>%
+  rename(prop_extreme = proportion_extreme1) %>%
+  arrange(desc(prop_extreme))
+
+# turn this into table
+knitr::kable(GEE_check_df_extreme, format = "html")
 ```
 
 ## References
 
+::: {#refs}
+:::
 
+---
+nocite: |
+  @*
+---
