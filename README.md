@@ -4,6 +4,20 @@ This repository contains all materials associated with the manuscript:
 **"From Multilevel Modeling to GEE: Revisiting the Within- and Between-Person Debate with Binary Predictors and Outcomes"**
 It includes code, supplementary documentation, and simulation results to ensure full transparency and reproducibility of the study.
 
+## Reproducibility via `renv`
+
+This repository uses the [`renv`](https://rstudio.github.io/renv/) package to create a reproducible R environment. To replicate the computational setup:
+
+1. Clone or download the entire repository.
+2. Open the project in RStudio (or start an R session in the project folder).
+3. Run:
+
+   ```r
+   renv::restore()
+   ```
+
+This restores all package versions as specified in the `renv.lock` file, ensuring consistent results across systems and over time.
+
 ## Repository Structure
 
 ### `scripts/`
