@@ -3183,7 +3183,7 @@ vertical-align: -.125em;
 </section>
 <section id="loading-simulation-results" class="level2" data-number="2">
 <h2 data-number="2" class="anchored" data-anchor-id="loading-simulation-results"><span class="header-section-number">2</span> Loading Simulation Results</h2>
-<p>First, we need to load the simulation results. As the simulations were ran in two parts, we will load the results from both parts. The first part includes DGMs 2-4 (binary X and continuous Y, continuous X and binary Y, and binary X and Y), while the second part includes DGM 1 (continuous predictor and outcome). The results are saved in the <code>simulation_results</code> folder.</p>
+<p>First, we need to load the simulation results. As the simulations were ran in two parts, we will load the results from both parts. The first part includes DGMs 2-4 (binary X and continuous Y, continuous X and binary Y, and binary X and Y), while the second part includes DGM 1 (continuous predictor and outcome). The results are saved in the <code>output</code> folder.</p>
 <div class="cell">
 <details class="code-fold">
 <summary>Code</summary>
@@ -3191,7 +3191,7 @@ vertical-align: -.125em;
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>runname <span class="ot">&lt;-</span> <span class="st">&quot;April10_fullsimulation&quot;</span></span>
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="co"># retrieve the design and parameterization</span></span>
-<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>settings <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="fu">here</span>(<span class="fu">paste0</span>(<span class="st">&quot;simulation_results/&quot;</span>, runname, <span class="st">&quot;/settings.RDS&quot;</span>)))</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>settings <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="fu">here</span>(<span class="fu">paste0</span>(<span class="st">&quot;output/&quot;</span>, runname, <span class="st">&quot;/settings.RDS&quot;</span>)))</span>
 <span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>design <span class="ot">&lt;-</span> settings<span class="sc">$</span>design</span>
 <span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>parametrization <span class="ot">&lt;-</span> settings<span class="sc">$</span>parametrization</span>
 <span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>nsim <span class="ot">&lt;-</span> settings<span class="sc">$</span>nsim</span>
@@ -3224,7 +3224,7 @@ vertical-align: -.125em;
 <span id="cb2-35"><a href="#cb2-35" aria-hidden="true" tabindex="-1"></a>  }</span>
 <span id="cb2-36"><a href="#cb2-36" aria-hidden="true" tabindex="-1"></a>  </span>
 <span id="cb2-37"><a href="#cb2-37" aria-hidden="true" tabindex="-1"></a>  <span class="co"># read in the results</span></span>
-<span id="cb2-38"><a href="#cb2-38" aria-hidden="true" tabindex="-1"></a>  parallel_results_setting <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="fu">here</span>(<span class="fu">paste0</span>(<span class="st">&quot;simulation_results/&quot;</span>, runname, <span class="st">&quot;/&quot;</span>, idesign, <span class="st">&quot;.RDS&quot;</span>)))</span>
+<span id="cb2-38"><a href="#cb2-38" aria-hidden="true" tabindex="-1"></a>  parallel_results_setting <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="fu">here</span>(<span class="fu">paste0</span>(<span class="st">&quot;output/&quot;</span>, runname, <span class="st">&quot;/&quot;</span>, idesign, <span class="st">&quot;.RDS&quot;</span>)))</span>
 <span id="cb2-39"><a href="#cb2-39" aria-hidden="true" tabindex="-1"></a>  </span>
 <span id="cb2-40"><a href="#cb2-40" aria-hidden="true" tabindex="-1"></a>  <span class="co"># unlist the lists inside the list</span></span>
 <span id="cb2-41"><a href="#cb2-41" aria-hidden="true" tabindex="-1"></a>  df <span class="ot">&lt;-</span> <span class="fu">map_dfr</span>(parallel_results_setting, <span class="cf">function</span>(rep) {</span>
@@ -3282,14 +3282,14 @@ vertical-align: -.125em;
 <span id="cb2-93"><a href="#cb2-93" aria-hidden="true" tabindex="-1"></a>final_df <span class="ot">&lt;-</span> <span class="fu">left_join</span>(design_long, sim_results_all, <span class="at">by =</span> <span class="fu">c</span>(<span class="st">&quot;design_id&quot;</span>, <span class="st">&quot;replication&quot;</span>))</span>
 <span id="cb2-94"><a href="#cb2-94" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb2-95"><a href="#cb2-95" aria-hidden="true" tabindex="-1"></a><span class="co"># save the final data frame</span></span>
-<span id="cb2-96"><a href="#cb2-96" aria-hidden="true" tabindex="-1"></a><span class="fu">saveRDS</span>(final_df, <span class="fu">here</span>(<span class="fu">paste0</span>(<span class="st">&quot;simulation_results/&quot;</span>, runname, <span class="st">&quot;/plotting_bias_df1.RDS&quot;</span>)))</span>
+<span id="cb2-96"><a href="#cb2-96" aria-hidden="true" tabindex="-1"></a><span class="fu">saveRDS</span>(final_df, <span class="fu">here</span>(<span class="fu">paste0</span>(<span class="st">&quot;output/&quot;</span>, runname, <span class="st">&quot;/plotting_bias_df1.RDS&quot;</span>)))</span>
 <span id="cb2-97"><a href="#cb2-97" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb2-98"><a href="#cb2-98" aria-hidden="true" tabindex="-1"></a><span class="do">### PART 2: DGM 1 (continuous X and Y) ----</span></span>
 <span id="cb2-99"><a href="#cb2-99" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb2-100"><a href="#cb2-100" aria-hidden="true" tabindex="-1"></a>runname <span class="ot">&lt;-</span> <span class="st">&quot;April17_fullsimulation_contXY&quot;</span></span>
 <span id="cb2-101"><a href="#cb2-101" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb2-102"><a href="#cb2-102" aria-hidden="true" tabindex="-1"></a><span class="co"># retrieve the design and parameterization</span></span>
-<span id="cb2-103"><a href="#cb2-103" aria-hidden="true" tabindex="-1"></a>settings <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="fu">here</span>(<span class="fu">paste0</span>(<span class="st">&quot;simulation_results/&quot;</span>, runname, <span class="st">&quot;/settings.RDS&quot;</span>)))</span>
+<span id="cb2-103"><a href="#cb2-103" aria-hidden="true" tabindex="-1"></a>settings <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="fu">here</span>(<span class="fu">paste0</span>(<span class="st">&quot;output/&quot;</span>, runname, <span class="st">&quot;/settings.RDS&quot;</span>)))</span>
 <span id="cb2-104"><a href="#cb2-104" aria-hidden="true" tabindex="-1"></a>design <span class="ot">&lt;-</span> settings<span class="sc">$</span>design</span>
 <span id="cb2-105"><a href="#cb2-105" aria-hidden="true" tabindex="-1"></a>parametrization <span class="ot">&lt;-</span> settings<span class="sc">$</span>parametrization</span>
 <span id="cb2-106"><a href="#cb2-106" aria-hidden="true" tabindex="-1"></a>nsim <span class="ot">&lt;-</span> settings<span class="sc">$</span>nsim</span>
@@ -3322,7 +3322,7 @@ vertical-align: -.125em;
 <span id="cb2-133"><a href="#cb2-133" aria-hidden="true" tabindex="-1"></a>  }</span>
 <span id="cb2-134"><a href="#cb2-134" aria-hidden="true" tabindex="-1"></a>  </span>
 <span id="cb2-135"><a href="#cb2-135" aria-hidden="true" tabindex="-1"></a>  <span class="co"># read in the results</span></span>
-<span id="cb2-136"><a href="#cb2-136" aria-hidden="true" tabindex="-1"></a>  parallel_results_setting <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="fu">here</span>(<span class="fu">paste0</span>(<span class="st">&quot;simulation_results/&quot;</span>, runname, <span class="st">&quot;/&quot;</span>, idesign, <span class="st">&quot;.RDS&quot;</span>)))</span>
+<span id="cb2-136"><a href="#cb2-136" aria-hidden="true" tabindex="-1"></a>  parallel_results_setting <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="fu">here</span>(<span class="fu">paste0</span>(<span class="st">&quot;output/&quot;</span>, runname, <span class="st">&quot;/&quot;</span>, idesign, <span class="st">&quot;.RDS&quot;</span>)))</span>
 <span id="cb2-137"><a href="#cb2-137" aria-hidden="true" tabindex="-1"></a>  </span>
 <span id="cb2-138"><a href="#cb2-138" aria-hidden="true" tabindex="-1"></a>  <span class="co"># unlist the lists inside the list</span></span>
 <span id="cb2-139"><a href="#cb2-139" aria-hidden="true" tabindex="-1"></a>  df <span class="ot">&lt;-</span> <span class="fu">map_dfr</span>(parallel_results_setting, <span class="cf">function</span>(rep) {</span>
@@ -3381,7 +3381,7 @@ vertical-align: -.125em;
 <span id="cb2-192"><a href="#cb2-192" aria-hidden="true" tabindex="-1"></a>final_df <span class="ot">&lt;-</span> <span class="fu">left_join</span>(design_long, sim_results_all, <span class="at">by =</span> <span class="fu">c</span>(<span class="st">&quot;design_id&quot;</span>, <span class="st">&quot;replication&quot;</span>))</span>
 <span id="cb2-193"><a href="#cb2-193" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb2-194"><a href="#cb2-194" aria-hidden="true" tabindex="-1"></a><span class="co"># save the final data frame</span></span>
-<span id="cb2-195"><a href="#cb2-195" aria-hidden="true" tabindex="-1"></a><span class="fu">saveRDS</span>(final_df, <span class="fu">here</span>(<span class="fu">paste0</span>(<span class="st">&quot;simulation_results/&quot;</span>, runname, <span class="st">&quot;/plotting_bias_df2.RDS&quot;</span>)))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb2-195"><a href="#cb2-195" aria-hidden="true" tabindex="-1"></a><span class="fu">saveRDS</span>(final_df, <span class="fu">here</span>(<span class="fu">paste0</span>(<span class="st">&quot;output/&quot;</span>, runname, <span class="st">&quot;/plotting_bias_df2.RDS&quot;</span>)))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
 <p>Let us now combine the results from both simulations</p>
@@ -3392,16 +3392,16 @@ vertical-align: -.125em;
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="co"># read in the first simulation results</span></span>
 <span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>runname1 <span class="ot">&lt;-</span> <span class="st">&quot;April10_fullsimulation&quot;</span></span>
-<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>final_df1 <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="fu">here</span>(<span class="fu">paste0</span>(<span class="st">&quot;simulation_results/&quot;</span>, runname1, <span class="st">&quot;/plotting_bias_df1.RDS&quot;</span>)))</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>final_df1 <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="fu">here</span>(<span class="fu">paste0</span>(<span class="st">&quot;output/&quot;</span>, runname1, <span class="st">&quot;/plotting_bias_df1.RDS&quot;</span>)))</span>
 <span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a><span class="co"># read in the second simulation results</span></span>
 <span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>runname2 <span class="ot">&lt;-</span> <span class="st">&quot;April17_fullsimulation_contXY&quot;</span></span>
-<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>final_df2 <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="fu">here</span>(<span class="fu">paste0</span>(<span class="st">&quot;simulation_results/&quot;</span>, runname2, <span class="st">&quot;/plotting_bias_df2.RDS&quot;</span>)))</span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>final_df2 <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="fu">here</span>(<span class="fu">paste0</span>(<span class="st">&quot;output/&quot;</span>, runname2, <span class="st">&quot;/plotting_bias_df2.RDS&quot;</span>)))</span>
 <span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a><span class="co"># combine the two data frames</span></span>
 <span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>final_df <span class="ot">&lt;-</span> <span class="fu">bind_rows</span>(final_df1, final_df2)</span>
 <span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a><span class="co"># save the final data frame</span></span>
 <span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a>newrunname <span class="ot">&lt;-</span> <span class="st">&quot;April18_fullsimulation_combined&quot;</span></span>
-<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a><span class="fu">saveRDS</span>(final_df, <span class="fu">here</span>(<span class="fu">paste0</span>(<span class="st">&quot;simulation_results/&quot;</span>, newrunname, <span class="st">&quot;/plotting_bias_df.RDS&quot;</span>)))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a><span class="fu">saveRDS</span>(final_df, <span class="fu">here</span>(<span class="fu">paste0</span>(<span class="st">&quot;output/&quot;</span>, newrunname, <span class="st">&quot;/plotting_bias_df.RDS&quot;</span>)))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
 <div class="cell">
@@ -3409,7 +3409,7 @@ vertical-align: -.125em;
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co"># read in the final data frame</span></span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>newrunname <span class="ot">&lt;-</span> <span class="st">&quot;April18_fullsimulation_combined&quot;</span></span>
-<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>final_df <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="fu">here</span>(<span class="fu">paste0</span>(<span class="st">&quot;simulation_results/&quot;</span>, newrunname, <span class="st">&quot;/plotting_bias_df.RDS&quot;</span>)))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>final_df <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="fu">here</span>(<span class="fu">paste0</span>(<span class="st">&quot;output/&quot;</span>, newrunname, <span class="st">&quot;/plotting_bias_df.RDS&quot;</span>)))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
 </section>
@@ -3627,7 +3627,7 @@ Figure 2: Differences in Estimates Between Hybrid and Contextual Methods in DGM
 <div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>runname <span class="ot">&lt;-</span> <span class="st">&quot;April18_fullsimulation_combined&quot;</span></span>
 <span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a><span class="co"># read in the final data frame</span></span>
-<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>final_df <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="fu">here</span>(<span class="fu">paste0</span>(<span class="st">&quot;simulation_results/&quot;</span>, runname, <span class="st">&quot;/plotting_bias_df.RDS&quot;</span>)))</span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>final_df <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="fu">here</span>(<span class="fu">paste0</span>(<span class="st">&quot;output/&quot;</span>, runname, <span class="st">&quot;/plotting_bias_df.RDS&quot;</span>)))</span>
 <span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>  </span>
 <span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a><span class="co"># select relevant variables and cases (select and filter)</span></span>
 <span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>plot_df <span class="ot">&lt;-</span> final_df <span class="sc">%&gt;%</span></span>
@@ -3732,7 +3732,7 @@ Figure 3: Bias in contextual effect estimates for DGM 3 (continuous predictor, 
 <div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>runname <span class="ot">&lt;-</span> <span class="st">&quot;April18_fullsimulation_combined&quot;</span></span>
 <span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a><span class="co"># read in the final data frame</span></span>
-<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>final_df <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="fu">here</span>(<span class="fu">paste0</span>(<span class="st">&quot;simulation_results/&quot;</span>, runname, <span class="st">&quot;/plotting_bias_df.RDS&quot;</span>)))</span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>final_df <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="fu">here</span>(<span class="fu">paste0</span>(<span class="st">&quot;output/&quot;</span>, runname, <span class="st">&quot;/plotting_bias_df.RDS&quot;</span>)))</span>
 <span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>  </span>
 <span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a><span class="co"># select relevant variables and cases (select and filter)</span></span>
 <span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>plot_df <span class="ot">&lt;-</span> final_df <span class="sc">%&gt;%</span></span>
@@ -3842,7 +3842,7 @@ Figure 4: Bias in contextual effect estimates for DGM 4 (binary predictor and o
 <span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>runname <span class="ot">&lt;-</span> <span class="st">&quot;April18_fullsimulation_combined&quot;</span></span>
 <span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a><span class="co"># read in the final data frame</span></span>
-<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>final_df <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="fu">here</span>(<span class="fu">paste0</span>(<span class="st">&quot;simulation_results/&quot;</span>, runname, <span class="st">&quot;/plotting_bias_df.RDS&quot;</span>)))</span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>final_df <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="fu">here</span>(<span class="fu">paste0</span>(<span class="st">&quot;output/&quot;</span>, runname, <span class="st">&quot;/plotting_bias_df.RDS&quot;</span>)))</span>
 <span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a><span class="co"># scenario 1</span></span>
 <span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a>GEE_check_df <span class="ot">&lt;-</span> final_df <span class="sc">%&gt;%</span></span>
@@ -4341,7 +4341,7 @@ Wickham, H. (2016). <em>ggplot2: Elegant graphics for data analysis</em>. Spring
 Wickham, H. (2023). <em>Stringr: Simple, consistent wrappers for common string operations</em>. <a href="https://stringr.tidyverse.org">https://stringr.tidyverse.org</a>
 </div>
 <div id="ref-R-ggplot2" class="csl-entry" role="listitem">
-Wickham, H., Chang, W., Henry, L., Pedersen, T. L., Takahashi, K., Wilke, C., Woo, K., Yutani, H., Dunnington, D., &amp; van den Brand, T. (2024). <em>ggplot2: Create elegant data visualisations using the grammar of graphics</em>. <a href="https://ggplot2.tidyverse.org">https://ggplot2.tidyverse.org</a>
+Wickham, H., Chang, W., Henry, L., Pedersen, T. L., Takahashi, K., Wilke, C., Woo, K., Yutani, H., Dunnington, D., &amp; van den Brand, T. (2025). <em>ggplot2: Create elegant data visualisations using the grammar of graphics</em>. <a href="https://ggplot2.tidyverse.org">https://ggplot2.tidyverse.org</a>
 </div>
 <div id="ref-R-dplyr" class="csl-entry" role="listitem">
 Wickham, H., François, R., Henry, L., Müller, K., &amp; Vaughan, D. (2023). <em>Dplyr: A grammar of data manipulation</em>. <a href="https://dplyr.tidyverse.org">https://dplyr.tidyverse.org</a>

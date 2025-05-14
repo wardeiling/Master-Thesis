@@ -11,7 +11,7 @@ library(ggplot2) # for plotting
 runname <- "April10_fullsimulation"
 
 # retrieve the design and parameterization
-settings <- readRDS(paste0("simulation_results_glmm/", runname, "/settings.RDS"))
+settings <- readRDS(paste0("output/", runname, "/settings.RDS"))
 design <- settings$design
 parametrization <- settings$parametrization
 nsim <- settings$nsim
@@ -44,7 +44,7 @@ for (idesign in 1:nrow(design)) {
   }
   
   # read in the results
-  parallel_results_setting <- readRDS(paste0("simulation_results_glmm/", runname, "/", idesign, ".RDS"))
+  parallel_results_setting <- readRDS(paste0("output/", runname, "/", idesign, ".RDS"))
   
   # unlist the lists inside the list
   df <- map_dfr(parallel_results_setting, function(rep) {
@@ -102,14 +102,14 @@ sim_results_all <- bind_rows(results_list)
 final_df <- left_join(design_long, sim_results_all, by = c("design_id", "replication"))
 
 # save the final data frame
-saveRDS(final_df, paste0("simulation_results_glmm/", runname, "/plotting_bias_df1.RDS"))
+saveRDS(final_df, paste0("output/", runname, "/plotting_bias_df1.RDS"))
 
 ### PART 2: DGM 1 (continuous X and Y) ----
 
 runname <- "April17_fullsimulation_contXY"
 
 # retrieve the design and parameterization
-settings <- readRDS(paste0("simulation_results_glmm/", runname, "/settings.RDS"))
+settings <- readRDS(paste0("output/", runname, "/settings.RDS"))
 design <- settings$design
 parametrization <- settings$parametrization
 nsim <- settings$nsim
@@ -142,7 +142,7 @@ for (idesign in 1:nrow(design)) {
   }
   
   # read in the results
-  parallel_results_setting <- readRDS(paste0("simulation_results_glmm/", runname, "/", idesign, ".RDS"))
+  parallel_results_setting <- readRDS(paste0("output/", runname, "/", idesign, ".RDS"))
   
   # unlist the lists inside the list
   df <- map_dfr(parallel_results_setting, function(rep) {
@@ -201,22 +201,22 @@ sim_results_all <- bind_rows(results_list) %>%
 final_df <- left_join(design_long, sim_results_all, by = c("design_id", "replication"))
 
 # save the final data frame
-saveRDS(final_df, paste0("simulation_results_glmm/", runname, "/plotting_bias_df2.RDS"))
+saveRDS(final_df, paste0("output/", runname, "/plotting_bias_df2.RDS"))
 
 ### COMBINE RESULTS FROM BOTH SIMULATIONS ### ----
 
 # read in the first simulation results
 runname1 <- "April10_fullsimulation"
-final_df1 <- readRDS(paste0("simulation_results_glmm/", runname1, "/plotting_bias_df1.RDS"))
+final_df1 <- readRDS(paste0("output/", runname1, "/plotting_bias_df1.RDS"))
 # read in the second simulation results
 runname2 <- "April17_fullsimulation_contXY"
-final_df2 <- readRDS(paste0("simulation_results_glmm/", runname2, "/plotting_bias_df2.RDS"))
+final_df2 <- readRDS(paste0("output/", runname2, "/plotting_bias_df2.RDS"))
 
 # combine the two data frames
 final_df <- bind_rows(final_df1, final_df2)
 # save the final data frame
 newrunname <- "April18_fullsimulation_combined"
-saveRDS(final_df, paste0("simulation_results_glmm/", newrunname, "/plotting_bias_df.RDS"))
+saveRDS(final_df, paste0("output/", newrunname, "/plotting_bias_df.RDS"))
 
 ### SELECT RELEVANT CASES FOR PLOTTING ### ----
 
@@ -240,7 +240,7 @@ for(i in 1:nrow(settings)) {
   #### Plot: Grid of sd.u0 and T_total ----
   
   # read in the final data frame
-  final_df <- readRDS(paste0("simulation_results_glmm/", runname, "/plotting_bias_df.RDS"))
+  final_df <- readRDS(paste0("output/", runname, "/plotting_bias_df.RDS"))
   
   # select relevant variables and cases (select and filter)
   plot_df <- final_df %>%
@@ -381,7 +381,7 @@ for(i in 1:nrow(settings)) {
   ggsave("bias_plot_T_total-vs-sd.u0_within.pdf", width = 9, height = 7)
   
   # save
-  ggsave(paste0("simulation_results_glmm/", runname, "/figures/", type, "bias_plot_T_total-vs-sd.u0_within.pdf"), width = 9, height = 7)
+  ggsave(paste0("output/", runname, "/figures/", type, "bias_plot_T_total-vs-sd.u0_within.pdf"), width = 9, height = 7)
   
   # For the contextual effect
   ggplot(plot_df_g01, aes(x = estimation_type, y = g01_bias, col = estimation_type)) +
@@ -417,6 +417,6 @@ for(i in 1:nrow(settings)) {
     guides(color = guide_legend(override.aes = list(color = NA)))
   
   # save
-  ggsave(paste0("simulation_results_glmm/", runname, "/figures/", type, "bias_plot_T_total-vs-sd.u0_contextual.pdf"), width = 3, height = 7)
+  ggsave(paste0("output/", runname, "/figures/", type, "bias_plot_T_total-vs-sd.u0_contextual.pdf"), width = 3, height = 7)
 
 }

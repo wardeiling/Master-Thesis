@@ -56,7 +56,7 @@ write_bib(c("purrr", "dplyr", "tidyr", "stringr", "ggplot2", "here", "patchwork"
 
 ## Loading Simulation Results
 
-First, we need to load the simulation results. As the simulations were ran in two parts, we will load the results from both parts. The first part includes DGMs 2-4 (binary X and continuous Y, continuous X and binary Y, and binary X and Y), while the second part includes DGM 1 (continuous predictor and outcome). The results are saved in the `simulation_results` folder.
+First, we need to load the simulation results. As the simulations were ran in two parts, we will load the results from both parts. The first part includes DGMs 2-4 (binary X and continuous Y, continuous X and binary Y, and binary X and Y), while the second part includes DGM 1 (continuous predictor and outcome). The results are saved in the `output` folder.
 
 ```{r}
 #| eval: false
@@ -65,7 +65,7 @@ First, we need to load the simulation results. As the simulations were ran in tw
 runname <- "April10_fullsimulation"
 
 # retrieve the design and parameterization
-settings <- readRDS(here(paste0("simulation_results/", runname, "/settings.RDS")))
+settings <- readRDS(here(paste0("output/", runname, "/settings.RDS")))
 design <- settings$design
 parametrization <- settings$parametrization
 nsim <- settings$nsim
@@ -98,7 +98,7 @@ for (idesign in 1:nrow(design)) {
   }
   
   # read in the results
-  parallel_results_setting <- readRDS(here(paste0("simulation_results/", runname, "/", idesign, ".RDS")))
+  parallel_results_setting <- readRDS(here(paste0("output/", runname, "/", idesign, ".RDS")))
   
   # unlist the lists inside the list
   df <- map_dfr(parallel_results_setting, function(rep) {
@@ -156,14 +156,14 @@ sim_results_all <- bind_rows(results_list)
 final_df <- left_join(design_long, sim_results_all, by = c("design_id", "replication"))
 
 # save the final data frame
-saveRDS(final_df, here(paste0("simulation_results/", runname, "/plotting_bias_df1.RDS")))
+saveRDS(final_df, here(paste0("output/", runname, "/plotting_bias_df1.RDS")))
 
 ### PART 2: DGM 1 (continuous X and Y) ----
 
 runname <- "April17_fullsimulation_contXY"
 
 # retrieve the design and parameterization
-settings <- readRDS(here(paste0("simulation_results/", runname, "/settings.RDS")))
+settings <- readRDS(here(paste0("output/", runname, "/settings.RDS")))
 design <- settings$design
 parametrization <- settings$parametrization
 nsim <- settings$nsim
@@ -196,7 +196,7 @@ for (idesign in 1:nrow(design)) {
   }
   
   # read in the results
-  parallel_results_setting <- readRDS(here(paste0("simulation_results/", runname, "/", idesign, ".RDS")))
+  parallel_results_setting <- readRDS(here(paste0("output/", runname, "/", idesign, ".RDS")))
   
   # unlist the lists inside the list
   df <- map_dfr(parallel_results_setting, function(rep) {
@@ -255,7 +255,7 @@ sim_results_all <- bind_rows(results_list) %>%
 final_df <- left_join(design_long, sim_results_all, by = c("design_id", "replication"))
 
 # save the final data frame
-saveRDS(final_df, here(paste0("simulation_results/", runname, "/plotting_bias_df2.RDS")))
+saveRDS(final_df, here(paste0("output/", runname, "/plotting_bias_df2.RDS")))
 ```
 
 Let us now combine the results from both simulations
@@ -266,22 +266,22 @@ Let us now combine the results from both simulations
 
 # read in the first simulation results
 runname1 <- "April10_fullsimulation"
-final_df1 <- readRDS(here(paste0("simulation_results/", runname1, "/plotting_bias_df1.RDS")))
+final_df1 <- readRDS(here(paste0("output/", runname1, "/plotting_bias_df1.RDS")))
 # read in the second simulation results
 runname2 <- "April17_fullsimulation_contXY"
-final_df2 <- readRDS(here(paste0("simulation_results/", runname2, "/plotting_bias_df2.RDS")))
+final_df2 <- readRDS(here(paste0("output/", runname2, "/plotting_bias_df2.RDS")))
 
 # combine the two data frames
 final_df <- bind_rows(final_df1, final_df2)
 # save the final data frame
 newrunname <- "April18_fullsimulation_combined"
-saveRDS(final_df, here(paste0("simulation_results/", newrunname, "/plotting_bias_df.RDS")))
+saveRDS(final_df, here(paste0("output/", newrunname, "/plotting_bias_df.RDS")))
 ```
 
 ```{r}
 # read in the final data frame
 newrunname <- "April18_fullsimulation_combined"
-final_df <- readRDS(here(paste0("simulation_results/", newrunname, "/plotting_bias_df.RDS")))
+final_df <- readRDS(here(paste0("output/", newrunname, "/plotting_bias_df.RDS")))
 ```
 
 ## Comparison of Hybrid and Mundlak's Contextual Method
@@ -487,7 +487,7 @@ Let us investigate whether this influenced the figures shown in the manuscript f
 runname <- "April18_fullsimulation_combined"
 
 # read in the final data frame
-final_df <- readRDS(here(paste0("simulation_results/", runname, "/plotting_bias_df.RDS")))
+final_df <- readRDS(here(paste0("output/", runname, "/plotting_bias_df.RDS")))
   
 # select relevant variables and cases (select and filter)
 plot_df <- final_df %>%
@@ -584,7 +584,7 @@ For DGM 4 (binary predictor and outcome), we see the same pattern found for DGM 
 runname <- "April18_fullsimulation_combined"
 
 # read in the final data frame
-final_df <- readRDS(here(paste0("simulation_results/", runname, "/plotting_bias_df.RDS")))
+final_df <- readRDS(here(paste0("output/", runname, "/plotting_bias_df.RDS")))
   
 # select relevant variables and cases (select and filter)
 plot_df <- final_df %>%
@@ -684,7 +684,7 @@ In @tbl-extreme-counts we can see that extreme values only occurred in scenarios
 runname <- "April18_fullsimulation_combined"
 
 # read in the final data frame
-final_df <- readRDS(here(paste0("simulation_results/", runname, "/plotting_bias_df.RDS")))
+final_df <- readRDS(here(paste0("output/", runname, "/plotting_bias_df.RDS")))
 
 # scenario 1
 GEE_check_df <- final_df %>%
