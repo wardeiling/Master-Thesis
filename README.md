@@ -80,23 +80,52 @@ Each folder includes:
 
 Contains internal `renv` files storing the project-specific package environment.
 
-## Reproducibility via `renv`
-
-This project uses the [`renv`](https://rstudio.github.io/renv/) package to ensure a reproducible R environment. To replicate the computational setup:
-
-1. Install R version 4.2.2 from [CRAN](https://cran.rstudio.com/bin/windows/base/old/4.4.2/R-4.4.2-win.exe).
-2. Clone or download the repository.
-3. Open the project in RStudio.
-4. Run:
-
-   ```r
-   renv::restore()
-   ```
-
-This will install all required package versions as specified in `renv.lock`.
-
 ## Reproducing Results
 
 1. Run `scripts/main-simulation-function-future-simul-part1.R` to simulate DGMs 2–4. Output is saved to `April10_fullsimulation/`.
 2. Run `scripts/main-simulation-function-future-simul-part2.R` for DGM 1. Output is saved to `April17_fullsimulation_contxy/`.
 3. Run `scripts/results-plotting.R` to process and visualize the simulation results used in the manuscript.
+
+## Reproducibility: Step-by-Step Guide
+
+This repository uses the [`renv`](https://rstudio.github.io/renv/) package to create a reproducible R environment. To replicate the computational setup and rerun the analyses:
+
+### Step 1: Setup R and RStudio
+
+1. Install **R version 4.2.2** from CRAN ([download link](https://cran.rstudio.com/bin/windows/base/old/4.2.2/R-4.2.2-win.exe))
+2. Install **RStudio** (latest stable release)
+
+### Step 2: Clone or Download the Repository
+
+Clone the repository via GitHub or download the ZIP file and unzip it locally.
+
+### Step 3: Restore the Project Environment via `renv`
+
+1. Open **`Master-Thesis.Rproj`** with RStudio.
+2. Run the following in the R console:
+
+   ```r
+   renv::restore()
+   ```
+
+This restores the exact package versions as specified in the `renv.lock` file, ensuring a consistent and reproducible computational environment.
+
+### Step 4: Run the Simulation Scripts
+
+1. Execute **`scripts/main-simulation-function-future-simul-part1.R`**
+
+   * Runs simulations for DGMs 2–4
+   * Outputs will be saved in `simulation_results/April10_fullsimulation/`
+
+2. Execute **`scripts/main-simulation-function-future-simul-part2.R`**
+
+   * Runs simulations for DGM 1
+   * Outputs will be saved in `simulation_results/April17_fullsimulation_contxy/`
+
+### Step 5: Reproduce the Figures
+
+Run **`scripts/results-plotting.R`** to generate the plots used in the manuscript.
+
+This script automatically collects and merges the simulation outputs from both parts and creates boxplots for each design condition.
+
+---
