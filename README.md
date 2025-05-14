@@ -129,8 +129,6 @@ This restores the exact package versions as specified in the `renv.lock` file, e
 
 ### Step 5: Reproduce the Figures
 
-Run **`scripts/results-plotting.R`** to generate the plots used in the manuscript.
-
-This script automatically collects and merges the simulation outputs from both parts and creates boxplots for each design condition.
+Run **`scripts/results-plotting.R`** to generate the plots used in the manuscript. This script automatically collects and merges the simulation outputs from both parts and creates boxplots for each design condition.
 
 ---
