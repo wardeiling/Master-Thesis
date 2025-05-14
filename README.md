@@ -4,7 +4,6 @@ This repository contains all materials associated with the manuscript:
 **"From Multilevel Modeling to GEE: Revisiting the Within- and Between-Person Debate with Binary Predictors and Outcomes"**
 It includes code, supplementary documentation, and simulation results to ensure full transparency and reproducibility of the study.
 
-
 ## Ethics Assessment
 
 This simulation study was approved by the Ethical Review Board of the Faculty of Social and Behavioural Sciences of Utrecht University. The approval is based on the documents submitted by the researchers as required by the Ethics Committee and filed under FETC number 24-2003. The approval is valid through 31 May 2025. The approval pertains to ethical considerations, data management, and privacy issues (including GDPR compliance).
@@ -39,42 +38,50 @@ Contains dependency information for full reproducibility with `renv`.
 
 ### `scripts/`
 
+Contains all core scripts for running and analyzing the simulation study.
+
 * **`main-simulation-function-future-simul-part1.R`**
-  Runs simulations for DGMs 2–4.
+  Modularized script that runs simulations for DGMs 2–4.
 
 * **`main-simulation-function-future-simul-part2.R`**
-  Runs simulations for DGM 1.
+  Modularized script that runs simulations for DGM 1.
 
 * **`results-plotting.R`**
-  Produces plots used in the manuscript.
+  Produces plots used in the result section of the manuscript.
 
-* **`helper-functions/`**
+* **`helper-functions/`** (subfolder with modular components):
 
-  * `data-generation-centeredX.R`: Hybrid model data generation.
-  * `data-generation-mundlak.R`: Contextual model data generation.
-  * `model-fitting.R`: GLMM and GEE fitting procedures.
-  * `result-formatting.R`: Formatting and summarizing outputs.
+  * `data-generation-centeredX.R`: Data-generating mechanisms based on the hybrid model.
+  * `data-generation-mundlak.R`: Data-generating mechanisms based on Mundlak’s contextual model (the model used in the main manuscript).
+  * `model-fitting.R`: Model-fitting procedures for both GLMMs and GEEs.
+  * `result-formatting.R`: Function to clean and format model-fitting output.
 
 ### `docs/`
 
+Contains supporting materials that provide additional context and in-depth explanations of specific aspects of the study.
+
 * **`data-exploration.qmd`** / **`.html`**
-  Interactive Quarto document for exploring DGMs. [View HTML](https://wardeiling.github.io/multilevel-vs-gee-binary/data-exploration.html)
+  Allows users to explore all four data-generating mechanisms (DGMs) considered in the study. [View HTML](https://wardeiling.github.io/multilevel-vs-gee-binary/data-exploration.html)
 
 * **`supplementary_materials.qmd`** / **`.html`**
-  Additional theoretical discussion. [View HTML](https://wardeiling.github.io/multilevel-vs-gee-binary/supplementary_materials.html)
+  Supplementary materials accompanying the manuscript [View HTML](https://wardeiling.github.io/multilevel-vs-gee-binary/supplementary_materials.html)
+  1. A comparison between the hybrid and Mundlak's contextual model.
+  2. Discussion of boundary/extreme estimates in GEEs and how they were handled.
 
-### `simulation_results/`
+### `output/`
 
-* **`April10_fullsimulation/`**: DGMs 2–4
-* **`April17_fullsimulation_contxy/`**: DGM 1
-* **`April18_fullsimulation_combined/figures/`**: Final manuscript figures
+Contains raw and processed simulation outputs, organized into subfolders corresponding to different simulation runs:
+
+* **`April10_fullsimulation/`**: Part 1 of the simulations, covering DGMs 2–4.
+* **`April17_fullsimulation_contxy/`**: Part 2 of the simulations, covering DGM 1.
+* **`April18_fullsimulation_combined/figures/`**: Final figures used in result section of the manuscript.
 
 Each folder includes:
 
-* `i.RDS`: Raw results for design scenario *i*
-* `settings.RDS`: Design settings metadata
-* `log.txt`: Warnings/errors from execution
-* `summary-results-bias.RDS` and `.csv`: Summary performance metrics
+* `i.RDS`: Raw output for each scenario *i*.
+* `settings.RDS`: Simulation settings used for that part.
+* `log.txt`: Logs containing warnings and errors during simulation.
+* `summary-results-bias.RDS` and `.csv`: Summary files quantifying bias in the estimates.
 
 ### `renv/`
 
