@@ -2,7 +2,7 @@
 
 This repository contains all materials associated with the manuscript:
 **"From Multilevel Modeling to GEE: Revisiting the Within- and Between-Person Debate with Binary Predictors and Outcomes"**
-It includes code, supplementary documentation, and simulation results to ensure full transparency and reproducibility of the study. The research archive is maintained by Ward Eiling, and stored on a GitHub public repository. For questions, contact: wardeiling2000@gmail.com.
+It includes code, supplementary documentation, and simulation results to ensure full transparency and reproducibility of the study. The research archive is maintained by Ward Eiling and stored on a GitHub repository. It will remain openly accessible for at least two years (until 14-05-2027). For questions, contact: wardeiling2000@gmail.com.
 
 ## Ethics Assessment
 
