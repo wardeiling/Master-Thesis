@@ -39,12 +39,16 @@ Contains all core scripts for running and analyzing the simulation study.
 
 ### `data_exploration/`
 
+
+
+
+
+### `docs/`
+
 Contains interactive and rendered documents to explore the simulation designs.
 
 * **`data-exploration.qmd`**: Allows users to explore all four data-generating mechanisms (DGMs) considered in the study.
-* **`data-exploration.html`**: Rendered HTML version for direct inspection.
-
-### `docs/`
+* **`data-exploration.html`**: Rendered HTML version for [direct inspection](https://wardeiling.github.io/multilevel-vs-gee-binary/data-exploration.html).
 
 Supplementary materials accompanying the manuscript.
 
@@ -52,7 +56,7 @@ Supplementary materials accompanying the manuscript.
 
   1. A comparison between the hybrid and Mundlak's contextual model.
   2. Discussion of boundary/extreme estimates in GEEs and how they were handled.
-* **`supplementary_materials.html`**: Rendered HTML version for [direct inspection](https://wardeiling.github.io/multilevel-vs-gee-binary/supplementary_materials.html)
+* **`supplementary_materials.html`**: Rendered HTML version for [direct inspection](https://wardeiling.github.io/multilevel-vs-gee-binary/supplementary_materials.html).
 
 ### `simulation_results/`
 
