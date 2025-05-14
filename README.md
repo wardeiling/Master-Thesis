@@ -10,8 +10,35 @@ This simulation study was approved by the Ethical Review Board of the Faculty of
 
 ## Study Design
 
+This simulation study evaluates the generalizability of disaggregation methods—commonly applied in multilevel linear models (MLMs)—to *generalized* multilevel models (GLMMs) and *generalized estimating equations* (GEEs) when dealing with binary predictors and/or binary outcomes.
+
+We address two primary questions:
+
+1. Can disaggregation methods (UC, CWC, MuCo) reliably recover within-person and contextual effects in GLMMs with binary predictors and/or outcomes?
+2. Do GEEs require explicit disaggregation to correctly estimate within-person effects, especially when contextual effects are present?
+
+We simulate data across four data-generating models (DGMs) that vary in the scale of the predictor and outcome variables (continuous or binary). Across DGMs, we keep constant the within-cluser standard deviation (SD) of the continuous predictor, the fixed intercept, the within-cluster effect and the level 1 residual SD (for DGMs with continuous outcome). For each of these DGMs, we systematically vary: 
+
+CREATE MARKDOWN TABLE
+
+* Sample size *(N = 100, 200)*
+* Number of time points *(T = 5, 10, 20)*
+* Between-cluster SD in continuous predictor (0, 1, 3)
+* SD in Z (the latent trait underlying between-person variability in binary X): (0, 1, 3)
+* Contextual effect: (0, 1, 3)
+* Random intercept residual SD: (1, 3)
+
+Each dataset is analyzed using 12 strategies: combinations of 3 disaggregation methods (uncentered, centering-within-clusters and mundlak's contextual model) and 4 estimation approaches (GLMM, and GEE with independence, exchangeable, and AR(1) correlation structures).
+
+Model performance is assessed via estimation bias in fixed effects (within-person: β₁; contextual: γ₀₁).
+
+---
 
 ## Repository Structure
+
+**`renv.lock`**
+
+Contains information on the requirements of all the dependencies of R-packages used in the simulation study.
 
 ### `scripts/`
 
@@ -61,6 +88,10 @@ Each run folder contains:
 * `settings.RDS`: Simulation settings used for that batch.
 * `log.txt`: Logs containing warnings and errors during simulation.
 * `summary-results-bias.RDS` & `.csv`: Summary files quantifying bias in the estimates.
+
+### **`renv/`**
+
+Contains documents that save the settings of the `renv` environment.
 
 ## Reproducibility via `renv`
 
