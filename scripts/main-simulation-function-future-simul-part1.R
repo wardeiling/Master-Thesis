@@ -13,7 +13,7 @@ seed <- 6384
 set.seed(seed) # set seed for reproducibility
 runname <- "April10_fullsimulation" # set a runname
 parametrization <- "mundlak" # set the parametrization (mundlak or centeredX)
-dir.create(paste0("simulation_results/", runname), showWarnings = FALSE) # create a directory
+dir.create(paste0("output/", runname), showWarnings = FALSE) # create a directory
 
 # load libraries
 library(lme4) # for generalized linear mixed models
@@ -34,8 +34,7 @@ source("scripts/helper-functions/result-formatting.R")
 # set the number of simulations
 nsim <- 1000
 
-# In the study, these simulations were run in two parts
-# Part 1: DGM 2, 3 and 4
+# Simulation Part 1: DGM 2, 3 and 4
 design <- expand.grid(N_total = c(100, 200), T_total = c(5, 10, 20),
                       predictor.type = c("binary", "continuous"),
                       outcome.type = c("binary", "continuous"),
@@ -48,25 +47,15 @@ design <- design[!(design$sdX.between == 0 & design$g.01 != 0),]
 # remove scenarios with predictor and outcome type continuous
 design <- design[!(design$predictor.type == "continuous" & design$outcome.type == "continuous"),]
 
-# Part 2: DGM 1 (continuous predictor and outcome)
-# design <- expand.grid(N_total = c(100, 200), T_total = c(5, 10, 20),
-#                       predictor.type = "continuous", outcome.type = "continuous",
-#                       sdX.within = 1, sdX.between = c(0, 1, 3),
-#                       g.00 = 0, g.01 = c(0, 1, 3), g.10 = 1.5,
-#                       sd.u0 = c(0, 1, 3), sd.u1 = 0, sd.e = 1,
-#                       true_cluster_means = FALSE)
-# # remove scenarios with sdX.between == 0 and g.01 != 0
-# design <- design[!(design$sdX.between == 0 & design$g.01 != 0),]
-
 # save the empty design and settings to the directory
 settings <- list(nsim = nsim, seed = seed, runname = runname, parametrization = parametrization, design = design)
-saveRDS(settings, paste0("simulation_results/", runname, "/settings.RDS"))
+saveRDS(settings, paste0("output/", runname, "/settings.RDS"))
 
 ### Simulation ---------------------------------------------------------------
 
 # Open a connection to capture output and messages
-output_conn <- file(paste0("simulation_results/", runname, "/log.txt"), open = "a")
-message_conn <- file(paste0("simulation_results/", runname, "/log.txt"), open = "a")
+output_conn <- file(paste0("output/", runname, "/log.txt"), open = "a")
+message_conn <- file(paste0("output/", runname, "/log.txt"), open = "a")
 
 # Redirect output and messages to the file
 sink(output_conn, type = "output")
@@ -111,7 +100,7 @@ for (idesign in 1:nrow(design)) {
     models <- glmm_model_fitting(data, outcome.type = outcome.type)
     return(models)
   }
-  saveRDS(parallel_results, file = paste0("simulation_results/", runname, "/", idesign, ".RDS"))
+  saveRDS(parallel_results, file = paste0("output/", runname, "/", idesign, ".RDS"))
 }
 
 # Stop capturing output and messages
@@ -127,8 +116,8 @@ close(message_conn)
 if(FALSE) {
   # runname <- "April10_fullsimulation"
   runname <- "April17_fullsimulation_contXY"
-  design <- readRDS(paste0("simulation_results/", runname, "/settings.RDS"))$design
-  parametrization <- readRDS(paste0("simulation_results/", runname, "/settings.RDS"))$parametrization
+  design <- readRDS(paste0("output/", runname, "/settings.RDS"))$design
+  parametrization <- readRDS(paste0("output/", runname, "/settings.RDS"))$parametrization
 }
 
 # load packages
@@ -192,7 +181,7 @@ for (idesign in 1:nrow(design_all)) {
   }
   
   # read in the results
-  parallel_results_setting <- readRDS(paste0("simulation_results/", runname, "/", idesign, ".RDS"))
+  parallel_results_setting <- readRDS(paste0("output/", runname, "/", idesign, ".RDS"))
   
   # unlist the lists inside the list
   df <- map_dfr(parallel_results_setting, function(rep) {
@@ -329,7 +318,7 @@ design_all_reordered <- design_all %>%
          g.independence4_success, g.exchangeable4_success, g.ar14_success)
 
 # save design
-saveRDS(design_all_reordered, paste0("simulation_results/", runname, "/summary-results-all.RDS"))
+saveRDS(design_all_reordered, paste0("output/", runname, "/summary-results-all.RDS"))
 
 # create a rounded version of the design
 design_all_rounded <- design_all_reordered %>%
@@ -339,15 +328,15 @@ design_all_rounded <- design_all_reordered %>%
          across(ends_with("success"), ~ round(., 3)))
 
 # save design
-saveRDS(design_all_rounded, paste0("simulation_results/", runname, "/summary-results-all-rounded.RDS"))
+saveRDS(design_all_rounded, paste0("output/", runname, "/summary-results-all-rounded.RDS"))
 
 # remove all bias columns
 design_absolute <- design_all_rounded %>%
   select(-contains("g.10_bias"), -contains("g.01_bias"))
 
 # save design
-saveRDS(design_absolute, paste0("simulation_results/", runname, "/summary-results-absolute.RDS"))
-write.csv(design_absolute, paste0("simulation_results/", runname, "/summary-results-absolute.csv"), row.names = FALSE)
+saveRDS(design_absolute, paste0("output/", runname, "/summary-results-absolute.RDS"))
+write.csv(design_absolute, paste0("output/", runname, "/summary-results-absolute.csv"), row.names = FALSE)
 
 # remove absolute value columns
 design_bias <- design_all_rounded %>%
@@ -355,8 +344,8 @@ design_bias <- design_all_rounded %>%
   select(-ends_with("X", ignore.case = FALSE), -ends_with("X.cent", ignore.case = FALSE), -ends_with("X.cluster.means", ignore.case = FALSE))
 
 # save design
-saveRDS(design_bias, paste0("simulation_results/", runname, "/summary-results-bias.RDS"))
-write.csv(design_bias, paste0("simulation_results/", runname, "/summary-results-bias.csv"), row.names = FALSE)
+saveRDS(design_bias, paste0("output/", runname, "/summary-results-bias.RDS"))
+write.csv(design_bias, paste0("output/", runname, "/summary-results-bias.csv"), row.names = FALSE)
 
 # create separate versions containing the within-person and contextual effect
 design_bias_g01 <- design_bias %>%
@@ -365,10 +354,10 @@ design_bias_g10 <- design_bias %>%
   select(-contains("g.01_bias"))
 
 # save design
-saveRDS(design_bias_g01, paste0("simulation_results/", runname, "/summary-results-bias-g01.RDS"))
-write.csv(design_bias_g01, paste0("simulation_results/", runname, "/summary-results-bias-g01.csv"), row.names = FALSE)
-saveRDS(design_bias_g10, paste0("simulation_results/", runname, "/summary-results-bias-g10.RDS"))
-write.csv(design_bias_g10, paste0("simulation_results/", runname, "/summary-results-bias-g10.csv"), row.names = FALSE)
+saveRDS(design_bias_g01, paste0("output/", runname, "/summary-results-bias-g01.RDS"))
+write.csv(design_bias_g01, paste0("output/", runname, "/summary-results-bias-g01.csv"), row.names = FALSE)
+saveRDS(design_bias_g10, paste0("output/", runname, "/summary-results-bias-g10.RDS"))
+write.csv(design_bias_g10, paste0("output/", runname, "/summary-results-bias-g10.csv"), row.names = FALSE)
 
 # save sucess rates
 design_success <- design_all_rounded %>%
@@ -376,5 +365,5 @@ design_success <- design_all_rounded %>%
                   g.00, g.01, g.10, sd.u0, sd.u1, sd.e, true_cluster_means, contains("success")))
 
 # save design
-saveRDS(design_success, paste0("simulation_results/", runname, "/summary-results-success.RDS"))
-write.csv(design_success, paste0("simulation_results/", runname, "/summary-results-success.csv"), row.names = FALSE)
+saveRDS(design_success, paste0("output/", runname, "/summary-results-success.RDS"))
+write.csv(design_success, paste0("output/", runname, "/summary-results-success.csv"), row.names = FALSE)
