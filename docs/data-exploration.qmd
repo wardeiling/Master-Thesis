@@ -19,7 +19,7 @@ execute:
   message: false
 ---
 
-This document allows for the exploration of the four data generating mechanisms underlying the simulation study of the manuscript "From Multilevel Modeling to GEE: Revisiting the Within- and Between-Person Debate with Binary Predictors and Outcomes". In this manuscript, the parameters have the following meaning
+This document allows for the exploration of the four data generating mechanisms underlying the simulation study of the manuscript "From Multilevel Modeling to GEE: Revisiting the Within- and Between-Person Debate with Binary Predictors and Outcomes". The parameters have the following meaning
 
 -   `N_total`: the total number of individuals in the dataset
 -   `T_total`: the total number of time points in the dataset
