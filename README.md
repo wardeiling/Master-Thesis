@@ -12,7 +12,7 @@ This repository uses the [`renv`](https://rstudio.github.io/renv/) package to cr
 
 1. Download `R` version 4.2.2 from CRAN ([link](https://cran.rstudio.com/bin/windows/base/old/4.4.2/R-4.4.2-win.exe)) and install in RStudio and set as R version.
 2. Clone or download the entire repository.
-3. Open the project in RStudio (or start an R session in the project folder).
+3. Open the project in RStudio.
 4. Run:
 
    ```r
