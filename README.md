@@ -93,7 +93,7 @@ Contains internal `renv` files storing the project-specific package environment.
 
 ## Reproducibility: Step-by-Step Guide
 
-This repository uses the [`renv`](https://rstudio.github.io/renv/) package to create a reproducible R environment. To replicate the computational setup and rerun the analyses:
+The requirements of this simulation study are R version 4.2.2, the latest stable version of RStudio and the dependencies are described in `renv.lock`. This repository uses the [`renv`](https://rstudio.github.io/renv/) package to create a reproducible R environment. To replicate the computational setup and rerun the analyses:
 
 ### Step 1: Setup R and RStudio
 
