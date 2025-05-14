@@ -52,7 +52,7 @@ Supplementary materials accompanying the manuscript.
 
   1. A comparison between the hybrid and Mundlak's contextual model.
   2. Discussion of boundary/extreme estimates in GEEs and how they were handled.
-* **`supplementary_materials.html`**: Rendered HTML version for direct inspection.
+* **`supplementary_materials.html`**: Rendered HTML version for [direct inspection](https://wardeiling.github.io/multilevel-vs-gee-binary/supplementary_materials.html)
 
 ### `simulation_results/`
 
