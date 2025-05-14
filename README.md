@@ -4,101 +4,88 @@ This repository contains all materials associated with the manuscript:
 **"From Multilevel Modeling to GEE: Revisiting the Within- and Between-Person Debate with Binary Predictors and Outcomes"**
 It includes code, supplementary documentation, and simulation results to ensure full transparency and reproducibility of the study.
 
+
 ## Ethics Assessment
 
-This simulation study was approved by the Ethical Review Board of the Faculty of Social and Behavioural Sciences of Utrecht University. The approval is based on the documents sent by the researchers as requested in the form of the Ethics committee and filed under FETC number 24-2003. The approval is valid through 31 May 2025. The approval of the Ethical Review Board concerns ethical aspects, as well as data management and privacy issues (including the GDPR).
+This simulation study was approved by the Ethical Review Board of the Faculty of Social and Behavioural Sciences of Utrecht University. The approval is based on the documents submitted by the researchers as required by the Ethics Committee and filed under FETC number 24-2003. The approval is valid through 31 May 2025. The approval pertains to ethical considerations, data management, and privacy issues (including GDPR compliance).
 
 ## Study Design
 
-This simulation study evaluates the generalizability of disaggregation methods—commonly applied in multilevel linear models (MLMs)—to *generalized* multilevel models (GLMMs) and *generalized estimating equations* (GEEs) when dealing with binary predictors and/or binary outcomes.
+This simulation study evaluates the generalizability of disaggregation methods—commonly applied in multilevel linear models (MLMs)—to *generalized* multilevel models (GLMMs) and *generalized estimating equations* (GEEs) in the context of binary predictors and/or outcomes.
 
-We address two primary questions:
+We address two questions:
 
-1. Can disaggregation methods (UC, CWC, MuCo) reliably recover within-person and contextual effects in GLMMs with binary predictors and/or outcomes?
-2. Do GEEs require explicit disaggregation to correctly estimate within-person effects, especially when contextual effects are present?
+1. Can disaggregation methods (uncentered, centering-within-cluster, Mundlak's contextual model) reliably recover within-person and contextual effects in GLMMs with binary predictors and/or outcomes?
+2. Do GEEs require explicit disaggregation to correctly estimate within-person effects in the presence of contextual effects?
 
-We simulate data across four data-generating models (DGMs) that vary in the scale of the predictor and outcome variables (continuous or binary). Across DGMs, we keep constant the within-cluser standard deviation (SD) of the continuous predictor, the fixed intercept, the within-cluster effect and the level 1 residual SD (for DGMs with continuous outcome). For each of these DGMs, we systematically vary: 
+We simulate data under four data-generating mechanisms (DGMs) that vary the scale of the predictor and outcome variables (binary or continuous). Across DGMs, the following parameters are held constant: the within-cluster SD of the continuous predictor, the fixed intercept, the within-cluster effect, and the level-1 residual SD (for DGMs with a continuous outcome). The table below summarizes the manipulated design factors:
 
-CREATE MARKDOWN TABLE
+| Factor                               | Levels    |
+| ------------------------------------ | --------- |
+| Sample size *(N)*                    | 100, 200  |
+| Number of time points *(T)*          | 5, 10, 20 |
+| Between-cluster SD in continuous *X* | 0, 1, 3   |
+| SD in latent *Z* for binary *X*      | 0, 1, 3   |
+| Contextual effect                    | 0, 1, 3   |
+| Random intercept residual SD         | 1, 3      |
 
-* Sample size *(N = 100, 200)*
-* Number of time points *(T = 5, 10, 20)*
-* Between-cluster SD in continuous predictor (0, 1, 3)
-* SD in Z (the latent trait underlying between-person variability in binary X): (0, 1, 3)
-* Contextual effect: (0, 1, 3)
-* Random intercept residual SD: (1, 3)
-
-Each dataset is analyzed using 12 strategies: combinations of 3 disaggregation methods (uncentered, centering-within-clusters and mundlak's contextual model) and 4 estimation approaches (GLMM, and GEE with independence, exchangeable, and AR(1) correlation structures).
-
-Model performance is assessed via estimation bias in fixed effects (within-person: β₁; contextual: γ₀₁).
-
----
+Each dataset is analyzed using 12 strategies: all combinations of 3 disaggregation methods and 4 estimation approaches (GLMM and GEE with independence, exchangeable, and AR(1) correlation structures). Model performance is evaluated in terms of estimation bias for the within-person effect ($\beta_1$) and the contextual effect ($\gamma_{01}$).
 
 ## Repository Structure
 
 **`renv.lock`**
 
-Contains information on the requirements of all the dependencies of R-packages used in the simulation study.
+Contains dependency information for full reproducibility with `renv`.
 
 ### `scripts/`
 
-Contains all core scripts for running and analyzing the simulation study.
-
 * **`main-simulation-function-future-simul-part1.R`**
-  Modularized main script that executes the simulation across various design conditions for DGM 2, 3 and 4
+  Runs simulations for DGMs 2–4.
+
 * **`main-simulation-function-future-simul-part2.R`**
-  Modularized main script that executes the simulation across various design conditions for DGM 1.
+  Runs simulations for DGM 1.
 
 * **`results-plotting.R`**
-  Scripts used to produce the plots featured in the Results section of the manuscript.
+  Produces plots used in the manuscript.
 
-* **`helper-functions/`** (subfolder with modular components):
+* **`helper-functions/`**
 
-  * `data-generation-centeredX.R`: Data-generating mechanisms based on the hybrid model.
-  * `data-generation-mundlak.R`: Data-generating mechanisms based on Mundlak’s contextual model (the model used in the main manuscript).
-  * `model-fitting.R`: Model-fitting procedures for both GLMMs and GEEs.
-  * `result-formatting.R`: Functions to clean and format simulation output.
+  * `data-generation-centeredX.R`: Hybrid model data generation.
+  * `data-generation-mundlak.R`: Contextual model data generation.
+  * `model-fitting.R`: GLMM and GEE fitting procedures.
+  * `result-formatting.R`: Formatting and summarizing outputs.
 
 ### `docs/`
 
-Contains interactive and rendered documents to explore the simulation designs.
+* **`data-exploration.qmd`** / **`.html`**
+  Interactive Quarto document for exploring DGMs. [View HTML](https://wardeiling.github.io/multilevel-vs-gee-binary/data-exploration.html)
 
-* **`data-exploration.qmd`**: Allows users to explore all four data-generating mechanisms (DGMs) considered in the study.
-* **`data-exploration.html`**: Rendered HTML version for [direct inspection](https://wardeiling.github.io/multilevel-vs-gee-binary/data-exploration.html).
-
-Supplementary materials accompanying the manuscript.
-
-* **`supplementary_materials.qmd`**: Quarto document with:
-
-  1. A comparison between the hybrid and Mundlak's contextual model.
-  2. Discussion of boundary/extreme estimates in GEEs and how they were handled.
-* **`supplementary_materials.html`**: Rendered HTML version for [direct inspection](https://wardeiling.github.io/multilevel-vs-gee-binary/supplementary_materials.html).
+* **`supplementary_materials.qmd`** / **`.html`**
+  Additional theoretical discussion. [View HTML](https://wardeiling.github.io/multilevel-vs-gee-binary/supplementary_materials.html)
 
 ### `simulation_results/`
 
-Contains raw and processed simulation outputs, organized into subfolders corresponding to different simulation runs:
+* **`April10_fullsimulation/`**: DGMs 2–4
+* **`April17_fullsimulation_contxy/`**: DGM 1
+* **`April18_fullsimulation_combined/figures/`**: Final manuscript figures
 
-* **`April10_fullsimulation/`**: Part 1, covering DGMs 2–4.
-* **`April17_fullsimulation_contxy/`**: Part 2, covering DGM 1.
-* **`April18_fullsimulation_combined/figures/`**: Final figures used in the manuscript.
+Each folder includes:
 
-Each run folder contains:
+* `i.RDS`: Raw results for design scenario *i*
+* `settings.RDS`: Design settings metadata
+* `log.txt`: Warnings/errors from execution
+* `summary-results-bias.RDS` and `.csv`: Summary performance metrics
 
-* `i.RDS`: Raw output for each design/scenario `i`.
-* `settings.RDS`: Simulation settings used for that batch.
-* `log.txt`: Logs containing warnings and errors during simulation.
-* `summary-results-bias.RDS` & `.csv`: Summary files quantifying bias in the estimates.
+### `renv/`
 
-### **`renv/`**
-
-Contains documents that save the settings of the `renv` environment.
+Contains internal `renv` files storing the project-specific package environment.
 
 ## Reproducibility via `renv`
 
-This repository uses the [`renv`](https://rstudio.github.io/renv/) package to create a reproducible R environment. To replicate the computational setup:
+This project uses the [`renv`](https://rstudio.github.io/renv/) package to ensure a reproducible R environment. To replicate the computational setup:
 
-1. Download `R` version 4.2.2 from CRAN ([link](https://cran.rstudio.com/bin/windows/base/old/4.4.2/R-4.4.2-win.exe)), install in RStudio and set as R version.
-2. Clone or download the entire repository.
+1. Install R version 4.2.2 from [CRAN](https://cran.rstudio.com/bin/windows/base/old/4.4.2/R-4.4.2-win.exe).
+2. Clone or download the repository.
 3. Open the project in RStudio.
 4. Run:
 
@@ -106,15 +93,10 @@ This repository uses the [`renv`](https://rstudio.github.io/renv/) package to cr
    renv::restore()
    ```
 
-This restores all package versions as specified in the `renv.lock` file, ensuring consistent results across systems and over time.
+This will install all required package versions as specified in `renv.lock`.
 
-After the computational setup is replicated, we can run the main simulation and reproduce the output as follows
+## Reproducing Results
 
-1. Run **`scripts/main-simulation-function-future-simul-part1.R`**, which should automatically retrieve the helper functions and produce output in the folder `April10_fullsimulation/`
-2. Run **`scripts/main-simulation-function-future-simul-part2.R`**, which should automatically retrieve the helper functions and produce output in the folder `April17_fullsimulation_contXY/`
-
-Now we can use the output to reproduce the figures shown in the result section of the manuscript as follows
-
-1. Run **`post-processing/results-plotting.R`**,  which should retrieve the simulation output, merge them together and process it for creating the boxplots.
-
----
+1. Run `scripts/main-simulation-function-future-simul-part1.R` to simulate DGMs 2–4. Output is saved to `April10_fullsimulation/`.
+2. Run `scripts/main-simulation-function-future-simul-part2.R` for DGM 1. Output is saved to `April17_fullsimulation_contxy/`.
+3. Run `scripts/results-plotting.R` to process and visualize the simulation results used in the manuscript.
