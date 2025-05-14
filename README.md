@@ -87,12 +87,6 @@ Each folder includes:
 
 Contains internal `renv` files storing the project-specific package environment.
 
-## Reproducing Results
-
-1. Run `scripts/main-simulation-function-future-simul-part1.R` to simulate DGMs 2–4. Output is saved to `April10_fullsimulation/`.
-2. Run `scripts/main-simulation-function-future-simul-part2.R` for DGM 1. Output is saved to `April17_fullsimulation_contxy/`.
-3. Run `scripts/results-plotting.R` to process and visualize the simulation results used in the manuscript.
-
 ## Reproducibility: Step-by-Step Guide
 
 This repository uses the [`renv`](https://rstudio.github.io/renv/) package to create a reproducible R environment. To replicate the computational setup and rerun the analyses:
