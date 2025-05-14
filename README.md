@@ -36,6 +36,10 @@ Each dataset is analyzed using 12 strategies: all combinations of 3 disaggregati
 
 Contains dependency information for full reproducibility with `renv`.
 
+**`LICENSE`**
+
+Specifies the terms of use under the [MIT License](https://opensource.org/license/mit), allowing reuse, modification, and distribution with attribution.
+
 ### `scripts/`
 
 Contains all core scripts for running and analyzing the simulation study.
