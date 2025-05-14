@@ -37,12 +37,6 @@ Contains all core scripts for running and analyzing the simulation study.
   * `model-fitting.R`: Model-fitting procedures for both GLMMs and GEEs.
   * `result-formatting.R`: Functions to clean and format simulation output.
 
-### `data_exploration/`
-
-
-
-
-
 ### `docs/`
 
 Contains interactive and rendered documents to explore the simulation designs.
