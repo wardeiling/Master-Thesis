@@ -68,7 +68,7 @@ Contains supporting materials that provide additional context and in-depth expla
   Allows users to explore all four data-generating mechanisms (DGMs) considered in the study. [View HTML](https://wardeiling.github.io/multilevel-vs-gee-binary/data-exploration.html)
 
 * **`supplementary_materials.qmd`** / **`.html`**
-  Supplementary materials accompanying the manuscript [View HTML](https://wardeiling.github.io/multilevel-vs-gee-binary/supplementary_materials.html)
+  Supplementary materials accompanying the manuscript. [View HTML](https://wardeiling.github.io/multilevel-vs-gee-binary/supplementary_materials.html)
   1. A comparison between the hybrid and Mundlak's contextual model.
   2. Discussion of boundary/extreme estimates in GEEs and how they were handled.
 
