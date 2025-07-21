@@ -67,6 +67,9 @@ Contains supporting materials that provide additional context and in-depth expla
 * **`data-exploration.qmd`** / **`.html`**
   Allows users to explore all four data-generating mechanisms (DGMs) considered in the study. [View HTML](https://wardeiling.github.io/multilevel-vs-gee-binary/data-exploration.html)
 
+* **`master-thesis.pdf`**
+  Pertains the master thesis manuscript. [View PDF](https://wardeiling.github.io/multilevel-vs-gee-binary/master-thesis.pdf)
+
 * **`supplementary_materials.qmd`** / **`.html`**
   Supplementary materials accompanying the manuscript. [View HTML](https://wardeiling.github.io/multilevel-vs-gee-binary/supplementary_materials.html)
   1. A comparison between the hybrid and Mundlak's contextual model.
